@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Masculine Security — Mini Office (Offline, Auto)</title>
+
+  <style>
+    /* ===================== THEME (Dark/Light) ===================== */
+    :root{
+      --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
+      --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd; --bad:#ff4d6d;
+      --r:16px; --r2:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --bgGrad1: radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.22), transparent 55%);
+      --bgGrad2: radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.18), transparent 55%);
+      --bgGrad3: linear-gradient(180deg, #07101f 0%, #070d18 100%);
+    }
+    body.light{
+      --bg:#f5f7fb; --panel:#ffffff; --card:#ffffff; --line:#e5e7eb;
+      --text:#111827; --muted:#6b7280; --accent:#2563eb; --good:#10b981; --bad:#ef4444;
+      --shadow: 0 10px 24px rgba(17,24,39,.08);
+      --bgGrad1: radial-gradient(1200px 700px at 30% -10%, rgba(37,99,235,.12), transparent 55%);
+      --bgGrad2: radial-gradient(1000px 600px at 90% 10%, rgba(16,185,129,.10), transparent 55%);
+      --bgGrad3: linear-gradient(180deg, #f7fbff 0%, #f4f6fb 100%);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background: var(--bgGrad1), var(--bgGrad2), var(--bgGrad3);
+    }
+
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:16px;
+      padding:16px;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .sidebar{
+      border:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      border-radius: var(--r);
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--card) 92%, transparent),
+        color-mix(in srgb, var(--panel) 92%, transparent)
+      );
+      padding:14px;
+      position:sticky; top:14px;
+      height: calc(100vh - 28px);
+      display:flex; flex-direction:column;
+      box-shadow: var(--shadow);
+      overflow:auto;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      padding:10px; border-radius: var(--r2);
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      background: color-mix(in srgb, var(--card) 92%, transparent);
+    }
+    .logo{
+      width:42px; height:42px; border-radius: 14px;
+      display:grid; place-items:center; font-weight:900; letter-spacing:.5px;
+      color: color-mix(in srgb, var(--bg) 85%, #fff 15%);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 90%, #fff 10%), color-mix(in srgb, var(--good) 90%, #fff 10%));
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .brand h1{margin:0; font-size:14px; line-height:1.2}
+    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+
+    .nav{margin-top:12px; display:flex; flex-direction:column; gap:8px}
+    .nav button{
+      all:unset; cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px; border-radius: 14px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      transition:.15s ease;
+    }
+    .nav button:hover{
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+      background: color-mix(in srgb, var(--accent) 10%, var(--card));
+    }
+    .nav button.active{
+      border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+      background: color-mix(in srgb, var(--accent) 16%, var(--card));
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+    }
+    .pill{
+      font-size:12px; color:var(--muted);
+      padding:4px 10px; border-radius:999px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      background: color-mix(in srgb, var(--bg) 20%, transparent);
+      white-space:nowrap;
+    }
+    .foot{
+      margin-top:auto;
+      padding:10px;
+      border-top:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .main{
+      border:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      border-radius: var(--r);
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--card) 90%, transparent),
+        color-mix(in srgb, var(--panel) 90%, transparent)
+      );
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex; flex-direction:column;
+      min-height: calc(100vh - 32px);
+    }
+
+    .topbar{
+      padding:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      border-bottom:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      background: color-mix(in srgb, var(--bg) 14%, transparent);
+      flex-wrap:wrap;
+    }
+    .crumb h2{margin:0; font-size:14px}
+    .crumb small{color:var(--muted)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
+    .btn{
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition:.15s ease;
+      font-weight:800;
+      font-size:13px;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+      background: color-mix(in srgb, var(--accent) 10%, var(--card));
+    }
+    .btn.primary{border-color: color-mix(in srgb, var(--accent) 70%, var(--line)); background: color-mix(in srgb, var(--accent) 16%, var(--card))}
+    .btn.good{border-color: color-mix(in srgb, var(--good) 70%, var(--line)); background: color-mix(in srgb, var(--good) 14%, var(--card))}
+    .btn.danger{border-color: color-mix(in srgb, var(--bad) 60%, var(--line)); background: color-mix(in srgb, var(--bad) 10%, var(--card))}
+
+    .content{padding:14px; display:grid; gap:14px}
+    .grid2{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
+    .grid3{display:grid; grid-template-columns: repeat(3, 1fr); gap:14px}
+    .card{
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      border:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      border-radius: var(--r2);
+      padding:14px;
+    }
+    .card h3{margin:0 0 10px 0; font-size:14px}
+    .muted{color:var(--muted)}
+    .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
+    .field label{font-size:12px; color:var(--muted); font-weight:900}
+    .field input, .field select, .field textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      background: color-mix(in srgb, var(--bg) 14%, transparent);
+      color:var(--text);
+      outline:none;
+    }
+    body.light .field input, body.light .field select, body.light .field textarea{
+      background:#fff;
+    }
+    .field textarea{min-height:90px; resize:vertical}
+    .split{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+
+    .table{width:100%; border-collapse:collapse; overflow:hidden; border-radius: 12px}
+    .table th, .table td{
+      padding:10px 10px;
+      border-bottom:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      text-align:left;
+      font-size:13px;
+      vertical-align:top;
+    }
+    .table th{color:var(--muted); font-weight:900; font-size:12px}
+    .right{text-align:right}
+    .hide{display:none!important}
+    .hr{height:1px; background: color-mix(in srgb, var(--line) 65%, transparent); margin:10px 0}
+    .note{
+      border:1px dashed color-mix(in srgb, var(--accent) 50%, var(--line));
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      padding:12px; border-radius: 12px;
+      font-size:13px;
+    }
+    .kpi{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
+    .kpi .value{font-size:22px; font-weight:900}
+    .kpi .label{color:var(--muted); font-size:12px; font-weight:800}
+    .tag{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      border:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      background: color-mix(in srgb, var(--bg) 14%, transparent);
+      font-size:12px; font-weight:900; color:var(--muted)}
+    .statusbar{
+      display:flex; align-items:center; gap:10px;
+      font-size:12px; color:var(--muted);
+      padding:6px 14px;
+      border-top:1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      background: color-mix(in srgb, var(--bg) 10%, transparent);
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+    .dot.off{background: color-mix(in srgb, var(--line) 60%, transparent)}
+    @media (max-width: 980px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:relative; height:auto}
+      .grid2,.grid3{grid-template-columns: 1fr}
+    }
+
+    /* ===================== PRINT (PDF) ===================== */
+    @media print{
+      body{background:#fff !important; color:#000 !important}
+      .app, .sidebar, .topbar, .statusbar{display:none!important}
+      #printArea{display:block!important}
+    }
+    #printArea{display:none}
+    .printDoc{font-family: Arial, sans-serif; padding:20px; color:#000;}
+    .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
+      border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
+    .printHeader h1{margin:0; font-size:18px}
+    .printBox{border:1px solid #ddd; padding:10px; margin:10px 0}
+    .printTable{width:100%; border-collapse:collapse}
+    .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
+    .printRight{text-align:right}
+    .warn{color:#a00; font-weight:700}
+    .printSmall{font-size:12px; color:#222}
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">MS</div>
+      <div>
+        <h1>Masculine Security</h1>
+        <small>Mini Office • Offline • Auto-Save</small>
+      </div>
+    </div>
+
+    <div class="nav" id="nav">
+      <button data-page="dashboard" class="active"><span>🏠 Dashboard</span><span class="pill" id="pillDash">–</span></button>
+      <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCustomers">0</span></button>
+      <button data-page="invoices"><span>🧾 Rechnungen</span><span class="pill" id="pillInvoices">0</span></button>
+      <button data-page="expenses"><span>💳 Ausgaben</span><span class="pill" id="pillExpenses">0</span></button>
+      <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmployees">0</span></button>
+      <button data-page="payroll"><span>💼 Lohnabrechnung</span><span class="pill" id="pillPayroll">0</span></button>
+      <button data-page="taxcert"><span>📄 Lohnsteuerbescheinigung</span><span class="pill">Auto</span></button>
+      <button data-page="settings"><span>⚙️ Einstellungen</span><span class="pill">Auto</span></button>
+    </div>
+
+    <div class="foot">
+      <div><b>Offline:</b> Daten bleiben im Browser (local).</div>
+      <div class="muted">Auto-Save: waxaad qorto si toos ah buu u kaydiyaa.</div>
+      <div class="muted"><span class="warn">Hinweis:</span> Lohnsteuer/SV “official” → ELSTER/Steuerberater.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <h2 id="pageTitle">Dashboard</h2>
+        <small id="pageSub" class="muted">Auto-Totals • Auto-Save • PDF via Print</small>
+      </div>
+      <div class="actions" id="topActions">
+        <button class="btn" id="btnTheme">🌓 Theme</button>
+        <button class="btn primary" id="btnQuickInvoice">+ Rechnung</button>
+        <button class="btn" id="btnQuickCustomer">+ Kunde</button>
+        <button class="btn" id="btnQuickExpense">+ Ausgabe</button>
+        <button class="btn" id="btnQuickPayroll">+ Lohn</button>
+        <button class="btn good" id="btnExport">Export JSON</button>
+        <button class="btn" id="btnImport">Import JSON</button>
+        <input id="fileImport" type="file" accept="application/json" class="hide"/>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="page-dashboard">
+        <div class="grid3">
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <div class="label">Umsatz (Monat)</div>
+                <div class="value" id="kpiRevenueMonth">0,00 €</div>
+                <div class="muted" style="font-size:12px">Kleinunternehmer: USt = 0</div>
+              </div>
+              <span class="tag">📈</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <div class="label">Ausgaben (Monat)</div>
+                <div class="value" id="kpiExpensesMonth">0,00 €</div>
+                <div class="muted" style="font-size:12px">Auto-Totals</div>
+              </div>
+              <span class="tag">💳</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <div class="label">Lohn (Monat)</div>
+                <div class="value" id="kpiPayrollMonth">0,00 €</div>
+                <div class="muted" style="font-size:12px">Netto Summe (manual)</div>
+              </div>
+              <span class="tag">💼</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <h3>Letzte Aktivitäten</h3>
+            <table class="table">
+              <thead><tr><th>Typ</th><th>Beschreibung</th><th>Datum</th><th class="right">Betrag</th></tr></thead>
+              <tbody id="recentList"></tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Schnellstart</h3>
+            <div class="note">
+              <b>Auto-Save:</b> wax kasta markaad qorto si toos ah ayuu u kaydiyaa.<br/>
+              <b>Auto-Invoice-No:</b> MS-YYYY-0001 si otomaatig ah ayuu u sameeyaa.<br/>
+              <b>Von–Bis:</b> Rechnung hat Leistungszeitraum (Von/Bis).<br/>
+              <b>Steuernummer:</b> ku qor Einstellungen si uga muuqato PDF.
+            </div>
+            <div class="hr"></div>
+            <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
+            <button class="btn" onclick="UI.go('invoices')">+ Rechnung</button>
+            <button class="btn" onclick="UI.go('employees')">+ Mitarbeiter</button>
+            <button class="btn good" onclick="UI.go('settings')">Einstellungen</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section id="page-customers" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Kunden (Auto)</h3>
+            <div class="field"><label>Suche</label><input id="c_search" placeholder="Suche name/email..." /></div>
+            <div class="hr"></div>
+            <h3>Neuer Kunde</h3>
+            <div class="field"><label>Name / Firma</label><input id="c_name" placeholder="z.B. Beispiel GmbH"/></div>
+            <div class="split">
+              <div class="field"><label>Email</label><input id="c_email" placeholder="kunde@email.de"/></div>
+              <div class="field"><label>Telefon</label><input id="c_phone" placeholder="+49 ..."/></div>
+            </div>
+            <div class="field"><label>Adresse</label><input id="c_addr" placeholder="Straße, PLZ Ort"/></div>
+            <button class="btn primary" onclick="Customers.add()">Speichern</button>
+            <button class="btn danger" onclick="Customers.clear()">Leeren</button>
+          </div>
+          <div class="card">
+            <h3>Kundenliste</h3>
+            <table class="table">
+              <thead><tr><th>Name</th><th>Email</th><th>Adresse</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="customersList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVOICES -->
+      <section id="page-invoices" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Rechnung (Auto)</h3>
+            <div class="split">
+              <div class="field"><label>Rechnungs-Nr. (auto)</label><input id="i_no" placeholder="MS-2026-0001" /></div>
+              <div class="field"><label>Datum</label><input id="i_date" type="date"/></div>
+            </div>
+
+            <div class="split">
+              <div class="field"><label>Von</label><input id="i_from" placeholder="z.B. 01.02.2026"/></div>
+              <div class="field"><label>Bis</label><input id="i_to" placeholder="z.B. 18.02.2026"/></div>
+            </div>
+
+            <div class="field"><label>Kunde</label><select id="i_customer"></select></div>
+            <div class="field"><label>Leistung / Beschreibung</label><input id="i_desc" placeholder="z.B. Objektschutz 12h"/></div>
+            <div class="split">
+              <div class="field"><label>Netto (€)</label><input id="i_net" type="number" step="0.01" placeholder="0.00"/></div>
+              <div class="field"><label>Status</label>
+                <select id="i_status">
+                  <option value="Entwurf">Entwurf</option>
+                  <option value="Gesendet">Gesendet</option>
+                  <option value="Bezahlt">Bezahlt</option>
+                </select>
+              </div>
+            </div>
+            <div class="note" id="i_previewNote">Gesamt: 0,00 € • Umsatzsteuer: 0,00 € • Hinweis: §19 UStG</div>
+            <button class="btn primary" onclick="Invoices.add()">Speichern</button>
+            <button class="btn" onclick="Invoices.print()">PDF öffnen</button>
+            <button class="btn danger" onclick="Invoices.clear()">Leeren</button>
+          </div>
+
+          <div class="card">
+            <h3>Rechnungen</h3>
+            <div class="split">
+              <div class="field"><label>Suche</label><input id="i_search" placeholder="Nr / Kunde..." /></div>
+              <div class="field"><label>Status Filter</label>
+                <select id="i_filter">
+                  <option value="">Alle</option>
+                  <option>Entwurf</option>
+                  <option>Gesendet</option>
+                  <option>Bezahlt</option>
+                </select>
+              </div>
+            </div>
+            <table class="table">
+              <thead><tr><th>Nr.</th><th>Kunde</th><th>Datum</th><th>Status</th><th class="right">Netto</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="invoicesList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPENSES -->
+      <section id="page-expenses" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Ausgabe (Auto)</h3>
+            <div class="split">
+              <div class="field"><label>Datum</label><input id="e_date" type="date"/></div>
+              <div class="field"><label>Betrag (€)</label><input id="e_amount" type="number" step="0.01" placeholder="0.00"/></div>
+            </div>
+            <div class="field"><label>Kategorie</label>
+              <select id="e_cat">
+                <option>Büromaterial</option>
+                <option>Fahrtkosten</option>
+                <option>Versicherung</option>
+                <option>Telefon/Internet</option>
+                <option>Lohnkosten</option>
+                <option>Sonstiges</option>
+              </select>
+            </div>
+            <div class="field"><label>Notiz</label><input id="e_note" placeholder="z.B. Quittung #123"/></div>
+            <button class="btn primary" onclick="Expenses.add()">Speichern</button>
+            <button class="btn danger" onclick="Expenses.clear()">Leeren</button>
+          </div>
+
+          <div class="card">
+            <h3>Ausgabenliste</h3>
+            <div class="field"><label>Suche</label><input id="e_search" placeholder="Kategorie/Notiz..." /></div>
+            <table class="table">
+              <thead><tr><th>Datum</th><th>Kategorie</th><th>Notiz</th><th class="right">Betrag</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="expensesList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMPLOYEES -->
+      <section id="page-employees" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Mitarbeiter (Auto)</h3>
+            <div class="field"><label>Suche</label><input id="m_search" placeholder="Name/Steuer-ID..." /></div>
+            <div class="hr"></div>
+            <h3>Neuer Mitarbeiter</h3>
+            <div class="split">
+              <div class="field"><label>Name</label><input id="m_name" placeholder="Vorname Nachname"/></div>
+              <div class="field"><label>Personal-Nr.</label><input id="m_pnr" placeholder="optional"/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>Steuer-ID (IdNr.)</label><input id="m_taxid" placeholder="optional"/></div>
+              <div class="field"><label>SV-Nr. (optional)</label><input id="m_svnr" placeholder="optional"/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>Adresse</label><input id="m_addr" placeholder="Straße, PLZ Ort"/></div>
+              <div class="field"><label>Steuerklasse (Info)</label>
+                <select id="m_taxclass"><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option></select>
+              </div>
+            </div>
+            <div class="split">
+              <div class="field"><label>KV-Kasse (optional)</label><input id="m_kasse" placeholder="z.B. Barmer"/></div>
+              <div class="field"><label>Beschäftigung (Info)</label>
+                <select id="m_type"><option>Vollzeit/Teilzeit</option><option>Minijob</option><option>Kurzfristig</option></select>
+              </div>
+            </div>
+            <button class="btn primary" onclick="Employees.add()">Speichern</button>
+            <button class="btn danger" onclick="Employees.clear()">Leeren</button>
+          </div>
+          <div class="card">
+            <h3>Mitarbeiterliste</h3>
+            <table class="table">
+              <thead><tr><th>Name</th><th>Steuer-ID</th><th>SV-Nr</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="employeesList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAYROLL -->
+      <section id="page-payroll" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Lohnabrechnung (einfach)</h3>
+            <div class="field"><label>Mitarbeiter</label><select id="p_emp"></select></div>
+            <div class="split">
+              <div class="field"><label>Monat (YYYY-MM)</label><input id="p_month" placeholder="2026-02"/></div>
+              <div class="field"><label>Stundenlohn (€)</label><input id="p_rate" type="number" step="0.01" placeholder="16.00"/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>Stunden</label><input id="p_hours" type="number" step="0.01" placeholder="0"/></div>
+              <div class="field"><label>Abzüge (€) (manual)</label><input id="p_deduct" type="number" step="0.01" value="0"/></div>
+            </div>
+            <div class="field"><label>Notiz</label><input id="p_note" placeholder="z.B. SV/Steuer Schätzung"/></div>
+            <div class="note" id="p_preview">Brutto: 0,00 € • Netto: 0,00 €</div>
+            <button class="btn primary" onclick="Payroll.add()">Speichern</button>
+            <button class="btn" onclick="Payroll.print()">PDF öffnen</button>
+            <button class="btn danger" onclick="Payroll.clear()">Leeren</button>
+            <div class="muted" style="margin-top:10px">Hinweis: Das ist intern (nicht offiziell).</div>
+          </div>
+
+          <div class="card">
+            <h3>Lohnliste</h3>
+            <div class="split">
+              <div class="field"><label>Suche</label><input id="p_search" placeholder="Name/Monat..." /></div>
+              <div class="field"><label>Jahr</label><input id="p_year" placeholder="2026" value="2026"/></div>
+            </div>
+            <table class="table">
+              <thead><tr><th>Monat</th><th>Name</th><th class="right">Brutto</th><th class="right">Netto</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="payrollList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAXCERT -->
+      <section id="page-taxcert" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Lohnsteuerbescheinigung (Auto)</h3>
+            <div class="field"><label>Jahr</label><input id="tc_year" value="2026"/></div>
+            <div class="field"><label>Mitarbeiter</label><select id="tc_emp"></select></div>
+            <div class="note">
+              Diese Bescheinigung ist eine <b>interne Zusammenfassung</b> aus deinen Payroll-Daten.<br/>
+              Für <b>offizielle</b> Lohnsteuerbescheinigung brauchst du i.d.R. ELSTER/Steuerberater/Lohnprogramm.
+            </div>
+            <button class="btn primary" onclick="TaxCert.build()">Anzeigen</button>
+            <button class="btn" onclick="TaxCert.print()">PDF öffnen</button>
+          </div>
+
+          <div class="card">
+            <h3>Vorschau</h3>
+            <div id="tc_preview" class="note">Wähle Jahr + Mitarbeiter, dann “Anzeigen”.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="page-settings" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Einstellungen (Firma)</h3>
+            <div class="field"><label>Firmenname</label><input id="s_company" /></div>
+            <div class="field"><label>Adresse</label><textarea id="s_addr"></textarea></div>
+
+            <div class="split">
+              <div class="field"><label>E-Mail</label><input id="s_email" /></div>
+              <div class="field"><label>Telefon</label><input id="s_phone" /></div>
+            </div>
+
+            <div class="split">
+              <div class="field"><label>IBAN</label><input id="s_iban" /></div>
+              <div class="field"><label>BIC</label><input id="s_bic" /></div>
+            </div>
+
+            <div class="field"><label>Steuernummer</label><input id="s_taxno" placeholder="z.B. 60/123/45678" /></div>
+
+            <div class="field"><label>Hinweis auf Rechnung (Kleinunternehmer)</label><textarea id="s_note"></textarea></div>
+
+            <button class="btn good" onclick="Settings.save()">Speichern</button>
+            <button class="btn danger" onclick="Settings.resetAll()">ALLES löschen</button>
+
+            <div class="muted" style="margin-top:10px">
+              Auto-Save ist an. Speichern Button ist “sicherstellen”.
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Status</h3>
+            <div class="note" id="settingsStatus">—</div>
+            <div class="hr"></div>
+            <div class="muted">
+              Tipp: Haddii Netlify/GitHub update uusan muuqan → <b>Ctrl + Shift + R</b>.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="statusbar">
+      <span class="dot" id="dotSave"></span>
+      <span id="saveText">Auto-Save bereit</span>
+      <span class="pill" id="versionLabel"></span>
+    </div>
+  </main>
+</div>
+
+<!-- PRINT AREA -->
+<div id="printArea"></div>
+
+<script>
+/* ===================== STORAGE ===================== */
+const APP_VERSION = "v1.0.0";
+const KEY = "ms_mini_office_v1";
+
+const Defaults = {
+  theme: "dark",
+  settings: {
+    company: "Masculine Security",
+    addr: "Werschenregerstraße 6\n28237 Bremen",
+    email: "kontakt.mass.bremen@hotmail.com",
+    phone: "015778697052",
+    iban: "DE98 1001 1001 2333 0146 96",
+    bic: "NTSBDEB1XXX",
+    taxno: "",
+    note: "Hinweis: Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+  },
+  customers: [],
+  invoices: [],
+  expenses: [],
+  employees: [],
+  payroll: []
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return structuredClone(Defaults);
+    const s = JSON.parse(raw);
+    return {
+      ...structuredClone(Defaults),
+      ...s,
+      settings: {...structuredClone(Defaults.settings), ...(s.settings||{})}
+    };
+  }catch(e){
+    return structuredClone(Defaults);
+  }
+}
+let State = loadState();
+
+let saveTimer = null;
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    localStorage.setItem(KEY, JSON.stringify(State));
+    UI.flashSaved();
+  }, 80);
+}
+function hardSave(){
+  localStorage.setItem(KEY, JSON.stringify(State));
+  UI.flashSaved();
+}
+
+/* ===================== HELPERS ===================== */
+const $ = (id)=>document.getElementById(id);
+const fmtEUR = (n)=> (Number(n||0)).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+const todayISO = ()=> new Date().toISOString().slice(0,10);
+
+function pad4(n){ return String(n).padStart(4,"0"); }
+function invoiceAutoNo(){
+  const y = new Date().getFullYear();
+  const countThisYear = State.invoices.filter(x => (x.no||"").includes(`MS-${y}-`)).length;
+  return `MS-${y}-${pad4(countThisYear+1)}`;
+}
+function monthKey(isoDate){ // YYYY-MM from ISO
+  if(!isoDate) return "";
+  return String(isoDate).slice(0,7);
+}
+function parseFloatSafe(x){
+  const v = Number(String(x||"").replace(",", "."));
+  return isFinite(v) ? v : 0;
+}
+function escapeHtml(str){
+  return String(str||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+/* ===================== UI NAV ===================== */
+const UI = {
+  page: "dashboard",
+  go(page){
+    UI.page = page;
+    // nav active
+    document.querySelectorAll("#nav button").forEach(b=>{
+      b.classList.toggle("active", b.dataset.page===page);
+    });
+    // pages show/hide
+    document.querySelectorAll("[id^='page-']").forEach(sec=>{
+      sec.classList.toggle("hide", sec.id !== `page-${page}`);
+    });
+
+    const titles = {
+      dashboard:["Dashboard","Auto-Totals • Auto-Save • PDF via Print"],
+      customers:["Kunden","Kunden speichern & auswählen"],
+      invoices:["Rechnungen","Von–Bis + Kleinunternehmer (§19 UStG)"],
+      expenses:["Ausgaben","Kosten speichern & Monats-Summe"],
+      employees:["Mitarbeiter","Stammdaten für Payroll"],
+      payroll:["Lohnabrechnung","Einfach (intern) + PDF via Print"],
+      taxcert:["Lohnsteuerbescheinigung","Interne Zusammenfassung (year)"],
+      settings:["Einstellungen","Firma + Steuernummer + Hinweis"]
+    };
+    const [t,sub] = titles[page] || ["",""];
+    $("pageTitle").textContent = t;
+    $("pageSub").textContent = sub;
+
+    // refresh on enter
+    Render.all();
+  },
+  flashSaved(){
+    const dot = $("dotSave");
+    const txt = $("saveText");
+    dot.classList.remove("off");
+    txt.textContent = "Gespeichert ✓";
+    setTimeout(()=>{
+      txt.textContent = "Auto-Save bereit";
+    }, 900);
+  },
+  setTheme(mode){
+    document.body.classList.toggle("light", mode==="light");
+    document.body.classList.toggle("dark", mode!=="light");
+    State.theme = mode;
+    saveState();
+  },
+  toggleTheme(){
+    UI.setTheme(State.theme==="light" ? "dark" : "light");
+  }
+};
+
+/* ===================== RENDER ===================== */
+const Render = {
+  all(){
+    Render.pills();
+    Render.customers();
+    Render.invoices();
+    Render.expenses();
+    Render.employees();
+    Render.payroll();
+    Render.dashboard();
+    Render.settingsForm();
+    Render.taxcertSelects();
+    $("versionLabel").textContent = `Build ${APP_VERSION}`;
+  },
+
+  pills(){
+    $("pillCustomers").textContent = State.customers.length;
+    $("pillInvoices").textContent = State.invoices.length;
+    $("pillExpenses").textContent = State.expenses.length;
+    $("pillEmployees").textContent = State.employees.length;
+    $("pillPayroll").textContent = State.payroll.length;
+    $("pillDash").textContent = `${State.invoices.length} / ${State.customers.length}`;
+  },
+
+  dashboard(){
+    // month sums
+    const now = new Date();
+    const mk = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+
+    const revM = State.invoices
+      .filter(x => monthKey(x.date)===mk)
+      .reduce((s,x)=> s + parseFloatSafe(x.net), 0);
+
+    const expM = State.expenses
+      .filter(x => monthKey(x.date)===mk)
+      .reduce((s,x)=> s + parseFloatSafe(x.amount), 0);
+
+    const payM = State.payroll
+      .filter(x => x.month===mk)
+      .reduce((s,x)=> s + parseFloatSafe(x.net), 0);
+
+    $("kpiRevenueMonth").textContent = fmtEUR(revM);
+    $("kpiExpensesMonth").textContent = fmtEUR(expM);
+    $("kpiPayrollMonth").textContent = fmtEUR(payM);
+
+    // recent activities (last 10)
+    const rec = [];
+    State.invoices.forEach(x=>rec.push({type:"Rechnung", desc:`${x.no} • ${x.customerName||"-"}`, date:x.date||"", amount:parseFloatSafe(x.net)}));
+    State.expenses.forEach(x=>rec.push({type:"Ausgabe", desc:`${x.cat} • ${x.note||""}`, date:x.date||"", amount:parseFloatSafe(x.amount)*(-1)}));
+    State.payroll.forEach(x=>rec.push({type:"Lohn", desc:`${x.empName||"-"} • ${x.month}`, date:(x.month||"")+"-01", amount:parseFloatSafe(x.net)*(-1)}));
+
+    rec.sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+    const rows = rec.slice(0,10).map(r=>{
+      const amt = r.amount>=0 ? fmtEUR(r.amount) : ("-"+fmtEUR(Math.abs(r.amount)));
+      return `<tr><td>${escapeHtml(r.type)}</td><td>${escapeHtml(r.desc)}</td><td>${escapeHtml(r.date)}</td><td class="right">${amt}</td></tr>`;
+    }).join("");
+    $("recentList").innerHTML = rows || `<tr><td colspan="4" class="muted">Noch keine Daten.</td></tr>`;
+  },
+
+  customers(){
+    const q = ($("c_search")?.value || "").toLowerCase().trim();
+    const list = State.customers.filter(c=>{
+      const t = `${c.name} ${c.email} ${c.addr}`.toLowerCase();
+      return !q || t.includes(q);
+    });
+
+    $("customersList").innerHTML = list.map(c=>`
+      <tr>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.email)}</td>
+        <td>${escapeHtml(c.addr)}</td>
+        <td class="right">
+          <button class="btn" onclick="Customers.use('${c.id}')">In Rechnung</button>
+          <button class="btn danger" onclick="Customers.del('${c.id}')">Löschen</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
+
+    // invoice customer select
+    const sel = $("i_customer");
+    if(sel){
+      sel.innerHTML = `<option value="">— auswählen —</option>` + State.customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+    }
+  },
+
+  invoices(){
+    // auto defaults
+    if($("i_date") && !$("i_date").value) $("i_date").value = todayISO();
+    if($("i_no") && (!$("i_no").value || $("i_no").value.trim()==="")) $("i_no").value = invoiceAutoNo();
+    if($("i_from") && !$("i_from").value) $("i_from").value = "";
+    if($("i_to") && !$("i_to").value) $("i_to").value = "";
+
+    // preview totals
+    const net = parseFloatSafe($("i_net")?.value);
+    $("i_previewNote").textContent = `Gesamt: ${fmtEUR(net)} • Umsatzsteuer: ${fmtEUR(0)} • Hinweis: §19 UStG`;
+
+    const q = ($("i_search")?.value || "").toLowerCase().trim();
+    const f = ($("i_filter")?.value || "").trim();
+
+    const list = State.invoices.filter(inv=>{
+      const t = `${inv.no} ${inv.customerName} ${inv.desc}`.toLowerCase();
+      const okQ = !q || t.includes(q);
+      const okF = !f || inv.status===f;
+      return okQ && okF;
+    });
+
+    $("invoicesList").innerHTML = list.map(inv=>`
+      <tr>
+        <td>${escapeHtml(inv.no)}</td>
+        <td>${escapeHtml(inv.customerName||"-")}</td>
+        <td>${escapeHtml(inv.date||"-")}</td>
+        <td><span class="pill">${escapeHtml(inv.status||"")}</span></td>
+        <td class="right">${fmtEUR(inv.net)}</td>
+        <td class="right">
+          <button class="btn" onclick="Invoices.open('${inv.id}')">Öffnen</button>
+          <button class="btn" onclick="Invoices.print('${inv.id}')">PDF</button>
+          <button class="btn danger" onclick="Invoices.del('${inv.id}')">Löschen</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="6" class="muted">Keine Rechnungen.</td></tr>`;
+  },
+
+  expenses(){
+    if($("e_date") && !$("e_date").value) $("e_date").value = todayISO();
+
+    const q = ($("e_search")?.value || "").toLowerCase().trim();
+    const list = State.expenses.filter(e=>{
+      const t = `${e.cat} ${e.note} ${e.date}`.toLowerCase();
+      return !q || t.includes(q);
+    });
+
+    $("expensesList").innerHTML = list.map(e=>`
+      <tr>
+        <td>${escapeHtml(e.date)}</td>
+        <td>${escapeHtml(e.cat)}</td>
+        <td>${escapeHtml(e.note||"")}</td>
+        <td class="right">${fmtEUR(e.amount)}</td>
+        <td class="right"><button class="btn danger" onclick="Expenses.del('${e.id}')">Löschen</button></td>
+      </tr>
+    `).join("") || `<tr><td colspan="5" class="muted">Keine Ausgaben.</td></tr>`;
+  },
+
+  employees(){
+    const q = ($("m_search")?.value || "").toLowerCase().trim();
+    const list = State.employees.filter(m=>{
+      const t = `${m.name} ${m.taxid} ${m.svnr}`.toLowerCase();
+      return !q || t.includes(q);
+    });
+
+    $("employeesList").innerHTML = list.map(m=>`
+      <tr>
+        <td>${escapeHtml(m.name)}</td>
+        <td>${escapeHtml(m.taxid||"")}</td>
+        <td>${escapeHtml(m.svnr||"")}</td>
+        <td class="right">
+          <button class="btn danger" onclick="Employees.del('${m.id}')">Löschen</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="4" class="muted">Keine Mitarbeiter.</td></tr>`;
+
+    // payroll employee select
+    const sel = $("p_emp");
+    if(sel){
+      sel.innerHTML = `<option value="">— auswählen —</option>` + State.employees.map(m=>`<option value="${m.id}">${escapeHtml(m.name)}</option>`).join("");
+    }
+  },
+
+  payroll(){
+    const rate = parseFloatSafe($("p_rate")?.value);
+    const hours = parseFloatSafe($("p_hours")?.value);
+    const deduct = parseFloatSafe($("p_deduct")?.value);
+    const brutto = rate * hours;
+    const netto = Math.max(0, brutto - deduct);
+    $("p_preview").textContent = `Brutto: ${fmtEUR(brutto)} • Netto: ${fmtEUR(netto)}`;
+
+    const q = ($("p_search")?.value || "").toLowerCase().trim();
+    const year = ($("p_year")?.value || "").trim();
+    const list = State.payroll.filter(p=>{
+      const t = `${p.empName} ${p.month}`.toLowerCase();
+      const okQ = !q || t.includes(q);
+      const okY = !year || String(p.month||"").startsWith(year);
+      return okQ && okY;
+    });
+
+    $("payrollList").innerHTML = list.map(p=>`
+      <tr>
+        <td>${escapeHtml(p.month)}</td>
+        <td>${escapeHtml(p.empName||"-")}</td>
+        <td class="right">${fmtEUR(p.brutto)}</td>
+        <td class="right">${fmtEUR(p.net)}</td>
+        <td class="right">
+          <button class="btn" onclick="Payroll.print('${p.id}')">PDF</button>
+          <button class="btn danger" onclick="Payroll.del('${p.id}')">Löschen</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="5" class="muted">Keine Löhne.</td></tr>`;
+
+    Render.taxcertSelects();
+  },
+
+  taxcertSelects(){
+    const sel = $("tc_emp");
+    if(sel){
+      sel.innerHTML = `<option value="">— auswählen —</option>` + State.employees.map(m=>`<option value="${m.id}">${escapeHtml(m.name)}</option>`).join("");
+    }
+  },
+
+  settingsForm(){
+    const s = State.settings;
+    const setIfEmpty = (id, val)=>{
+      const el = $(id); if(!el) return;
+      if(el.value===undefined || el.value===null || el.value==="") el.value = val||"";
+    };
+    setIfEmpty("s_company", s.company);
+    setIfEmpty("s_addr", s.addr);
+    setIfEmpty("s_email", s.email);
+    setIfEmpty("s_phone", s.phone);
+    setIfEmpty("s_iban", s.iban);
+    setIfEmpty("s_bic", s.bic);
+    setIfEmpty("s_taxno", s.taxno);
+    setIfEmpty("s_note", s.note);
+
+    $("settingsStatus").innerHTML =
+      `<b>Firma:</b> ${escapeHtml(s.company)}<br>
+       <b>E-Mail:</b> <a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a><br>
+       <b>Steuernummer:</b> ${escapeHtml(s.taxno||"—")}<br>
+       <b>Hinweis:</b> ${escapeHtml(s.note)}`;
+  }
+};
+
+/* ===================== MODULES ===================== */
+const Customers = {
+  add(){
+    const name = $("c_name").value.trim();
+    if(!name) return alert("Bitte Name eingeben.");
+    const c = {
+      id: crypto.randomUUID(),
+      name,
+      email: $("c_email").value.trim(),
+      phone: $("c_phone").value.trim(),
+      addr: $("c_addr").value.trim()
+    };
+    State.customers.unshift(c);
+    saveState();
+    Customers.clear();
+    Render.all();
+  },
+  clear(){
+    $("c_name").value = "";
+    $("c_email").value = "";
+    $("c_phone").value = "";
+    $("c_addr").value = "";
+  },
+  del(id){
+    if(!confirm("Kunde löschen?")) return;
+    State.customers = State.customers.filter(x=>x.id!==id);
+    saveState(); Render.all();
+  },
+  use(id){
+    UI.go("invoices");
+    $("i_customer").value = id;
+  }
+};
+
+const Invoices = {
+  add(){
+    const no = ($("i_no").value.trim() || invoiceAutoNo());
+    const date = $("i_date").value || todayISO();
+    const from = $("i_from").value.trim();
+    const to = $("i_to").value.trim();
+    const custId = $("i_customer").value;
+    const cust = State.customers.find(c=>c.id===custId) || null;
+    const desc = $("i_desc").value.trim();
+    const net = parseFloatSafe($("i_net").value);
+    const status = $("i_status").value;
+
+    if(!desc) return alert("Bitte Leistung/Beschreibung eingeben.");
+    if(!cust) return alert("Bitte Kunde auswählen.");
+    if(!from || !to) return alert("Bitte Von und Bis eingeben.");
+
+    const inv = {
+      id: crypto.randomUUID(),
+      no, date, from, to,
+      customerId: cust.id,
+      customerName: cust.name,
+      customerEmail: cust.email||"",
+      customerAddr: cust.addr||"",
+      desc,
+      net,
+      vat: 0,
+      total: net,
+      status
+    };
+
+    State.invoices.unshift(inv);
+    saveState();
+    Invoices.clear();
+    Render.all();
+  },
+  clear(){
+    $("i_no").value = invoiceAutoNo();
+    $("i_date").value = todayISO();
+    $("i_from").value = "";
+    $("i_to").value = "";
+    $("i_customer").value = "";
+    $("i_desc").value = "";
+    $("i_net").value = "";
+    $("i_status").value = "Entwurf";
+    Render.invoices();
+  },
+  del(id){
+    if(!confirm("Rechnung löschen?")) return;
+    State.invoices = State.invoices.filter(x=>x.id!==id);
+    saveState(); Render.all();
+  },
+  open(id){
+    const inv = State.invoices.find(x=>x.id===id);
+    if(!inv) return;
+    UI.go("invoices");
+    $("i_no").value = inv.no;
+    $("i_date").value = inv.date;
+    $("i_from").value = inv.from;
+    $("i_to").value = inv.to;
+    $("i_customer").value = inv.customerId;
+    $("i_desc").value = inv.desc;
+    $("i_net").value = inv.net;
+    $("i_status").value = inv.status;
+    Render.invoices();
+  },
+  print(id){
+    const inv = id ? State.invoices.find(x=>x.id===id) : null;
+    const live = !inv ? {
+      no: $("i_no").value.trim(),
+      date: $("i_date").value,
+      from: $("i_from").value.trim(),
+      to: $("i_to").value.trim(),
+      customerId: $("i_customer").value,
+      desc: $("i_desc").value.trim(),
+      net: parseFloatSafe($("i_net").value),
+      status: $("i_status").value
+    } : inv;
+
+    const cust = State.customers.find(c=>c.id===live.customerId) || {name: live.customerName||"", addr: live.customerAddr||"", email: live.customerEmail||""};
+
+    const s = State.settings;
+    const html = `
+      <div class="printDoc">
+        <div class="printHeader">
+          <div>
+            <h1>Rechnung</h1>
+            <div class="printSmall"><b>${escapeHtml(s.company)}</b><br>
+              ${escapeHtml(s.addr).replace(/\n/g,"<br>")}<br>
+              E-Mail: <a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a><br>
+              Tel: ${escapeHtml(s.phone)}<br>
+              Steuernummer: ${escapeHtml(s.taxno||"—")}<br>
+              IBAN: ${escapeHtml(s.iban)} • BIC: ${escapeHtml(s.bic)}
+            </div>
+          </div>
+          <div class="printSmall">
+            <div><b>Rechnungs-Nr.:</b> ${escapeHtml(live.no||"—")}</div>
+            <div><b>Datum:</b> ${escapeHtml(live.date||"—")}</div>
+            <div><b>Zeitraum:</b> ${escapeHtml(live.from||"—")} – ${escapeHtml(live.to||"—")}</div>
+            <div><b>Status:</b> ${escapeHtml(live.status||"—")}</div>
+          </div>
+        </div>
+
+        <div class="printBox">
+          <div class="printSmall"><b>Kunde</b><br>
+            ${escapeHtml(cust.name||"—")}<br>
+            ${escapeHtml(cust.addr||"").replace(/\n/g,"<br>")}<br>
+            ${cust.email ? `E-Mail: <a href="mailto:${escapeHtml(cust.email)}">${escapeHtml(cust.email)}</a>` : ""}
+          </div>
+        </div>
+
+        <table class="printTable">
+          <thead><tr><th>Leistung</th><th class="printRight">Netto</th></tr></thead>
+          <tbody>
+            <tr><td>${escapeHtml(live.desc||"—")}</td><td class="printRight">${fmtEUR(live.net||0)}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="printBox">
+          <div class="printSmall">
+            Zwischensumme: <b>${fmtEUR(live.net||0)}</b><br>
+            Umsatzsteuer: <b>${fmtEUR(0)}</b><br>
+            Gesamt: <b>${fmtEUR(live.net||0)}</b><br><br>
+            ${escapeHtml(s.note||"")}
+          </div>
+        </div>
+      </div>
+    `;
+    $("printArea").innerHTML = html;
+    window.print();
+  }
+};
+
+const Expenses = {
+  add(){
+    const date = $("e_date").value || todayISO();
+    const amount = parseFloatSafe($("e_amount").value);
+    const cat = $("e_cat").value;
+    const note = $("e_note").value.trim();
+    if(amount<=0) return alert("Bitte Betrag > 0 eingeben.");
+    const e = { id: crypto.randomUUID(), date, amount, cat, note };
+    State.expenses.unshift(e);
+    saveState();
+    Expenses.clear();
+    Render.all();
+  },
+  clear(){
+    $("e_date").value = todayISO();
+    $("e_amount").value = "";
+    $("e_cat").value = "Büromaterial";
+    $("e_note").value = "";
+  },
+  del(id){
+    if(!confirm("Ausgabe löschen?")) return;
+    State.expenses = State.expenses.filter(x=>x.id!==id);
+    saveState(); Render.all();
+  }
+};
+
+const Employees = {
+  add(){
+    const name = $("m_name").value.trim();
+    if(!name) return alert("Bitte Name eingeben.");
+    const m = {
+      id: crypto.randomUUID(),
+      name,
+      pnr: $("m_pnr").value.trim(),
+      taxid: $("m_taxid").value.trim(),
+      svnr: $("m_svnr").value.trim(),
+      addr: $("m_addr").value.trim(),
+      taxclass: $("m_taxclass").value,
+      kasse: $("m_kasse").value.trim(),
+      type: $("m_type").value
+    };
+    State.employees.unshift(m);
+    saveState();
+    Employees.clear();
+    Render.all();
+  },
+  clear(){
+    ["m_name","m_pnr","m_taxid","m_svnr","m_addr","m_kasse"].forEach(id=>$(id).value="");
+    $("m_taxclass").value="I";
+    $("m_type").value="Vollzeit/Teilzeit";
+  },
+  del(id){
+    if(!confirm("Mitarbeiter löschen?")) return;
+    State.employees = State.employees.filter(x=>x.id!==id);
+    // also payroll entries for that employee
+    State.payroll = State.payroll.filter(p=>p.empId!==id);
+    saveState(); Render.all();
+  }
+};
+
+const Payroll = {
+  add(){
+    const empId = $("p_emp").value;
+    const emp = State.employees.find(e=>e.id===empId);
+    if(!emp) return alert("Bitte Mitarbeiter auswählen.");
+    const month = $("p_month").value.trim();
+    if(!/^\d{4}-\d{2}$/.test(month)) return alert("Monat bitte als YYYY-MM eingeben.");
+    const rate = parseFloatSafe($("p_rate").value);
+    const hours = parseFloatSafe($("p_hours").value);
+    const deduct = parseFloatSafe($("p_deduct").value);
+    if(rate<=0 || hours<=0) return alert("Bitte Stundenlohn und Stunden > 0 eingeben.");
+    const brutto = rate*hours;
+    const net = Math.max(0, brutto-deduct);
+    const p = {
+      id: crypto.randomUUID(),
+      empId: emp.id,
+      empName: emp.name,
+      month,
+      rate, hours,
+      deduct,
+      brutto,
+      net,
+      note: $("p_note").value.trim()
+    };
+    State.payroll.unshift(p);
+    saveState();
+    Payroll.clear();
+    Render.all();
+  },
+  clear(){
+    $("p_emp").value="";
+    $("p_month").value="";
+    $("p_rate").value="";
+    $("p_hours").value="";
+    $("p_deduct").value="0";
+    $("p_note").value="";
+    Render.payroll();
+  },
+  del(id){
+    if(!confirm("Lohn löschen?")) return;
+    State.payroll = State.payroll.filter(x=>x.id!==id);
+    saveState(); Render.all();
+  },
+  print(id){
+    const p = id ? State.payroll.find(x=>x.id===id) : null;
+    if(!p) return alert("Kein Eintrag gefunden.");
+    const emp = State.employees.find(e=>e.id===p.empId) || {};
+    const s = State.settings;
+
+    const html = `
+      <div class="printDoc">
+        <div class="printHeader">
+          <div>
+            <h1>Lohnabrechnung (intern)</h1>
+            <div class="printSmall"><b>${escapeHtml(s.company)}</b><br>${escapeHtml(s.addr).replace(/\n/g,"<br>")}</div>
+          </div>
+          <div class="printSmall">
+            <div><b>Monat:</b> ${escapeHtml(p.month)}</div>
+            <div><b>Steuernummer (Firma):</b> ${escapeHtml(s.taxno||"—")}</div>
+          </div>
+        </div>
+
+        <div class="printBox printSmall">
+          <b>Mitarbeiter:</b> ${escapeHtml(emp.name||p.empName||"—")}<br>
+          <b>Adresse:</b> ${escapeHtml(emp.addr||"—")}<br>
+          <b>Steuer-ID:</b> ${escapeHtml(emp.taxid||"—")}<br>
+          <b>SV-Nr:</b> ${escapeHtml(emp.svnr||"—")}<br>
+          <b>Steuerklasse (Info):</b> ${escapeHtml(emp.taxclass||"—")}
+        </div>
+
+        <table class="printTable">
+          <thead><tr><th>Position</th><th class="printRight">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Stundenlohn</td><td class="printRight">${fmtEUR(p.rate)}</td></tr>
+            <tr><td>Stunden</td><td class="printRight">${escapeHtml(p.hours)}</td></tr>
+            <tr><td><b>Brutto</b></td><td class="printRight"><b>${fmtEUR(p.brutto)}</b></td></tr>
+            <tr><td>Abzüge (manual)</td><td class="printRight">-${fmtEUR(p.deduct)}</td></tr>
+            <tr><td><b>Netto</b></td><td class="printRight"><b>${fmtEUR(p.net)}</b></td></tr>
+          </tbody>
+        </table>
+
+        <div class="printBox printSmall">
+          <b>Notiz:</b> ${escapeHtml(p.note||"—")}<br><br>
+          <span class="warn">Hinweis:</span> Diese Abrechnung ist intern (nicht offiziell).
+        </div>
+      </div>
+    `;
+    $("printArea").innerHTML = html;
+    window.print();
+  }
+};
+
+const TaxCert = {
+  build(){
+    const year = $("tc_year").value.trim();
+    const empId = $("tc_emp").value;
+    const emp = State.employees.find(e=>e.id===empId);
+    if(!year || !/^\d{4}$/.test(year)) return alert("Bitte Jahr (YYYY) eingeben.");
+    if(!emp) return alert("Bitte Mitarbeiter auswählen.");
+
+    const list = State.payroll.filter(p=>p.empId===emp.id && String(p.month||"").startsWith(year));
+    const brutto = list.reduce((s,p)=>s + parseFloatSafe(p.brutto), 0);
+    const net = list.reduce((s,p)=>s + parseFloatSafe(p.net), 0);
+    const deduct = list.reduce((s,p)=>s + parseFloatSafe(p.deduct), 0);
+
+    $("tc_preview").innerHTML = `
+      <b>${escapeHtml(emp.name)}</b> • Jahr ${escapeHtml(year)}<br>
+      Brutto Summe: <b>${fmtEUR(brutto)}</b><br>
+      Abzüge (manual) Summe: <b>${fmtEUR(deduct)}</b><br>
+      Netto Summe: <b>${fmtEUR(net)}</b><br>
+      <div class="hr"></div>
+      <span class="warn">Hinweis:</span> intern, nicht ELSTER-offiziell.
+    `;
+  },
+  print(){
+    const year = $("tc_year").value.trim();
+    const empId = $("tc_emp").value;
+    const emp = State.employees.find(e=>e.id===empId);
+    if(!year || !/^\d{4}$/.test(year)) return alert("Bitte Jahr (YYYY) eingeben.");
+    if(!emp) return alert("Bitte Mitarbeiter auswählen.");
+
+    const s = State.settings;
+    const list = State.payroll.filter(p=>p.empId===emp.id && String(p.month||"").startsWith(year));
+    const brutto = list.reduce((s,p)=>s + parseFloatSafe(p.brutto), 0);
+    const net = list.reduce((s,p)=>s + parseFloatSafe(p.net), 0);
+    const deduct = list.reduce((s,p)=>s + parseFloatSafe(p.deduct), 0);
+
+    const rows = list.sort((a,b)=>(a.month||"").localeCompare(b.month||"")).map(p=>`
+      <tr>
+        <td>${escapeHtml(p.month)}</td>
+        <td class="printRight">${fmtEUR(p.brutto)}</td>
+        <td class="printRight">-${fmtEUR(p.deduct)}</td>
+        <td class="printRight">${fmtEUR(p.net)}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4">Keine Daten.</td></tr>`;
+
+    const html = `
+      <div class="printDoc">
+        <div class="printHeader">
+          <div>
+            <h1>Lohnsteuerbescheinigung (intern)</h1>
+            <div class="printSmall"><b>${escapeHtml(s.company)}</b><br>${escapeHtml(s.addr).replace(/\n/g,"<br>")}</div>
+          </div>
+          <div class="printSmall">
+            <div><b>Jahr:</b> ${escapeHtml(year)}</div>
+            <div><b>Steuernummer (Firma):</b> ${escapeHtml(s.taxno||"—")}</div>
+          </div>
+        </div>
+
+        <div class="printBox printSmall">
+          <b>Mitarbeiter:</b> ${escapeHtml(emp.name)}<br>
+          <b>Adresse:</b> ${escapeHtml(emp.addr||"—")}<br>
+          <b>Steuer-ID:</b> ${escapeHtml(emp.taxid||"—")} • <b>SV-Nr:</b> ${escapeHtml(emp.svnr||"—")}<br>
+          <b>Steuerklasse (Info):</b> ${escapeHtml(emp.taxclass||"—")}
+        </div>
+
+        <table class="printTable">
+          <thead><tr><th>Monat</th><th class="printRight">Brutto</th><th class="printRight">Abzüge</th><th class="printRight">Netto</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+
+        <div class="printBox printSmall">
+          <b>Summe Brutto:</b> ${fmtEUR(brutto)}<br>
+          <b>Summe Abzüge (manual):</b> ${fmtEUR(deduct)}<br>
+          <b>Summe Netto:</b> ${fmtEUR(net)}<br><br>
+          <span class="warn">Hinweis:</span> intern, nicht ELSTER-offiziell.
+        </div>
+      </div>
+    `;
+    $("printArea").innerHTML = html;
+    window.print();
+  }
+};
+
+const Settings = {
+  save(){
+    State.settings = {
+      company: $("s_company").value.trim(),
+      addr: $("s_addr").value.trim(),
+      email: $("s_email").value.trim(),
+      phone: $("s_phone").value.trim(),
+      iban: $("s_iban").value.trim(),
+      bic: $("s_bic").value.trim(),
+      taxno: $("s_taxno").value.trim(),
+      note: $("s_note").value.trim()
+    };
+    hardSave();
+    Render.settingsForm();
+    alert("Gespeichert ✓");
+  },
+  resetAll(){
+    if(!confirm("ALLES löschen? (Kunden, Rechnungen, Löhne, Einstellungen)")) return;
+    localStorage.removeItem(KEY);
+    State = loadState();
+    UI.setTheme(State.theme==="light" ? "light" : "dark");
+    Render.all();
+  }
+};
+
+/* ===================== EVENTS ===================== */
+function wireAutoSaveInputs(){
+  // settings inputs autosave
+  ["s_company","s_addr","s_email","s_phone","s_iban","s_bic","s_taxno","s_note"].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener("input", ()=>{
+      State.settings = {
+        company: $("s_company").value.trim(),
+        addr: $("s_addr").value.trim(),
+        email: $("s_email").value.trim(),
+        phone: $("s_phone").value.trim(),
+        iban: $("s_iban").value.trim(),
+        bic: $("s_bic").value.trim(),
+        taxno: $("s_taxno").value.trim(),
+        note: $("s_note").value.trim()
+      };
+      saveState();
+      Render.settingsForm();
+    });
+  });
+
+  // searches / filters re-render
+  ["c_search","i_search","i_filter","e_search","m_search","p_search","p_year"].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener("input", Render.all);
+    el.addEventListener("change", Render.all);
+  });
+
+  // invoice preview update
+  ["i_net","i_desc","i_customer","i_date","i_no","i_status","i_from","i_to"].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener("input", Render.invoices);
+    el.addEventListener("change", Render.invoices);
+  });
+
+  // payroll preview
+  ["p_rate","p_hours","p_deduct","p_month","p_emp","p_note"].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener("input", Render.payroll);
+    el.addEventListener("change", Render.payroll);
+  });
+
+  // taxcert
+  ["tc_year","tc_emp"].forEach(id=>{
+    const el = $(id); if(!el) return;
+    el.addEventListener("change", ()=>{ /* optional auto preview */ });
+  });
+}
+
+function init(){
+  // theme
+  UI.setTheme(State.theme==="light" ? "light" : "dark");
+
+  // nav clicks
+  document.querySelectorAll("#nav button").forEach(btn=>{
+    btn.addEventListener("click", ()=> UI.go(btn.dataset.page));
+  });
+
+  // top actions
+  $("btnTheme").addEventListener("click", UI.toggleTheme);
+  $("btnQuickInvoice").addEventListener("click", ()=>UI.go("invoices"));
+  $("btnQuickCustomer").addEventListener("click", ()=>UI.go("customers"));
+  $("btnQuickExpense").addEventListener("click", ()=>UI.go("expenses"));
+  $("btnQuickPayroll").addEventListener("click", ()=>UI.go("payroll"));
+
+  // export/import
+  $("btnExport").addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(State, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `MasculineSecurity_MiniOffice_${APP_VERSION}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  $("btnImport").addEventListener("click", ()=> $("fileImport").click());
+  $("fileImport").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    const txt = await f.text();
+    try{
+      const obj = JSON.parse(txt);
+      State = {
+        ...structuredClone(Defaults),
+        ...obj,
+        settings: {...structuredClone(Defaults.settings), ...(obj.settings||{})}
+      };
+      hardSave();
+      UI.setTheme(State.theme==="light" ? "light" : "dark");
+      Render.all();
+      alert("Import OK ✓");
+    }catch(err){
+      alert("Import Fehler: JSON ungültig.");
+    }finally{
+      e.target.value = "";
+    }
+  });
+
+  // set defaults in forms
+  $("i_date").value = todayISO();
+  $("i_no").value = invoiceAutoNo();
+
+  // settings form fill
+  $("s_company").value = State.settings.company;
+  $("s_addr").value = State.settings.addr;
+  $("s_email").value = State.settings.email;
+  $("s_phone").value = State.settings.phone;
+  $("s_iban").value = State.settings.iban;
+  $("s_bic").value = State.settings.bic;
+  $("s_taxno").value = State.settings.taxno;
+  $("s_note").value = State.settings.note;
+
+  wireAutoSaveInputs();
+  Render.all();
+}
+init();
+</script>
+</body>
+</html>
+```0
