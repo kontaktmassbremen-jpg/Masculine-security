@@ -89,6 +89,7 @@
       border-top:1px solid rgba(255,255,255,.06);
       color:var(--muted);
       font-size:12px;
+      line-height:1.45;
     }
 
     .main{
@@ -120,6 +121,7 @@
       transition:.15s ease;
       font-weight:700;
       font-size:13px;
+      user-select:none;
     }
     .btn:hover{transform: translateY(-1px); border-color: rgba(58,166,255,.4); background: rgba(58,166,255,.10)}
     .btn.primary{border-color: rgba(58,166,255,.55); background: rgba(58,166,255,.16)}
@@ -137,7 +139,6 @@
       padding:14px;
     }
     .card h3{margin:0 0 10px 0; font-size:14px}
-
     .muted{color:var(--muted)}
     .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
     .field label{font-size:12px; color:var(--muted); font-weight:800}
@@ -170,8 +171,8 @@
       background: rgba(58,166,255,.08);
       padding:12px; border-radius: 12px;
       font-size:13px;
+      line-height:1.45;
     }
-
     .kpi{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
     .kpi .value{font-size:22px; font-weight:900}
     .kpi .label{color:var(--muted); font-size:12px; font-weight:700}
@@ -184,10 +185,11 @@
       padding:6px 14px;
       border-top:1px solid rgba(255,255,255,.06);
       background: rgba(0,0,0,.10);
-      flex-wrap:wrap;
     }
     .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
     .dot.off{background:rgba(255,255,255,.25)}
+    .statusbar .err{color:#ffb3c0; font-weight:800}
+    .small{font-size:12px}
 
     @media (max-width: 980px){
       .app{grid-template-columns: 1fr}
@@ -195,8 +197,10 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
+    /* placeholder option */
     select option[disabled]{ color: rgba(147,164,198,.9) }
 
+    /* PRINT */
     @media print{
       body{background:#fff; color:#000}
       .app, .sidebar, .topbar, .statusbar{display:none!important}
@@ -207,12 +211,13 @@
     .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
       border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
     .printHeader h1{margin:0; font-size:18px}
+    .printMeta{font-size:12px; line-height:1.45}
     .printBox{border:1px solid #ddd; padding:10px; margin:10px 0}
     .printTable{width:100%; border-collapse:collapse}
     .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
     .printRight{text-align:right}
-    .warn{color:#a00; font-weight:700}
 
+    /* LIGHT THEME */
     body.light{
       color:#0b1220;
       background:
@@ -251,7 +256,7 @@
     <div class="brand">
       <div class="logo">MS</div>
       <div>
-        <h1>Masculine Security</h1>
+        <h1 id="brandName">Masculine Security</h1>
         <small>Mini Office • Offline • Auto-Save</small>
       </div>
     </div>
@@ -266,8 +271,8 @@
 
     <div class="foot">
       <div><b>Offline:</b> Daten bleiben im Browser (localStorage).</div>
-      <div class="muted">Haddii uusan update muuqan: Ctrl+Shift+R (hard refresh).</div>
-      <div class="muted"><span class="warn">Hinweis:</span> Rechnung = Einzelunternehmer • §19 UStG (Kleinunternehmer).</div>
+      <div>Rechnung = <b>Einzelunternehmer</b> (Kleinunternehmer → Hinweis §19 UStG).</div>
+      <div class="muted">Auto-Save: wax kasta markaad qorto si toos ah ayuu u kaydiyaa.</div>
     </div>
   </aside>
 
@@ -275,20 +280,21 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Dashboard</h2>
-        <small id="pageSub" class="muted">Auto-Save • Kunden wählen fix • PDF via Print</small>
+        <small id="pageSub" class="muted">Auto-Save • Kunden wählen FIX • PDF via Print</small>
       </div>
       <div class="actions" id="topActions">
-        <button class="btn primary" id="btnQuickInvoice">+ Rechnung</button>
-        <button class="btn" id="btnQuickCustomer">+ Kunde</button>
-        <button class="btn" id="btnEmailCompany">✉️ Direkt Email</button>
-        <button class="btn" id="btnTheme">🌓 Theme</button>
-        <button class="btn good" id="btnExport">Export JSON</button>
-        <button class="btn" id="btnImport">Import JSON</button>
+        <button class="btn primary" id="btnQuickInvoice" type="button">+ Rechnung</button>
+        <button class="btn" id="btnQuickCustomer" type="button">+ Kunde</button>
+        <button class="btn" id="btnEmailCompany" type="button">✉️ Direkt Email</button>
+        <button class="btn" id="btnTheme" type="button">🌓 Theme</button>
+        <button class="btn good" id="btnExport" type="button">Export JSON</button>
+        <button class="btn" id="btnImport" type="button">Import JSON</button>
         <input id="fileImport" type="file" accept="application/json" class="hide"/>
       </div>
     </div>
 
     <div class="content">
+      <!-- DASHBOARD -->
       <section id="page-dashboard">
         <div class="grid3">
           <div class="card">
@@ -296,7 +302,7 @@
               <div>
                 <div class="label">Umsatz (Monat)</div>
                 <div class="value" id="kpiRevenueMonth">0,00 €</div>
-                <div class="muted" style="font-size:12px">Netto • USt=0 (§19 UStG)</div>
+                <div class="muted small">Kleinunternehmer: USt = 0</div>
               </div>
               <span class="tag">📈</span>
             </div>
@@ -306,7 +312,7 @@
               <div>
                 <div class="label">Kunden</div>
                 <div class="value" id="kpiCustomers">0</div>
-                <div class="muted" style="font-size:12px">Kunden werden gespeichert</div>
+                <div class="muted small">Kunden werden gespeichert</div>
               </div>
               <span class="tag">👤</span>
             </div>
@@ -316,7 +322,7 @@
               <div>
                 <div class="label">Rechnungen</div>
                 <div class="value" id="kpiInvoices">0</div>
-                <div class="muted" style="font-size:12px">PDF via Print</div>
+                <div class="muted small">PDF via Print</div>
               </div>
               <span class="tag">🧾</span>
             </div>
@@ -334,24 +340,25 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → Kunde auswählen → PDF.<br/>
-              <b>Von…Bis</b> waa timeframe, wuxuuna ka soo muuqanayaa PDF.
+              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → Kunde auswählen → <b>PDF öffnen</b>.<br/>
+              <b>Von…Bis:</b> Zeitraum wird in Rechnung gedruckt.<br/>
+              <b>Direkt Email:</b> öffnet dein Mail-Programm (mailto).
             </div>
             <div class="hr"></div>
-            <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
-            <button class="btn" onclick="UI.go('invoices')">+ Rechnung</button>
-            <button class="btn" onclick="UI.go('settings')">Einstellungen</button>
+            <button class="btn primary" type="button" data-goto="customers">+ Kunde</button>
+            <button class="btn" type="button" data-goto="invoices">+ Rechnung</button>
+            <button class="btn" type="button" data-goto="settings">Einstellungen</button>
           </div>
         </div>
       </section>
 
+      <!-- CUSTOMERS -->
       <section id="page-customers" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Kunden</h3>
             <div class="field"><label>Suche</label><input id="c_search" placeholder="Suche name/email..." /></div>
             <div class="hr"></div>
-
             <h3>Neuer Kunde</h3>
             <div class="field"><label>Name / Firma</label><input id="c_name" placeholder="z.B. Beispiel GmbH"/></div>
             <div class="split">
@@ -359,11 +366,9 @@
               <div class="field"><label>Telefon</label><input id="c_phone" placeholder="+49 ..."/></div>
             </div>
             <div class="field"><label>Adresse</label><input id="c_addr" placeholder="Straße, PLZ Ort"/></div>
-
-            <button class="btn primary" id="btnCustomerSave">Speichern</button>
-            <button class="btn danger" id="btnCustomerClear">Leeren</button>
+            <button class="btn primary" id="btnSaveCustomer" type="button">Speichern</button>
+            <button class="btn danger" id="btnClearCustomer" type="button">Leeren</button>
           </div>
-
           <div class="card">
             <h3>Kundenliste</h3>
             <table class="table">
@@ -374,13 +379,14 @@
         </div>
       </section>
 
+      <!-- INVOICES (Einzelunternehmer) -->
       <section id="page-invoices" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Rechnung (Einzelunternehmer)</h3>
 
             <div class="split">
-              <div class="field"><label>Rechnungs-Nr. (auto)</label><input id="i_no" placeholder="MS-2026-0001"/></div>
+              <div class="field"><label>Rechnungs-Nr. (auto)</label><input id="i_no" readonly/></div>
               <div class="field"><label>Rechnungsdatum</label><input id="i_date" type="date"/></div>
             </div>
 
@@ -389,8 +395,12 @@
               <div class="field"><label>Bis</label><input id="i_bis" type="date"/></div>
             </div>
 
-            <div class="field"><label>Kunde</label>
-              <select id="i_customer"></select>
+            <div class="field">
+              <label>Kunde</label>
+              <select id="i_customer">
+                <option value="" disabled selected>— Bitte wählen —</option>
+              </select>
+              <div class="muted small">Wenn leer: erst Kunde speichern (Seite “Kunden”).</div>
             </div>
 
             <div class="field"><label>Leistung / Beschreibung</label>
@@ -410,17 +420,17 @@
                   <option value="Bezahlt">Bezahlt</option>
                 </select>
               </div>
-              <div class="field"><label>Hinweis (§19 UStG)</label>
+              <div class="field"><label>Hinweis</label>
                 <input id="i_hint" value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet." readonly/>
               </div>
             </div>
 
             <div class="note" id="i_previewNote">Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG</div>
 
-            <button class="btn primary" id="btnInvoiceSave">Speichern</button>
-            <button class="btn" id="btnInvoicePrint">PDF öffnen</button>
-            <button class="btn" id="btnInvoiceEmail">Email Rechnung</button>
-            <button class="btn danger" id="btnInvoiceClear">Leeren</button>
+            <button class="btn primary" id="btnSaveInvoice" type="button">Speichern</button>
+            <button class="btn" id="btnPrintInvoice" type="button">PDF öffnen</button>
+            <button class="btn" id="btnEmailInvoice" type="button">Email Rechnung</button>
+            <button class="btn danger" id="btnClearInvoice" type="button">Leeren</button>
           </div>
 
           <div class="card">
@@ -455,17 +465,17 @@
         </div>
       </section>
 
+      <!-- EMPLOYEES (basic) -->
       <section id="page-employees" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Mitarbeiter</h3>
             <div class="field"><label>Suche</label><input id="m_search" placeholder="Name/Steuer-ID..." /></div>
             <div class="hr"></div>
-
             <h3>Neuer Mitarbeiter</h3>
             <div class="split">
               <div class="field"><label>Name</label><input id="m_name" placeholder="Vorname Nachname"/></div>
-              <div class="field"><label>Personal-Nr.</label><input id="m_pnr" placeholder="optional"/></div>
+              <div class="field"><label>Personal-Nr. (optional)</label><input id="m_pnr" placeholder="optional"/></div>
             </div>
             <div class="split">
               <div class="field"><label>Steuer-ID (IdNr.)</label><input id="m_taxid" placeholder="optional"/></div>
@@ -475,9 +485,8 @@
                 </select>
               </div>
             </div>
-
-            <button class="btn primary" id="btnEmployeeSave">Speichern</button>
-            <button class="btn danger" id="btnEmployeeClear">Leeren</button>
+            <button class="btn primary" id="btnSaveEmployee" type="button">Speichern</button>
+            <button class="btn danger" id="btnClearEmployee" type="button">Leeren</button>
           </div>
 
           <div class="card">
@@ -490,335 +499,339 @@
         </div>
       </section>
 
+      <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
           <div class="card">
-            <h3>Einstellungen (Firma)</h3>
+            <h3>Einstellungen</h3>
 
-            <div class="field"><label>Firma / Name</label><input id="s_company"/></div>
-            <div class="field"><label>Adresse</label><input id="s_addr"/></div>
+            <div class="field"><label>Firma / Name</label><input id="s_company" placeholder="Masculine Security"/></div>
+            <div class="field"><label>Adresse</label><input id="s_addr" placeholder="Werschenerregerstraße 6, 28237 Bremen"/></div>
+
             <div class="split">
-              <div class="field"><label>Email</label><input id="s_email"/></div>
-              <div class="field"><label>Telefon (optional)</label><input id="s_phone" placeholder="+49 ..."/></div>
+              <div class="field"><label>Email</label><input id="s_email" placeholder="kontakt.mass.bremen@hotmail.com"/></div>
+              <div class="field"><label>Telefon</label><input id="s_phone" placeholder=""/></div>
             </div>
+
+            <div class="split">
+              <div class="field"><label>Steuernummer</label><input id="s_taxno" placeholder="(wenn vorhanden)"/></div>
+              <div class="field"><label>USt-IdNr. (optional)</label><input id="s_vatid" placeholder="optional"/></div>
+            </div>
+
             <div class="split">
               <div class="field"><label>IBAN</label><input id="s_iban" placeholder="DE..."/></div>
               <div class="field"><label>BIC</label><input id="s_bic" placeholder="..."/></div>
             </div>
-            <div class="field"><label>Steuernummer</label><input id="s_taxno" placeholder="..."/></div>
 
-            <button class="btn primary" id="btnSettingsSave">Speichern</button>
-            <button class="btn danger" id="btnResetAll">Alles löschen (Reset)</button>
+            <div class="field"><label>Standard Hinweis (Rechnung)</label>
+              <input id="s_hint" value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."/>
+            </div>
+
+            <button class="btn primary" id="btnSaveSettings" type="button">Speichern</button>
+            <button class="btn danger" id="btnResetAll" type="button">Reset (alles löschen)</button>
 
             <div class="hr"></div>
             <div class="note">
-              <b>Tip:</b> Settings waxay ka soo muuqanayaan PDF-ga Rechnung.
+              <b>Hinweis:</b> Das ist ein Offline-Tool. Für offizielle Steuer-/Lohnabrechnungen brauchst du ELSTER/Steuerberater.
             </div>
           </div>
 
           <div class="card">
             <h3>Info</h3>
             <div class="note">
-              <b>Rechnung (Einzelunternehmer):</b> USt = 0 haddii aad tahay Kleinunternehmer (§19 UStG).<br/>
-              <b>PDF:</b> “PDF öffnen” → Browser Print → “Save as PDF”.
+              <b>PDF:</b> “PDF öffnen” → Browser Print → “Als PDF speichern”.<br/>
+              <b>Kunden wählen:</b> funktioniert nur wenn Kundenliste nicht leer ist.<br/>
+              <b>Theme:</b> oben “Theme” (dark/light).<br/>
+              <b>Export/Import:</b> Backup als JSON Datei.
             </div>
+            <div class="hr"></div>
+            <div class="muted small">Build v1.0.3 • Offline</div>
           </div>
         </div>
       </section>
     </div>
 
     <div class="statusbar">
-      <span class="dot" id="dotOk"></span>
-      <span id="statusText">Bereit.</span>
-      <span class="pill" id="verPill">v1</span>
+      <span class="dot" id="dotReady"></span>
+      <span id="statusText">Auto-Save bereit</span>
+      <span class="muted" style="margin-left:auto">Build v1.0.3</span>
     </div>
   </main>
 </div>
 
+<!-- PRINT AREA -->
 <div id="printArea"></div>
 
 <script>
-  // ✅ FIX: structuredClone fallback (old browsers/webview)
-  if (!window.structuredClone) window.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+/* =========================
+   ✅ FIX: App not clickable
+   - No undefined.map crash
+   - Safe localStorage migration
+   - Init on DOMContentLoaded
+   ========================= */
 
-  // ---------- Helpers ----------
-  const $ = (id) => document.getElementById(id);
-  const fmtEUR = (n) => (Number(n||0)).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €";
-  const todayISO = () => new Date().toISOString().slice(0,10);
-  const safeId = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
+(function(){
+  // structuredClone polyfill
+  if(!window.structuredClone){
+    window.structuredClone = (obj)=>JSON.parse(JSON.stringify(obj));
+  }
 
-  const Storage = {
-    key: "ms_mini_office_v1",
-    load(){
-      const raw = localStorage.getItem(this.key);
-      if(!raw) return null;
-      return JSON.parse(raw);
-    },
-    save(state){
-      localStorage.setItem(this.key, JSON.stringify(state));
-    },
-    wipe(){
-      localStorage.removeItem(this.key);
-    }
-  };
+  const STORE_KEY = "ms_mini_office_state_v103";
 
-  const Defaults = () => ({
-    version: 1,
-    theme: "dark",
+  const DEFAULT_STATE = {
     settings: {
       company: "Masculine Security",
-      addr: "",
+      address: "Werschenerregerstraße 6, 28237 Bremen",
       email: "kontakt.mass.bremen@hotmail.com",
       phone: "",
-      iban: "",
-      bic: "",
-      taxno: ""
+      taxNumber: "",
+      vatId: "",
+      iban: "DE98 1001 1001 2333 0146 96",
+      bic: "NTSBDEB1XXX",
+      hint: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",
+      theme: "dark"
     },
     customers: [],
     employees: [],
     invoices: [],
-    recent: []
-  });
+    activity: []
+  };
 
-  let State = null;
+  const $ = (id)=>document.getElementById(id);
 
-  function setStatus(text, ok=true){
-    $("statusText").textContent = text;
-    $("dotOk").classList.toggle("off", !ok);
+  function safeParse(s, fallback){
+    try{ return JSON.parse(s); }catch(e){ return fallback; }
+  }
+  function asArray(v){ return Array.isArray(v) ? v : []; }
+  function mergeDefaults(def, src){
+    if(src==null || typeof src!=="object") return structuredClone(def);
+    const out = Array.isArray(def) ? [] : {};
+    for(const k of Object.keys(def)){
+      const dv = def[k];
+      const sv = src[k];
+      if(Array.isArray(dv)) out[k] = Array.isArray(sv) ? sv : [];
+      else if(dv && typeof dv === "object") out[k] = mergeDefaults(dv, sv);
+      else out[k] = (sv===undefined ? dv : sv);
+    }
+    // keep extras if any
+    for(const k of Object.keys(src)){
+      if(out[k] === undefined) out[k] = src[k];
+    }
+    return out;
   }
 
-  function commit(){
-    Storage.save(State);
-    renderAll();
+  function loadState(){
+    const raw = localStorage.getItem(STORE_KEY);
+    const parsed = raw ? safeParse(raw, {}) : {};
+    const merged = mergeDefaults(DEFAULT_STATE, parsed);
+    merged.customers = asArray(merged.customers);
+    merged.employees = asArray(merged.employees);
+    merged.invoices  = asArray(merged.invoices);
+    merged.activity  = asArray(merged.activity);
+    return merged;
+  }
+  function saveState(){
+    localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
+    setStatus("Auto-Save bereit");
   }
 
-  function addRecent(type, desc, amount=0){
-    State.recent.unshift({
-      id: safeId(),
-      type,
-      desc,
-      date: new Date().toLocaleString("de-DE"),
-      amount: Number(amount||0)
-    });
-    State.recent = State.recent.slice(0,20);
+  function euro(n){
+    const x = Number(n||0);
+    return x.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+  }
+  function todayISO(){
+    const d = new Date();
+    const z = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+    return z.toISOString().slice(0,10);
+  }
+  function uid(){
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
+  function monthKey(iso){
+    if(!iso) return "";
+    return iso.slice(0,7); // YYYY-MM
+  }
+  function setStatus(msg, isErr=false){
+    $("statusText").textContent = msg;
+    $("dotReady").classList.toggle("off", !!isErr);
+    $("statusText").classList.toggle("err", !!isErr);
   }
 
-  function applyTheme(){
-    document.body.classList.toggle("light", State.theme === "light");
-  }
+  // Global state
+  let STATE = loadState();
+  // migrate/repair once
+  localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
 
-  function nextInvoiceNo(){
-    const year = new Date().getFullYear();
-    const prefix = `MS-${year}-`;
-    const nums = State.invoices
-      .map(i => (i.no||""))
-      .filter(no => no.startsWith(prefix))
-      .map(no => parseInt(no.split("-").pop(),10))
-      .filter(n => Number.isFinite(n));
-    const next = (nums.length ? Math.max(...nums) : 0) + 1;
-    return prefix + String(next).padStart(4,"0");
-  }
-
-  // ---------- UI ----------
+  /* ===== UI / NAV ===== */
   const UI = {
     go(page){
-      // nav active
-      document.querySelectorAll("#nav button").forEach(b=>{
-        b.classList.toggle("active", b.dataset.page === page);
-      });
       // sections
-      document.querySelectorAll('[id^="page-"]').forEach(sec=>{
-        sec.classList.toggle("hide", sec.id !== `page-${page}`);
+      const pages = ["dashboard","customers","invoices","employees","settings"];
+      for(const p of pages){
+        const el = $("page-"+p);
+        if(el) el.classList.toggle("hide", p!==page);
+      }
+      // nav buttons
+      document.querySelectorAll("#nav button").forEach(b=>{
+        b.classList.toggle("active", b.dataset.page===page);
       });
 
       // title
-      const titleMap = {
+      const titles = {
         dashboard: "Dashboard",
         customers: "Kunden",
         invoices: "Rechnungen",
         employees: "Mitarbeiter",
         settings: "Einstellungen"
       };
-      $("pageTitle").textContent = titleMap[page] || "Mini Office";
-      $("pageSub").textContent = "Auto-Save • Offline • PDF via Print";
+      $("pageTitle").textContent = titles[page] || "Dashboard";
+      $("pageSub").textContent = page==="invoices"
+        ? "Einzelunternehmer • Von…Bis • PDF via Print"
+        : "Auto-Save • Offline • PDF via Print";
 
-      // page-specific refresh
-      if(page === "invoices") Invoices.refreshCustomerSelect();
-      setStatus("Bereit.");
+      // refresh content
+      App.refreshAll();
     }
   };
-  window.UI = UI;
 
-  // ---------- Customers ----------
+  /* ===== DATA MODULES ===== */
   const Customers = {
     add(){
       const name = $("c_name").value.trim();
       const email = $("c_email").value.trim();
       const phone = $("c_phone").value.trim();
       const addr = $("c_addr").value.trim();
+      if(!name){ setStatus("Bitte Kundenname eingeben", true); return; }
 
-      if(!name){
-        setStatus("Bitte Kundenname eingeben.", false);
-        return;
-      }
-      const c = { id: safeId(), name, email, phone, addr };
-      State.customers.unshift(c);
-      addRecent("Kunde", `Kunde gespeichert: ${name}`, 0);
+      STATE.customers.push({ id: uid(), name, email, phone, addr, createdAt: todayISO() });
+      STATE.activity.unshift({type:"Kunde", desc:name, date: todayISO(), amount: 0});
+      saveState();
       this.clearForm();
-      commit();
-      setStatus("Kunde gespeichert ✅");
+      App.refreshAll();
+      setStatus("Kunde gespeichert");
     },
     remove(id){
-      State.customers = State.customers.filter(c=>c.id!==id);
-      commit();
-      setStatus("Kunde gelöscht.");
+      STATE.customers = asArray(STATE.customers).filter(x=>x.id!==id);
+      saveState(); App.refreshAll();
     },
     clearForm(){
-      $("c_name").value="";
-      $("c_email").value="";
-      $("c_phone").value="";
-      $("c_addr").value="";
+      $("c_name").value=""; $("c_email").value=""; $("c_phone").value=""; $("c_addr").value="";
     },
-    render(){
-      const q = ($("c_search").value||"").toLowerCase();
-      const list = State.customers.filter(c=>{
-        const blob = `${c.name} ${c.email} ${c.addr}`.toLowerCase();
-        return !q || blob.includes(q);
-      });
-      $("customersList").innerHTML = list.map(c=>`
-        <tr>
-          <td><b>${escapeHTML(c.name)}</b></td>
-          <td>${escapeHTML(c.email||"")}</td>
-          <td>${escapeHTML(c.addr||"")}</td>
-          <td class="right">
-            <button class="btn danger" onclick="Customers.remove('${c.id}')">Löschen</button>
-          </td>
-        </tr>
-      `).join("") || `<tr><td colspan="4" class="muted">Noch keine Kunden.</td></tr>`;
+    renderList(){
+      const q = ($("c_search").value||"").toLowerCase().trim();
+      const rows = asArray(STATE.customers)
+        .filter(c=>{
+          if(!q) return true;
+          return (c.name||"").toLowerCase().includes(q) || (c.email||"").toLowerCase().includes(q);
+        })
+        .map(c=>`
+          <tr>
+            <td>${escapeHtml(c.name||"")}</td>
+            <td>${c.email ? `<a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a>` : ""}</td>
+            <td>${escapeHtml(c.addr||"")}</td>
+            <td class="right">
+              <button class="btn danger" type="button" data-del-customer="${c.id}">Löschen</button>
+            </td>
+          </tr>
+        `).join("");
 
-      $("pillCustomers").textContent = State.customers.length;
-      $("kpiCustomers").textContent = State.customers.length;
+      $("customersList").innerHTML = rows || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
+      $("pillCustomers").textContent = asArray(STATE.customers).length;
+      $("kpiCustomers").textContent = asArray(STATE.customers).length;
+
+      // bind delete
+      document.querySelectorAll("[data-del-customer]").forEach(b=>{
+        b.onclick = ()=>Customers.remove(b.getAttribute("data-del-customer"));
+      });
+    },
+    fillSelect(){
+      const sel = $("i_customer");
+      if(!sel) return;
+
+      // keep first placeholder
+      const placeholder = sel.querySelector("option[value='']");
+      sel.innerHTML = "";
+      if(placeholder){
+        sel.appendChild(placeholder);
+      }else{
+        const o = document.createElement("option");
+        o.value=""; o.disabled=true; o.selected=true;
+        o.textContent="— Bitte wählen —";
+        sel.appendChild(o);
+      }
+
+      for(const c of asArray(STATE.customers)){
+        const o = document.createElement("option");
+        o.value = c.id;
+        o.textContent = c.name + (c.email ? " • " + c.email : "");
+        sel.appendChild(o);
+      }
     }
   };
-  window.Customers = Customers;
 
-  // ---------- Employees ----------
   const Employees = {
     add(){
       const name = $("m_name").value.trim();
       const pnr = $("m_pnr").value.trim();
       const taxid = $("m_taxid").value.trim();
       const taxclass = $("m_taxclass").value;
+      if(!name){ setStatus("Bitte Mitarbeitername eingeben", true); return; }
 
-      if(!name){
-        setStatus("Bitte Mitarbeitername eingeben.", false);
-        return;
-      }
-      const m = { id: safeId(), name, pnr, taxid, taxclass };
-      State.employees.unshift(m);
-      addRecent("Mitarbeiter", `Mitarbeiter gespeichert: ${name}`, 0);
+      STATE.employees.push({ id: uid(), name, pnr, taxid, taxclass, createdAt: todayISO() });
+      STATE.activity.unshift({type:"Mitarbeiter", desc:name, date: todayISO(), amount: 0});
+      saveState();
       this.clearForm();
-      commit();
-      setStatus("Mitarbeiter gespeichert ✅");
+      App.refreshAll();
+      setStatus("Mitarbeiter gespeichert");
     },
     remove(id){
-      State.employees = State.employees.filter(m=>m.id!==id);
-      commit();
-      setStatus("Mitarbeiter gelöscht.");
+      STATE.employees = asArray(STATE.employees).filter(x=>x.id!==id);
+      saveState(); App.refreshAll();
     },
     clearForm(){
-      $("m_name").value="";
-      $("m_pnr").value="";
-      $("m_taxid").value="";
-      $("m_taxclass").value="I";
+      $("m_name").value=""; $("m_pnr").value=""; $("m_taxid").value=""; $("m_taxclass").value="I";
     },
-    render(){
-      const q = ($("m_search").value||"").toLowerCase();
-      const list = State.employees.filter(m=>{
-        const blob = `${m.name} ${m.taxid} ${m.taxclass}`.toLowerCase();
-        return !q || blob.includes(q);
-      });
-      $("employeesList").innerHTML = list.map(m=>`
-        <tr>
-          <td><b>${escapeHTML(m.name)}</b></td>
-          <td>${escapeHTML(m.taxid||"")}</td>
-          <td>${escapeHTML(m.taxclass||"")}</td>
-          <td class="right">
-            <button class="btn danger" onclick="Employees.remove('${m.id}')">Löschen</button>
-          </td>
-        </tr>
-      `).join("") || `<tr><td colspan="4" class="muted">Noch keine Mitarbeiter.</td></tr>`;
+    renderList(){
+      const q = ($("m_search").value||"").toLowerCase().trim();
+      const rows = asArray(STATE.employees)
+        .filter(m=>{
+          if(!q) return true;
+          return (m.name||"").toLowerCase().includes(q) || (m.taxid||"").toLowerCase().includes(q);
+        })
+        .map(m=>`
+          <tr>
+            <td>${escapeHtml(m.name||"")}</td>
+            <td>${escapeHtml(m.taxid||"")}</td>
+            <td>${escapeHtml(m.taxclass||"")}</td>
+            <td class="right">
+              <button class="btn danger" type="button" data-del-employee="${m.id}">Löschen</button>
+            </td>
+          </tr>
+        `).join("");
 
-      $("pillEmployees").textContent = State.employees.length;
+      $("employeesList").innerHTML = rows || `<tr><td colspan="4" class="muted">Keine Mitarbeiter.</td></tr>`;
+      $("pillEmployees").textContent = asArray(STATE.employees).length;
+
+      document.querySelectorAll("[data-del-employee]").forEach(b=>{
+        b.onclick = ()=>Employees.remove(b.getAttribute("data-del-employee"));
+      });
     }
   };
-  window.Employees = Employees;
 
-  // ---------- Invoices ----------
   const Invoices = {
-    refreshCustomerSelect(){
-      const sel = $("i_customer");
-      const current = sel.value;
-      const opts = [
-        `<option value="" disabled ${current ? "" : "selected"}>— Bitte wählen —</option>`,
-        ...State.customers.map(c => `<option value="${c.id}" ${c.id===current?"selected":""}>${escapeHTML(c.name)}</option>`)
-      ];
-      sel.innerHTML = opts.join("");
+    nextNumber(){
+      const y = new Date().getFullYear();
+      const prefix = `MS-${y}-`;
+      const nums = asArray(STATE.invoices)
+        .map(inv => String(inv.no||""))
+        .filter(no => no.startsWith(prefix))
+        .map(no => parseInt(no.slice(prefix.length),10))
+        .filter(n => Number.isFinite(n));
+      const next = (nums.length ? Math.max(...nums) : 0) + 1;
+      return prefix + String(next).padStart(4,"0");
     },
-    updatePreview(){
-      const net = Number($("i_net").value||0);
-      $("i_previewNote").textContent = `Gesamt: ${fmtEUR(net)} • USt: ${fmtEUR(0)} • Hinweis: §19 UStG`;
-      $("kpiRevenueMonth").textContent = fmtEUR(calcMonthRevenue());
-    },
-    add(){
-      const no = ($("i_no").value||"").trim() || nextInvoiceNo();
-      const date = $("i_date").value || todayISO();
-      const von = $("i_von").value || "";
-      const bis = $("i_bis").value || "";
-      const due = $("i_due").value || "";
-      const customerId = $("i_customer").value || "";
-      const desc = $("i_desc").value.trim();
-      const net = Number($("i_net").value||0);
-      const status = $("i_status").value || "Entwurf";
-
-      if(!customerId){
-        setStatus("Bitte Kunde auswählen.", false);
-        return;
-      }
-      if(!desc){
-        setStatus("Bitte Leistung/Beschreibung eingeben.", false);
-        return;
-      }
-      if(!(net>0)){
-        setStatus("Bitte Netto-Betrag eingeben.", false);
-        return;
-      }
-
-      const customer = State.customers.find(c=>c.id===customerId) || null;
-
-      const inv = {
-        id: safeId(),
-        no, date, von, bis, due,
-        customerId,
-        customerName: customer ? customer.name : "",
-        customerEmail: customer ? customer.email : "",
-        customerAddr: customer ? customer.addr : "",
-        desc,
-        net,
-        vat: 0,
-        total: net,
-        status,
-        note: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
-      };
-
-      State.invoices.unshift(inv);
-      addRecent("Rechnung", `Rechnung ${no} an ${inv.customerName}`, net);
-      this.clearForm(false);
-      commit();
-      setStatus("Rechnung gespeichert ✅");
-    },
-    clearForm(resetNo=true){
-      if(resetNo) $("i_no").value = nextInvoiceNo();
+    clearForm(){
+      $("i_no").value = this.nextNumber();
       $("i_date").value = todayISO();
       $("i_von").value = "";
       $("i_bis").value = "";
@@ -826,349 +839,381 @@
       $("i_desc").value = "";
       $("i_net").value = "";
       $("i_status").value = "Entwurf";
-      this.refreshCustomerSelect();
-      this.updatePreview();
+      $("i_customer").value = "";
+      $("i_previewNote").textContent = `Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG`;
+      setStatus("Formular geleert");
+    },
+    updatePreview(){
+      const net = Number($("i_net").value || 0);
+      $("i_previewNote").textContent = `Gesamt: ${euro(net)} • USt: 0,00 € • Hinweis: §19 UStG`;
+    },
+    add(){
+      const no = $("i_no").value.trim() || this.nextNumber();
+      const date = $("i_date").value || todayISO();
+      const von = $("i_von").value || "";
+      const bis = $("i_bis").value || "";
+      const due = $("i_due").value || "";
+      const customerId = $("i_customer").value || "";
+      const desc = $("i_desc").value.trim();
+      const net = Number($("i_net").value || 0);
+      const status = $("i_status").value;
+
+      if(!customerId){ setStatus("Bitte Kunde auswählen", true); return; }
+      if(!desc){ setStatus("Bitte Leistung/Beschreibung eingeben", true); return; }
+      if(!(net>0)){ setStatus("Bitte Netto Betrag eingeben", true); return; }
+
+      const inv = {
+        id: uid(), no, date, von, bis, due,
+        customerId, desc, net, status,
+        hint: (STATE.settings.hint || DEFAULT_STATE.settings.hint)
+      };
+      STATE.invoices.unshift(inv);
+      STATE.activity.unshift({type:"Rechnung", desc:no, date, amount: net});
+      saveState();
+      this.clearForm();
+      App.refreshAll();
+      setStatus("Rechnung gespeichert");
+    },
+    findCustomer(customerId){
+      return asArray(STATE.customers).find(c=>c.id===customerId) || null;
+    },
+    renderList(){
+      const q = ($("i_search").value||"").toLowerCase().trim();
+      const f = ($("i_filter").value||"").trim();
+
+      const rows = asArray(STATE.invoices)
+        .filter(inv=>{
+          if(f && inv.status !== f) return false;
+          if(!q) return true;
+          const c = this.findCustomer(inv.customerId);
+          const cname = (c?.name||"").toLowerCase();
+          return String(inv.no||"").toLowerCase().includes(q) || cname.includes(q);
+        })
+        .map(inv=>{
+          const c = this.findCustomer(inv.customerId);
+          const vonbis = [inv.von, inv.bis].filter(Boolean).join("…");
+          return `
+            <tr>
+              <td>${escapeHtml(inv.no||"")}</td>
+              <td>${escapeHtml(c?.name || "—")}</td>
+              <td>${escapeHtml(vonbis || "—")}</td>
+              <td>${escapeHtml(inv.due || "—")}</td>
+              <td>${escapeHtml(inv.status || "")}</td>
+              <td class="right">${euro(inv.net||0)}</td>
+              <td class="right">
+                <button class="btn" type="button" data-print="${inv.id}">PDF</button>
+                <button class="btn danger" type="button" data-del-inv="${inv.id}">Löschen</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+      $("invoicesList").innerHTML = rows || `<tr><td colspan="7" class="muted">Keine Rechnungen.</td></tr>`;
+      $("pillInvoices").textContent = asArray(STATE.invoices).length;
+      $("kpiInvoices").textContent = asArray(STATE.invoices).length;
+
+      document.querySelectorAll("[data-del-inv]").forEach(b=>{
+        b.onclick = ()=>Invoices.remove(b.getAttribute("data-del-inv"));
+      });
+      document.querySelectorAll("[data-print]").forEach(b=>{
+        b.onclick = ()=>Invoices.printById(b.getAttribute("data-print"));
+      });
     },
     remove(id){
-      State.invoices = State.invoices.filter(i=>i.id!==id);
-      commit();
-      setStatus("Rechnung gelöscht.");
+      STATE.invoices = asArray(STATE.invoices).filter(x=>x.id!==id);
+      saveState(); App.refreshAll();
+      setStatus("Rechnung gelöscht");
     },
-    emailToCustomer(id=null){
-      let inv = null;
-      if(id){
-        inv = State.invoices.find(x=>x.id===id);
-      }else{
-        // current form
-        const cid = $("i_customer").value || "";
-        const c = State.customers.find(x=>x.id===cid);
-        inv = {
-          no: ($("i_no").value||"").trim() || nextInvoiceNo(),
-          date: $("i_date").value || todayISO(),
-          customerEmail: c ? c.email : "",
-          customerName: c ? c.name : "",
-          total: Number($("i_net").value||0)
-        };
-      }
-      if(!inv || !inv.customerEmail){
-        setStatus("Kein Kunden-Email gefunden.", false);
-        return;
-      }
-      const subj = encodeURIComponent(`Rechnung ${inv.no} – Masculine Security`);
-      const body = encodeURIComponent(
-        `Guten Tag ${inv.customerName || ""},\n\nanbei die Rechnung ${inv.no}.\nBetrag: ${fmtEUR(inv.total)}\n\nMit freundlichen Grüßen\n${State.settings.company}\n${State.settings.email}`
-      );
-      window.location.href = `mailto:${encodeURIComponent(inv.customerEmail)}?subject=${subj}&body=${body}`;
-      setStatus("Email-App geöffnet.");
+    print(){
+      // print current form as preview (if customer selected)
+      const customerId = $("i_customer").value || "";
+      if(!customerId){ setStatus("Bitte Kunde auswählen (für PDF)", true); return; }
+      const inv = {
+        id: "FORM",
+        no: $("i_no").value.trim() || this.nextNumber(),
+        date: $("i_date").value || todayISO(),
+        von: $("i_von").value || "",
+        bis: $("i_bis").value || "",
+        due: $("i_due").value || "",
+        customerId,
+        desc: $("i_desc").value.trim(),
+        net: Number($("i_net").value || 0),
+        status: $("i_status").value,
+        hint: (STATE.settings.hint || DEFAULT_STATE.settings.hint)
+      };
+      this.renderPrint(inv);
+      window.print();
     },
-    print(id=null){
-      let inv = null;
-      if(id){
-        inv = State.invoices.find(x=>x.id===id);
-      }else{
-        // from form
-        const cid = $("i_customer").value || "";
-        const c = State.customers.find(x=>x.id===cid) || {};
-        inv = {
-          no: ($("i_no").value||"").trim() || nextInvoiceNo(),
-          date: $("i_date").value || todayISO(),
-          von: $("i_von").value || "",
-          bis: $("i_bis").value || "",
-          due: $("i_due").value || "",
-          customerName: c.name||"",
-          customerAddr: c.addr||"",
-          customerEmail: c.email||"",
-          desc: $("i_desc").value.trim(),
-          net: Number($("i_net").value||0),
-          vat: 0,
-          total: Number($("i_net").value||0),
-          note: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
-        };
-      }
-
-      const daysTxt = dateRangeDays(inv.von, inv.bis);
-      const company = State.settings;
-
-      $("printArea").innerHTML = `
+    printById(id){
+      const inv = asArray(STATE.invoices).find(x=>x.id===id);
+      if(!inv){ setStatus("Rechnung nicht gefunden", true); return; }
+      this.renderPrint(inv);
+      window.print();
+    },
+    renderPrint(inv){
+      const s = STATE.settings || DEFAULT_STATE.settings;
+      const c = this.findCustomer(inv.customerId) || {};
+      const vonbis = [inv.von, inv.bis].filter(Boolean).join("…");
+      const net = Number(inv.net||0);
+      const html = `
         <div class="printDoc">
           <div class="printHeader">
             <div>
               <h1>Rechnung</h1>
-              <div><b>${escapeHTML(company.company||"")}</b></div>
-              <div>${escapeHTML(company.addr||"")}</div>
-              <div>Email: ${escapeHTML(company.email||"")}</div>
-              ${company.phone?`<div>Tel: ${escapeHTML(company.phone)}</div>`:""}
+              <div class="printMeta">
+                <b>${escapeHtml(s.company||"")}</b><br/>
+                ${escapeHtml(s.address||"")}<br/>
+                E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a><br/>
+                ${s.phone ? `Tel: ${escapeHtml(s.phone)}<br/>` : ``}
+                ${s.taxNumber ? `Steuernummer: ${escapeHtml(s.taxNumber)}<br/>` : ``}
+                ${s.vatId ? `USt-IdNr.: ${escapeHtml(s.vatId)}<br/>` : ``}
+                IBAN: ${escapeHtml(s.iban||"")} • BIC: ${escapeHtml(s.bic||"")}
+              </div>
             </div>
-            <div>
-              <div><b>Rechnung Nr.:</b> ${escapeHTML(inv.no||"")}</div>
-              <div><b>Rechnungsdatum:</b> ${escapeHTML(inv.date||"")}</div>
-              ${inv.due?`<div><b>Fällig am:</b> ${escapeHTML(inv.due)}</div>`:""}
-              ${(inv.von||inv.bis)?`<div><b>Von…Bis:</b> ${escapeHTML(inv.von||"")} – ${escapeHTML(inv.bis||"")} ${daysTxt?`(${daysTxt})`:""}</div>`:""}
-              ${company.taxno?`<div><b>Steuernummer:</b> ${escapeHTML(company.taxno)}</div>`:""}
+            <div class="printMeta">
+              <b>Rechnungs-Nr.:</b> ${escapeHtml(inv.no||"")}<br/>
+              <b>Datum:</b> ${escapeHtml(inv.date||"")}<br/>
+              <b>Zeitraum:</b> ${escapeHtml(vonbis || "—")}<br/>
+              <b>Fällig am:</b> ${escapeHtml(inv.due || "—")}<br/>
+              <b>Status:</b> ${escapeHtml(inv.status||"")}
             </div>
           </div>
 
           <div class="printBox">
-            <div><b>Kunde:</b> ${escapeHTML(inv.customerName||"")}</div>
-            <div>${escapeHTML(inv.customerAddr||"")}</div>
-            ${inv.customerEmail?`<div>Email: ${escapeHTML(inv.customerEmail)}</div>`:""}
-          </div>
-
-          <table class="printTable">
-            <thead>
-              <tr><th>Beschreibung</th><th class="printRight">Netto</th><th class="printRight">USt</th><th class="printRight">Gesamt</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>${escapeHTML(inv.desc||"")}</td>
-                <td class="printRight">${fmtEUR(inv.net||0)}</td>
-                <td class="printRight">${fmtEUR(0)}</td>
-                <td class="printRight"><b>${fmtEUR(inv.total||0)}</b></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="printBox">
-            <div><b>Zahlung:</b></div>
-            ${company.iban?`<div>IBAN: ${escapeHTML(company.iban)}</div>`:""}
-            ${company.bic?`<div>BIC: ${escapeHTML(company.bic)}</div>`:""}
+            <b>Kunde</b><br/>
+            ${escapeHtml(c.name||"")}<br/>
+            ${escapeHtml(c.addr||"")}<br/>
+            ${c.email ? `E-Mail: <a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a><br/>` : ``}
+            ${c.phone ? `Tel: ${escapeHtml(c.phone)}<br/>` : ``}
           </div>
 
           <div class="printBox">
-            <div><b>Hinweis:</b> ${escapeHTML(inv.note||"")}</div>
+            <table class="printTable">
+              <thead>
+                <tr><th>Leistung</th><th class="printRight">Netto</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>${escapeHtml(inv.desc||"")}</td>
+                  <td class="printRight">${euro(net)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:10px; font-size:12px;">
+              Zwischensumme: <b>${euro(net)}</b><br/>
+              Umsatzsteuer: <b>0,00 €</b><br/>
+              Gesamt: <b>${euro(net)}</b><br/><br/>
+              Hinweis: ${escapeHtml(inv.hint || s.hint || DEFAULT_STATE.settings.hint)}
+            </div>
           </div>
         </div>
       `;
-      window.print();
-      setStatus("Print geöffnet (Save as PDF).");
+      $("printArea").innerHTML = html;
     },
-    render(){
-      // filters
-      const q = ($("i_search").value||"").toLowerCase();
-      const st = $("i_filter").value||"";
-      const list = State.invoices.filter(inv=>{
-        const blob = `${inv.no} ${inv.customerName}`.toLowerCase();
-        const okQ = !q || blob.includes(q);
-        const okS = !st || inv.status===st;
-        return okQ && okS;
-      });
+    emailToCustomer(){
+      const customerId = $("i_customer").value || "";
+      const c = this.findCustomer(customerId);
+      if(!c || !c.email){ setStatus("Kunde hat keine Email", true); return; }
 
-      $("invoicesList").innerHTML = list.map(inv=>`
-        <tr>
-          <td><b>${escapeHTML(inv.no)}</b></td>
-          <td>${escapeHTML(inv.customerName||"")}</td>
-          <td>${escapeHTML(inv.von||"")} – ${escapeHTML(inv.bis||"")}</td>
-          <td>${escapeHTML(inv.due||"")}</td>
-          <td>${escapeHTML(inv.status||"")}</td>
-          <td class="right">${fmtEUR(inv.net||0)}</td>
-          <td class="right">
-            <button class="btn" onclick="Invoices.print('${inv.id}')">PDF</button>
-            <button class="btn" onclick="Invoices.emailToCustomer('${inv.id}')">Email</button>
-            <button class="btn danger" onclick="Invoices.remove('${inv.id}')">Löschen</button>
-          </td>
-        </tr>
-      `).join("") || `<tr><td colspan="7" class="muted">Noch keine Rechnungen.</td></tr>`;
-
-      $("pillInvoices").textContent = State.invoices.length;
-      $("kpiInvoices").textContent = State.invoices.length;
-      $("kpiRevenueMonth").textContent = fmtEUR(calcMonthRevenue());
+      const s = STATE.settings || DEFAULT_STATE.settings;
+      const no = $("i_no").value.trim() || this.nextNumber();
+      const date = $("i_date").value || todayISO();
+      const vonbis = [($("i_von").value||""), ($("i_bis").value||"")].filter(Boolean).join("…");
+      const net = Number($("i_net").value||0);
+      const subject = encodeURIComponent(`Rechnung ${no} (${date})`);
+      const body = encodeURIComponent(
+        `Guten Tag,\n\nanbei die Rechnung ${no}.\nZeitraum: ${vonbis || "—"}\nBetrag (Netto): ${net.toFixed(2)} EUR\n\nMit freundlichen Grüßen\n${s.company}\n${s.email}`
+      );
+      location.href = `mailto:${encodeURIComponent(c.email)}?subject=${subject}&body=${body}`;
     }
   };
-  window.Invoices = Invoices;
 
-  // ---------- Dashboard ----------
-  function renderRecent(){
-    const rows = State.recent.map(r=>`
-      <tr>
-        <td>${escapeHTML(r.type||"")}</td>
-        <td>${escapeHTML(r.desc||"")}</td>
-        <td>${escapeHTML(r.date||"")}</td>
-        <td class="right">${fmtEUR(r.amount||0)}</td>
-      </tr>
-    `).join("") || `<tr><td colspan="4" class="muted">Noch keine Aktivitäten.</td></tr>`;
-    $("recentList").innerHTML = rows;
-  }
-
-  function calcMonthRevenue(){
-    const now = new Date();
-    const ym = now.toISOString().slice(0,7); // YYYY-MM
-    return State.invoices
-      .filter(i => (i.date||"").slice(0,7) === ym)
-      .reduce((sum,i)=>sum + Number(i.net||0), 0);
-  }
-
-  function dateRangeDays(von, bis){
-    if(!von || !bis) return "";
-    const a = new Date(von);
-    const b = new Date(bis);
-    if(isNaN(a.getTime()) || isNaN(b.getTime())) return "";
-    const diff = Math.round((b - a) / (1000*60*60*24)) + 1;
-    if(diff <= 0) return "";
-    return `${diff} Tage`;
-  }
-
-  function escapeHTML(s){
-    return String(s??"").replace(/[&<>"']/g, (c)=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-    }[c]));
-  }
-
-  // ---------- Settings ----------
   const Settings = {
     loadToForm(){
-      const s = State.settings;
-      $("s_company").value = s.company || "";
-      $("s_addr").value = s.addr || "";
-      $("s_email").value = s.email || "";
-      $("s_phone").value = s.phone || "";
-      $("s_iban").value = s.iban || "";
-      $("s_bic").value = s.bic || "";
-      $("s_taxno").value = s.taxno || "";
+      const s = STATE.settings || DEFAULT_STATE.settings;
+      $("s_company").value = s.company||"";
+      $("s_addr").value = s.address||"";
+      $("s_email").value = s.email||"";
+      $("s_phone").value = s.phone||"";
+      $("s_taxno").value = s.taxNumber||"";
+      $("s_vatid").value = s.vatId||"";
+      $("s_iban").value = s.iban||"";
+      $("s_bic").value = s.bic||"";
+      $("s_hint").value = s.hint || DEFAULT_STATE.settings.hint;
     },
     saveFromForm(){
-      State.settings.company = $("s_company").value.trim();
-      State.settings.addr = $("s_addr").value.trim();
-      State.settings.email = $("s_email").value.trim();
-      State.settings.phone = $("s_phone").value.trim();
-      State.settings.iban = $("s_iban").value.trim();
-      State.settings.bic = $("s_bic").value.trim();
-      State.settings.taxno = $("s_taxno").value.trim();
-      commit();
-      setStatus("Einstellungen gespeichert ✅");
+      STATE.settings = {
+        ...STATE.settings,
+        company: $("s_company").value.trim() || DEFAULT_STATE.settings.company,
+        address: $("s_addr").value.trim(),
+        email: $("s_email").value.trim(),
+        phone: $("s_phone").value.trim(),
+        taxNumber: $("s_taxno").value.trim(),
+        vatId: $("s_vatid").value.trim(),
+        iban: $("s_iban").value.trim(),
+        bic: $("s_bic").value.trim(),
+        hint: $("s_hint").value.trim() || DEFAULT_STATE.settings.hint
+      };
+      saveState();
+      App.refreshAll();
+      setStatus("Einstellungen gespeichert");
+    },
+    resetAll(){
+      if(!confirm("Alles löschen? (Kunden, Rechnungen, Mitarbeiter, Einstellungen)")) return;
+      localStorage.removeItem(STORE_KEY);
+      STATE = loadState();
+      saveState();
+      location.reload();
     }
   };
 
-  // ---------- Export / Import ----------
+  /* ===== APP ===== */
+  const App = {
+    refreshAll(){
+      // brand name
+      $("brandName").textContent = (STATE.settings?.company || "Masculine Security");
+
+      // pills + KPIs
+      Customers.renderList();
+      Employees.renderList();
+      Customers.fillSelect(); // ✅ Kunden wählen FIX
+      Invoices.renderList();
+
+      // dashboard revenue month
+      const currentMonth = (new Date().toISOString().slice(0,7));
+      const rev = asArray(STATE.invoices)
+        .filter(inv => monthKey(inv.date) === currentMonth)
+        .reduce((sum, inv)=>sum + Number(inv.net||0), 0);
+      $("kpiRevenueMonth").textContent = euro(rev);
+
+      // activities
+      const recent = asArray(STATE.activity).slice(0,7).map(a=>`
+        <tr>
+          <td>${escapeHtml(a.type||"")}</td>
+          <td>${escapeHtml(a.desc||"")}</td>
+          <td>${escapeHtml(a.date||"")}</td>
+          <td class="right">${a.amount ? euro(a.amount) : "—"}</td>
+        </tr>
+      `).join("");
+      $("recentList").innerHTML = recent || `<tr><td colspan="4" class="muted">Keine Aktivitäten.</td></tr>`;
+
+      // invoice form defaults + preview
+      if(!$("i_no").value) Invoices.clearForm();
+      Invoices.updatePreview();
+
+      // settings form
+      if($("page-settings") && !$("s_company").value) Settings.loadToForm();
+    }
+  };
+
+  /* ===== EXPORT/IMPORT ===== */
   function exportJSON(){
-    const blob = new Blob([JSON.stringify(State, null, 2)], {type:"application/json"});
+    const data = JSON.stringify(STATE, null, 2);
+    const blob = new Blob([data], {type:"application/json"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "ms-mini-office-backup.json";
-    document.body.appendChild(a);
     a.click();
-    a.remove();
     URL.revokeObjectURL(url);
-    setStatus("Export heruntergeladen.");
+    setStatus("Export erstellt");
   }
-
   function importJSON(file){
     const reader = new FileReader();
-    reader.onload = () => {
-      try{
-        const data = JSON.parse(String(reader.result||""));
-        if(!data || typeof data !== "object") throw new Error("invalid");
-        State = Object.assign(Defaults(), data);
-        applyTheme();
-        commit();
-        setStatus("Import erfolgreich ✅");
-      }catch(e){
-        setStatus("Import Fehler: JSON ungültig.", false);
-      }
+    reader.onload = ()=>{
+      const parsed = safeParse(reader.result, null);
+      if(!parsed){ setStatus("Import Fehler: JSON ungültig", true); return; }
+      STATE = mergeDefaults(DEFAULT_STATE, parsed);
+      STATE.customers = asArray(STATE.customers);
+      STATE.employees = asArray(STATE.employees);
+      STATE.invoices  = asArray(STATE.invoices);
+      STATE.activity  = asArray(STATE.activity);
+      saveState();
+      App.refreshAll();
+      setStatus("Import ok");
     };
     reader.readAsText(file);
   }
 
-  // ---------- Render ----------
-  function renderAll(){
-    Customers.render();
-    Employees.render();
-    Invoices.refreshCustomerSelect();
-    Invoices.render();
-    renderRecent();
-    Settings.loadToForm();
-    $("verPill").textContent = "v1";
+  /* ===== Helpers ===== */
+  function escapeHtml(s){
+    return String(s||"").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
   }
 
-  // ---------- Init ----------
-  function init(){
+  /* ===== Bind Events (NO inline reliance) ===== */
+  document.addEventListener("DOMContentLoaded", ()=>{
     try{
-      State = Storage.load() || Defaults();
+      // apply theme
+      if(STATE.settings?.theme === "light") document.body.classList.add("light");
 
-      // default dates
-      $("i_date").value = todayISO();
-
-      // Ensure invoice no
-      $("i_no").value = nextInvoiceNo();
-
-      applyTheme();
-      renderAll();
-      Invoices.updatePreview();
-
-      // NAV click
+      // nav
       document.querySelectorAll("#nav button").forEach(btn=>{
-        btn.addEventListener("click", ()=> UI.go(btn.dataset.page));
+        btn.addEventListener("click", ()=>UI.go(btn.dataset.page));
+      });
+      document.querySelectorAll("[data-goto]").forEach(btn=>{
+        btn.addEventListener("click", ()=>UI.go(btn.getAttribute("data-goto")));
       });
 
-      // Top actions
-      $("btnQuickInvoice").addEventListener("click", ()=>{ UI.go("invoices"); });
-      $("btnQuickCustomer").addEventListener("click", ()=>{ UI.go("customers"); });
-      $("btnTheme").addEventListener("click", ()=>{
-        State.theme = (State.theme === "light") ? "dark" : "light";
-        applyTheme();
-        commit();
-        setStatus("Theme geändert.");
-      });
-
+      // top actions
+      $("btnQuickInvoice").addEventListener("click", ()=>UI.go("invoices"));
+      $("btnQuickCustomer").addEventListener("click", ()=>UI.go("customers"));
       $("btnEmailCompany").addEventListener("click", ()=>{
-        const mail = (State.settings.email||"").trim();
-        if(!mail){ setStatus("Kein Firmen-Email in Einstellungen.", false); return; }
-        window.location.href = `mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent("Masculine Security")}`;
+        const em = (STATE.settings?.email || DEFAULT_STATE.settings.email || "").trim();
+        if(!em){ setStatus("Bitte Email in Einstellungen setzen", true); return; }
+        location.href = `mailto:${encodeURIComponent(em)}`;
+      });
+      $("btnTheme").addEventListener("click", ()=>{
+        const isLight = document.body.classList.toggle("light");
+        STATE.settings.theme = isLight ? "light" : "dark";
+        saveState();
+        setStatus("Theme geändert");
       });
 
+      // customers
+      $("btnSaveCustomer").addEventListener("click", ()=>Customers.add());
+      $("btnClearCustomer").addEventListener("click", ()=>Customers.clearForm());
+      $("c_search").addEventListener("input", ()=>Customers.renderList());
+
+      // employees
+      $("btnSaveEmployee").addEventListener("click", ()=>Employees.add());
+      $("btnClearEmployee").addEventListener("click", ()=>Employees.clearForm());
+      $("m_search").addEventListener("input", ()=>Employees.renderList());
+
+      // invoices
+      $("i_net").addEventListener("input", ()=>Invoices.updatePreview());
+      $("btnSaveInvoice").addEventListener("click", ()=>Invoices.add());
+      $("btnClearInvoice").addEventListener("click", ()=>Invoices.clearForm());
+      $("btnPrintInvoice").addEventListener("click", ()=>Invoices.print());
+      $("btnEmailInvoice").addEventListener("click", ()=>Invoices.emailToCustomer());
+      $("i_search").addEventListener("input", ()=>Invoices.renderList());
+      $("i_filter").addEventListener("change", ()=>Invoices.renderList());
+
+      // settings
+      $("btnSaveSettings").addEventListener("click", ()=>Settings.saveFromForm());
+      $("btnResetAll").addEventListener("click", ()=>Settings.resetAll());
+
+      // export/import
       $("btnExport").addEventListener("click", exportJSON);
-      $("btnImport").addEventListener("click", ()=> $("fileImport").click());
+      $("btnImport").addEventListener("click", ()=>$("fileImport").click());
       $("fileImport").addEventListener("change", (e)=>{
         const f = e.target.files && e.target.files[0];
         if(f) importJSON(f);
         e.target.value = "";
       });
 
-      // Customers events
-      $("btnCustomerSave").addEventListener("click", ()=> Customers.add());
-      $("btnCustomerClear").addEventListener("click", ()=> { Customers.clearForm(); setStatus("Form geleert."); });
-      $("c_search").addEventListener("input", ()=> Customers.render());
-
-      // Employees events
-      $("btnEmployeeSave").addEventListener("click", ()=> Employees.add());
-      $("btnEmployeeClear").addEventListener("click", ()=> { Employees.clearForm(); setStatus("Form geleert."); });
-      $("m_search").addEventListener("input", ()=> Employees.render());
-
-      // Invoices events
-      $("i_net").addEventListener("input", ()=> Invoices.updatePreview());
-      $("i_customer").addEventListener("change", ()=> setStatus("Kunde ausgewählt."));
-      $("btnInvoiceSave").addEventListener("click", ()=> Invoices.add());
-      $("btnInvoicePrint").addEventListener("click", ()=> Invoices.print());
-      $("btnInvoiceEmail").addEventListener("click", ()=> Invoices.emailToCustomer());
-      $("btnInvoiceClear").addEventListener("click", ()=> { Invoices.clearForm(); setStatus("Form geleert."); });
-
-      $("i_search").addEventListener("input", ()=> Invoices.render());
-      $("i_filter").addEventListener("change", ()=> Invoices.render());
-
-      // Settings events
-      $("btnSettingsSave").addEventListener("click", ()=> Settings.saveFromForm());
-      $("btnResetAll").addEventListener("click", ()=>{
-        if(confirm("Wirklich alles löschen?")){
-          Storage.wipe();
-          State = Defaults();
-          applyTheme();
-          commit();
-          Invoices.clearForm(true);
-          setStatus("Alles gelöscht ✅");
-        }
-      });
-
-      // Go default page
+      // first render
+      App.refreshAll();
       UI.go("dashboard");
-
-      setStatus("Bereit ✅");
+      setStatus("Auto-Save bereit");
     }catch(err){
       console.error(err);
-      setStatus("Fehler: " + (err && err.message ? err.message : "unknown"), false);
+      setStatus("Fehler: " + (err?.message || err), true);
     }
-  }
+  });
 
-  document.addEventListener("DOMContentLoaded", init);
+})();
 </script>
 </body>
 </html>
