@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Mini Office</title>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Masculine Security — Mini Office (Kunde-Rechnung)</title>
   <style>
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
@@ -15,1205 +14,616 @@
     *{box-sizing:border-box}
     body{
       margin:0; font-family:var(--font); color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.22), transparent 55%),
-        radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.18), transparent 55%),
-        linear-gradient(180deg, #07101f 0%, #070d18 100%);
+      background: radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.18), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(43,212,189,.12), transparent 55%),
+                  var(--bg);
     }
-    a{color:inherit}
-
-    .app{
-      min-height:100vh;
-      display:grid;
-      grid-template-columns: 280px 1fr;
-      gap:16px;
-      padding:16px;
-      max-width: 1320px;
-      margin: 0 auto;
-    }
-    .sidebar{
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(16,32,58,.78), rgba(12,22,41,.78));
-      padding:14px;
-      position:sticky; top:14px;
-      height: calc(100vh - 28px);
-      display:flex; flex-direction:column;
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-    }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-      padding:10px; border-radius: var(--r2);
-      border:1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-    }
-    .logo{
-      width:42px; height:42px; border-radius: 14px;
-      display:grid; place-items:center; font-weight:900; letter-spacing:.5px;
-      color:#07101f;
-      background: linear-gradient(135deg, rgba(58,166,255,.95), rgba(43,212,189,.95));
-      box-shadow: 0 10px 30px rgba(58,166,255,.18);
-    }
-    .brand h1{margin:0; font-size:14px; line-height:1.2}
-    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
-
-    .nav{margin-top:12px; display:flex; flex-direction:column; gap:8px}
-    .nav button{
-      all:unset; cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px; border-radius: 14px;
-      border:1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.02);
-      transition:.15s ease;
-    }
-    .nav button:hover{
-      transform: translateY(-1px);
-      border-color: rgba(58,166,255,.35);
-      background: rgba(58,166,255,.08);
-    }
-    .nav button.active{
-      border-color: rgba(58,166,255,.55);
-      background: rgba(58,166,255,.14);
-      box-shadow: 0 10px 26px rgba(0,0,0,.25);
-    }
-    .pill{
-      font-size:12px; color:var(--muted);
-      padding:4px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.16);
-      white-space:nowrap;
-    }
-    .foot{
-      margin-top:auto;
-      padding:10px;
-      border-top:1px solid rgba(255,255,255,.06);
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    .main{
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(16,32,58,.55), rgba(12,22,41,.55));
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      min-height: calc(100vh - 32px);
-    }
-    .topbar{
-      padding:14px;
+    header{
+      padding:20px 16px 8px;
       display:flex; align-items:center; justify-content:space-between; gap:12px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background: rgba(0,0,0,.12);
-      flex-wrap:wrap;
+      max-width:1100px; margin:0 auto;
     }
-    .crumb h2{margin:0; font-size:14px}
-    .crumb small{color:var(--muted)}
-    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
-    .btn{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      padding:9px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      transition:.15s ease;
-      font-weight:700;
-      font-size:13px;
-      user-select:none;
-    }
-    .btn:hover{transform: translateY(-1px); border-color: rgba(58,166,255,.4); background: rgba(58,166,255,.10)}
-    .btn.primary{border-color: rgba(58,166,255,.55); background: rgba(58,166,255,.16)}
-    .btn.good{border-color: rgba(43,212,189,.55); background: rgba(43,212,189,.14)}
-    .btn.danger{border-color: rgba(255,77,109,.45); background: rgba(255,77,109,.10)}
+    .brand{display:flex; flex-direction:column; gap:2px}
+    .brand h1{margin:0; font-size:18px; letter-spacing:.2px}
+    .brand p{margin:0; color:var(--muted); font-size:12px}
+    .wrap{max-width:1100px; margin:0 auto; padding:12px 16px 28px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
-    .content{padding:14px; display:grid; gap:14px}
-    .grid2{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
-    .grid3{display:grid; grid-template-columns: repeat(3, 1fr); gap:14px}
-
-    .card{
-      background: rgba(16,32,58,.55);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--r2);
-      padding:14px;
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      overflow:hidden;
+      box-shadow: 0 12px 35px rgba(0,0,0,.35);
     }
-    .card h3{margin:0 0 10px 0; font-size:14px}
-    .muted{color:var(--muted)}
-    .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
-    .field label{font-size:12px; color:var(--muted); font-weight:800}
-    .field input, .field select, .field textarea{
+    .panel .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .panel .hd h2{margin:0; font-size:14px}
+    .panel .bd{padding:14px}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px}
+    @media (max-width: 520px){ .row{grid-template-columns:1fr} }
+
+    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
+    input, select, textarea{
       width:100%;
+      background:rgba(0,0,0,.18);
+      border:1px solid var(--line);
+      border-radius:12px;
       padding:10px 12px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
       color:var(--text);
       outline:none;
+      font-size:14px;
     }
-    .field textarea{min-height:90px; resize:vertical}
-    .split{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-
-    .table{width:100%; border-collapse:collapse; overflow:hidden; border-radius: 12px}
-    .table th, .table td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      text-align:left;
-      font-size:13px;
-      vertical-align:top;
+    textarea{min-height:80px; resize:vertical}
+    .hint{font-size:11px; color:var(--muted); margin-top:6px}
+    .btns{display:flex; flex-wrap:wrap; gap:10px}
+    button{
+      border:1px solid var(--line);
+      background: rgba(58,166,255,.14);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
     }
-    .table th{color:var(--muted); font-weight:800; font-size:12px}
-    .right{text-align:right}
-    .hide{display:none!important}
-    .hr{height:1px; background: rgba(255,255,255,.06); margin:10px 0}
-    .note{
-      border:1px dashed rgba(58,166,255,.45);
-      background: rgba(58,166,255,.08);
-      padding:12px; border-radius: 12px;
-      font-size:13px;
-      line-height:1.45;
+    button.secondary{background: rgba(255,255,255,.06)}
+    button.good{background: rgba(43,212,189,.14)}
+    button.bad{background: rgba(255,77,109,.12)}
+    button:active{transform: translateY(1px)}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      font-size:12px; color:var(--text);
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
     }
-    .kpi{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
-    .kpi .value{font-size:22px; font-weight:900}
-    .kpi .label{color:var(--muted); font-size:12px; font-weight:700}
-    .tag{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); font-size:12px; font-weight:800; color:var(--muted)}
+    .chip strong{color:var(--good)}
+    .sep{height:1px; background:var(--line); margin:12px 0}
 
-    .statusbar{
-      display:flex; align-items:center; gap:10px;
-      font-size:12px; color:var(--muted);
-      padding:6px 14px;
-      border-top:1px solid rgba(255,255,255,.06);
-      background: rgba(0,0,0,.10);
-    }
-    .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
-    .dot.off{background:rgba(255,255,255,.25)}
-    .statusbar .err{color:#ffb3c0; font-weight:800}
-    .small{font-size:12px}
-
-    @media (max-width: 980px){
-      .app{grid-template-columns: 1fr}
-      .sidebar{position:relative; height:auto}
-      .grid2,.grid3{grid-template-columns: 1fr}
-    }
-
-    /* placeholder option */
-    select option[disabled]{ color: rgba(147,164,198,.9) }
-
-    /* PRINT */
-    @media print{
-      body{background:#fff; color:#000}
-      .app, .sidebar, .topbar, .statusbar{display:none!important}
-      #printArea{display:block!important}
-    }
-    #printArea{display:none}
-    .printDoc{font-family: Arial, sans-serif; padding:18px; color:#000;}
-    .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
-      border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
-    .printHeader h1{margin:0; font-size:18px}
-    .printMeta{font-size:12px; line-height:1.45}
-    .printBox{border:1px solid #ddd; padding:10px; margin:10px 0}
-    .printTable{width:100%; border-collapse:collapse}
-    .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
-    .printRight{text-align:right}
-
-    /* LIGHT THEME */
-    body.light{
+    /* Invoice preview */
+    .invoice{
+      background: #ffffff;
       color:#0b1220;
-      background:
-        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.20), transparent 55%),
-        radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.14), transparent 55%),
-        linear-gradient(180deg, #f6f8ff 0%, #eef2ff 100%);
+      border-radius: var(--r);
+      padding:18px;
+      border: 1px solid rgba(0,0,0,.08);
     }
-    body.light .sidebar,
-    body.light .main{
-      background: linear-gradient(180deg, rgba(255,255,255,.84), rgba(245,247,255,.84));
-      border-color: rgba(0,0,0,.08);
+    .inv-top{display:flex; justify-content:space-between; gap:20px; align-items:flex-start}
+    .inv-top .left{max-width:62%}
+    .inv-top .right{text-align:right}
+    .inv-title{margin:0; font-size:18px}
+    .inv-sub{margin:4px 0 0; font-size:12px; color:#334155}
+    .inv-meta{margin-top:10px; font-size:12px; color:#334155; line-height:1.45}
+    .inv-block{margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap:14px}
+    .inv-box{
+      border:1px solid rgba(15,23,42,.14);
+      border-radius:12px;
+      padding:12px;
+      background: rgba(15,23,42,.03);
     }
-    body.light .card{
-      background: rgba(255,255,255,.75);
-      border-color: rgba(0,0,0,.08);
+    .inv-box h3{margin:0 0 8px; font-size:12px; color:#0f172a; text-transform:uppercase; letter-spacing:.06em}
+    .inv-box p{margin:0; font-size:12px; color:#0f172a; line-height:1.45; white-space:pre-line}
+    table{width:100%; border-collapse:collapse; margin-top:14px; font-size:12px}
+    th, td{padding:10px 8px; border-bottom:1px solid rgba(15,23,42,.12); vertical-align:top}
+    th{text-align:left; color:#0f172a; background: rgba(15,23,42,.03)}
+    td.num, th.num{text-align:right; white-space:nowrap}
+    .totals{display:flex; justify-content:flex-end; margin-top:10px}
+    .totals .box{min-width:280px; border:1px solid rgba(15,23,42,.14); border-radius:12px; padding:12px}
+    .totals .line{display:flex; justify-content:space-between; font-size:12px; padding:4px 0}
+    .totals .line strong{font-size:14px}
+    .footer-note{margin-top:10px; font-size:11px; color:#334155}
+    .badge{display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; border:1px solid rgba(15,23,42,.14); background: rgba(15,23,42,.03)}
+    .muted{color:#334155}
+
+    /* Internal details (not printed in Kunde invoice) */
+    .internal{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      border:1px dashed rgba(15,23,42,.28);
+      background: rgba(15,23,42,.03);
     }
-    body.light .btn{
-      border-color: rgba(0,0,0,.12);
-      background: rgba(0,0,0,.03);
-      color:#0b1220;
+    .internal h4{margin:0 0 6px; font-size:12px}
+    .internal p{margin:0; font-size:12px; color:#0f172a; white-space:pre-line}
+
+    /* Print: print only invoice */
+    @media print {
+      body{background:#fff}
+      header, .wrap .grid .panel:first-child, .no-print{display:none !important}
+      .wrap{padding:0}
+      .panel{box-shadow:none; border:none}
+      .invoice{border:none}
+      .hide-in-print{display:none !important}
     }
-    body.light .field input,
-    body.light .field select,
-    body.light .field textarea{
-      border-color: rgba(0,0,0,.14);
-      background: rgba(255,255,255,.85);
-      color:#0b1220;
-    }
-    body.light .muted{color:#4e5c7a}
   </style>
 </head>
 
 <body>
-<div class="app">
-  <aside class="sidebar">
+  <header>
     <div class="brand">
-      <div class="logo">MS</div>
-      <div>
-        <h1 id="brandName">Masculine Security</h1>
-        <small>Mini Office • Offline • Auto-Save</small>
-      </div>
+      <h1>Mini Office — Kunde-Rechnung</h1>
+      <p>3+ Mitarbeiter → automatisch Gesamtstunden & Gesamtbetrag • Kunde sieht nur Zusammenfassung</p>
     </div>
-
-    <div class="nav" id="nav">
-      <button data-page="dashboard" class="active"><span>🏠 Dashboard</span><span class="pill" id="pillDash">Auto</span></button>
-      <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCustomers">0</span></button>
-      <button data-page="invoices"><span>🧾 Rechnungen</span><span class="pill" id="pillInvoices">0</span></button>
-      <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmployees">0</span></button>
-      <button data-page="settings"><span>⚙️ Einstellungen</span><span class="pill">Auto</span></button>
+    <div class="chips no-print">
+      <span class="chip">Kleinunternehmer: <strong id="kuStatus">Ja</strong></span>
+      <span class="chip">Gesamtstunden: <strong id="chipHours">0</strong></span>
+      <span class="chip">Summe: <strong id="chipTotal">0,00 €</strong></span>
     </div>
+  </header>
 
-    <div class="foot">
-      <div><b>Offline:</b> Daten bleiben im Browser (localStorage).</div>
-      <div>Rechnung = <b>Einzelunternehmer</b> (Kleinunternehmer → Hinweis §19 UStG).</div>
-      <div class="muted">Auto-Save: wax kasta markaad qorto si toos ah ayuu u kaydiyaa.</div>
-    </div>
-  </aside>
+  <div class="wrap">
+    <div class="grid">
 
-  <main class="main">
-    <div class="topbar">
-      <div class="crumb">
-        <h2 id="pageTitle">Dashboard</h2>
-        <small id="pageSub" class="muted">Auto-Save • Kunden wählen FIX • PDF via Print</small>
-      </div>
-      <div class="actions" id="topActions">
-        <button class="btn primary" id="btnQuickInvoice" type="button">+ Rechnung</button>
-        <button class="btn" id="btnQuickCustomer" type="button">+ Kunde</button>
-        <button class="btn" id="btnEmailCompany" type="button">✉️ Direkt Email</button>
-        <button class="btn" id="btnTheme" type="button">🌓 Theme</button>
-        <button class="btn good" id="btnExport" type="button">Export JSON</button>
-        <button class="btn" id="btnImport" type="button">Import JSON</button>
-        <input id="fileImport" type="file" accept="application/json" class="hide"/>
-      </div>
-    </div>
-
-    <div class="content">
-      <!-- DASHBOARD -->
-      <section id="page-dashboard">
-        <div class="grid3">
-          <div class="card">
-            <div class="kpi">
-              <div>
-                <div class="label">Umsatz (Monat)</div>
-                <div class="value" id="kpiRevenueMonth">0,00 €</div>
-                <div class="muted small">Kleinunternehmer: USt = 0</div>
-              </div>
-              <span class="tag">📈</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="kpi">
-              <div>
-                <div class="label">Kunden</div>
-                <div class="value" id="kpiCustomers">0</div>
-                <div class="muted small">Kunden werden gespeichert</div>
-              </div>
-              <span class="tag">👤</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="kpi">
-              <div>
-                <div class="label">Rechnungen</div>
-                <div class="value" id="kpiInvoices">0</div>
-                <div class="muted small">PDF via Print</div>
-              </div>
-              <span class="tag">🧾</span>
-            </div>
+      <!-- FORM PANEL -->
+      <section class="panel no-print">
+        <div class="hd">
+          <h2>Eingaben (Auftrag → Rechnung)</h2>
+          <div class="btns">
+            <button class="secondary" id="btnReset" type="button">Reset</button>
+            <button class="good" id="btnSave" type="button">Speichern</button>
+            <button class="secondary" id="btnLoad" type="button">Laden</button>
           </div>
         </div>
-
-        <div class="grid2">
-          <div class="card">
-            <h3>Letzte Aktivitäten</h3>
-            <table class="table">
-              <thead><tr><th>Typ</th><th>Beschreibung</th><th>Datum</th><th class="right">Betrag</th></tr></thead>
-              <tbody id="recentList"></tbody>
-            </table>
-          </div>
-          <div class="card">
-            <h3>Schnellstart</h3>
-            <div class="note">
-              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → Kunde auswählen → <b>PDF öffnen</b>.<br/>
-              <b>Von…Bis:</b> Zeitraum wird in Rechnung gedruckt.<br/>
-              <b>Direkt Email:</b> öffnet dein Mail-Programm (mailto).
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Rechnungsnummer</label>
+              <input id="invNo" placeholder="MS-2026-0001" />
+              <div class="hint">Tipp: jährlich fortlaufend.</div>
             </div>
-            <div class="hr"></div>
-            <button class="btn primary" type="button" data-goto="customers">+ Kunde</button>
-            <button class="btn" type="button" data-goto="invoices">+ Rechnung</button>
-            <button class="btn" type="button" data-goto="settings">Einstellungen</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- CUSTOMERS -->
-      <section id="page-customers" class="hide">
-        <div class="grid2">
-          <div class="card">
-            <h3>Kunden</h3>
-            <div class="field"><label>Suche</label><input id="c_search" placeholder="Suche name/email..." /></div>
-            <div class="hr"></div>
-            <h3>Neuer Kunde</h3>
-            <div class="field"><label>Name / Firma</label><input id="c_name" placeholder="z.B. Beispiel GmbH"/></div>
-            <div class="split">
-              <div class="field"><label>Email</label><input id="c_email" placeholder="kunde@email.de"/></div>
-              <div class="field"><label>Telefon</label><input id="c_phone" placeholder="+49 ..."/></div>
+            <div>
+              <label>Rechnungsdatum</label>
+              <input id="invDate" type="date" />
             </div>
-            <div class="field"><label>Adresse</label><input id="c_addr" placeholder="Straße, PLZ Ort"/></div>
-            <button class="btn primary" id="btnSaveCustomer" type="button">Speichern</button>
-            <button class="btn danger" id="btnClearCustomer" type="button">Leeren</button>
           </div>
-          <div class="card">
-            <h3>Kundenliste</h3>
-            <table class="table">
-              <thead><tr><th>Name</th><th>Email</th><th>Adresse</th><th class="right">Aktion</th></tr></thead>
-              <tbody id="customersList"></tbody>
-            </table>
+
+          <div class="row">
+            <div>
+              <label>Zeitraum (von)</label>
+              <input id="fromDate" type="date" />
+            </div>
+            <div>
+              <label>Zeitraum (bis)</label>
+              <input id="toDate" type="date" />
+            </div>
           </div>
-        </div>
-      </section>
 
-      <!-- INVOICES (Einzelunternehmer) -->
-      <section id="page-invoices" class="hide">
-        <div class="grid2">
-          <div class="card">
-            <h3>Rechnung (Einzelunternehmer)</h3>
-
-            <div class="split">
-              <div class="field"><label>Rechnungs-Nr. (auto)</label><input id="i_no" readonly/></div>
-              <div class="field"><label>Rechnungsdatum</label><input id="i_date" type="date"/></div>
+          <div class="row">
+            <div>
+              <label>Kunde (Name / Firma)</label>
+              <input id="kundeName" placeholder="z.B. Muster GmbH" />
             </div>
-
-            <div class="split">
-              <div class="field"><label>Von</label><input id="i_von" type="date"/></div>
-              <div class="field"><label>Bis</label><input id="i_bis" type="date"/></div>
+            <div>
+              <label>Kunde (Adresse)</label>
+              <input id="kundeAddr" placeholder="Straße, PLZ Ort" />
             </div>
+          </div>
 
-            <div class="field">
-              <label>Kunde</label>
-              <select id="i_customer">
-                <option value="" disabled selected>— Bitte wählen —</option>
+          <div class="row">
+            <div>
+              <label>Einsatzort</label>
+              <input id="einsatzOrt" placeholder="z.B. Bremen – Gröpelingen" />
+            </div>
+            <div>
+              <label>Leistung (Kurzbeschreibung)</label>
+              <input id="leistung" placeholder="Sicherheitsdienstleistung – Eventabsicherung" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Anzahl Sicherheitskräfte (Mitarbeiter)</label>
+              <input id="anzahl" type="number" min="1" step="1" value="3" />
+            </div>
+            <div>
+              <label>Stunden pro Mitarbeiter</label>
+              <input id="stundenPro" type="number" min="0" step="0.25" value="8" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Preis pro Stunde (€)</label>
+              <input id="preis" type="number" min="0" step="0.01" value="22" />
+            </div>
+            <div>
+              <label>Kleinunternehmerregelung (§19 UStG)</label>
+              <select id="ku">
+                <option value="yes" selected>Ja (keine USt)</option>
+                <option value="no">Nein (mit USt)</option>
               </select>
-              <div class="muted small">Wenn leer: erst Kunde speichern (Seite “Kunden”).</div>
             </div>
-
-            <div class="field"><label>Leistung / Beschreibung</label>
-              <input id="i_desc" placeholder="z.B. Objektschutz / Veranstaltungsschutz"/>
-            </div>
-
-            <div class="split">
-              <div class="field"><label>Netto (€)</label><input id="i_net" type="number" step="0.01" placeholder="0.00"/></div>
-              <div class="field"><label>Zahlungsziel (Fällig am)</label><input id="i_due" type="date"/></div>
-            </div>
-
-            <div class="split">
-              <div class="field"><label>Status</label>
-                <select id="i_status">
-                  <option value="Entwurf">Entwurf</option>
-                  <option value="Gesendet">Gesendet</option>
-                  <option value="Bezahlt">Bezahlt</option>
-                </select>
-              </div>
-              <div class="field"><label>Hinweis</label>
-                <input id="i_hint" value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet." readonly/>
-              </div>
-            </div>
-
-            <div class="note" id="i_previewNote">Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG</div>
-
-            <button class="btn primary" id="btnSaveInvoice" type="button">Speichern</button>
-            <button class="btn" id="btnPrintInvoice" type="button">PDF öffnen</button>
-            <button class="btn" id="btnEmailInvoice" type="button">Email Rechnung</button>
-            <button class="btn danger" id="btnClearInvoice" type="button">Leeren</button>
           </div>
 
-          <div class="card">
-            <h3>Rechnungen</h3>
-            <div class="split">
-              <div class="field"><label>Suche</label><input id="i_search" placeholder="Nr / Kunde..." /></div>
-              <div class="field"><label>Status Filter</label>
-                <select id="i_filter">
-                  <option value="">Alle</option>
-                  <option>Entwurf</option>
-                  <option>Gesendet</option>
-                  <option>Bezahlt</option>
-                </select>
+          <div class="row">
+            <div>
+              <label>USt-Satz (%) (nur wenn nicht Kleinunternehmer)</label>
+              <input id="ust" type="number" min="0" step="0.1" value="19" />
+              <div class="hint">Wird nur genutzt, wenn Kleinunternehmer = Nein.</div>
+            </div>
+            <div>
+              <label>Zahlungsziel / Hinweise</label>
+              <input id="payHint" placeholder="Zahlbar innerhalb von 7 Tagen ohne Abzug." />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Deine Firma (Absender)</label>
+              <textarea id="absender">Masculine Security
+Werschenregerstraße 6
+28237 Bremen</textarea>
+            </div>
+            <div>
+              <label>Bankdaten</label>
+              <textarea id="bank">IBAN: DE98 1001 1001 2333 0146 96
+BIC: NTSBDEB1XXX
+Bank: N26</textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Steuerliche Angaben (optional)</label>
+              <textarea id="tax">Steuernummer: (eintragen)</textarea>
+              <div class="hint">Wenn du Kleinunternehmer bist: der §19 Text kommt automatisch unten.</div>
+            </div>
+            <div>
+              <label>Interne Notiz (Kunde sieht das NICHT)</label>
+              <textarea id="intern">Interne Info:
+- Team: 3 Personen
+- Pausen/Briefing: …</textarea>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="btns">
+            <button id="btnPrint" type="button">Rechnung drucken / als PDF speichern</button>
+            <button class="secondary" id="btnCopy" type="button">Rechnungstext kopieren</button>
+          </div>
+          <div class="hint">
+            Hinweis: Beim Drucken wird nur die Kunde-Rechnung gedruckt (interne Details werden ausgeblendet).
+          </div>
+        </div>
+      </section>
+
+      <!-- PREVIEW PANEL -->
+      <section class="panel">
+        <div class="hd">
+          <h2>Vorschau (Kunde sieht nur Zusammenfassung)</h2>
+          <span class="badge" id="badgeMode">Kunde-Rechnung</span>
+        </div>
+        <div class="bd">
+          <div class="invoice" id="invoice">
+            <div class="inv-top">
+              <div class="left">
+                <h3 class="inv-title">Rechnung</h3>
+                <p class="inv-sub" id="invSub">Sicherheitsdienstleistung</p>
+                <div class="inv-meta" id="metaLeft"></div>
+              </div>
+              <div class="right">
+                <div class="inv-meta" id="metaRight"></div>
               </div>
             </div>
 
-            <table class="table">
+            <div class="inv-block">
+              <div class="inv-box">
+                <h3>Rechnung an</h3>
+                <p id="outKunde"></p>
+              </div>
+              <div class="inv-box">
+                <h3>Von</h3>
+                <p id="outAbsender"></p>
+              </div>
+            </div>
+
+            <table>
               <thead>
                 <tr>
-                  <th>Nr.</th>
-                  <th>Kunde</th>
-                  <th>Von…Bis</th>
-                  <th>Fällig</th>
-                  <th>Status</th>
-                  <th class="right">Netto</th>
-                  <th class="right">Aktion</th>
+                  <th>Leistung</th>
+                  <th class="num">Menge</th>
+                  <th class="num">Preis</th>
+                  <th class="num">Gesamt</th>
                 </tr>
-              </thead>
-              <tbody id="invoicesList"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- EMPLOYEES (basic) -->
-      <section id="page-employees" class="hide">
-        <div class="grid2">
-          <div class="card">
-            <h3>Mitarbeiter</h3>
-            <div class="field"><label>Suche</label><input id="m_search" placeholder="Name/Steuer-ID..." /></div>
-            <div class="hr"></div>
-            <h3>Neuer Mitarbeiter</h3>
-            <div class="split">
-              <div class="field"><label>Name</label><input id="m_name" placeholder="Vorname Nachname"/></div>
-              <div class="field"><label>Personal-Nr. (optional)</label><input id="m_pnr" placeholder="optional"/></div>
-            </div>
-            <div class="split">
-              <div class="field"><label>Steuer-ID (IdNr.)</label><input id="m_taxid" placeholder="optional"/></div>
-              <div class="field"><label>Steuerklasse</label>
-                <select id="m_taxclass">
-                  <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option>
-                </select>
-              </div>
-            </div>
-            <button class="btn primary" id="btnSaveEmployee" type="button">Speichern</button>
-            <button class="btn danger" id="btnClearEmployee" type="button">Leeren</button>
-          </div>
-
-          <div class="card">
-            <h3>Mitarbeiterliste</h3>
-            <table class="table">
-              <thead><tr><th>Name</th><th>Steuer-ID</th><th>Klasse</th><th class="right">Aktion</th></tr></thead>
-              <tbody id="employeesList"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section id="page-settings" class="hide">
-        <div class="grid2">
-          <div class="card">
-            <h3>Einstellungen</h3>
-
-            <div class="field"><label>Firma / Name</label><input id="s_company" placeholder="Masculine Security"/></div>
-            <div class="field"><label>Adresse</label><input id="s_addr" placeholder="Werschenerregerstraße 6, 28237 Bremen"/></div>
-
-            <div class="split">
-              <div class="field"><label>Email</label><input id="s_email" placeholder="kontakt.mass.bremen@hotmail.com"/></div>
-              <div class="field"><label>Telefon</label><input id="s_phone" placeholder=""/></div>
-            </div>
-
-            <div class="split">
-              <div class="field"><label>Steuernummer</label><input id="s_taxno" placeholder="(wenn vorhanden)"/></div>
-              <div class="field"><label>USt-IdNr. (optional)</label><input id="s_vatid" placeholder="optional"/></div>
-            </div>
-
-            <div class="split">
-              <div class="field"><label>IBAN</label><input id="s_iban" placeholder="DE..."/></div>
-              <div class="field"><label>BIC</label><input id="s_bic" placeholder="..."/></div>
-            </div>
-
-            <div class="field"><label>Standard Hinweis (Rechnung)</label>
-              <input id="s_hint" value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."/>
-            </div>
-
-            <button class="btn primary" id="btnSaveSettings" type="button">Speichern</button>
-            <button class="btn danger" id="btnResetAll" type="button">Reset (alles löschen)</button>
-
-            <div class="hr"></div>
-            <div class="note">
-              <b>Hinweis:</b> Das ist ein Offline-Tool. Für offizielle Steuer-/Lohnabrechnungen brauchst du ELSTER/Steuerberater.
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>Info</h3>
-            <div class="note">
-              <b>PDF:</b> “PDF öffnen” → Browser Print → “Als PDF speichern”.<br/>
-              <b>Kunden wählen:</b> funktioniert nur wenn Kundenliste nicht leer ist.<br/>
-              <b>Theme:</b> oben “Theme” (dark/light).<br/>
-              <b>Export/Import:</b> Backup als JSON Datei.
-            </div>
-            <div class="hr"></div>
-            <div class="muted small">Build v1.0.3 • Offline</div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div class="statusbar">
-      <span class="dot" id="dotReady"></span>
-      <span id="statusText">Auto-Save bereit</span>
-      <span class="muted" style="margin-left:auto">Build v1.0.3</span>
-    </div>
-  </main>
-</div>
-
-<!-- PRINT AREA -->
-<div id="printArea"></div>
-
-<script>
-/* =========================
-   ✅ FIX: App not clickable
-   - No undefined.map crash
-   - Safe localStorage migration
-   - Init on DOMContentLoaded
-   ========================= */
-
-(function(){
-  // structuredClone polyfill
-  if(!window.structuredClone){
-    window.structuredClone = (obj)=>JSON.parse(JSON.stringify(obj));
-  }
-
-  const STORE_KEY = "ms_mini_office_state_v103";
-
-  const DEFAULT_STATE = {
-    settings: {
-      company: "Masculine Security",
-      address: "Werschenerregerstraße 6, 28237 Bremen",
-      email: "kontakt.mass.bremen@hotmail.com",
-      phone: "",
-      taxNumber: "",
-      vatId: "",
-      iban: "DE98 1001 1001 2333 0146 96",
-      bic: "NTSBDEB1XXX",
-      hint: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",
-      theme: "dark"
-    },
-    customers: [],
-    employees: [],
-    invoices: [],
-    activity: []
-  };
-
-  const $ = (id)=>document.getElementById(id);
-
-  function safeParse(s, fallback){
-    try{ return JSON.parse(s); }catch(e){ return fallback; }
-  }
-  function asArray(v){ return Array.isArray(v) ? v : []; }
-  function mergeDefaults(def, src){
-    if(src==null || typeof src!=="object") return structuredClone(def);
-    const out = Array.isArray(def) ? [] : {};
-    for(const k of Object.keys(def)){
-      const dv = def[k];
-      const sv = src[k];
-      if(Array.isArray(dv)) out[k] = Array.isArray(sv) ? sv : [];
-      else if(dv && typeof dv === "object") out[k] = mergeDefaults(dv, sv);
-      else out[k] = (sv===undefined ? dv : sv);
-    }
-    // keep extras if any
-    for(const k of Object.keys(src)){
-      if(out[k] === undefined) out[k] = src[k];
-    }
-    return out;
-  }
-
-  function loadState(){
-    const raw = localStorage.getItem(STORE_KEY);
-    const parsed = raw ? safeParse(raw, {}) : {};
-    const merged = mergeDefaults(DEFAULT_STATE, parsed);
-    merged.customers = asArray(merged.customers);
-    merged.employees = asArray(merged.employees);
-    merged.invoices  = asArray(merged.invoices);
-    merged.activity  = asArray(merged.activity);
-    return merged;
-  }
-  function saveState(){
-    localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
-    setStatus("Auto-Save bereit");
-  }
-
-  function euro(n){
-    const x = Number(n||0);
-    return x.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
-  }
-  function todayISO(){
-    const d = new Date();
-    const z = new Date(d.getTime() - d.getTimezoneOffset()*60000);
-    return z.toISOString().slice(0,10);
-  }
-  function uid(){
-    return Math.random().toString(16).slice(2) + Date.now().toString(16);
-  }
-  function monthKey(iso){
-    if(!iso) return "";
-    return iso.slice(0,7); // YYYY-MM
-  }
-  function setStatus(msg, isErr=false){
-    $("statusText").textContent = msg;
-    $("dotReady").classList.toggle("off", !!isErr);
-    $("statusText").classList.toggle("err", !!isErr);
-  }
-
-  // Global state
-  let STATE = loadState();
-  // migrate/repair once
-  localStorage.setItem(STORE_KEY, JSON.stringify(STATE));
-
-  /* ===== UI / NAV ===== */
-  const UI = {
-    go(page){
-      // sections
-      const pages = ["dashboard","customers","invoices","employees","settings"];
-      for(const p of pages){
-        const el = $("page-"+p);
-        if(el) el.classList.toggle("hide", p!==page);
-      }
-      // nav buttons
-      document.querySelectorAll("#nav button").forEach(b=>{
-        b.classList.toggle("active", b.dataset.page===page);
-      });
-
-      // title
-      const titles = {
-        dashboard: "Dashboard",
-        customers: "Kunden",
-        invoices: "Rechnungen",
-        employees: "Mitarbeiter",
-        settings: "Einstellungen"
-      };
-      $("pageTitle").textContent = titles[page] || "Dashboard";
-      $("pageSub").textContent = page==="invoices"
-        ? "Einzelunternehmer • Von…Bis • PDF via Print"
-        : "Auto-Save • Offline • PDF via Print";
-
-      // refresh content
-      App.refreshAll();
-    }
-  };
-
-  /* ===== DATA MODULES ===== */
-  const Customers = {
-    add(){
-      const name = $("c_name").value.trim();
-      const email = $("c_email").value.trim();
-      const phone = $("c_phone").value.trim();
-      const addr = $("c_addr").value.trim();
-      if(!name){ setStatus("Bitte Kundenname eingeben", true); return; }
-
-      STATE.customers.push({ id: uid(), name, email, phone, addr, createdAt: todayISO() });
-      STATE.activity.unshift({type:"Kunde", desc:name, date: todayISO(), amount: 0});
-      saveState();
-      this.clearForm();
-      App.refreshAll();
-      setStatus("Kunde gespeichert");
-    },
-    remove(id){
-      STATE.customers = asArray(STATE.customers).filter(x=>x.id!==id);
-      saveState(); App.refreshAll();
-    },
-    clearForm(){
-      $("c_name").value=""; $("c_email").value=""; $("c_phone").value=""; $("c_addr").value="";
-    },
-    renderList(){
-      const q = ($("c_search").value||"").toLowerCase().trim();
-      const rows = asArray(STATE.customers)
-        .filter(c=>{
-          if(!q) return true;
-          return (c.name||"").toLowerCase().includes(q) || (c.email||"").toLowerCase().includes(q);
-        })
-        .map(c=>`
-          <tr>
-            <td>${escapeHtml(c.name||"")}</td>
-            <td>${c.email ? `<a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a>` : ""}</td>
-            <td>${escapeHtml(c.addr||"")}</td>
-            <td class="right">
-              <button class="btn danger" type="button" data-del-customer="${c.id}">Löschen</button>
-            </td>
-          </tr>
-        `).join("");
-
-      $("customersList").innerHTML = rows || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
-      $("pillCustomers").textContent = asArray(STATE.customers).length;
-      $("kpiCustomers").textContent = asArray(STATE.customers).length;
-
-      // bind delete
-      document.querySelectorAll("[data-del-customer]").forEach(b=>{
-        b.onclick = ()=>Customers.remove(b.getAttribute("data-del-customer"));
-      });
-    },
-    fillSelect(){
-      const sel = $("i_customer");
-      if(!sel) return;
-
-      // keep first placeholder
-      const placeholder = sel.querySelector("option[value='']");
-      sel.innerHTML = "";
-      if(placeholder){
-        sel.appendChild(placeholder);
-      }else{
-        const o = document.createElement("option");
-        o.value=""; o.disabled=true; o.selected=true;
-        o.textContent="— Bitte wählen —";
-        sel.appendChild(o);
-      }
-
-      for(const c of asArray(STATE.customers)){
-        const o = document.createElement("option");
-        o.value = c.id;
-        o.textContent = c.name + (c.email ? " • " + c.email : "");
-        sel.appendChild(o);
-      }
-    }
-  };
-
-  const Employees = {
-    add(){
-      const name = $("m_name").value.trim();
-      const pnr = $("m_pnr").value.trim();
-      const taxid = $("m_taxid").value.trim();
-      const taxclass = $("m_taxclass").value;
-      if(!name){ setStatus("Bitte Mitarbeitername eingeben", true); return; }
-
-      STATE.employees.push({ id: uid(), name, pnr, taxid, taxclass, createdAt: todayISO() });
-      STATE.activity.unshift({type:"Mitarbeiter", desc:name, date: todayISO(), amount: 0});
-      saveState();
-      this.clearForm();
-      App.refreshAll();
-      setStatus("Mitarbeiter gespeichert");
-    },
-    remove(id){
-      STATE.employees = asArray(STATE.employees).filter(x=>x.id!==id);
-      saveState(); App.refreshAll();
-    },
-    clearForm(){
-      $("m_name").value=""; $("m_pnr").value=""; $("m_taxid").value=""; $("m_taxclass").value="I";
-    },
-    renderList(){
-      const q = ($("m_search").value||"").toLowerCase().trim();
-      const rows = asArray(STATE.employees)
-        .filter(m=>{
-          if(!q) return true;
-          return (m.name||"").toLowerCase().includes(q) || (m.taxid||"").toLowerCase().includes(q);
-        })
-        .map(m=>`
-          <tr>
-            <td>${escapeHtml(m.name||"")}</td>
-            <td>${escapeHtml(m.taxid||"")}</td>
-            <td>${escapeHtml(m.taxclass||"")}</td>
-            <td class="right">
-              <button class="btn danger" type="button" data-del-employee="${m.id}">Löschen</button>
-            </td>
-          </tr>
-        `).join("");
-
-      $("employeesList").innerHTML = rows || `<tr><td colspan="4" class="muted">Keine Mitarbeiter.</td></tr>`;
-      $("pillEmployees").textContent = asArray(STATE.employees).length;
-
-      document.querySelectorAll("[data-del-employee]").forEach(b=>{
-        b.onclick = ()=>Employees.remove(b.getAttribute("data-del-employee"));
-      });
-    }
-  };
-
-  const Invoices = {
-    nextNumber(){
-      const y = new Date().getFullYear();
-      const prefix = `MS-${y}-`;
-      const nums = asArray(STATE.invoices)
-        .map(inv => String(inv.no||""))
-        .filter(no => no.startsWith(prefix))
-        .map(no => parseInt(no.slice(prefix.length),10))
-        .filter(n => Number.isFinite(n));
-      const next = (nums.length ? Math.max(...nums) : 0) + 1;
-      return prefix + String(next).padStart(4,"0");
-    },
-    clearForm(){
-      $("i_no").value = this.nextNumber();
-      $("i_date").value = todayISO();
-      $("i_von").value = "";
-      $("i_bis").value = "";
-      $("i_due").value = "";
-      $("i_desc").value = "";
-      $("i_net").value = "";
-      $("i_status").value = "Entwurf";
-      $("i_customer").value = "";
-      $("i_previewNote").textContent = `Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG`;
-      setStatus("Formular geleert");
-    },
-    updatePreview(){
-      const net = Number($("i_net").value || 0);
-      $("i_previewNote").textContent = `Gesamt: ${euro(net)} • USt: 0,00 € • Hinweis: §19 UStG`;
-    },
-    add(){
-      const no = $("i_no").value.trim() || this.nextNumber();
-      const date = $("i_date").value || todayISO();
-      const von = $("i_von").value || "";
-      const bis = $("i_bis").value || "";
-      const due = $("i_due").value || "";
-      const customerId = $("i_customer").value || "";
-      const desc = $("i_desc").value.trim();
-      const net = Number($("i_net").value || 0);
-      const status = $("i_status").value;
-
-      if(!customerId){ setStatus("Bitte Kunde auswählen", true); return; }
-      if(!desc){ setStatus("Bitte Leistung/Beschreibung eingeben", true); return; }
-      if(!(net>0)){ setStatus("Bitte Netto Betrag eingeben", true); return; }
-
-      const inv = {
-        id: uid(), no, date, von, bis, due,
-        customerId, desc, net, status,
-        hint: (STATE.settings.hint || DEFAULT_STATE.settings.hint)
-      };
-      STATE.invoices.unshift(inv);
-      STATE.activity.unshift({type:"Rechnung", desc:no, date, amount: net});
-      saveState();
-      this.clearForm();
-      App.refreshAll();
-      setStatus("Rechnung gespeichert");
-    },
-    findCustomer(customerId){
-      return asArray(STATE.customers).find(c=>c.id===customerId) || null;
-    },
-    renderList(){
-      const q = ($("i_search").value||"").toLowerCase().trim();
-      const f = ($("i_filter").value||"").trim();
-
-      const rows = asArray(STATE.invoices)
-        .filter(inv=>{
-          if(f && inv.status !== f) return false;
-          if(!q) return true;
-          const c = this.findCustomer(inv.customerId);
-          const cname = (c?.name||"").toLowerCase();
-          return String(inv.no||"").toLowerCase().includes(q) || cname.includes(q);
-        })
-        .map(inv=>{
-          const c = this.findCustomer(inv.customerId);
-          const vonbis = [inv.von, inv.bis].filter(Boolean).join("…");
-          return `
-            <tr>
-              <td>${escapeHtml(inv.no||"")}</td>
-              <td>${escapeHtml(c?.name || "—")}</td>
-              <td>${escapeHtml(vonbis || "—")}</td>
-              <td>${escapeHtml(inv.due || "—")}</td>
-              <td>${escapeHtml(inv.status || "")}</td>
-              <td class="right">${euro(inv.net||0)}</td>
-              <td class="right">
-                <button class="btn" type="button" data-print="${inv.id}">PDF</button>
-                <button class="btn danger" type="button" data-del-inv="${inv.id}">Löschen</button>
-              </td>
-            </tr>
-          `;
-        }).join("");
-
-      $("invoicesList").innerHTML = rows || `<tr><td colspan="7" class="muted">Keine Rechnungen.</td></tr>`;
-      $("pillInvoices").textContent = asArray(STATE.invoices).length;
-      $("kpiInvoices").textContent = asArray(STATE.invoices).length;
-
-      document.querySelectorAll("[data-del-inv]").forEach(b=>{
-        b.onclick = ()=>Invoices.remove(b.getAttribute("data-del-inv"));
-      });
-      document.querySelectorAll("[data-print]").forEach(b=>{
-        b.onclick = ()=>Invoices.printById(b.getAttribute("data-print"));
-      });
-    },
-    remove(id){
-      STATE.invoices = asArray(STATE.invoices).filter(x=>x.id!==id);
-      saveState(); App.refreshAll();
-      setStatus("Rechnung gelöscht");
-    },
-    print(){
-      // print current form as preview (if customer selected)
-      const customerId = $("i_customer").value || "";
-      if(!customerId){ setStatus("Bitte Kunde auswählen (für PDF)", true); return; }
-      const inv = {
-        id: "FORM",
-        no: $("i_no").value.trim() || this.nextNumber(),
-        date: $("i_date").value || todayISO(),
-        von: $("i_von").value || "",
-        bis: $("i_bis").value || "",
-        due: $("i_due").value || "",
-        customerId,
-        desc: $("i_desc").value.trim(),
-        net: Number($("i_net").value || 0),
-        status: $("i_status").value,
-        hint: (STATE.settings.hint || DEFAULT_STATE.settings.hint)
-      };
-      this.renderPrint(inv);
-      window.print();
-    },
-    printById(id){
-      const inv = asArray(STATE.invoices).find(x=>x.id===id);
-      if(!inv){ setStatus("Rechnung nicht gefunden", true); return; }
-      this.renderPrint(inv);
-      window.print();
-    },
-    renderPrint(inv){
-      const s = STATE.settings || DEFAULT_STATE.settings;
-      const c = this.findCustomer(inv.customerId) || {};
-      const vonbis = [inv.von, inv.bis].filter(Boolean).join("…");
-      const net = Number(inv.net||0);
-      const html = `
-        <div class="printDoc">
-          <div class="printHeader">
-            <div>
-              <h1>Rechnung</h1>
-              <div class="printMeta">
-                <b>${escapeHtml(s.company||"")}</b><br/>
-                ${escapeHtml(s.address||"")}<br/>
-                E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a><br/>
-                ${s.phone ? `Tel: ${escapeHtml(s.phone)}<br/>` : ``}
-                ${s.taxNumber ? `Steuernummer: ${escapeHtml(s.taxNumber)}<br/>` : ``}
-                ${s.vatId ? `USt-IdNr.: ${escapeHtml(s.vatId)}<br/>` : ``}
-                IBAN: ${escapeHtml(s.iban||"")} • BIC: ${escapeHtml(s.bic||"")}
-              </div>
-            </div>
-            <div class="printMeta">
-              <b>Rechnungs-Nr.:</b> ${escapeHtml(inv.no||"")}<br/>
-              <b>Datum:</b> ${escapeHtml(inv.date||"")}<br/>
-              <b>Zeitraum:</b> ${escapeHtml(vonbis || "—")}<br/>
-              <b>Fällig am:</b> ${escapeHtml(inv.due || "—")}<br/>
-              <b>Status:</b> ${escapeHtml(inv.status||"")}
-            </div>
-          </div>
-
-          <div class="printBox">
-            <b>Kunde</b><br/>
-            ${escapeHtml(c.name||"")}<br/>
-            ${escapeHtml(c.addr||"")}<br/>
-            ${c.email ? `E-Mail: <a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a><br/>` : ``}
-            ${c.phone ? `Tel: ${escapeHtml(c.phone)}<br/>` : ``}
-          </div>
-
-          <div class="printBox">
-            <table class="printTable">
-              <thead>
-                <tr><th>Leistung</th><th class="printRight">Netto</th></tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>${escapeHtml(inv.desc||"")}</td>
-                  <td class="printRight">${euro(net)}</td>
+                  <td id="lineDesc"></td>
+                  <td class="num" id="lineQty"></td>
+                  <td class="num" id="linePrice"></td>
+                  <td class="num" id="lineTotal"></td>
                 </tr>
               </tbody>
             </table>
-            <div style="margin-top:10px; font-size:12px;">
-              Zwischensumme: <b>${euro(net)}</b><br/>
-              Umsatzsteuer: <b>0,00 €</b><br/>
-              Gesamt: <b>${euro(net)}</b><br/><br/>
-              Hinweis: ${escapeHtml(inv.hint || s.hint || DEFAULT_STATE.settings.hint)}
+
+            <div class="totals">
+              <div class="box">
+                <div class="line"><span>Zwischensumme</span><span id="subTotal">0,00 €</span></div>
+                <div class="line" id="vatLine"><span>USt</span><span id="vatAmount">0,00 €</span></div>
+                <div class="line"><strong>Gesamtbetrag</strong><strong id="grandTotal">0,00 €</strong></div>
+              </div>
+            </div>
+
+            <div class="footer-note" id="kuText"></div>
+            <div class="footer-note muted" id="payText"></div>
+
+            <div class="inv-box" style="margin-top:12px">
+              <h3>Bankverbindung</h3>
+              <p id="outBank"></p>
+            </div>
+
+            <!-- Internal section: visible on screen, hidden in print -->
+            <div class="internal hide-in-print" id="internalBox">
+              <h4>Interne Details (nicht für den Kunden / nicht im Druck)</h4>
+              <p id="outInternal"></p>
             </div>
           </div>
         </div>
-      `;
-      $("printArea").innerHTML = html;
-    },
-    emailToCustomer(){
-      const customerId = $("i_customer").value || "";
-      const c = this.findCustomer(customerId);
-      if(!c || !c.email){ setStatus("Kunde hat keine Email", true); return; }
+      </section>
 
-      const s = STATE.settings || DEFAULT_STATE.settings;
-      const no = $("i_no").value.trim() || this.nextNumber();
-      const date = $("i_date").value || todayISO();
-      const vonbis = [($("i_von").value||""), ($("i_bis").value||"")].filter(Boolean).join("…");
-      const net = Number($("i_net").value||0);
-      const subject = encodeURIComponent(`Rechnung ${no} (${date})`);
-      const body = encodeURIComponent(
-        `Guten Tag,\n\nanbei die Rechnung ${no}.\nZeitraum: ${vonbis || "—"}\nBetrag (Netto): ${net.toFixed(2)} EUR\n\nMit freundlichen Grüßen\n${s.company}\n${s.email}`
-      );
-      location.href = `mailto:${encodeURIComponent(c.email)}?subject=${subject}&body=${body}`;
-    }
-  };
+    </div>
+  </div>
 
-  const Settings = {
-    loadToForm(){
-      const s = STATE.settings || DEFAULT_STATE.settings;
-      $("s_company").value = s.company||"";
-      $("s_addr").value = s.address||"";
-      $("s_email").value = s.email||"";
-      $("s_phone").value = s.phone||"";
-      $("s_taxno").value = s.taxNumber||"";
-      $("s_vatid").value = s.vatId||"";
-      $("s_iban").value = s.iban||"";
-      $("s_bic").value = s.bic||"";
-      $("s_hint").value = s.hint || DEFAULT_STATE.settings.hint;
-    },
-    saveFromForm(){
-      STATE.settings = {
-        ...STATE.settings,
-        company: $("s_company").value.trim() || DEFAULT_STATE.settings.company,
-        address: $("s_addr").value.trim(),
-        email: $("s_email").value.trim(),
-        phone: $("s_phone").value.trim(),
-        taxNumber: $("s_taxno").value.trim(),
-        vatId: $("s_vatid").value.trim(),
-        iban: $("s_iban").value.trim(),
-        bic: $("s_bic").value.trim(),
-        hint: $("s_hint").value.trim() || DEFAULT_STATE.settings.hint
-      };
-      saveState();
-      App.refreshAll();
-      setStatus("Einstellungen gespeichert");
-    },
-    resetAll(){
-      if(!confirm("Alles löschen? (Kunden, Rechnungen, Mitarbeiter, Einstellungen)")) return;
-      localStorage.removeItem(STORE_KEY);
-      STATE = loadState();
-      saveState();
-      location.reload();
-    }
-  };
-
-  /* ===== APP ===== */
-  const App = {
-    refreshAll(){
-      // brand name
-      $("brandName").textContent = (STATE.settings?.company || "Masculine Security");
-
-      // pills + KPIs
-      Customers.renderList();
-      Employees.renderList();
-      Customers.fillSelect(); // ✅ Kunden wählen FIX
-      Invoices.renderList();
-
-      // dashboard revenue month
-      const currentMonth = (new Date().toISOString().slice(0,7));
-      const rev = asArray(STATE.invoices)
-        .filter(inv => monthKey(inv.date) === currentMonth)
-        .reduce((sum, inv)=>sum + Number(inv.net||0), 0);
-      $("kpiRevenueMonth").textContent = euro(rev);
-
-      // activities
-      const recent = asArray(STATE.activity).slice(0,7).map(a=>`
-        <tr>
-          <td>${escapeHtml(a.type||"")}</td>
-          <td>${escapeHtml(a.desc||"")}</td>
-          <td>${escapeHtml(a.date||"")}</td>
-          <td class="right">${a.amount ? euro(a.amount) : "—"}</td>
-        </tr>
-      `).join("");
-      $("recentList").innerHTML = recent || `<tr><td colspan="4" class="muted">Keine Aktivitäten.</td></tr>`;
-
-      // invoice form defaults + preview
-      if(!$("i_no").value) Invoices.clearForm();
-      Invoices.updatePreview();
-
-      // settings form
-      if($("page-settings") && !$("s_company").value) Settings.loadToForm();
-    }
-  };
-
-  /* ===== EXPORT/IMPORT ===== */
-  function exportJSON(){
-    const data = JSON.stringify(STATE, null, 2);
-    const blob = new Blob([data], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ms-mini-office-backup.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    setStatus("Export erstellt");
-  }
-  function importJSON(file){
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      const parsed = safeParse(reader.result, null);
-      if(!parsed){ setStatus("Import Fehler: JSON ungültig", true); return; }
-      STATE = mergeDefaults(DEFAULT_STATE, parsed);
-      STATE.customers = asArray(STATE.customers);
-      STATE.employees = asArray(STATE.employees);
-      STATE.invoices  = asArray(STATE.invoices);
-      STATE.activity  = asArray(STATE.activity);
-      saveState();
-      App.refreshAll();
-      setStatus("Import ok");
+  <script>
+    // ---------- helpers ----------
+    const $ = (id) => document.getElementById(id);
+    const fmtEUR = (n) => {
+      const x = Number.isFinite(n) ? n : 0;
+      return x.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
     };
-    reader.readAsText(file);
-  }
+    const clampNum = (v, min=0) => {
+      const n = Number(String(v).replace(",", "."));
+      return Number.isFinite(n) ? Math.max(min, n) : min;
+    };
+    const safeText = (s) => (s ?? "").toString().trim();
 
-  /* ===== Helpers ===== */
-  function escapeHtml(s){
-    return String(s||"").replace(/[&<>"']/g, m => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    }[m]));
-  }
+    // ---------- state ----------
+    const fields = [
+      "invNo","invDate","fromDate","toDate","kundeName","kundeAddr","einsatzOrt","leistung",
+      "anzahl","stundenPro","preis","ku","ust","payHint","absender","bank","tax","intern"
+    ];
 
-  /* ===== Bind Events (NO inline reliance) ===== */
-  document.addEventListener("DOMContentLoaded", ()=>{
-    try{
-      // apply theme
-      if(STATE.settings?.theme === "light") document.body.classList.add("light");
-
-      // nav
-      document.querySelectorAll("#nav button").forEach(btn=>{
-        btn.addEventListener("click", ()=>UI.go(btn.dataset.page));
-      });
-      document.querySelectorAll("[data-goto]").forEach(btn=>{
-        btn.addEventListener("click", ()=>UI.go(btn.getAttribute("data-goto")));
-      });
-
-      // top actions
-      $("btnQuickInvoice").addEventListener("click", ()=>UI.go("invoices"));
-      $("btnQuickCustomer").addEventListener("click", ()=>UI.go("customers"));
-      $("btnEmailCompany").addEventListener("click", ()=>{
-        const em = (STATE.settings?.email || DEFAULT_STATE.settings.email || "").trim();
-        if(!em){ setStatus("Bitte Email in Einstellungen setzen", true); return; }
-        location.href = `mailto:${encodeURIComponent(em)}`;
-      });
-      $("btnTheme").addEventListener("click", ()=>{
-        const isLight = document.body.classList.toggle("light");
-        STATE.settings.theme = isLight ? "light" : "dark";
-        saveState();
-        setStatus("Theme geändert");
-      });
-
-      // customers
-      $("btnSaveCustomer").addEventListener("click", ()=>Customers.add());
-      $("btnClearCustomer").addEventListener("click", ()=>Customers.clearForm());
-      $("c_search").addEventListener("input", ()=>Customers.renderList());
-
-      // employees
-      $("btnSaveEmployee").addEventListener("click", ()=>Employees.add());
-      $("btnClearEmployee").addEventListener("click", ()=>Employees.clearForm());
-      $("m_search").addEventListener("input", ()=>Employees.renderList());
-
-      // invoices
-      $("i_net").addEventListener("input", ()=>Invoices.updatePreview());
-      $("btnSaveInvoice").addEventListener("click", ()=>Invoices.add());
-      $("btnClearInvoice").addEventListener("click", ()=>Invoices.clearForm());
-      $("btnPrintInvoice").addEventListener("click", ()=>Invoices.print());
-      $("btnEmailInvoice").addEventListener("click", ()=>Invoices.emailToCustomer());
-      $("i_search").addEventListener("input", ()=>Invoices.renderList());
-      $("i_filter").addEventListener("change", ()=>Invoices.renderList());
-
-      // settings
-      $("btnSaveSettings").addEventListener("click", ()=>Settings.saveFromForm());
-      $("btnResetAll").addEventListener("click", ()=>Settings.resetAll());
-
-      // export/import
-      $("btnExport").addEventListener("click", exportJSON);
-      $("btnImport").addEventListener("click", ()=>$("fileImport").click());
-      $("fileImport").addEventListener("change", (e)=>{
-        const f = e.target.files && e.target.files[0];
-        if(f) importJSON(f);
-        e.target.value = "";
-      });
-
-      // first render
-      App.refreshAll();
-      UI.go("dashboard");
-      setStatus("Auto-Save bereit");
-    }catch(err){
-      console.error(err);
-      setStatus("Fehler: " + (err?.message || err), true);
+    function getData(){
+      const d = {};
+      for(const f of fields){
+        d[f] = $(f).value;
+      }
+      return d;
     }
-  });
 
-})();
-</script>
+    function setData(d){
+      for(const f of fields){
+        if(d[f] !== undefined) $(f).value = d[f];
+      }
+      render();
+    }
+
+    function calc(d){
+      const anzahl = Math.round(clampNum(d.anzahl, 1));
+      const stundenPro = clampNum(d.stundenPro, 0);
+      const preis = clampNum(d.preis, 0);
+      const totalHours = anzahl * stundenPro;
+      const net = totalHours * preis;
+
+      const isKU = d.ku === "yes";
+      const ustRate = clampNum(d.ust, 0) / 100;
+      const vat = isKU ? 0 : net * ustRate;
+      const gross = net + vat;
+
+      return { anzahl, stundenPro, preis, totalHours, net, vat, gross, isKU, ustRate };
+    }
+
+    // ---------- render ----------
+    function render(){
+      const d = getData();
+      const c = calc(d);
+
+      // chips
+      $("kuStatus").textContent = c.isKU ? "Ja" : "Nein";
+      $("chipHours").textContent = (c.totalHours % 1 === 0) ? String(c.totalHours) : c.totalHours.toLocaleString("de-DE");
+      $("chipTotal").textContent = fmtEUR(c.gross);
+
+      // invoice header
+      $("invSub").textContent = safeText(d.leistung) || "Sicherheitsdienstleistung";
+      const invNo = safeText(d.invNo) || "—";
+      const invDate = safeText(d.invDate) ? new Date(d.invDate).toLocaleDateString("de-DE") : "—";
+
+      $("metaRight").textContent =
+        `Rechnungsnummer: ${invNo}\nRechnungsdatum: ${invDate}`;
+
+      // left meta
+      const from = safeText(d.fromDate) ? new Date(d.fromDate).toLocaleDateString("de-DE") : "—";
+      const to = safeText(d.toDate) ? new Date(d.toDate).toLocaleDateString("de-DE") : "—";
+      const ort = safeText(d.einsatzOrt) || "—";
+      const tax = safeText(d.tax);
+      $("metaLeft").textContent =
+        `Zeitraum: ${from} – ${to}\nEinsatzort: ${ort}` + (tax ? `\n${tax}` : "");
+
+      // addresses
+      const kunde = `${safeText(d.kundeName) || "—"}\n${safeText(d.kundeAddr) || ""}`.trim();
+      $("outKunde").textContent = kunde;
+
+      $("outAbsender").textContent = safeText(d.absender) || "—";
+      $("outBank").textContent = safeText(d.bank) || "—";
+
+      // line item (Kunde summary only)
+      // Kunde sees: Einsatz: X Sicherheitskräfte, Gesamtstunden, Zeitraum/Ort
+      const descParts = [];
+      descParts.push(safeText(d.leistung) || "Sicherheitsdienstleistung");
+      descParts.push(`Einsatz: ${c.anzahl} Sicherheitskräfte`);
+      descParts.push(`Gesamtstunden: ${ (c.totalHours % 1 === 0) ? c.totalHours : c.totalHours.toLocaleString("de-DE") } Std`);
+      descParts.push(`Zeitraum: ${from} – ${to}`);
+      if(ort && ort !== "—") descParts.push(`Ort: ${ort}`);
+
+      $("lineDesc").textContent = descParts.join(" • ");
+
+      // quantity = total hours, price = hourly rate
+      $("lineQty").textContent = (c.totalHours % 1 === 0) ? String(c.totalHours) : c.totalHours.toLocaleString("de-DE");
+      $("linePrice").textContent = fmtEUR(c.preis) + " / Std";
+      $("lineTotal").textContent = fmtEUR(c.net);
+
+      // totals
+      $("subTotal").textContent = fmtEUR(c.net);
+
+      if(c.isKU){
+        $("vatLine").style.display = "none";
+        $("kuText").textContent = "Gemäß §19 UStG wird keine Umsatzsteuer berechnet.";
+      }else{
+        $("vatLine").style.display = "flex";
+        $("vatAmount").textContent = fmtEUR(c.vat);
+        const ratePct = (c.ustRate * 100);
+        $("vatLine").firstElementChild.textContent = `USt (${ratePct % 1 === 0 ? ratePct.toFixed(0) : ratePct.toLocaleString("de-DE")}%)`;
+        $("kuText").textContent = "";
+      }
+      $("grandTotal").textContent = fmtEUR(c.gross);
+
+      // payment hint
+      const payHint = safeText(d.payHint);
+      $("payText").textContent = payHint ? payHint : "";
+
+      // internal (screen only)
+      $("outInternal").textContent = safeText(d.intern) || "—";
+    }
+
+    // ---------- actions ----------
+    function resetAll(){
+      // defaults
+      const today = new Date();
+      const iso = today.toISOString().slice(0,10);
+      setData({
+        invNo: "MS-2026-0001",
+        invDate: iso,
+        fromDate: iso,
+        toDate: iso,
+        kundeName: "",
+        kundeAddr: "",
+        einsatzOrt: "Bremen",
+        leistung: "Sicherheitsdienstleistung – Event/Objektschutz",
+        anzahl: "3",
+        stundenPro: "8",
+        preis: "22",
+        ku: "yes",
+        ust: "19",
+        payHint: "Zahlbar innerhalb von 7 Tagen ohne Abzug.",
+        absender: "Masculine Security\nWerschenregerstraße 6\n28237 Bremen",
+        bank: "IBAN: DE98 1001 1001 2333 0146 96\nBIC: NTSBDEB1XXX\nBank: N26",
+        tax: "Steuernummer: (eintragen)",
+        intern: "Interne Info:\n- Team: 3 Personen\n- Pausen/Briefing: …"
+      });
+    }
+
+    function saveLocal(){
+      const d = getData();
+      localStorage.setItem("ms_mini_office_invoice_v2", JSON.stringify(d));
+      alert("Gespeichert ✅");
+    }
+
+    function loadLocal(){
+      const raw = localStorage.getItem("ms_mini_office_invoice_v2");
+      if(!raw){
+        alert("Keine gespeicherten Daten gefunden.");
+        return;
+      }
+      try{
+        const d = JSON.parse(raw);
+        setData(d);
+        alert("Geladen ✅");
+      }catch(e){
+        alert("Fehler beim Laden.");
+      }
+    }
+
+    function copyInvoiceText(){
+      // copy the visible invoice text summary (Kunde)
+      const d = getData();
+      const c = calc(d);
+
+      const invNo = safeText(d.invNo) || "—";
+      const invDate = safeText(d.invDate) ? new Date(d.invDate).toLocaleDateString("de-DE") : "—";
+      const from = safeText(d.fromDate) ? new Date(d.fromDate).toLocaleDateString("de-DE") : "—";
+      const to = safeText(d.toDate) ? new Date(d.toDate).toLocaleDateString("de-DE") : "—";
+      const ort = safeText(d.einsatzOrt) || "—";
+
+      const text =
+`RECHNUNG
+
+Rechnungsnummer: ${invNo}
+Rechnungsdatum: ${invDate}
+
+Kunde:
+${safeText(d.kundeName) || "—"}
+${safeText(d.kundeAddr) || ""}
+
+Leistung:
+${safeText(d.leistung) || "Sicherheitsdienstleistung"}
+Zeitraum: ${from} – ${to}
+Einsatzort: ${ort}
+Einsatz: ${c.anzahl} Sicherheitskräfte
+Gesamtstunden: ${ (c.totalHours % 1 === 0) ? c.totalHours : c.totalHours.toLocaleString("de-DE") } Std
+Preis: ${fmtEUR(c.preis)} / Std
+
+Zwischensumme: ${fmtEUR(c.net)}
+${c.isKU ? "" : `USt: ${fmtEUR(c.vat)}`}
+Gesamtbetrag: ${fmtEUR(c.gross)}
+
+${c.isKU ? "Gemäß §19 UStG wird keine Umsatzsteuer berechnet.\n" : ""}
+${safeText(d.payHint) || ""}
+
+Bankverbindung:
+${safeText(d.bank) || ""}
+
+Von:
+${safeText(d.absender) || ""}`.trim();
+
+      navigator.clipboard.writeText(text)
+        .then(()=>alert("Rechnungstext kopiert ✅"))
+        .catch(()=>alert("Kopieren nicht möglich (Browser Rechte)."));
+    }
+
+    function printPDF(){
+      // Print dialog -> user can "Save as PDF"
+      window.print();
+    }
+
+    // ---------- init ----------
+    function init(){
+      // Set today if empty
+      const todayIso = new Date().toISOString().slice(0,10);
+      if(!$("invDate").value) $("invDate").value = todayIso;
+      if(!$("fromDate").value) $("fromDate").value = todayIso;
+      if(!$("toDate").value) $("toDate").value = todayIso;
+
+      // listeners
+      for(const f of fields){
+        $(f).addEventListener("input", render);
+        $(f).addEventListener("change", render);
+      }
+
+      $("btnReset").addEventListener("click", resetAll);
+      $("btnSave").addEventListener("click", saveLocal);
+      $("btnLoad").addEventListener("click", loadLocal);
+      $("btnCopy").addEventListener("click", copyInvoiceText);
+      $("btnPrint").addEventListener("click", printPDF);
+
+      // try auto-load if present
+      const raw = localStorage.getItem("ms_mini_office_invoice_v2");
+      if(raw){
+        try{ setData(JSON.parse(raw)); }
+        catch{ resetAll(); }
+      } else {
+        resetAll();
+      }
+
+      render();
+    }
+
+    init();
+  </script>
 </body>
 </html>
