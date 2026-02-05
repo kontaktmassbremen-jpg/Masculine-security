@@ -20,6 +20,7 @@
         radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.18), transparent 55%),
         linear-gradient(180deg, #07101f 0%, #070d18 100%);
     }
+    a{color:inherit}
     .app{
       min-height:100vh;
       display:grid;
@@ -183,13 +184,16 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
+    select option[disabled]{ color: rgba(147,164,198,.9) }
+
+    /* PRINT */
     @media print{
       body{background:#fff; color:#000}
       .app, .sidebar, .topbar, .statusbar{display:none!important}
       #printArea{display:block!important}
     }
     #printArea{display:none}
-    .printDoc{font-family: Arial, sans-serif; padding:20px; color:#000;}
+    .printDoc{font-family: Arial, sans-serif; padding:18px; color:#000;}
     .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
       border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
     .printHeader h1{margin:0; font-size:18px}
@@ -199,6 +203,7 @@
     .printRight{text-align:right}
     .warn{color:#a00; font-weight:700}
 
+    /* LIGHT THEME */
     body.light{
       color:#0b1220;
       background:
@@ -228,11 +233,6 @@
       color:#0b1220;
     }
     body.light .muted{color:#4e5c7a}
-
-    /* ✅ FIX: Mitabeiter wählen placeholder text NOT editable */
-    select option[disabled]{
-      color: rgba(147,164,198,.9);
-    }
   </style>
 </head>
 
@@ -248,20 +248,21 @@
     </div>
 
     <div class="nav" id="nav">
-      <button data-page="dashboard" class="active"><span>🏠 Dashboard</span><span class="pill" id="pillDash">–</span></button>
+      <button data-page="dashboard" class="active"><span>🏠 Dashboard</span><span class="pill" id="pillDash">Auto</span></button>
       <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCustomers">0</span></button>
       <button data-page="invoices"><span>🧾 Rechnungen</span><span class="pill" id="pillInvoices">0</span></button>
       <button data-page="expenses"><span>💳 Ausgaben</span><span class="pill" id="pillExpenses">0</span></button>
       <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmployees">0</span></button>
       <button data-page="payroll"><span>💼 Lohnabrechnung</span><span class="pill" id="pillPayroll">0</span></button>
       <button data-page="taxcert"><span>📄 Lohnsteuerbescheinigung</span><span class="pill">Auto</span></button>
+      <button data-page="tax"><span>🧾 Steuern</span><span class="pill">ESt/LSt</span></button>
       <button data-page="settings"><span>⚙️ Einstellungen</span><span class="pill">Auto</span></button>
     </div>
 
     <div class="foot">
       <div><b>Offline:</b> Daten bleiben im Browser (local).</div>
-      <div class="muted">Auto-Save: waxaad qorto si toos ah buu u kaydiyaa.</div>
-      <div class="muted"><span class="warn">Hinweis:</span> Lohnsteuer/SV “official” → ELSTER/Steuerberater.</div>
+      <div class="muted">Auto-Save: wax kasta markaad qorto si toos ah ayuu u kaydiyaa.</div>
+      <div class="muted"><span class="warn">Hinweis:</span> ESt/LSt xisaabtan waa “estimate”. Official → ELSTER/Steuerberater.</div>
     </div>
   </aside>
 
@@ -276,6 +277,7 @@
         <button class="btn" id="btnQuickCustomer">+ Kunde</button>
         <button class="btn" id="btnQuickExpense">+ Ausgabe</button>
         <button class="btn" id="btnQuickPayroll">+ Lohn</button>
+        <button class="btn" id="btnEmailCompany">✉️ Direkt Email</button>
         <button class="btn good" id="btnExport">Export JSON</button>
         <button class="btn" id="btnImport">Import JSON</button>
         <input id="fileImport" type="file" accept="application/json" class="hide"/>
@@ -283,6 +285,7 @@
     </div>
 
     <div class="content">
+      <!-- DASHBOARD -->
       <section id="page-dashboard">
         <div class="grid3">
           <div class="card">
@@ -328,18 +331,20 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>Auto-Save:</b> wax kasta markaad qorto si toos ah ayuu u kaydiyaa.<br/>
-              <b>Auto-Invoice-No:</b> MS-YYYY-0001 si otomaatig ah ayuu u sameeyaa.<br/>
+              <b>Kunden wählen System:</b> Erst Kunde speichern → dann in Rechnung auswählen.<br/>
+              <b>Mitarbeiter wählen System:</b> Erst Mitarbeiter speichern → dann Payroll auswählen.<br/>
+              <b>Direkt Email:</b> Button “Direkt Email” öffnet dein Mail-Programm (mailto).
             </div>
             <div class="hr"></div>
             <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
             <button class="btn" onclick="UI.go('invoices')">+ Rechnung</button>
             <button class="btn" onclick="UI.go('employees')">+ Mitarbeiter</button>
-            <button class="btn good" onclick="UI.go('taxcert')">Bescheinigung</button>
+            <button class="btn good" onclick="UI.go('tax')">Steuern</button>
           </div>
         </div>
       </section>
 
+      <!-- CUSTOMERS -->
       <section id="page-customers" class="hide">
         <div class="grid2">
           <div class="card">
@@ -366,6 +371,7 @@
         </div>
       </section>
 
+      <!-- INVOICES -->
       <section id="page-invoices" class="hide">
         <div class="grid2">
           <div class="card">
@@ -394,9 +400,16 @@
               </div>
             </div>
 
-            <div class="note" id="i_previewNote">Gesamt: 0,00 € • Umsatzsteuer: 0,00 € • Hinweis: §19 UStG</div>
+            <div class="split">
+              <div class="field"><label>Lohnsteuer (optional) €</label><input id="i_lost" type="number" step="0.01" placeholder="0.00"/></div>
+              <div class="field"><label>Einkommensteuer Reserve (optional) €</label><input id="i_est" type="number" step="0.01" placeholder="0.00"/></div>
+            </div>
+
+            <div class="note" id="i_previewNote">Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG</div>
+
             <button class="btn primary" onclick="Invoices.add()">Speichern</button>
             <button class="btn" onclick="Invoices.print()">PDF öffnen</button>
+            <button class="btn" onclick="Invoices.emailToCustomer()">Email Rechnung</button>
             <button class="btn danger" onclick="Invoices.clearForm()">Leeren</button>
           </div>
 
@@ -421,6 +434,7 @@
         </div>
       </section>
 
+      <!-- EXPENSES -->
       <section id="page-expenses" class="hide">
         <div class="grid2">
           <div class="card">
@@ -455,6 +469,7 @@
         </div>
       </section>
 
+      <!-- EMPLOYEES -->
       <section id="page-employees" class="hide">
         <div class="grid2">
           <div class="card">
@@ -462,99 +477,164 @@
             <div class="field"><label>Suche</label><input id="m_search" placeholder="Name/Steuer-ID..." /></div>
             <div class="hr"></div>
             <h3>Neuer Mitarbeiter</h3>
+
             <div class="split">
               <div class="field"><label>Name</label><input id="m_name" placeholder="Vorname Nachname"/></div>
-              <div class="field"><label>Personal-Nr.</label><input id="m_pnr" placeholder="optional"/></div>
+              <div class="field"><label>Personal-Nr. (optional)</label><input id="m_pnr" placeholder="optional"/></div>
             </div>
+
             <div class="split">
               <div class="field"><label>Steuer-ID (IdNr.)</label><input id="m_taxid" placeholder="optional"/></div>
               <div class="field"><label>SV-Nr. (optional)</label><input id="m_svnr" placeholder="optional"/></div>
             </div>
+
             <div class="split">
               <div class="field"><label>Adresse</label><input id="m_addr" placeholder="Straße, PLZ Ort"/></div>
-              <div class="field"><label>Steuerklasse (Info)</label>
+              <div class="field"><label>Steuerklasse</label>
                 <select id="m_taxclass">
-                  <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option>
+                  <option>I</option>
+                  <option>II</option>
+                  <option>III</option>
+                  <option>IV</option>
+                  <option>V</option>
+                  <option>VI</option>
                 </select>
               </div>
             </div>
+
             <div class="split">
               <div class="field"><label>KV-Kasse (optional)</label><input id="m_kasse" placeholder="z.B. Barmer"/></div>
-              <div class="field"><label>Beschäftigung (Info)</label>
-                <select id="m_type"><option>Vollzeit/Teilzeit</option><option>Minijob</option><option>Kurzfristig</option></select>
+              <div class="field"><label>Beschäftigung</label>
+                <select id="m_type">
+                  <option>Vollzeit/Teilzeit</option>
+                  <option>Minijob</option>
+                  <option>Kurzfristig</option>
+                </select>
               </div>
             </div>
+
             <button class="btn primary" onclick="Employees.add()">Speichern</button>
             <button class="btn danger" onclick="Employees.clearForm()">Leeren</button>
           </div>
+
           <div class="card">
             <h3>Mitarbeiterliste</h3>
             <table class="table">
-              <thead><tr><th>Name</th><th>Steuer-ID</th><th>SV</th><th class="right">Aktion</th></tr></thead>
+              <thead><tr><th>Name</th><th>Steuerklasse</th><th>Steuer-ID</th><th class="right">Aktion</th></tr></thead>
               <tbody id="employeesList"></tbody>
             </table>
           </div>
         </div>
       </section>
 
+      <!-- PAYROLL -->
       <section id="page-payroll" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Lohnabrechnung</h3>
-
-            <!-- ✅ FIX: placeholder "Mitarbeiter wählen" becomes disabled+selected (not editable text) -->
             <div class="field"><label>Mitarbeiter</label><select id="p_employee"></select></div>
 
             <div class="split">
               <div class="field"><label>Monat</label><input id="p_month" type="month"/></div>
-              <div class="field"><label>Netto (€) (manual)</label><input id="p_net" type="number" step="0.01" placeholder="0.00"/></div>
+              <div class="field"><label>Netto (€)</label><input id="p_net" type="number" step="0.01" placeholder="0.00"/></div>
             </div>
+
             <div class="split">
-              <div class="field"><label>Brutto (€) (optional)</label><input id="p_gross" type="number" step="0.01" placeholder="0.00"/></div>
-              <div class="field"><label>Lohnsteuer (€) (optional)</label><input id="p_tax" type="number" step="0.01" placeholder="0.00"/></div>
+              <div class="field"><label>Lohnsteuer (€) (optional)</label><input id="p_lost" type="number" step="0.01" placeholder="0.00"/></div>
+              <div class="field"><label>Notiz</label><input id="p_note" placeholder="z.B. 18 Tage × 12h"/></div>
             </div>
-            <div class="field"><label>Notiz</label><input id="p_note" placeholder="z.B. 18 Tage × 12h"/></div>
+
             <button class="btn primary" onclick="Payroll.add()">Speichern</button>
+            <button class="btn" onclick="Payroll.print()">PDF öffnen</button>
             <button class="btn danger" onclick="Payroll.clearForm()">Leeren</button>
           </div>
+
           <div class="card">
             <h3>Payroll Liste</h3>
             <table class="table">
-              <thead><tr><th>Monat</th><th>Mitarbeiter</th><th class="right">Netto</th><th class="right">Aktion</th></tr></thead>
+              <thead><tr><th>Monat</th><th>Mitarbeiter</th><th class="right">Netto</th><th class="right">LSt</th><th class="right">Aktion</th></tr></thead>
               <tbody id="payrollList"></tbody>
             </table>
           </div>
         </div>
       </section>
 
+      <!-- TAXCERT -->
       <section id="page-taxcert" class="hide">
         <div class="grid2">
           <div class="card">
-            <h3>Lohnsteuerbescheinigung</h3>
+            <h3>Lohnsteuerbescheinigung (Summary)</h3>
             <div class="field"><label>Jahr</label><input id="t_year" type="number" min="2000" max="2100"/></div>
-
-            <!-- ✅ same fix here too -->
             <div class="field"><label>Mitarbeiter</label><select id="t_employee"></select></div>
-
             <div class="note" id="t_summary">Wähle Jahr & Mitarbeiter.</div>
             <button class="btn primary" onclick="TaxCert.print()">PDF öffnen</button>
           </div>
           <div class="card">
             <h3>Hinweis</h3>
             <div class="note">
-              Tani waa “summary” gudaha app-ka. Official Bescheinigung → ELSTER / Steuerberater.
+              Official Lohnsteuerbescheinigung waxaa laga sameeyaa ELSTER / Steuerberater.
             </div>
           </div>
         </div>
       </section>
 
+      <!-- TAX -->
+      <section id="page-tax" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Steuern (Einkommensteuer / Lohnsteuer)</h3>
+            <div class="note">
+              <b>Einkommensteuer (ESt):</b> Gewinn (Umsatz - Ausgaben) → estimate (Satz in Einstellungen).<br/>
+              <b>Lohnsteuer (LSt):</b> aus Payroll summiert (oder manuell).<br/>
+              <span class="warn">Hinweis:</span> Das ist eine Orientierung – keine amtliche Berechnung.
+            </div>
+            <div class="hr"></div>
+            <div class="split">
+              <div class="field"><label>Jahr</label><input id="x_year" type="number" min="2000" max="2100"/></div>
+              <div class="field"><label>Monat (optional)</label><input id="x_month" type="month"/></div>
+            </div>
+            <button class="btn primary" onclick="Tax.render()">Berechnen</button>
+            <div class="hr"></div>
+            <div class="card" style="padding:12px">
+              <div class="split">
+                <div><div class="muted">Umsatz</div><div style="font-weight:900;font-size:18px" id="x_rev">0,00 €</div></div>
+                <div><div class="muted">Ausgaben</div><div style="font-weight:900;font-size:18px" id="x_exp">0,00 €</div></div>
+              </div>
+              <div class="hr"></div>
+              <div class="split">
+                <div><div class="muted">Gewinn</div><div style="font-weight:900;font-size:18px" id="x_profit">0,00 €</div></div>
+                <div><div class="muted">ESt (estimate)</div><div style="font-weight:900;font-size:18px" id="x_est">0,00 €</div></div>
+              </div>
+              <div class="hr"></div>
+              <div class="split">
+                <div><div class="muted">Lohnsteuer Summe (Payroll)</div><div style="font-weight:900;font-size:18px" id="x_lost">0,00 €</div></div>
+                <div><div class="muted">ESt-Satz</div><div class="muted" id="x_rate">—</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Deutsche Steuerklassen</h3>
+            <div class="note">
+              <b>I</b> ledig / getrennt<br/>
+              <b>II</b> Alleinerziehend<br/>
+              <b>III</b> verheiratet (Partner V/IV)<br/>
+              <b>IV</b> verheiratet (ähnliche Einkommen)<br/>
+              <b>V</b> verheiratet (Partner III/IV)<br/>
+              <b>VI</b> zweite Arbeit / Nebenjob
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Einstellungen</h3>
 
             <div class="field"><label>Firmenname</label><input id="s_company" placeholder="Masculine Security"/></div>
-            <div class="field"><label>Adresse</label><input id="s_addr" placeholder="Werschenregerstraße 6, 28237 Bremen"/></div>
+            <div class="field"><label>Adresse</label><textarea id="s_addr" placeholder="Werschenregerstraße 6&#10;28237 Bremen"></textarea></div>
 
             <div class="split">
               <div class="field"><label>E-Mail</label><input id="s_email" placeholder="kontakt.mass.bremen@hotmail.com"/></div>
@@ -583,6 +663,11 @@
               </div>
             </div>
 
+            <div class="split">
+              <div class="field"><label>Einkommensteuer Satz (estimate %) </label><input id="s_est_rate" type="number" step="0.01" placeholder="z.B. 20"/></div>
+              <div class="field"><label>Standard Lohnsteuer Satz (estimate %) </label><input id="s_lost_rate" type="number" step="0.01" placeholder="z.B. 10"/></div>
+            </div>
+
             <button class="btn primary" onclick="Settings.save()">Speichern</button>
             <button class="btn danger" onclick="Settings.resetAll()">Alles zurücksetzen</button>
           </div>
@@ -604,7 +689,7 @@
       <span class="dot" id="dotSave"></span>
       <span id="saveState">Auto-Save bereit</span>
       <span class="muted">•</span>
-      <span class="muted" id="buildInfo">Build v1.0.1</span>
+      <span class="muted" id="buildInfo">Build v1.1.0</span>
     </div>
   </main>
 </div>
@@ -627,18 +712,24 @@
       const z=(n)=>String(n).padStart(2,"0");
       return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate());
     },
+    ymNow(){
+      const d=new Date();
+      return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    },
     monthKey(dISO){
       if(!dISO) return "";
       return dISO.slice(0,7);
     },
-    ymKey(mISO){
-      if(!mISO) return "";
-      return mISO;
+    fmt(iso){
+      if(!iso) return "—";
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+      const y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
+      return d+"."+m+"."+y;
     }
   };
 
   const Store = {
-    key:"ms-mini-office-v1",
+    key:"ms-mini-office-v11",
     load(){
       try{
         const raw = localStorage.getItem(this.key);
@@ -668,7 +759,9 @@
           iban:"DE98 1001 1001 2333 0146 96",
           bic:"NTSBDEB1XXX",
           theme:"dark",
-          klein:"1"
+          klein:"1",
+          estRate: 20,
+          lostRate: 10
         },
         customers:[],
         invoices:[],
@@ -683,7 +776,7 @@
       Settings.applyTheme();
       UI.bindNav();
       UI.bindTopActions();
-      UI.bindSearchAndInputs();
+      UI.bindInputs();
       UI.go("dashboard");
       this.autoFillDefaults();
       UI.refreshAll();
@@ -693,10 +786,9 @@
       if(!$("i_date").value) $("i_date").value = Dates.todayISO();
       if(!$("e_date").value) $("e_date").value = Dates.todayISO();
       if(!$("t_year").value) $("t_year").value = new Date().getFullYear();
-      if(!$("p_month").value){
-        const d = new Date();
-        $("p_month").value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-      }
+      if(!$("x_year").value) $("x_year").value = new Date().getFullYear();
+      if(!$("x_month").value) $("x_month").value = Dates.ymNow();
+      if(!$("p_month").value) $("p_month").value = Dates.ymNow();
       Invoices.ensureInvoiceNo();
       Invoices.recalcPreview();
     },
@@ -759,15 +851,17 @@
         customers:["Kunden","Kundenliste • Auto-Save"],
         invoices:["Rechnungen","Auto-Save • Offline • PDF via Print"],
         expenses:["Ausgaben","Kosten erfassen • Auto-Totals"],
-        employees:["Mitarbeiter","Personalverwaltung (Info)"],
-        payroll:["Lohnabrechnung","Lohn (manual) + Export/Print"],
+        employees:["Mitarbeiter","Personal + Steuerklasse"],
+        payroll:["Lohnabrechnung","Netto (manual) + LSt optional"],
         taxcert:["Lohnsteuerbescheinigung","Auto-Summary aus Payroll (year)"],
+        tax:["Steuern","Einkommensteuer (estimate) + Lohnsteuer Summe"],
         settings:["Einstellungen","Firma • Bank • Steuernummer • Theme"]
       };
       $("pageTitle").textContent = titles[page]?.[0] || "Mini Office";
       $("pageSub").textContent   = titles[page]?.[1] || "";
 
       this.refreshAll();
+      if(page==="tax") Tax.render();
     },
 
     refreshAll(){
@@ -780,24 +874,12 @@
       Payroll.render();
       TaxCert.syncSelectors();
       Settings.applyToUI();
-
-      if(this.page === "invoices"){
-        Customers.fillInvoiceSelect(true);
-      }
-      if(this.page === "payroll"){
-        Employees.fillEmployeeSelects(true);
-      }
-      if(this.page === "taxcert"){
-        Employees.fillEmployeeSelects(true);
-      }
     },
 
     flashSaved(){
       $("saveState").textContent = "Gespeichert";
       clearTimeout(this._t);
-      this._t=setTimeout(()=>{
-        $("saveState").textContent = "Auto-Save bereit";
-      },700);
+      this._t=setTimeout(()=> $("saveState").textContent="Auto-Save bereit", 700);
     },
 
     bindTopActions(){
@@ -805,6 +887,14 @@
       $("btnQuickCustomer").onclick=()=>this.go("customers");
       $("btnQuickExpense").onclick=()=>this.go("expenses");
       $("btnQuickPayroll").onclick=()=>this.go("payroll");
+
+      $("btnEmailCompany").onclick=()=>{
+        const s = App.state.settings;
+        const to = s.email || "kontakt.mass.bremen@hotmail.com";
+        const subject = encodeURIComponent("Kontakt — "+(s.company||"Masculine Security"));
+        const body = encodeURIComponent("Hallo,\n\n");
+        location.href = "mailto:"+encodeURIComponent(to)+"?subject="+subject+"&body="+body;
+      };
 
       $("btnExport").onclick=()=>App.exportJson();
       $("btnImport").onclick=()=>$("fileImport").click();
@@ -815,20 +905,23 @@
       });
     },
 
-    bindSearchAndInputs(){
+    bindInputs(){
       $("c_search").addEventListener("input", ()=>Customers.render());
-      ["i_net","i_desc","i_status","i_customer","i_date","i_von","i_bis"].forEach(id=>{
-        $(id).addEventListener("input", ()=>Invoices.recalcPreview());
-        $(id).addEventListener("change", ()=>Invoices.recalcPreview());
-      });
       $("i_search").addEventListener("input", ()=>Invoices.render());
       $("i_filter").addEventListener("change", ()=>Invoices.render());
-
       $("e_search").addEventListener("input", ()=>Expenses.render());
       $("m_search").addEventListener("input", ()=>Employees.render());
 
+      ["i_net","i_desc","i_status","i_customer","i_date","i_von","i_bis","i_lost","i_est"].forEach(id=>{
+        $(id).addEventListener("input", ()=>Invoices.recalcPreview());
+        $(id).addEventListener("change", ()=>Invoices.recalcPreview());
+      });
+
       $("t_year").addEventListener("input", ()=>TaxCert.updateSummary());
       $("t_employee").addEventListener("change", ()=>TaxCert.updateSummary());
+
+      $("x_year").addEventListener("input", ()=>Tax.render());
+      $("x_month").addEventListener("change", ()=>Tax.render());
     }
   };
 
@@ -839,7 +932,6 @@
       $("pillExpenses").textContent = App.state.expenses.length;
       $("pillEmployees").textContent = App.state.employees.length;
       $("pillPayroll").textContent = App.state.payroll.length;
-      $("pillDash").textContent = "Auto";
     }
   };
 
@@ -892,13 +984,12 @@
         </tr>
       `).join("") || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
 
-      this.fillInvoiceSelect(false);
+      this.fillInvoiceSelect(true);
     },
 
     fillInvoiceSelect(keepSelection){
       const sel = $("i_customer");
       if(!sel) return;
-
       const old = sel.value;
 
       sel.innerHTML = `
@@ -906,15 +997,14 @@
         ${App.state.customers.map(c=>`<option value="${escAttr(c.id)}">${esc(c.name)}</option>`).join("")}
       `;
 
-      if(keepSelection && old && App.state.customers.some(c=>c.id===old)){
-        sel.value = old;
-      }
+      if(keepSelection && old && App.state.customers.some(c=>c.id===old)) sel.value = old;
     },
 
+    get(id){
+      return App.state.customers.find(x=>x.id===id) || null;
+    },
     getName(id){
-      if(!id) return "";
-      const c = App.state.customers.find(x=>x.id===id);
-      return c?c.name:"";
+      return this.get(id)?.name || "";
     }
   };
 
@@ -932,8 +1022,13 @@
       const net = Number($("i_net").value||0);
       const ust = (App.state.settings.klein==="1") ? 0 : 0;
       const total = net + ust;
+
+      const lost = Number($("i_lost").value||0);
+      const est  = Number($("i_est").value||0);
+      const payout = Math.max(0, total - lost - est);
+
       $("i_previewNote").textContent =
-        `Gesamt: ${Money.fmtEUR(total)} • Umsatzsteuer: ${Money.fmtEUR(ust)} • Hinweis: §19 UStG`;
+        `Gesamt: ${Money.fmtEUR(total)} • USt: ${Money.fmtEUR(ust)} • LSt: ${Money.fmtEUR(lost)} • ESt: ${Money.fmtEUR(est)} • Auszahlung: ${Money.fmtEUR(payout)} • §19 UStG`;
     },
 
     clearForm(){
@@ -944,6 +1039,8 @@
       $("i_customer").value="";
       $("i_desc").value="";
       $("i_net").value="";
+      $("i_lost").value="";
+      $("i_est").value="";
       $("i_status").value="Entwurf";
       this.ensureInvoiceNo();
       this.recalcPreview();
@@ -961,7 +1058,9 @@
         customerId: $("i_customer").value || "",
         desc: $("i_desc").value.trim(),
         net: Number($("i_net").value||0),
-        status: $("i_status").value || "Entwurf"
+        status: $("i_status").value || "Entwurf",
+        lost: Number($("i_lost").value||0),
+        est: Number($("i_est").value||0)
       };
       App.state.invoices.unshift(inv);
       this.clearForm();
@@ -988,7 +1087,7 @@
 
       $("invoicesList").innerHTML = list.map(inv=>{
         const cname = Customers.getName(inv.customerId) || "—";
-        const vonbis = (inv.von || inv.bis) ? `${fmtDate(inv.von)}…${fmtDate(inv.bis)}` : "—";
+        const vonbis = (inv.von || inv.bis) ? `${Dates.fmt(inv.von)}…${Dates.fmt(inv.bis)}` : "—";
         return `
           <tr>
             <td><b>${esc(inv.no)}</b></td>
@@ -998,6 +1097,7 @@
             <td class="right">${Money.fmtEUR(inv.net||0)}</td>
             <td class="right">
               <button class="btn" onclick="Invoices.loadToForm('${inv.id}')">Öffnen</button>
+              <button class="btn" onclick="Invoices.printById('${inv.id}')">PDF</button>
               <button class="btn danger" onclick="Invoices.remove('${inv.id}')">Löschen</button>
             </td>
           </tr>
@@ -1018,13 +1118,123 @@
       $("i_customer").value = inv.customerId || "";
       $("i_desc").value = inv.desc || "";
       $("i_net").value = Number(inv.net||0) ? String(inv.net) : "";
+      $("i_lost").value = Number(inv.lost||0) ? String(inv.lost) : "";
+      $("i_est").value  = Number(inv.est||0) ? String(inv.est) : "";
       $("i_status").value = inv.status || "Entwurf";
       this.recalcPreview();
       UI.go("invoices");
     },
 
+    emailToCustomer(){
+      const cust = Customers.get($("i_customer").value||"");
+      if(!cust || !cust.email){
+        alert("Kunde hat keine Email. Bitte Kunden Email eintragen.");
+        return;
+      }
+      const s = App.state.settings;
+      const no = $("i_no").value || "";
+      const net = Number($("i_net").value||0);
+      const subject = encodeURIComponent("Rechnung " + no);
+      const body = encodeURIComponent(
+        "Hallo " + (cust.name||"") + ",\n\n" +
+        "anbei die Rechnung " + no + ".\n" +
+        "Betrag (Netto): " + Money.fmtEUR(net) + "\n\n" +
+        "Bank:\nIBAN: " + (s.iban||"") + "\nBIC: " + (s.bic||"") + "\n\n" +
+        "Viele Grüße\n" + (s.company||"Masculine Security") + "\n" +
+        (s.email||"kontakt.mass.bremen@hotmail.com")
+      );
+      location.href = "mailto:"+encodeURIComponent(cust.email)+"?subject="+subject+"&body="+body;
+    },
+
     print(){
-      alert("PDF Print qaybtaan hore aya u shaqaynaysaa—haddii aad rabto waan ku soo celin karaa version-ka PDF.");
+      const inv = this.formToTempInvoice();
+      this.renderPrintInvoice(inv);
+      window.print();
+    },
+
+    printById(id){
+      const inv = App.state.invoices.find(x=>x.id===id);
+      if(!inv) return;
+      this.renderPrintInvoice(inv);
+      window.print();
+    },
+
+    formToTempInvoice(){
+      return {
+        no: $("i_no").value.trim(),
+        date: $("i_date").value || Dates.todayISO(),
+        von: $("i_von").value || "",
+        bis: $("i_bis").value || "",
+        customerId: $("i_customer").value || "",
+        desc: $("i_desc").value.trim(),
+        net: Number($("i_net").value||0),
+        status: $("i_status").value || "Entwurf",
+        lost: Number($("i_lost").value||0),
+        est: Number($("i_est").value||0)
+      };
+    },
+
+    renderPrintInvoice(inv){
+      const s = App.state.settings;
+      const c = Customers.get(inv.customerId) || {};
+      const ust = (s.klein==="1") ? 0 : 0;
+      const total = Number(inv.net||0) + ust;
+      const payout = Math.max(0, total - Number(inv.lost||0) - Number(inv.est||0));
+      const vonbis = (inv.von||inv.bis) ? (Dates.fmt(inv.von)+" — "+Dates.fmt(inv.bis)) : "—";
+
+      $("printArea").innerHTML = `
+        <div class="printDoc">
+          <div class="printHeader">
+            <div>
+              <h1>Rechnung</h1>
+              <div><b>${esc(s.company||"")}</b></div>
+              <div style="white-space:pre-line">${esc(s.addr||"")}</div>
+              <div>E-Mail: <a href="mailto:${escAttr(s.email||"")}">${esc(s.email||"")}</a></div>
+              ${s.phone?`<div>Tel: ${esc(s.phone)}</div>`:""}
+              ${s.steuernr?`<div>Steuernummer: ${esc(s.steuernr)}</div>`:"<div>Steuernummer: —</div>"}
+              <div>IBAN: ${esc(s.iban||"")} • BIC: ${esc(s.bic||"")}</div>
+            </div>
+            <div>
+              <div><b>Rechnungs-Nr.:</b> ${esc(inv.no||"")}</div>
+              <div><b>Datum:</b> ${esc(Dates.fmt(inv.date))}</div>
+              <div><b>Von…Bis:</b> ${esc(vonbis)}</div>
+              <div><b>Status:</b> ${esc(inv.status||"")}</div>
+            </div>
+          </div>
+
+          <div class="printBox">
+            <div><b>Kunde</b></div>
+            <div><b>${esc(c.name||"—")}</b></div>
+            ${c.addr?`<div>${esc(c.addr)}</div>`:""}
+            ${c.email?`<div>Email: <a href="mailto:${escAttr(c.email)}">${esc(c.email)}</a></div>`:""}
+          </div>
+
+          <table class="printTable">
+            <thead>
+              <tr><th>Leistung / Beschreibung</th><th class="printRight">Netto</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${inv.desc?esc(inv.desc):"—"}</td>
+                <td class="printRight">${Money.fmtEUR(inv.net||0)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="printBox">
+            <div>Zwischensumme: <b>${Money.fmtEUR(inv.net||0)}</b></div>
+            <div>Umsatzsteuer: <b>${Money.fmtEUR(ust)}</b></div>
+            <div>Gesamt: <b>${Money.fmtEUR(total)}</b></div>
+            <div>Lohnsteuer (optional): <b>${Money.fmtEUR(inv.lost||0)}</b></div>
+            <div>Einkommensteuer Reserve (optional): <b>${Money.fmtEUR(inv.est||0)}</b></div>
+            <div>Auszahlungsbetrag: <b>${Money.fmtEUR(payout)}</b></div>
+          </div>
+
+          <div style="font-size:12px">
+            Hinweis: Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
+          </div>
+        </div>
+      `;
     }
   };
 
@@ -1054,7 +1264,7 @@
       });
       $("expensesList").innerHTML = list.map(e=>`
         <tr>
-          <td>${esc(fmtDate(e.date))}</td>
+          <td>${esc(Dates.fmt(e.date))}</td>
           <td>${esc(e.cat||"")}</td>
           <td>${e.note?esc(e.note):"<span class='muted'>—</span>"}</td>
           <td class="right">${Money.fmtEUR(e.amount||0)}</td>
@@ -1106,16 +1316,15 @@
       $("employeesList").innerHTML = list.map(m=>`
         <tr>
           <td><b>${esc(m.name)}</b><div class="muted" style="font-size:12px">${esc(m.type||"")}</div></td>
+          <td>${esc(m.taxclass||"")}</td>
           <td>${m.taxid?esc(m.taxid):"<span class='muted'>—</span>"}</td>
-          <td>${m.svnr?esc(m.svnr):"<span class='muted'>—</span>"}</td>
           <td class="right"><button class="btn danger" onclick="Employees.remove('${m.id}')">Löschen</button></td>
         </tr>
       `).join("") || `<tr><td colspan="4" class="muted">Keine Mitarbeiter.</td></tr>`;
 
-      this.fillEmployeeSelects(false);
+      this.fillEmployeeSelects(true);
     },
 
-    // ✅ MAIN FIX: placeholder is disabled+selected (not editable text)
     fillEmployeeSelects(keep){
       const make = (selId, placeholderText)=>{
         const sel = $(selId);
@@ -1127,19 +1336,18 @@
           ${App.state.employees.map(e=>`<option value="${escAttr(e.id)}">${esc(e.name)}</option>`).join("")}
         `;
 
-        if(keep && old && App.state.employees.some(e=>e.id===old)){
-          sel.value = old;
-        }
+        if(keep && old && App.state.employees.some(e=>e.id===old)) sel.value = old;
       };
 
       make("p_employee","— Mitarbeiter wählen —");
       make("t_employee","— Mitarbeiter wählen —");
     },
 
+    get(id){
+      return App.state.employees.find(x=>x.id===id) || null;
+    },
     getName(id){
-      if(!id) return "";
-      const e=App.state.employees.find(x=>x.id===id);
-      return e?e.name:"";
+      return this.get(id)?.name || "";
     }
   };
 
@@ -1151,7 +1359,10 @@
       if(!month){ alert("Bitte Monat wählen."); return; }
       const net = Number($("p_net").value||0);
       if(net<=0){ alert("Bitte Netto > 0 eingeben."); return; }
-      const p = { id: crypto.randomUUID(), employeeId, month, net };
+      const lost = Number($("p_lost").value||0);
+      const note = $("p_note").value.trim();
+
+      const p = { id: crypto.randomUUID(), employeeId, month, net, lost, note };
       App.state.payroll.unshift(p);
       this.clearForm();
       App.commit();
@@ -1159,9 +1370,15 @@
     },
     clearForm(){
       $("p_employee").value="";
-      const d=new Date();
-      $("p_month").value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+      $("p_month").value = Dates.ymNow();
       $("p_net").value="";
+      $("p_lost").value="";
+      $("p_note").value="";
+    },
+    remove(id){
+      App.state.payroll = App.state.payroll.filter(x=>x.id!==id);
+      App.commit();
+      TaxCert.updateSummary();
     },
     render(){
       Employees.fillEmployeeSelects(true);
@@ -1172,10 +1389,52 @@
             <td>${esc(p.month||"")}</td>
             <td>${esc(name)}</td>
             <td class="right">${Money.fmtEUR(p.net||0)}</td>
-            <td class="right"></td>
+            <td class="right">${Money.fmtEUR(p.lost||0)}</td>
+            <td class="right">
+              <button class="btn" onclick="Payroll.printById('${p.id}')">PDF</button>
+              <button class="btn danger" onclick="Payroll.remove('${p.id}')">Löschen</button>
+            </td>
           </tr>
         `;
-      }).join("") || `<tr><td colspan="4" class="muted">Keine Lohnabrechnungen.</td></tr>`;
+      }).join("") || `<tr><td colspan="5" class="muted">Keine Lohnabrechnungen.</td></tr>`;
+    },
+    print(){
+      alert("Bitte Eintrag in Liste wählen → PDF.");
+    },
+    printById(id){
+      const p = App.state.payroll.find(x=>x.id===id);
+      if(!p) return;
+      const s = App.state.settings;
+      const e = Employees.get(p.employeeId)||{};
+      $("printArea").innerHTML = `
+        <div class="printDoc">
+          <div class="printHeader">
+            <div>
+              <h1>Lohnabrechnung (intern)</h1>
+              <div><b>${esc(s.company||"")}</b></div>
+              <div style="white-space:pre-line">${esc(s.addr||"")}</div>
+              <div>E-Mail: <a href="mailto:${escAttr(s.email||"")}">${esc(s.email||"")}</a></div>
+              ${s.steuernr?`<div>Steuernummer: ${esc(s.steuernr)}</div>`:""}
+            </div>
+            <div>
+              <div><b>Monat:</b> ${esc(p.month||"")}</div>
+              <div><b>Mitarbeiter:</b> ${esc(e.name||"—")}</div>
+              <div><b>Steuerklasse:</b> ${esc(e.taxclass||"—")}</div>
+            </div>
+          </div>
+
+          <div class="printBox">
+            <div>Netto: <b>${Money.fmtEUR(p.net||0)}</b></div>
+            <div>Lohnsteuer (optional): <b>${Money.fmtEUR(p.lost||0)}</b></div>
+            ${p.note?`<div>Notiz: ${esc(p.note)}</div>`:""}
+          </div>
+
+          <div style="font-size:12px">
+            Hinweis: Dieses Dokument ist intern (nicht amtlich). Official → ELSTER/Steuerberater.
+          </div>
+        </div>
+      `;
+      window.print();
     }
   };
 
@@ -1195,20 +1454,93 @@
         return p.employeeId===employeeId && String(p.month||"").startsWith(String(year));
       });
       const sumNet = rows.reduce((a,b)=>a+Number(b.net||0),0);
+      const sumLSt = rows.reduce((a,b)=>a+Number(b.lost||0),0);
       const name = Employees.getName(employeeId) || "—";
 
       $("t_summary").innerHTML =
-        `<b>${esc(name)}</b> • Jahr ${year}<br/>Netto Summe: <b>${Money.fmtEUR(sumNet)}</b><br/>Einträge: <b>${rows.length}</b>`;
+        `<b>${esc(name)}</b> • Jahr ${year}<br/>
+         Netto Summe: <b>${Money.fmtEUR(sumNet)}</b><br/>
+         Lohnsteuer Summe: <b>${Money.fmtEUR(sumLSt)}</b><br/>
+         Einträge: <b>${rows.length}</b>`;
     },
     print(){
-      alert("TaxCert PDF (summary) waa diyaar—haddii aad rabto waan kugu buuxin karaa version print-ka.");
+      const year = Number($("t_year").value||0);
+      const employeeId = $("t_employee").value || "";
+      if(!year || !employeeId){ alert("Bitte Jahr & Mitarbeiter wählen."); return; }
+      const s = App.state.settings;
+      const e = Employees.get(employeeId)||{};
+      const rows = App.state.payroll.filter(p=>p.employeeId===employeeId && String(p.month||"").startsWith(String(year)));
+      const sumNet = rows.reduce((a,b)=>a+Number(b.net||0),0);
+      const sumLSt = rows.reduce((a,b)=>a+Number(b.lost||0),0);
+
+      $("printArea").innerHTML = `
+        <div class="printDoc">
+          <div class="printHeader">
+            <div>
+              <h1>Lohnsteuerbescheinigung (Summary)</h1>
+              <div><b>${esc(s.company||"")}</b></div>
+              <div style="white-space:pre-line">${esc(s.addr||"")}</div>
+              <div>E-Mail: <a href="mailto:${escAttr(s.email||"")}">${esc(s.email||"")}</a></div>
+            </div>
+            <div>
+              <div><b>Jahr:</b> ${year}</div>
+              <div><b>Mitarbeiter:</b> ${esc(e.name||"—")}</div>
+              <div><b>Steuerklasse:</b> ${esc(e.taxclass||"—")}</div>
+            </div>
+          </div>
+
+          <div class="printBox">
+            <div>Netto Summe: <b>${Money.fmtEUR(sumNet)}</b></div>
+            <div>Lohnsteuer Summe: <b>${Money.fmtEUR(sumLSt)}</b></div>
+            <div>Einträge: <b>${rows.length}</b></div>
+          </div>
+
+          <div style="font-size:12px">
+            Hinweis: Nur Summary (intern). Official Bescheinigung → ELSTER/Steuerberater.
+          </div>
+        </div>
+      `;
+      window.print();
+    }
+  };
+
+  const Tax = {
+    render(){
+      const s = App.state.settings;
+      const year = Number($("x_year").value||0) || new Date().getFullYear();
+      const month = ($("x_month").value||"").trim(); // optional
+
+      const inv = App.state.invoices.filter(i=>{
+        if(month) return Dates.monthKey(i.date)===month;
+        return String(i.date||"").startsWith(String(year));
+      });
+      const exp = App.state.expenses.filter(e=>{
+        if(month) return Dates.monthKey(e.date)===month;
+        return String(e.date||"").startsWith(String(year));
+      });
+      const pay = App.state.payroll.filter(p=>{
+        if(month) return String(p.month||"")===month;
+        return String(p.month||"").startsWith(String(year));
+      });
+
+      const revenue = inv.reduce((a,b)=>a+Number(b.net||0),0);
+      const expenses = exp.reduce((a,b)=>a+Number(b.amount||0),0);
+      const profit = revenue - expenses;
+      const est = Math.max(0, profit * (Number(s.estRate||0)/100));
+      const lost = pay.reduce((a,b)=>a+Number(b.lost||0),0);
+
+      $("x_rev").textContent = Money.fmtEUR(revenue);
+      $("x_exp").textContent = Money.fmtEUR(expenses);
+      $("x_profit").textContent = Money.fmtEUR(profit);
+      $("x_est").textContent = Money.fmtEUR(est);
+      $("x_lost").textContent = Money.fmtEUR(lost);
+      $("x_rate").textContent = (Number(s.estRate||0).toFixed(2)) + " %";
     }
   };
 
   const Dashboard = {
     render(){
-      const now = new Date();
-      const ym = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+      const ym = Dates.ymNow();
 
       const revenue = App.state.invoices
         .filter(i=>Dates.monthKey(i.date)===ym)
@@ -1219,7 +1551,7 @@
         .reduce((a,b)=>a+Number(b.amount||0),0);
 
       const payroll = App.state.payroll
-        .filter(p=>Dates.ymKey(p.month)===ym)
+        .filter(p=>String(p.month||"")===ym)
         .reduce((a,b)=>a+Number(b.net||0),0);
 
       $("kpiRevenueMonth").textContent = Money.fmtEUR(revenue);
@@ -1242,6 +1574,8 @@
       $("s_bic").value = s.bic||"";
       $("s_theme").value = s.theme||"dark";
       $("s_klein").value = s.klein||"1";
+      $("s_est_rate").value = (s.estRate ?? 20);
+      $("s_lost_rate").value = (s.lostRate ?? 10);
     },
     save(){
       const s = App.state.settings;
@@ -1254,6 +1588,8 @@
       s.bic = $("s_bic").value.trim();
       s.theme = $("s_theme").value;
       s.klein = $("s_klein").value;
+      s.estRate = Number($("s_est_rate").value||0);
+      s.lostRate = Number($("s_lost_rate").value||0);
       this.applyTheme();
       App.commit();
       alert("Gespeichert.");
@@ -1280,13 +1616,6 @@
   function escAttr(s){
     return esc(s).replace(/"/g,"&quot;");
   }
-  function fmtDate(iso){
-    if(!iso) return "—";
-    if(/^\d{4}-\d{2}$/.test(iso)) return iso;
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
-    const y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
-    return d+"."+m+"."+y;
-  }
 
   window.App = App;
   window.UI = UI;
@@ -1296,6 +1625,7 @@
   window.Employees = Employees;
   window.Payroll = Payroll;
   window.TaxCert = TaxCert;
+  window.Tax = Tax;
   window.Settings = Settings;
 
   App.init();
