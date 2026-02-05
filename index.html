@@ -171,6 +171,7 @@
       padding:12px; border-radius: 12px;
       font-size:13px;
     }
+
     .kpi{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
     .kpi .value{font-size:22px; font-weight:900}
     .kpi .label{color:var(--muted); font-size:12px; font-weight:700}
@@ -206,8 +207,6 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
-    select option[disabled]{ color: rgba(147,164,198,.9) }
-
     @media print{
       body{background:#fff; color:#000}
       .app, .sidebar, .topbar, .statusbar, .toast{display:none!important}
@@ -218,11 +217,9 @@
     .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
       border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
     .printHeader h1{margin:0; font-size:18px}
-    .printBox{border:1px solid #ddd; padding:10px; margin:10px 0}
     .printTable{width:100%; border-collapse:collapse}
     .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
     .printRight{text-align:right}
-    .warn{color:#a00; font-weight:700}
 
     body.light{
       color:#0b1220;
@@ -278,7 +275,7 @@
     <div class="foot">
       <div><b>Offline:</b> Daten bleiben im Browser (localStorage).</div>
       <div class="muted">Haddii uusan update muuqan: Ctrl+Shift+R (hard refresh).</div>
-      <div class="muted"><span class="warn">Hinweis:</span> Rechnung = Einzelunternehmer • §19 UStG (Kleinunternehmer).</div>
+      <div class="muted"><b>Hinweis:</b> Rechnung = Einzelunternehmer • §19 UStG (Kleinunternehmer).</div>
     </div>
   </aside>
 
@@ -286,7 +283,7 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Dashboard</h2>
-        <small id="pageSub" class="muted">Auto-Save • Kunden wählen fix • PDF via Print</small>
+        <small id="pageSub" class="muted">Auto-Save • PDF via Print</small>
       </div>
       <div class="actions" id="topActions">
         <button class="btn primary" id="btnQuickInvoice">+ Rechnung</button>
@@ -346,7 +343,7 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → Kunde auswählen → PDF.<br/>
+              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → PDF (Print).<br/>
               <b>Von…Bis</b> waa timeframe, wuxuuna ka soo muuqanayaa PDF.
             </div>
             <div class="hr"></div>
@@ -440,7 +437,7 @@
           <div class="card">
             <h3>Rechnungen</h3>
             <div class="split">
-              <div class="field"><label>Suche</label><input id="i_search" placeholder="Nr / Kunde..." /></div>
+              <div class="field"><label>Suche</label><input id="i_search" placeholder="Nr / Status..." /></div>
               <div class="field"><label>Status Filter</label>
                 <select id="i_filter">
                   <option value="">Alle</option>
@@ -451,11 +448,11 @@
               </div>
             </div>
 
+            <!-- ✅ Kunde column removed -->
             <table class="table">
               <thead>
                 <tr>
                   <th>Nr.</th>
-                  <th>Kunde</th>
                   <th>Von…Bis</th>
                   <th>Fällig</th>
                   <th>Status</th>
@@ -537,7 +534,6 @@
               <b>Auto-Save:</b> wax walba browser-ka ayuu ku keydinayaa.<br/>
               <b>Export/Import:</b> JSON si aad u backup gareyso.<br/>
               <b>Email:</b> links waa clickable (mailto).<br/>
-              <span class="warn">Haddii aad device beddesho:</span> samee Export JSON.
             </div>
           </div>
         </div>
@@ -560,153 +556,92 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ========= Mini Office (Single File) =========
-   - Offline localStorage
-   - Customers / Invoices / Employees / Settings
-   - Export/Import JSON
-   - Print invoice to PDF
-   - Clickable mailto links
-============================================= */
-
 const DB_KEY = "ms_mini_office_v1";
-
 const $ = (id)=>document.getElementById(id);
 
 const fmtEUR = (n)=>{
   const v = Number(n||0);
-  return v.toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+  return v.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
 };
 const todayISO = ()=>{
   const d = new Date();
   const pad = (x)=>String(x).padStart(2,"0");
   return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 };
-const monthKey = (isoDate)=>{
-  if(!isoDate) return "";
-  return isoDate.slice(0,7); // YYYY-MM
-};
+const monthKey = (isoDate)=> isoDate ? isoDate.slice(0,7) : "";
 const uid = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
 
 const Toast = {
-  t: null,
+  t:null,
   show(msg){
-    const el = $("toast");
-    el.textContent = msg;
-    el.style.display = "block";
+    const el=$("toast");
+    el.textContent=msg;
+    el.style.display="block";
     clearTimeout(this.t);
-    this.t = setTimeout(()=>{ el.style.display="none"; }, 2200);
+    this.t=setTimeout(()=>{el.style.display="none";},2200);
   }
 };
 
 const Store = {
-  data: null,
+  data:null,
   load(){
-    const raw = localStorage.getItem(DB_KEY);
-    if(raw){
-      try{ this.data = JSON.parse(raw); }
-      catch(e){ this.data = null; }
-    }
+    const raw=localStorage.getItem(DB_KEY);
+    if(raw){ try{ this.data=JSON.parse(raw);}catch(e){this.data=null;} }
     if(!this.data){
-      this.data = {
-        version: 1,
-        theme: "dark",
-        settings: {
-          company: "Masculine Security",
-          addr: "Werschenregerstraße 6\n28237 Bremen",
-          email: "kontakt.mass.bremen@hotmail.com",
-          phone: "",
-          iban: "DE98 1001 1001 2333 0146 96",
-          bic: "NTSBDEB1XXX",
-          hint: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+      this.data={
+        version:1,
+        theme:"dark",
+        settings:{
+          company:"Masculine Security",
+          addr:"Werschenregerstraße 6\n28237 Bremen",
+          email:"kontakt.mass.bremen@hotmail.com",
+          phone:"",
+          iban:"DE98 1001 1001 2333 0146 96",
+          bic:"NTSBDEB1XXX",
+          hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
         },
-        customers: [],
-        employees: [],
-        invoices: [],
-        recent: []
+        customers:[],
+        employees:[],
+        invoices:[],
+        recent:[]
       };
       this.save();
     }
     return this.data;
   },
-  save(){
-    localStorage.setItem(DB_KEY, JSON.stringify(this.data));
-    UI.pulse();
-  },
-  wipe(){
-    localStorage.removeItem(DB_KEY);
-    location.reload();
-  }
+  save(){ localStorage.setItem(DB_KEY, JSON.stringify(this.data)); UI.pulse(); },
+  wipe(){ localStorage.removeItem(DB_KEY); location.reload(); }
 };
 
 const UI = {
-  current: "dashboard",
-  pulseTimer: null,
+  current:"dashboard",
+  pulseTimer:null,
   pulse(){
-    $("dot").classList.remove("off");
-    $("statusText").textContent = "Gespeichert ✔";
+    $("statusText").textContent="Gespeichert ✔";
     clearTimeout(this.pulseTimer);
-    this.pulseTimer = setTimeout(()=>{
-      $("statusText").textContent = "Bereit • Auto-Save aktiv";
-    }, 1200);
+    this.pulseTimer=setTimeout(()=>{$("statusText").textContent="Bereit • Auto-Save aktiv";},1200);
   },
   go(page){
-    this.current = page;
-    // toggle nav buttons
+    this.current=page;
     document.querySelectorAll("#nav button").forEach(b=>{
       b.classList.toggle("active", b.dataset.page===page);
     });
-    // toggle pages
     ["dashboard","customers","invoices","employees","settings"].forEach(p=>{
-      const sec = $("page-"+p);
+      const sec=$("page-"+p);
       if(sec) sec.classList.toggle("hide", p!==page);
     });
-    // titles
-    const titles = {
-      dashboard:["Dashboard","Auto-Save • Kunden wählen fix • PDF via Print"],
+    const titles={
+      dashboard:["Dashboard","Auto-Save • PDF via Print"],
       customers:["Kunden","Kunden speichern • Suche • Email clickable"],
       invoices:["Rechnungen","§19 UStG • Von…Bis • PDF via Print"],
-      employees:["Mitarbeiter","Liste • einfache Speicherung (keine Lohnabrechnung)"],
-      settings:["Einstellungen","Firma • Bank • Hinweis • Backup"]
+      employees:["Mitarbeiter","Liste • Speicherung"],
+      settings:["Einstellungen","Firma • Hinweis • Backup"]
     };
-    $("pageTitle").textContent = titles[page][0];
-    $("pageSub").textContent = titles[page][1];
-
-    // page refresh
+    $("pageTitle").textContent=titles[page][0];
+    $("pageSub").textContent=titles[page][1];
     renderAll();
   }
 };
-
-function addRecent(type, desc, dateISO, amount){
-  const d = Store.data;
-  d.recent.unshift({
-    id: uid(),
-    type,
-    desc,
-    date: dateISO || todayISO(),
-    amount: amount ?? ""
-  });
-  d.recent = d.recent.slice(0,12);
-  Store.save();
-}
-
-function renderRecent(){
-  const d = Store.data;
-  const tbody = $("recentList");
-  tbody.innerHTML = "";
-  if(d.recent.length===0){
-    tbody.innerHTML = `<tr><td class="muted" colspan="4">Noch keine Aktivitäten</td></tr>`;
-    return;
-  }
-  for(const r of d.recent){
-    tbody.innerHTML += `
-      <tr>
-        <td>${escapeHtml(r.type||"")}</td>
-        <td>${escapeHtml(r.desc||"")}</td>
-        <td>${escapeHtml(r.date||"")}</td>
-        <td class="right">${r.amount!=="" ? fmtEUR(r.amount) : ""}</td>
-      </tr>`;
-  }
-}
 
 function escapeHtml(str){
   return String(str??"").replace(/[&<>"']/g, s=>({
@@ -714,18 +649,44 @@ function escapeHtml(str){
   }[s]));
 }
 
-/* ========= CUSTOMERS ========= */
+function addRecent(type, desc, dateISO, amount){
+  const d=Store.data;
+  d.recent.unshift({id:uid(),type,desc,date:dateISO||todayISO(),amount:amount??""});
+  d.recent=d.recent.slice(0,12);
+  Store.save();
+}
+
+function renderRecent(){
+  const d=Store.data;
+  const tbody=$("recentList");
+  tbody.innerHTML="";
+  if(d.recent.length===0){
+    tbody.innerHTML=`<tr><td class="muted" colspan="4">Noch keine Aktivitäten</td></tr>`;
+    return;
+  }
+  for(const r of d.recent){
+    tbody.innerHTML+=`
+      <tr>
+        <td>${escapeHtml(r.type||"")}</td>
+        <td>${escapeHtml(r.desc||"")}</td>
+        <td>${escapeHtml(r.date||"")}</td>
+        <td class="right">${r.amount!==""?fmtEUR(r.amount):""}</td>
+      </tr>`;
+  }
+}
+
+/* CUSTOMERS */
 function renderCustomers(){
-  const d = Store.data;
-  $("pillCustomers").textContent = d.customers.length;
-  const q = ($("c_search").value||"").toLowerCase().trim();
-  const rows = d.customers
+  const d=Store.data;
+  $("pillCustomers").textContent=d.customers.length;
+  const q=($("c_search").value||"").toLowerCase().trim();
+  const rows=d.customers
     .filter(c=>{
-      const s = (c.name+" "+c.email+" "+c.addr).toLowerCase();
-      return !q || s.includes(q);
+      const s=(c.name+" "+c.email+" "+c.addr).toLowerCase();
+      return !q||s.includes(q);
     })
     .map(c=>{
-      const mail = c.email ? `<a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a>` : "";
+      const mail=c.email?`<a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a>`:"";
       return `
       <tr>
         <td><b>${escapeHtml(c.name||"")}</b><div class="muted" style="font-size:12px">${escapeHtml(c.phone||"")}</div></td>
@@ -737,74 +698,55 @@ function renderCustomers(){
         </td>
       </tr>`;
     }).join("");
-  $("customersList").innerHTML = rows || `<tr><td class="muted" colspan="4">Keine Kunden gefunden</td></tr>`;
+  $("customersList").innerHTML=rows||`<tr><td class="muted" colspan="4">Keine Kunden gefunden</td></tr>`;
 
-  // update invoice customer dropdown
-  const sel = $("i_customer");
-  const current = sel.value;
-  sel.innerHTML = `<option value="" disabled ${d.customers.length? "" : "selected"}>${d.customers.length? "Bitte Kunde wählen" : "Erst Kunde anlegen"}</option>`;
+  const sel=$("i_customer");
+  const current=sel.value;
+  sel.innerHTML=`<option value="" disabled ${d.customers.length?"":"selected"}>${d.customers.length?"Bitte Kunde wählen":"Erst Kunde anlegen"}</option>`;
   for(const c of d.customers){
-    const opt = document.createElement("option");
-    opt.value = c.id;
-    opt.textContent = c.name + (c.email? " • "+c.email:"");
+    const opt=document.createElement("option");
+    opt.value=c.id;
+    opt.textContent=c.name+(c.email?" • "+c.email:"");
     sel.appendChild(opt);
   }
-  if(current && d.customers.some(x=>x.id===current)) sel.value = current;
+  if(current && d.customers.some(x=>x.id===current)) sel.value=current;
 }
 
-const Customers = {
-  clear(){
-    $("c_name").value = "";
-    $("c_email").value = "";
-    $("c_phone").value = "";
-    $("c_addr").value = "";
-  },
+const Customers={
+  clear(){ $("c_name").value=""; $("c_email").value=""; $("c_phone").value=""; $("c_addr").value=""; },
   save(){
-    const name = $("c_name").value.trim();
-    if(!name){ Toast.show("Bitte Name eingeben"); return; }
-    const c = {
-      id: uid(),
-      name,
-      email: $("c_email").value.trim(),
-      phone: $("c_phone").value.trim(),
-      addr: $("c_addr").value.trim()
-    };
+    const name=$("c_name").value.trim();
+    if(!name){Toast.show("Bitte Name eingeben");return;}
+    const c={id:uid(),name,email:$("c_email").value.trim(),phone:$("c_phone").value.trim(),addr:$("c_addr").value.trim()};
     Store.data.customers.unshift(c);
     Store.save();
-    addRecent("Kunde", `Gespeichert: ${name}`, todayISO(), "");
+    addRecent("Kunde",`Gespeichert: ${name}`,todayISO(),"");
     this.clear();
     Toast.show("Kunde gespeichert");
     renderAll();
   },
   del(id){
-    const d = Store.data;
-    const c = d.customers.find(x=>x.id===id);
-    d.customers = d.customers.filter(x=>x.id!==id);
-    // also detach invoices
-    for(const inv of d.invoices){
-      if(inv.customerId===id) inv.customerId = "";
-    }
+    const d=Store.data;
+    const c=d.customers.find(x=>x.id===id);
+    d.customers=d.customers.filter(x=>x.id!==id);
+    for(const inv of d.invoices){ if(inv.customerId===id) inv.customerId=""; }
     Store.save();
-    addRecent("Kunde", `Gelöscht: ${c?.name||id}`, todayISO(), "");
+    addRecent("Kunde",`Gelöscht: ${c?.name||id}`,todayISO(),"");
     Toast.show("Kunde gelöscht");
     renderAll();
   },
-  use(id){
-    UI.go("invoices");
-    $("i_customer").value = id;
-    Toast.show("Kunde gewählt");
-  }
+  use(id){ UI.go("invoices"); $("i_customer").value=id; Toast.show("Kunde gewählt"); }
 };
 
-/* ========= EMPLOYEES ========= */
+/* EMPLOYEES */
 function renderEmployees(){
-  const d = Store.data;
-  $("pillEmployees").textContent = d.employees.length;
-  const q = ($("m_search").value||"").toLowerCase().trim();
-  const rows = d.employees
+  const d=Store.data;
+  $("pillEmployees").textContent=d.employees.length;
+  const q=($("m_search").value||"").toLowerCase().trim();
+  const rows=d.employees
     .filter(m=>{
-      const s = (m.name+" "+m.taxid+" "+m.taxclass).toLowerCase();
-      return !q || s.includes(q);
+      const s=(m.name+" "+m.taxid+" "+m.taxclass).toLowerCase();
+      return !q||s.includes(q);
     })
     .map(m=>`
       <tr>
@@ -812,87 +754,68 @@ function renderEmployees(){
         <td class="muted">${escapeHtml(m.taxid||"")}</td>
         <td>${escapeHtml(m.taxclass||"")}</td>
         <td class="right"><button class="btn danger" onclick="Employees.del('${m.id}')">Löschen</button></td>
-      </tr>
-    `).join("");
-  $("employeesList").innerHTML = rows || `<tr><td class="muted" colspan="4">Keine Mitarbeiter gefunden</td></tr>`;
+      </tr>`).join("");
+  $("employeesList").innerHTML=rows||`<tr><td class="muted" colspan="4">Keine Mitarbeiter gefunden</td></tr>`;
 }
 
-const Employees = {
-  clear(){
-    $("m_name").value="";
-    $("m_pnr").value="";
-    $("m_taxid").value="";
-    $("m_taxclass").value="I";
-  },
+const Employees={
+  clear(){ $("m_name").value=""; $("m_pnr").value=""; $("m_taxid").value=""; $("m_taxclass").value="I"; },
   save(){
-    const name = $("m_name").value.trim();
-    if(!name){ Toast.show("Bitte Name eingeben"); return; }
-    const m = {
-      id: uid(),
-      name,
-      pnr: $("m_pnr").value.trim(),
-      taxid: $("m_taxid").value.trim(),
-      taxclass: $("m_taxclass").value
-    };
+    const name=$("m_name").value.trim();
+    if(!name){Toast.show("Bitte Name eingeben");return;}
+    const m={id:uid(),name,pnr:$("m_pnr").value.trim(),taxid:$("m_taxid").value.trim(),taxclass:$("m_taxclass").value};
     Store.data.employees.unshift(m);
     Store.save();
-    addRecent("Mitarbeiter", `Gespeichert: ${name}`, todayISO(), "");
+    addRecent("Mitarbeiter",`Gespeichert: ${name}`,todayISO(),"");
     this.clear();
     Toast.show("Mitarbeiter gespeichert");
     renderAll();
   },
   del(id){
-    const d = Store.data;
-    const m = d.employees.find(x=>x.id===id);
-    d.employees = d.employees.filter(x=>x.id!==id);
+    const d=Store.data;
+    const m=d.employees.find(x=>x.id===id);
+    d.employees=d.employees.filter(x=>x.id!==id);
     Store.save();
-    addRecent("Mitarbeiter", `Gelöscht: ${m?.name||id}`, todayISO(), "");
+    addRecent("Mitarbeiter",`Gelöscht: ${m?.name||id}`,todayISO(),"");
     Toast.show("Mitarbeiter gelöscht");
     renderAll();
   }
 };
 
-/* ========= INVOICES ========= */
+/* INVOICES */
 function nextInvoiceNo(){
-  // MS-YYYY-0001
-  const year = new Date().getFullYear();
-  const prefix = "MS-"+year+"-";
-  const nums = Store.data.invoices
+  const year=new Date().getFullYear();
+  const prefix="MS-"+year+"-";
+  const nums=Store.data.invoices
     .map(i=>i.no||"")
     .filter(no=>no.startsWith(prefix))
     .map(no=>parseInt(no.slice(prefix.length),10))
     .filter(n=>Number.isFinite(n));
-  const next = (nums.length? Math.max(...nums)+1 : 1);
-  return prefix + String(next).padStart(4,"0");
+  const next=(nums.length?Math.max(...nums)+1:1);
+  return prefix+String(next).padStart(4,"0");
 }
-
 function invoiceTotalPreview(){
-  const net = Number($("i_net").value||0);
-  $("i_previewNote").textContent = `Gesamt: ${fmtEUR(net)} • USt: 0,00 € • Hinweis: §19 UStG`;
+  const net=Number($("i_net").value||0);
+  $("i_previewNote").textContent=`Gesamt: ${fmtEUR(net)} • USt: 0,00 € • Hinweis: §19 UStG`;
 }
 
 function renderInvoices(){
-  const d = Store.data;
-  $("pillInvoices").textContent = d.invoices.length;
+  const d=Store.data;
+  $("pillInvoices").textContent=d.invoices.length;
 
-  // filters
-  const q = ($("i_search").value||"").toLowerCase().trim();
-  const st = $("i_filter").value;
+  const q=($("i_search").value||"").toLowerCase().trim();
+  const st=$("i_filter").value;
 
-  const rows = d.invoices
+  /* ✅ Kunde column removed: row mapping updated */
+  const rows=d.invoices
     .filter(inv=>{
-      const c = d.customers.find(x=>x.id===inv.customerId);
-      const s = (inv.no+" "+(c?.name||"")+" "+(inv.status||"")).toLowerCase();
-      const okQ = !q || s.includes(q);
-      const okS = !st || (inv.status===st);
-      return okQ && okS;
+      // keep customerId internally, but hide customer in the list
+      const s=(inv.no+" "+(inv.status||"")).toLowerCase();
+      return (!q||s.includes(q)) && (!st||inv.status===st);
     })
-    .map(inv=>{
-      const c = d.customers.find(x=>x.id===inv.customerId);
-      return `
+    .map(inv=>`
       <tr>
         <td><b>${escapeHtml(inv.no||"")}</b><div class="muted" style="font-size:12px">${escapeHtml(inv.date||"")}</div></td>
-        <td>${escapeHtml(c?.name||"—")}</td>
         <td class="muted">${escapeHtml(inv.von||"")}…${escapeHtml(inv.bis||"")}</td>
         <td>${escapeHtml(inv.due||"")}</td>
         <td>${escapeHtml(inv.status||"")}</td>
@@ -902,131 +825,119 @@ function renderInvoices(){
           <button class="btn" onclick="Invoices.print('${inv.id}')">PDF</button>
           <button class="btn danger" onclick="Invoices.del('${inv.id}')">Löschen</button>
         </td>
-      </tr>`;
-    }).join("");
+      </tr>
+    `).join("");
 
-  $("invoicesList").innerHTML = rows || `<tr><td class="muted" colspan="7">Keine Rechnungen gefunden</td></tr>`;
+  $("invoicesList").innerHTML=rows||`<tr><td class="muted" colspan="6">Keine Rechnungen gefunden</td></tr>`;
 
-  // dashboard KPI month revenue
-  const thisMonth = monthKey(todayISO());
-  const sumMonth = d.invoices
-    .filter(i=>monthKey(i.date)===thisMonth)
-    .reduce((a,b)=>a+Number(b.net||0),0);
-  $("kpiRevenueMonth").textContent = fmtEUR(sumMonth);
-  $("kpiCustomers").textContent = String(d.customers.length);
-  $("kpiInvoices").textContent = String(d.invoices.length);
+  const thisMonth=monthKey(todayISO());
+  const sumMonth=d.invoices.filter(i=>monthKey(i.date)===thisMonth).reduce((a,b)=>a+Number(b.net||0),0);
+  $("kpiRevenueMonth").textContent=fmtEUR(sumMonth);
+  $("kpiCustomers").textContent=String(d.customers.length);
+  $("kpiInvoices").textContent=String(d.invoices.length);
 }
 
-const Invoices = {
+const Invoices={
   clear(){
-    $("i_no").value = nextInvoiceNo();
-    $("i_date").value = todayISO();
-    $("i_von").value = "";
-    $("i_bis").value = "";
-    $("i_customer").value = "";
-    $("i_desc").value = "Sicherheitsdienstleistung";
-    $("i_net").value = "";
-    $("i_due").value = "";
-    $("i_status").value = "Entwurf";
-    $("i_hint").value = Store.data.settings.hint || "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
-    $("i_no").dataset.editId = "";
+    $("i_no").value=nextInvoiceNo();
+    $("i_date").value=todayISO();
+    $("i_von").value="";
+    $("i_bis").value="";
+    $("i_customer").value="";
+    $("i_desc").value="Sicherheitsdienstleistung";
+    $("i_net").value="";
+    $("i_due").value="";
+    $("i_status").value="Entwurf";
+    $("i_hint").value=Store.data.settings.hint||"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
+    $("i_no").dataset.editId="";
     invoiceTotalPreview();
   },
   save(){
-    const d = Store.data;
-    const no = $("i_no").value.trim() || nextInvoiceNo();
-    const date = $("i_date").value || todayISO();
-    const customerId = $("i_customer").value || "";
-    const net = Number($("i_net").value||0);
-    if(!customerId){ Toast.show("Bitte Kunde wählen"); return; }
-    if(!net || net<=0){ Toast.show("Bitte Netto Betrag eingeben"); return; }
+    const d=Store.data;
+    const no=$("i_no").value.trim()||nextInvoiceNo();
+    const date=$("i_date").value||todayISO();
+    const customerId=$("i_customer").value||"";
+    const net=Number($("i_net").value||0);
+    if(!customerId){Toast.show("Bitte Kunde wählen");return;}
+    if(!net||net<=0){Toast.show("Bitte Netto Betrag eingeben");return;}
 
-    const editId = $("i_no").dataset.editId;
-    const inv = {
-      id: editId || uid(),
-      no,
-      date,
-      von: $("i_von").value || "",
-      bis: $("i_bis").value || "",
+    const editId=$("i_no").dataset.editId;
+    const inv={
+      id: editId||uid(),
+      no, date,
+      von:$("i_von").value||"",
+      bis:$("i_bis").value||"",
       customerId,
-      desc: $("i_desc").value.trim(),
+      desc:$("i_desc").value.trim(),
       net,
-      due: $("i_due").value || "",
-      status: $("i_status").value,
-      hint: d.settings.hint || $("i_hint").value
+      due:$("i_due").value||"",
+      status:$("i_status").value,
+      hint:d.settings.hint||$("i_hint").value
     };
 
     if(editId){
-      const idx = d.invoices.findIndex(x=>x.id===editId);
+      const idx=d.invoices.findIndex(x=>x.id===editId);
       if(idx>=0) d.invoices[idx]=inv;
-      addRecent("Rechnung", `Aktualisiert: ${no}`, date, net);
+      addRecent("Rechnung",`Aktualisiert: ${no}`,date,net);
       Toast.show("Rechnung aktualisiert");
     }else{
       d.invoices.unshift(inv);
-      addRecent("Rechnung", `Gespeichert: ${no}`, date, net);
+      addRecent("Rechnung",`Gespeichert: ${no}`,date,net);
       Toast.show("Rechnung gespeichert");
     }
-
     Store.save();
     renderAll();
   },
   load(id){
-    const d = Store.data;
-    const inv = d.invoices.find(x=>x.id===id);
+    const d=Store.data;
+    const inv=d.invoices.find(x=>x.id===id);
     if(!inv) return;
     UI.go("invoices");
-    $("i_no").value = inv.no || "";
-    $("i_no").dataset.editId = inv.id;
-    $("i_date").value = inv.date || todayISO();
-    $("i_von").value = inv.von || "";
-    $("i_bis").value = inv.bis || "";
-    $("i_customer").value = inv.customerId || "";
-    $("i_desc").value = inv.desc || "";
-    $("i_net").value = String(inv.net ?? "");
-    $("i_due").value = inv.due || "";
-    $("i_status").value = inv.status || "Entwurf";
-    $("i_hint").value = inv.hint || Store.data.settings.hint;
+    $("i_no").value=inv.no||"";
+    $("i_no").dataset.editId=inv.id;
+    $("i_date").value=inv.date||todayISO();
+    $("i_von").value=inv.von||"";
+    $("i_bis").value=inv.bis||"";
+    $("i_customer").value=inv.customerId||"";
+    $("i_desc").value=inv.desc||"";
+    $("i_net").value=String(inv.net??"");
+    $("i_due").value=inv.due||"";
+    $("i_status").value=inv.status||"Entwurf";
+    $("i_hint").value=inv.hint||Store.data.settings.hint;
     invoiceTotalPreview();
     Toast.show("Rechnung geladen");
   },
   del(id){
-    const d = Store.data;
-    const inv = d.invoices.find(x=>x.id===id);
-    d.invoices = d.invoices.filter(x=>x.id!==id);
+    const d=Store.data;
+    const inv=d.invoices.find(x=>x.id===id);
+    d.invoices=d.invoices.filter(x=>x.id!==id);
     Store.save();
-    addRecent("Rechnung", `Gelöscht: ${inv?.no||id}`, todayISO(), inv?.net ?? "");
+    addRecent("Rechnung",`Gelöscht: ${inv?.no||id}`,todayISO(),inv?.net??"");
     Toast.show("Rechnung gelöscht");
     renderAll();
   },
-  print(id){
-    const d = Store.data;
-    const inv = d.invoices.find(x=>x.id===id) || this._current();
-    if(!inv){ Toast.show("Keine Rechnung gewählt"); return; }
-    const c = d.customers.find(x=>x.id===inv.customerId);
-    const s = d.settings;
 
-    const doc = `
+  // PDF: no Kunde box + no Bank section (already removed)
+  print(id){
+    const d=Store.data;
+    const inv=d.invoices.find(x=>x.id===id) || this._current();
+    if(!inv){Toast.show("Keine Rechnung gewählt");return;}
+    const s=d.settings;
+
+    const doc=`
       <div class="printHeader">
         <div>
           <h1>Rechnung</h1>
           <div><b>${escapeHtml(s.company||"")}</b></div>
           <div style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
           <div>E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a></div>
-          ${s.phone? `<div>Tel: ${escapeHtml(s.phone)}</div>`:""}
+          ${s.phone?`<div>Tel: ${escapeHtml(s.phone)}</div>`:""}
         </div>
         <div style="text-align:right">
           <div><b>Rechnungs-Nr.:</b> ${escapeHtml(inv.no||"")}</div>
           <div><b>Rechnungsdatum:</b> ${escapeHtml(inv.date||"")}</div>
           <div><b>Zeitraum:</b> ${escapeHtml(inv.von||"")}…${escapeHtml(inv.bis||"")}</div>
         </div>
-      </div>
-
-      <div class="printBox">
-        <div><b>Rechnung an:</b></div>
-        <div><b>${escapeHtml(c?.name||"")}</b></div>
-        <div>${c?.email ? `E-Mail: <a href="mailto:${encodeURIComponent(c.email)}">${escapeHtml(c.email)}</a>` : ""}</div>
-        <div style="white-space:pre-line">${escapeHtml(c?.addr||"")}</div>
-        ${c?.phone ? `<div>Tel: ${escapeHtml(c.phone)}</div>`:""}
       </div>
 
       <table class="printTable">
@@ -1063,30 +974,24 @@ const Invoices = {
         </tfoot>
       </table>
 
-      <div class="printBox">
-        <div><b>Zahlungsziel:</b> ${escapeHtml(inv.due||"")}</div>
-        <div><b>Bankverbindung:</b></div>
-        <div>IBAN: ${escapeHtml(s.iban||"")}</div>
-        <div>BIC: ${escapeHtml(s.bic||"")}</div>
-      </div>
-
       <div style="font-size:12px;color:#555;margin-top:10px">
         <b>Hinweis:</b> ${escapeHtml(inv.hint||s.hint||"")}
       </div>
     `;
 
-    $("printDoc").innerHTML = doc;
+    $("printDoc").innerHTML=doc;
     window.print();
   },
-  emailCurrent(){
-    const inv = this._current();
-    if(!inv){ Toast.show("Erst Rechnung speichern oder öffnen"); return; }
-    const d = Store.data;
-    const c = d.customers.find(x=>x.id===inv.customerId);
-    if(!c?.email){ Toast.show("Kunde hat keine Email"); return; }
 
-    const subject = `Rechnung ${inv.no} – ${d.settings.company}`;
-    const bodyLines = [
+  emailCurrent(){
+    const inv=this._current();
+    if(!inv){Toast.show("Erst Rechnung speichern oder öffnen");return;}
+    const d=Store.data;
+    const c=d.customers.find(x=>x.id===inv.customerId);
+    if(!c?.email){Toast.show("Kunde hat keine Email");return;}
+
+    const subject=`Rechnung ${inv.no} – ${d.settings.company}`;
+    const bodyLines=[
       `Guten Tag,`,
       ``,
       `anbei die Rechnung ${inv.no}.`,
@@ -1096,84 +1001,79 @@ const Invoices = {
       `Hinweis: ${inv.hint || d.settings.hint}`,
       ``,
       `Mit freundlichen Grüßen`,
-      `${d.settings.company}`,
-      `${d.settings.addr}`,
-      `IBAN: ${d.settings.iban}`,
-      `BIC: ${d.settings.bic}`
+      `${d.settings.company}`
     ];
-    const mailto = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-    location.href = mailto;
+    const mailto=`mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    location.href=mailto;
   },
   _current(){
-    const editId = $("i_no").dataset.editId;
+    const editId=$("i_no").dataset.editId;
     if(editId) return Store.data.invoices.find(x=>x.id===editId);
     return null;
   }
 };
 
-/* ========= SETTINGS ========= */
-const Settings = {
+/* SETTINGS */
+const Settings={
   load(){
-    const s = Store.data.settings;
-    $("s_company").value = s.company||"";
-    $("s_addr").value = s.addr||"";
-    $("s_email").value = s.email||"";
-    $("s_phone").value = s.phone||"";
-    $("s_iban").value = s.iban||"";
-    $("s_bic").value = s.bic||"";
-    $("s_hint").value = s.hint||"";
-    // reflect header
-    $("brandTitle").textContent = s.company || "Masculine Security";
-    $("brandLogo").textContent = (s.company||"MS").split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
+    const s=Store.data.settings;
+    $("s_company").value=s.company||"";
+    $("s_addr").value=s.addr||"";
+    $("s_email").value=s.email||"";
+    $("s_phone").value=s.phone||"";
+    $("s_iban").value=s.iban||"";
+    $("s_bic").value=s.bic||"";
+    $("s_hint").value=s.hint||"";
+    $("brandTitle").textContent=s.company||"Masculine Security";
+    $("brandLogo").textContent=(s.company||"MS").split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
   },
   save(){
-    const s = Store.data.settings;
-    s.company = $("s_company").value.trim();
-    s.addr = $("s_addr").value.trim();
-    s.email = $("s_email").value.trim();
-    s.phone = $("s_phone").value.trim();
-    s.iban = $("s_iban").value.trim();
-    s.bic = $("s_bic").value.trim();
-    s.hint = $("s_hint").value.trim() || "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
+    const s=Store.data.settings;
+    s.company=$("s_company").value.trim();
+    s.addr=$("s_addr").value.trim();
+    s.email=$("s_email").value.trim();
+    s.phone=$("s_phone").value.trim();
+    s.iban=$("s_iban").value.trim();
+    s.bic=$("s_bic").value.trim();
+    s.hint=$("s_hint").value.trim()||"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
     Store.save();
-    addRecent("Settings", "Firma aktualisiert", todayISO(), "");
+    addRecent("Settings","Firma aktualisiert",todayISO(),"");
     Toast.show("Einstellungen gespeichert");
     this.load();
     renderAll();
   }
 };
 
-/* ========= EXPORT / IMPORT ========= */
+/* EXPORT / IMPORT */
 function exportJSON(){
-  const blob = new Blob([JSON.stringify(Store.data, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "masculine-security-mini-office-backup.json";
+  const blob=new Blob([JSON.stringify(Store.data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="masculine-security-mini-office-backup.json";
   a.click();
   URL.revokeObjectURL(url);
   Toast.show("Export gestartet");
 }
 function importJSON(file){
-  const reader = new FileReader();
-  reader.onload = ()=>{
+  const reader=new FileReader();
+  reader.onload=()=>{
     try{
-      const data = JSON.parse(reader.result);
-      if(!data || typeof data!=="object") throw new Error("bad");
-      // minimal validation
-      data.customers = Array.isArray(data.customers)? data.customers : [];
-      data.employees = Array.isArray(data.employees)? data.employees : [];
-      data.invoices = Array.isArray(data.invoices)? data.invoices : [];
-      data.recent = Array.isArray(data.recent)? data.recent : [];
-      data.settings = data.settings || Store.data.settings;
-      data.theme = data.theme || "dark";
-      Store.data = data;
+      const data=JSON.parse(reader.result);
+      if(!data||typeof data!=="object") throw new Error("bad");
+      data.customers=Array.isArray(data.customers)?data.customers:[];
+      data.employees=Array.isArray(data.employees)?data.employees:[];
+      data.invoices=Array.isArray(data.invoices)?data.invoices:[];
+      data.recent=Array.isArray(data.recent)?data.recent:[];
+      data.settings=data.settings||Store.data.settings;
+      data.theme=data.theme||"dark";
+      Store.data=data;
       Store.save();
       applyTheme();
       Settings.load();
       renderAll();
       Toast.show("Import erfolgreich");
-      addRecent("Backup", "Import JSON", todayISO(), "");
+      addRecent("Backup","Import JSON",todayISO(),"");
     }catch(e){
       Toast.show("Import Fehler: JSON ungültig");
     }
@@ -1181,67 +1081,58 @@ function importJSON(file){
   reader.readAsText(file);
 }
 
-/* ========= THEME ========= */
 function applyTheme(){
-  const t = Store.data.theme || "dark";
+  const t=Store.data.theme||"dark";
   document.body.classList.toggle("light", t==="light");
-  $("dot").classList.toggle("off", false);
 }
 
-/* ========= RENDER ALL ========= */
 function renderAll(){
   Settings.load();
   renderRecent();
   renderCustomers();
   renderEmployees();
   renderInvoices();
-  // invoice preview
   invoiceTotalPreview();
-  // default invoice fields if empty
   if(!$("i_no").value) Invoices.clear();
 }
 
-/* ========= EVENTS ========= */
 function bind(){
-  // nav
   document.querySelectorAll("#nav button").forEach(b=>{
-    b.addEventListener("click", ()=> UI.go(b.dataset.page));
+    b.addEventListener("click", ()=>UI.go(b.dataset.page));
   });
 
-  // quick buttons
   $("btnQuickInvoice").addEventListener("click", ()=>{ UI.go("invoices"); Invoices.clear(); });
   $("btnQuickCustomer").addEventListener("click", ()=>{ UI.go("customers"); $("c_name").focus(); });
+
   $("btnTheme").addEventListener("click", ()=>{
-    Store.data.theme = (Store.data.theme==="light" ? "dark" : "light");
+    Store.data.theme=(Store.data.theme==="light"?"dark":"light");
     Store.save();
     applyTheme();
     Toast.show("Theme geändert");
   });
+
   $("btnExport").addEventListener("click", exportJSON);
-  $("btnImport").addEventListener("click", ()=> $("fileImport").click());
-  $("fileImport").addEventListener("change", (e)=>{
-    const f = e.target.files?.[0];
+  $("btnImport").addEventListener("click", ()=>$("fileImport").click());
+  $("fileImport").addEventListener("change",(e)=>{
+    const f=e.target.files?.[0];
     if(f) importJSON(f);
     e.target.value="";
   });
 
   $("btnEmailCompany").addEventListener("click", ()=>{
-    const s = Store.data.settings;
-    if(!s.email){ Toast.show("Firma Email fehlt"); return; }
-    location.href = `mailto:${encodeURIComponent(s.email)}`;
+    const s=Store.data.settings;
+    if(!s.email){Toast.show("Firma Email fehlt");return;}
+    location.href=`mailto:${encodeURIComponent(s.email)}`;
   });
 
-  // customers
   $("btnCustomerSave").addEventListener("click", ()=>Customers.save());
   $("btnCustomerClear").addEventListener("click", ()=>Customers.clear());
   $("c_search").addEventListener("input", renderCustomers);
 
-  // employees
   $("btnEmployeeSave").addEventListener("click", ()=>Employees.save());
   $("btnEmployeeClear").addEventListener("click", ()=>Employees.clear());
   $("m_search").addEventListener("input", renderEmployees);
 
-  // invoices
   $("btnInvoiceSave").addEventListener("click", ()=>Invoices.save());
   $("btnInvoiceClear").addEventListener("click", ()=>Invoices.clear());
   $("btnInvoicePrint").addEventListener("click", ()=>Invoices.print());
@@ -1250,20 +1141,17 @@ function bind(){
   $("i_search").addEventListener("input", renderInvoices);
   $("i_filter").addEventListener("change", renderInvoices);
 
-  // settings
   $("btnSettingsSave").addEventListener("click", ()=>Settings.save());
   $("btnWipe").addEventListener("click", ()=>{
-    const ok = confirm("Alles löschen? (Kunden/Rechnungen/Mitarbeiter)");
+    const ok=confirm("Alles löschen? (Kunden/Rechnungen/Mitarbeiter)");
     if(ok) Store.wipe();
   });
 
-  // autosave for settings fields (optional: save when leaving)
   ["s_company","s_addr","s_email","s_phone","s_iban","s_bic","s_hint"].forEach(id=>{
     $(id).addEventListener("change", ()=>Settings.save());
   });
 }
 
-/* ========= INIT ========= */
 (function init(){
   Store.load();
   applyTheme();
