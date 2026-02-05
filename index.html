@@ -184,6 +184,7 @@
       padding:6px 14px;
       border-top:1px solid rgba(255,255,255,.06);
       background: rgba(0,0,0,.10);
+      flex-wrap:wrap;
     }
     .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
     .dot.off{background:rgba(255,255,255,.25)}
@@ -194,10 +195,8 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
-    /* placeholder option (not editable text) */
     select option[disabled]{ color: rgba(147,164,198,.9) }
 
-    /* PRINT */
     @media print{
       body{background:#fff; color:#000}
       .app, .sidebar, .topbar, .statusbar{display:none!important}
@@ -214,7 +213,6 @@
     .printRight{text-align:right}
     .warn{color:#a00; font-weight:700}
 
-    /* LIGHT THEME */
     body.light{
       color:#0b1220;
       background:
@@ -268,8 +266,8 @@
 
     <div class="foot">
       <div><b>Offline:</b> Daten bleiben im Browser (localStorage).</div>
-      <div class="muted">Auto-Save: wax kasta markaad qorto si toos ah ayuu u kaydiyaa.</div>
-      <div class="muted"><span class="warn">Hinweis:</span> Rechnung = Einzelunternehmer (§19 UStG, wenn Kleinunternehmer).</div>
+      <div class="muted">Haddii uusan update muuqan: Ctrl+Shift+R (hard refresh).</div>
+      <div class="muted"><span class="warn">Hinweis:</span> Rechnung = Einzelunternehmer • §19 UStG (Kleinunternehmer).</div>
     </div>
   </aside>
 
@@ -291,8 +289,6 @@
     </div>
 
     <div class="content">
-
-      <!-- DASHBOARD -->
       <section id="page-dashboard">
         <div class="grid3">
           <div class="card">
@@ -300,7 +296,7 @@
               <div>
                 <div class="label">Umsatz (Monat)</div>
                 <div class="value" id="kpiRevenueMonth">0,00 €</div>
-                <div class="muted" style="font-size:12px">Rechnung: Netto (Kleinunternehmer USt=0)</div>
+                <div class="muted" style="font-size:12px">Netto • USt=0 (§19 UStG)</div>
               </div>
               <span class="tag">📈</span>
             </div>
@@ -310,7 +306,7 @@
               <div>
                 <div class="label">Kunden</div>
                 <div class="value" id="kpiCustomers">0</div>
-                <div class="muted" style="font-size:12px">Kunden wählen in Rechnung</div>
+                <div class="muted" style="font-size:12px">Kunden werden gespeichert</div>
               </div>
               <span class="tag">👤</span>
             </div>
@@ -338,9 +334,8 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>Kunden wählen:</b> Erst Kunde speichern → dann in Rechnung auswählen.<br/>
-              <b>Von…Bis:</b> Zeitraum wird in PDF gedruckt.<br/>
-              <b>Direkt Email:</b> Öffnet dein Mail-Programm.
+              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → Kunde auswählen → PDF.<br/>
+              <b>Von…Bis</b> waa timeframe, wuxuuna ka soo muuqanayaa PDF.
             </div>
             <div class="hr"></div>
             <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
@@ -350,13 +345,13 @@
         </div>
       </section>
 
-      <!-- CUSTOMERS -->
       <section id="page-customers" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Kunden</h3>
             <div class="field"><label>Suche</label><input id="c_search" placeholder="Suche name/email..." /></div>
             <div class="hr"></div>
+
             <h3>Neuer Kunde</h3>
             <div class="field"><label>Name / Firma</label><input id="c_name" placeholder="z.B. Beispiel GmbH"/></div>
             <div class="split">
@@ -364,9 +359,11 @@
               <div class="field"><label>Telefon</label><input id="c_phone" placeholder="+49 ..."/></div>
             </div>
             <div class="field"><label>Adresse</label><input id="c_addr" placeholder="Straße, PLZ Ort"/></div>
-            <button class="btn primary" onclick="Customers.add()">Speichern</button>
-            <button class="btn danger" onclick="Customers.clearForm()">Leeren</button>
+
+            <button class="btn primary" id="btnCustomerSave">Speichern</button>
+            <button class="btn danger" id="btnCustomerClear">Leeren</button>
           </div>
+
           <div class="card">
             <h3>Kundenliste</h3>
             <table class="table">
@@ -377,7 +374,6 @@
         </div>
       </section>
 
-      <!-- INVOICES (Einzelunternehmer) -->
       <section id="page-invoices" class="hide">
         <div class="grid2">
           <div class="card">
@@ -394,9 +390,7 @@
             </div>
 
             <div class="field"><label>Kunde</label>
-              <select id="i_customer">
-                <option value="" disabled selected>— Bitte wählen —</option>
-              </select>
+              <select id="i_customer"></select>
             </div>
 
             <div class="field"><label>Leistung / Beschreibung</label>
@@ -416,17 +410,17 @@
                   <option value="Bezahlt">Bezahlt</option>
                 </select>
               </div>
-              <div class="field"><label>Hinweis</label>
+              <div class="field"><label>Hinweis (§19 UStG)</label>
                 <input id="i_hint" value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet." readonly/>
               </div>
             </div>
 
             <div class="note" id="i_previewNote">Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG</div>
 
-            <button class="btn primary" onclick="Invoices.add()">Speichern</button>
-            <button class="btn" onclick="Invoices.print()">PDF öffnen</button>
-            <button class="btn" onclick="Invoices.emailToCustomer()">Email Rechnung</button>
-            <button class="btn danger" onclick="Invoices.clearForm()">Leeren</button>
+            <button class="btn primary" id="btnInvoiceSave">Speichern</button>
+            <button class="btn" id="btnInvoicePrint">PDF öffnen</button>
+            <button class="btn" id="btnInvoiceEmail">Email Rechnung</button>
+            <button class="btn danger" id="btnInvoiceClear">Leeren</button>
           </div>
 
           <div class="card">
@@ -461,13 +455,13 @@
         </div>
       </section>
 
-      <!-- EMPLOYEES (basic, for future payroll) -->
       <section id="page-employees" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Mitarbeiter</h3>
             <div class="field"><label>Suche</label><input id="m_search" placeholder="Name/Steuer-ID..." /></div>
             <div class="hr"></div>
+
             <h3>Neuer Mitarbeiter</h3>
             <div class="split">
               <div class="field"><label>Name</label><input id="m_name" placeholder="Vorname Nachname"/></div>
@@ -481,8 +475,9 @@
                 </select>
               </div>
             </div>
-            <button class="btn primary" onclick="Employees.add()">Speichern</button>
-            <button class="btn danger" onclick="Employees.clearForm()">Leeren</button>
+
+            <button class="btn primary" id="btnEmployeeSave">Speichern</button>
+            <button class="btn danger" id="btnEmployeeClear">Leeren</button>
           </div>
 
           <div class="card">
@@ -495,19 +490,685 @@
         </div>
       </section>
 
-      <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
           <div class="card">
-            <h3>Einstellungen</h3>
+            <h3>Einstellungen (Firma)</h3>
 
-            <div class="field"><label>Firma / Name</label><input id="s_company" placeholder="Masculine Security"/></div>
-            <div class="field"><label>Adresse</label><input id="s_addr" placeholder="Wersch
-...
+            <div class="field"><label>Firma / Name</label><input id="s_company"/></div>
+            <div class="field"><label>Adresse</label><input id="s_addr"/></div>
+            <div class="split">
+              <div class="field"><label>Email</label><input id="s_email"/></div>
+              <div class="field"><label>Telefon (optional)</label><input id="s_phone" placeholder="+49 ..."/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>IBAN</label><input id="s_iban" placeholder="DE..."/></div>
+              <div class="field"><label>BIC</label><input id="s_bic" placeholder="..."/></div>
+            </div>
+            <div class="field"><label>Steuernummer</label><input id="s_taxno" placeholder="..."/></div>
+
+            <button class="btn primary" id="btnSettingsSave">Speichern</button>
+            <button class="btn danger" id="btnResetAll">Alles löschen (Reset)</button>
+
+            <div class="hr"></div>
+            <div class="note">
+              <b>Tip:</b> Settings waxay ka soo muuqanayaan PDF-ga Rechnung.
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Info</h3>
+            <div class="note">
+              <b>Rechnung (Einzelunternehmer):</b> USt = 0 haddii aad tahay Kleinunternehmer (§19 UStG).<br/>
+              <b>PDF:</b> “PDF öffnen” → Browser Print → “Save as PDF”.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="statusbar">
+      <span class="dot" id="dotOk"></span>
+      <span id="statusText">Bereit.</span>
+      <span class="pill" id="verPill">v1</span>
+    </div>
+  </main>
+</div>
+
+<div id="printArea"></div>
+
 <script>
-  if (!window.structuredClone) {
-    window.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+  // ✅ FIX: structuredClone fallback (old browsers/webview)
+  if (!window.structuredClone) window.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const fmtEUR = (n) => (Number(n||0)).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €";
+  const todayISO = () => new Date().toISOString().slice(0,10);
+  const safeId = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
+
+  const Storage = {
+    key: "ms_mini_office_v1",
+    load(){
+      const raw = localStorage.getItem(this.key);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    },
+    save(state){
+      localStorage.setItem(this.key, JSON.stringify(state));
+    },
+    wipe(){
+      localStorage.removeItem(this.key);
+    }
+  };
+
+  const Defaults = () => ({
+    version: 1,
+    theme: "dark",
+    settings: {
+      company: "Masculine Security",
+      addr: "",
+      email: "kontakt.mass.bremen@hotmail.com",
+      phone: "",
+      iban: "",
+      bic: "",
+      taxno: ""
+    },
+    customers: [],
+    employees: [],
+    invoices: [],
+    recent: []
+  });
+
+  let State = null;
+
+  function setStatus(text, ok=true){
+    $("statusText").textContent = text;
+    $("dotOk").classList.toggle("off", !ok);
   }
+
+  function commit(){
+    Storage.save(State);
+    renderAll();
+  }
+
+  function addRecent(type, desc, amount=0){
+    State.recent.unshift({
+      id: safeId(),
+      type,
+      desc,
+      date: new Date().toLocaleString("de-DE"),
+      amount: Number(amount||0)
+    });
+    State.recent = State.recent.slice(0,20);
+  }
+
+  function applyTheme(){
+    document.body.classList.toggle("light", State.theme === "light");
+  }
+
+  function nextInvoiceNo(){
+    const year = new Date().getFullYear();
+    const prefix = `MS-${year}-`;
+    const nums = State.invoices
+      .map(i => (i.no||""))
+      .filter(no => no.startsWith(prefix))
+      .map(no => parseInt(no.split("-").pop(),10))
+      .filter(n => Number.isFinite(n));
+    const next = (nums.length ? Math.max(...nums) : 0) + 1;
+    return prefix + String(next).padStart(4,"0");
+  }
+
+  // ---------- UI ----------
+  const UI = {
+    go(page){
+      // nav active
+      document.querySelectorAll("#nav button").forEach(b=>{
+        b.classList.toggle("active", b.dataset.page === page);
+      });
+      // sections
+      document.querySelectorAll('[id^="page-"]').forEach(sec=>{
+        sec.classList.toggle("hide", sec.id !== `page-${page}`);
+      });
+
+      // title
+      const titleMap = {
+        dashboard: "Dashboard",
+        customers: "Kunden",
+        invoices: "Rechnungen",
+        employees: "Mitarbeiter",
+        settings: "Einstellungen"
+      };
+      $("pageTitle").textContent = titleMap[page] || "Mini Office";
+      $("pageSub").textContent = "Auto-Save • Offline • PDF via Print";
+
+      // page-specific refresh
+      if(page === "invoices") Invoices.refreshCustomerSelect();
+      setStatus("Bereit.");
+    }
+  };
+  window.UI = UI;
+
+  // ---------- Customers ----------
+  const Customers = {
+    add(){
+      const name = $("c_name").value.trim();
+      const email = $("c_email").value.trim();
+      const phone = $("c_phone").value.trim();
+      const addr = $("c_addr").value.trim();
+
+      if(!name){
+        setStatus("Bitte Kundenname eingeben.", false);
+        return;
+      }
+      const c = { id: safeId(), name, email, phone, addr };
+      State.customers.unshift(c);
+      addRecent("Kunde", `Kunde gespeichert: ${name}`, 0);
+      this.clearForm();
+      commit();
+      setStatus("Kunde gespeichert ✅");
+    },
+    remove(id){
+      State.customers = State.customers.filter(c=>c.id!==id);
+      commit();
+      setStatus("Kunde gelöscht.");
+    },
+    clearForm(){
+      $("c_name").value="";
+      $("c_email").value="";
+      $("c_phone").value="";
+      $("c_addr").value="";
+    },
+    render(){
+      const q = ($("c_search").value||"").toLowerCase();
+      const list = State.customers.filter(c=>{
+        const blob = `${c.name} ${c.email} ${c.addr}`.toLowerCase();
+        return !q || blob.includes(q);
+      });
+      $("customersList").innerHTML = list.map(c=>`
+        <tr>
+          <td><b>${escapeHTML(c.name)}</b></td>
+          <td>${escapeHTML(c.email||"")}</td>
+          <td>${escapeHTML(c.addr||"")}</td>
+          <td class="right">
+            <button class="btn danger" onclick="Customers.remove('${c.id}')">Löschen</button>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="4" class="muted">Noch keine Kunden.</td></tr>`;
+
+      $("pillCustomers").textContent = State.customers.length;
+      $("kpiCustomers").textContent = State.customers.length;
+    }
+  };
+  window.Customers = Customers;
+
+  // ---------- Employees ----------
+  const Employees = {
+    add(){
+      const name = $("m_name").value.trim();
+      const pnr = $("m_pnr").value.trim();
+      const taxid = $("m_taxid").value.trim();
+      const taxclass = $("m_taxclass").value;
+
+      if(!name){
+        setStatus("Bitte Mitarbeitername eingeben.", false);
+        return;
+      }
+      const m = { id: safeId(), name, pnr, taxid, taxclass };
+      State.employees.unshift(m);
+      addRecent("Mitarbeiter", `Mitarbeiter gespeichert: ${name}`, 0);
+      this.clearForm();
+      commit();
+      setStatus("Mitarbeiter gespeichert ✅");
+    },
+    remove(id){
+      State.employees = State.employees.filter(m=>m.id!==id);
+      commit();
+      setStatus("Mitarbeiter gelöscht.");
+    },
+    clearForm(){
+      $("m_name").value="";
+      $("m_pnr").value="";
+      $("m_taxid").value="";
+      $("m_taxclass").value="I";
+    },
+    render(){
+      const q = ($("m_search").value||"").toLowerCase();
+      const list = State.employees.filter(m=>{
+        const blob = `${m.name} ${m.taxid} ${m.taxclass}`.toLowerCase();
+        return !q || blob.includes(q);
+      });
+      $("employeesList").innerHTML = list.map(m=>`
+        <tr>
+          <td><b>${escapeHTML(m.name)}</b></td>
+          <td>${escapeHTML(m.taxid||"")}</td>
+          <td>${escapeHTML(m.taxclass||"")}</td>
+          <td class="right">
+            <button class="btn danger" onclick="Employees.remove('${m.id}')">Löschen</button>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="4" class="muted">Noch keine Mitarbeiter.</td></tr>`;
+
+      $("pillEmployees").textContent = State.employees.length;
+    }
+  };
+  window.Employees = Employees;
+
+  // ---------- Invoices ----------
+  const Invoices = {
+    refreshCustomerSelect(){
+      const sel = $("i_customer");
+      const current = sel.value;
+      const opts = [
+        `<option value="" disabled ${current ? "" : "selected"}>— Bitte wählen —</option>`,
+        ...State.customers.map(c => `<option value="${c.id}" ${c.id===current?"selected":""}>${escapeHTML(c.name)}</option>`)
+      ];
+      sel.innerHTML = opts.join("");
+    },
+    updatePreview(){
+      const net = Number($("i_net").value||0);
+      $("i_previewNote").textContent = `Gesamt: ${fmtEUR(net)} • USt: ${fmtEUR(0)} • Hinweis: §19 UStG`;
+      $("kpiRevenueMonth").textContent = fmtEUR(calcMonthRevenue());
+    },
+    add(){
+      const no = ($("i_no").value||"").trim() || nextInvoiceNo();
+      const date = $("i_date").value || todayISO();
+      const von = $("i_von").value || "";
+      const bis = $("i_bis").value || "";
+      const due = $("i_due").value || "";
+      const customerId = $("i_customer").value || "";
+      const desc = $("i_desc").value.trim();
+      const net = Number($("i_net").value||0);
+      const status = $("i_status").value || "Entwurf";
+
+      if(!customerId){
+        setStatus("Bitte Kunde auswählen.", false);
+        return;
+      }
+      if(!desc){
+        setStatus("Bitte Leistung/Beschreibung eingeben.", false);
+        return;
+      }
+      if(!(net>0)){
+        setStatus("Bitte Netto-Betrag eingeben.", false);
+        return;
+      }
+
+      const customer = State.customers.find(c=>c.id===customerId) || null;
+
+      const inv = {
+        id: safeId(),
+        no, date, von, bis, due,
+        customerId,
+        customerName: customer ? customer.name : "",
+        customerEmail: customer ? customer.email : "",
+        customerAddr: customer ? customer.addr : "",
+        desc,
+        net,
+        vat: 0,
+        total: net,
+        status,
+        note: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+      };
+
+      State.invoices.unshift(inv);
+      addRecent("Rechnung", `Rechnung ${no} an ${inv.customerName}`, net);
+      this.clearForm(false);
+      commit();
+      setStatus("Rechnung gespeichert ✅");
+    },
+    clearForm(resetNo=true){
+      if(resetNo) $("i_no").value = nextInvoiceNo();
+      $("i_date").value = todayISO();
+      $("i_von").value = "";
+      $("i_bis").value = "";
+      $("i_due").value = "";
+      $("i_desc").value = "";
+      $("i_net").value = "";
+      $("i_status").value = "Entwurf";
+      this.refreshCustomerSelect();
+      this.updatePreview();
+    },
+    remove(id){
+      State.invoices = State.invoices.filter(i=>i.id!==id);
+      commit();
+      setStatus("Rechnung gelöscht.");
+    },
+    emailToCustomer(id=null){
+      let inv = null;
+      if(id){
+        inv = State.invoices.find(x=>x.id===id);
+      }else{
+        // current form
+        const cid = $("i_customer").value || "";
+        const c = State.customers.find(x=>x.id===cid);
+        inv = {
+          no: ($("i_no").value||"").trim() || nextInvoiceNo(),
+          date: $("i_date").value || todayISO(),
+          customerEmail: c ? c.email : "",
+          customerName: c ? c.name : "",
+          total: Number($("i_net").value||0)
+        };
+      }
+      if(!inv || !inv.customerEmail){
+        setStatus("Kein Kunden-Email gefunden.", false);
+        return;
+      }
+      const subj = encodeURIComponent(`Rechnung ${inv.no} – Masculine Security`);
+      const body = encodeURIComponent(
+        `Guten Tag ${inv.customerName || ""},\n\nanbei die Rechnung ${inv.no}.\nBetrag: ${fmtEUR(inv.total)}\n\nMit freundlichen Grüßen\n${State.settings.company}\n${State.settings.email}`
+      );
+      window.location.href = `mailto:${encodeURIComponent(inv.customerEmail)}?subject=${subj}&body=${body}`;
+      setStatus("Email-App geöffnet.");
+    },
+    print(id=null){
+      let inv = null;
+      if(id){
+        inv = State.invoices.find(x=>x.id===id);
+      }else{
+        // from form
+        const cid = $("i_customer").value || "";
+        const c = State.customers.find(x=>x.id===cid) || {};
+        inv = {
+          no: ($("i_no").value||"").trim() || nextInvoiceNo(),
+          date: $("i_date").value || todayISO(),
+          von: $("i_von").value || "",
+          bis: $("i_bis").value || "",
+          due: $("i_due").value || "",
+          customerName: c.name||"",
+          customerAddr: c.addr||"",
+          customerEmail: c.email||"",
+          desc: $("i_desc").value.trim(),
+          net: Number($("i_net").value||0),
+          vat: 0,
+          total: Number($("i_net").value||0),
+          note: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+        };
+      }
+
+      const daysTxt = dateRangeDays(inv.von, inv.bis);
+      const company = State.settings;
+
+      $("printArea").innerHTML = `
+        <div class="printDoc">
+          <div class="printHeader">
+            <div>
+              <h1>Rechnung</h1>
+              <div><b>${escapeHTML(company.company||"")}</b></div>
+              <div>${escapeHTML(company.addr||"")}</div>
+              <div>Email: ${escapeHTML(company.email||"")}</div>
+              ${company.phone?`<div>Tel: ${escapeHTML(company.phone)}</div>`:""}
+            </div>
+            <div>
+              <div><b>Rechnung Nr.:</b> ${escapeHTML(inv.no||"")}</div>
+              <div><b>Rechnungsdatum:</b> ${escapeHTML(inv.date||"")}</div>
+              ${inv.due?`<div><b>Fällig am:</b> ${escapeHTML(inv.due)}</div>`:""}
+              ${(inv.von||inv.bis)?`<div><b>Von…Bis:</b> ${escapeHTML(inv.von||"")} – ${escapeHTML(inv.bis||"")} ${daysTxt?`(${daysTxt})`:""}</div>`:""}
+              ${company.taxno?`<div><b>Steuernummer:</b> ${escapeHTML(company.taxno)}</div>`:""}
+            </div>
+          </div>
+
+          <div class="printBox">
+            <div><b>Kunde:</b> ${escapeHTML(inv.customerName||"")}</div>
+            <div>${escapeHTML(inv.customerAddr||"")}</div>
+            ${inv.customerEmail?`<div>Email: ${escapeHTML(inv.customerEmail)}</div>`:""}
+          </div>
+
+          <table class="printTable">
+            <thead>
+              <tr><th>Beschreibung</th><th class="printRight">Netto</th><th class="printRight">USt</th><th class="printRight">Gesamt</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${escapeHTML(inv.desc||"")}</td>
+                <td class="printRight">${fmtEUR(inv.net||0)}</td>
+                <td class="printRight">${fmtEUR(0)}</td>
+                <td class="printRight"><b>${fmtEUR(inv.total||0)}</b></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="printBox">
+            <div><b>Zahlung:</b></div>
+            ${company.iban?`<div>IBAN: ${escapeHTML(company.iban)}</div>`:""}
+            ${company.bic?`<div>BIC: ${escapeHTML(company.bic)}</div>`:""}
+          </div>
+
+          <div class="printBox">
+            <div><b>Hinweis:</b> ${escapeHTML(inv.note||"")}</div>
+          </div>
+        </div>
+      `;
+      window.print();
+      setStatus("Print geöffnet (Save as PDF).");
+    },
+    render(){
+      // filters
+      const q = ($("i_search").value||"").toLowerCase();
+      const st = $("i_filter").value||"";
+      const list = State.invoices.filter(inv=>{
+        const blob = `${inv.no} ${inv.customerName}`.toLowerCase();
+        const okQ = !q || blob.includes(q);
+        const okS = !st || inv.status===st;
+        return okQ && okS;
+      });
+
+      $("invoicesList").innerHTML = list.map(inv=>`
+        <tr>
+          <td><b>${escapeHTML(inv.no)}</b></td>
+          <td>${escapeHTML(inv.customerName||"")}</td>
+          <td>${escapeHTML(inv.von||"")} – ${escapeHTML(inv.bis||"")}</td>
+          <td>${escapeHTML(inv.due||"")}</td>
+          <td>${escapeHTML(inv.status||"")}</td>
+          <td class="right">${fmtEUR(inv.net||0)}</td>
+          <td class="right">
+            <button class="btn" onclick="Invoices.print('${inv.id}')">PDF</button>
+            <button class="btn" onclick="Invoices.emailToCustomer('${inv.id}')">Email</button>
+            <button class="btn danger" onclick="Invoices.remove('${inv.id}')">Löschen</button>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="7" class="muted">Noch keine Rechnungen.</td></tr>`;
+
+      $("pillInvoices").textContent = State.invoices.length;
+      $("kpiInvoices").textContent = State.invoices.length;
+      $("kpiRevenueMonth").textContent = fmtEUR(calcMonthRevenue());
+    }
+  };
+  window.Invoices = Invoices;
+
+  // ---------- Dashboard ----------
+  function renderRecent(){
+    const rows = State.recent.map(r=>`
+      <tr>
+        <td>${escapeHTML(r.type||"")}</td>
+        <td>${escapeHTML(r.desc||"")}</td>
+        <td>${escapeHTML(r.date||"")}</td>
+        <td class="right">${fmtEUR(r.amount||0)}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4" class="muted">Noch keine Aktivitäten.</td></tr>`;
+    $("recentList").innerHTML = rows;
+  }
+
+  function calcMonthRevenue(){
+    const now = new Date();
+    const ym = now.toISOString().slice(0,7); // YYYY-MM
+    return State.invoices
+      .filter(i => (i.date||"").slice(0,7) === ym)
+      .reduce((sum,i)=>sum + Number(i.net||0), 0);
+  }
+
+  function dateRangeDays(von, bis){
+    if(!von || !bis) return "";
+    const a = new Date(von);
+    const b = new Date(bis);
+    if(isNaN(a.getTime()) || isNaN(b.getTime())) return "";
+    const diff = Math.round((b - a) / (1000*60*60*24)) + 1;
+    if(diff <= 0) return "";
+    return `${diff} Tage`;
+  }
+
+  function escapeHTML(s){
+    return String(s??"").replace(/[&<>"']/g, (c)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  // ---------- Settings ----------
+  const Settings = {
+    loadToForm(){
+      const s = State.settings;
+      $("s_company").value = s.company || "";
+      $("s_addr").value = s.addr || "";
+      $("s_email").value = s.email || "";
+      $("s_phone").value = s.phone || "";
+      $("s_iban").value = s.iban || "";
+      $("s_bic").value = s.bic || "";
+      $("s_taxno").value = s.taxno || "";
+    },
+    saveFromForm(){
+      State.settings.company = $("s_company").value.trim();
+      State.settings.addr = $("s_addr").value.trim();
+      State.settings.email = $("s_email").value.trim();
+      State.settings.phone = $("s_phone").value.trim();
+      State.settings.iban = $("s_iban").value.trim();
+      State.settings.bic = $("s_bic").value.trim();
+      State.settings.taxno = $("s_taxno").value.trim();
+      commit();
+      setStatus("Einstellungen gespeichert ✅");
+    }
+  };
+
+  // ---------- Export / Import ----------
+  function exportJSON(){
+    const blob = new Blob([JSON.stringify(State, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ms-mini-office-backup.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus("Export heruntergeladen.");
+  }
+
+  function importJSON(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const data = JSON.parse(String(reader.result||""));
+        if(!data || typeof data !== "object") throw new Error("invalid");
+        State = Object.assign(Defaults(), data);
+        applyTheme();
+        commit();
+        setStatus("Import erfolgreich ✅");
+      }catch(e){
+        setStatus("Import Fehler: JSON ungültig.", false);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ---------- Render ----------
+  function renderAll(){
+    Customers.render();
+    Employees.render();
+    Invoices.refreshCustomerSelect();
+    Invoices.render();
+    renderRecent();
+    Settings.loadToForm();
+    $("verPill").textContent = "v1";
+  }
+
+  // ---------- Init ----------
+  function init(){
+    try{
+      State = Storage.load() || Defaults();
+
+      // default dates
+      $("i_date").value = todayISO();
+
+      // Ensure invoice no
+      $("i_no").value = nextInvoiceNo();
+
+      applyTheme();
+      renderAll();
+      Invoices.updatePreview();
+
+      // NAV click
+      document.querySelectorAll("#nav button").forEach(btn=>{
+        btn.addEventListener("click", ()=> UI.go(btn.dataset.page));
+      });
+
+      // Top actions
+      $("btnQuickInvoice").addEventListener("click", ()=>{ UI.go("invoices"); });
+      $("btnQuickCustomer").addEventListener("click", ()=>{ UI.go("customers"); });
+      $("btnTheme").addEventListener("click", ()=>{
+        State.theme = (State.theme === "light") ? "dark" : "light";
+        applyTheme();
+        commit();
+        setStatus("Theme geändert.");
+      });
+
+      $("btnEmailCompany").addEventListener("click", ()=>{
+        const mail = (State.settings.email||"").trim();
+        if(!mail){ setStatus("Kein Firmen-Email in Einstellungen.", false); return; }
+        window.location.href = `mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent("Masculine Security")}`;
+      });
+
+      $("btnExport").addEventListener("click", exportJSON);
+      $("btnImport").addEventListener("click", ()=> $("fileImport").click());
+      $("fileImport").addEventListener("change", (e)=>{
+        const f = e.target.files && e.target.files[0];
+        if(f) importJSON(f);
+        e.target.value = "";
+      });
+
+      // Customers events
+      $("btnCustomerSave").addEventListener("click", ()=> Customers.add());
+      $("btnCustomerClear").addEventListener("click", ()=> { Customers.clearForm(); setStatus("Form geleert."); });
+      $("c_search").addEventListener("input", ()=> Customers.render());
+
+      // Employees events
+      $("btnEmployeeSave").addEventListener("click", ()=> Employees.add());
+      $("btnEmployeeClear").addEventListener("click", ()=> { Employees.clearForm(); setStatus("Form geleert."); });
+      $("m_search").addEventListener("input", ()=> Employees.render());
+
+      // Invoices events
+      $("i_net").addEventListener("input", ()=> Invoices.updatePreview());
+      $("i_customer").addEventListener("change", ()=> setStatus("Kunde ausgewählt."));
+      $("btnInvoiceSave").addEventListener("click", ()=> Invoices.add());
+      $("btnInvoicePrint").addEventListener("click", ()=> Invoices.print());
+      $("btnInvoiceEmail").addEventListener("click", ()=> Invoices.emailToCustomer());
+      $("btnInvoiceClear").addEventListener("click", ()=> { Invoices.clearForm(); setStatus("Form geleert."); });
+
+      $("i_search").addEventListener("input", ()=> Invoices.render());
+      $("i_filter").addEventListener("change", ()=> Invoices.render());
+
+      // Settings events
+      $("btnSettingsSave").addEventListener("click", ()=> Settings.saveFromForm());
+      $("btnResetAll").addEventListener("click", ()=>{
+        if(confirm("Wirklich alles löschen?")){
+          Storage.wipe();
+          State = Defaults();
+          applyTheme();
+          commit();
+          Invoices.clearForm(true);
+          setStatus("Alles gelöscht ✅");
+        }
+      });
+
+      // Go default page
+      UI.go("dashboard");
+
+      setStatus("Bereit ✅");
+    }catch(err){
+      console.error(err);
+      setStatus("Fehler: " + (err && err.message ? err.message : "unknown"), false);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>
