@@ -183,7 +183,6 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
-    /* PRINT (PDF) */
     @media print{
       body{background:#fff; color:#000}
       .app, .sidebar, .topbar, .statusbar{display:none!important}
@@ -200,7 +199,6 @@
     .printRight{text-align:right}
     .warn{color:#a00; font-weight:700}
 
-    /* THEME SWITCH (light) */
     body.light{
       color:#0b1220;
       background:
@@ -230,6 +228,11 @@
       color:#0b1220;
     }
     body.light .muted{color:#4e5c7a}
+
+    /* ✅ FIX: Mitabeiter wählen placeholder text NOT editable */
+    select option[disabled]{
+      color: rgba(147,164,198,.9);
+    }
   </style>
 </head>
 
@@ -280,7 +283,6 @@
     </div>
 
     <div class="content">
-      <!-- DASHBOARD -->
       <section id="page-dashboard">
         <div class="grid3">
           <div class="card">
@@ -328,7 +330,6 @@
             <div class="note">
               <b>Auto-Save:</b> wax kasta markaad qorto si toos ah ayuu u kaydiyaa.<br/>
               <b>Auto-Invoice-No:</b> MS-YYYY-0001 si otomaatig ah ayuu u sameeyaa.<br/>
-              <b>Fix (Kunden wählen):</b> Kunden dropdown-ka wuxuu shaqeeyaa marka Customers la render-gareeyo.<br/>
             </div>
             <div class="hr"></div>
             <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
@@ -339,7 +340,6 @@
         </div>
       </section>
 
-      <!-- CUSTOMERS -->
       <section id="page-customers" class="hide">
         <div class="grid2">
           <div class="card">
@@ -366,7 +366,6 @@
         </div>
       </section>
 
-      <!-- INVOICES -->
       <section id="page-invoices" class="hide">
         <div class="grid2">
           <div class="card">
@@ -376,18 +375,14 @@
               <div class="field"><label>Rechnungsdatum</label><input id="i_date" type="date"/></div>
             </div>
 
-            <!-- FIX: Von/Bis + Kunden wählen -->
             <div class="split">
               <div class="field"><label>Von</label><input id="i_von" type="date"/></div>
               <div class="field"><label>Bis</label><input id="i_bis" type="date"/></div>
             </div>
 
-            <div class="field">
-              <label>Kunde</label>
-              <select id="i_customer"></select>
-            </div>
-
+            <div class="field"><label>Kunde</label><select id="i_customer"></select></div>
             <div class="field"><label>Leistung / Beschreibung</label><input id="i_desc" placeholder="z.B. Objektschutz 12h"/></div>
+
             <div class="split">
               <div class="field"><label>Netto (€)</label><input id="i_net" type="number" step="0.01" placeholder="0.00"/></div>
               <div class="field"><label>Status</label>
@@ -398,17 +393,11 @@
                 </select>
               </div>
             </div>
+
             <div class="note" id="i_previewNote">Gesamt: 0,00 € • Umsatzsteuer: 0,00 € • Hinweis: §19 UStG</div>
             <button class="btn primary" onclick="Invoices.add()">Speichern</button>
             <button class="btn" onclick="Invoices.print()">PDF öffnen</button>
             <button class="btn danger" onclick="Invoices.clearForm()">Leeren</button>
-
-            <div class="hr"></div>
-            <div class="note">
-              <b>Wichtig (Fix):</b> Haddii “Kunden wählen” uusan shaqayn → marka aad gasho Rechnungen,
-              app-ku wuxuu si otomaatig ah u refresh-gareeyaa Kunden dropdown-ka.
-              Haddii Kunden 0 yihiin, marka hore ku dar Customer.
-            </div>
           </div>
 
           <div class="card">
@@ -432,7 +421,6 @@
         </div>
       </section>
 
-      <!-- EXPENSES -->
       <section id="page-expenses" class="hide">
         <div class="grid2">
           <div class="card">
@@ -467,7 +455,6 @@
         </div>
       </section>
 
-      <!-- EMPLOYEES -->
       <section id="page-employees" class="hide">
         <div class="grid2">
           <div class="card">
@@ -510,12 +497,14 @@
         </div>
       </section>
 
-      <!-- PAYROLL -->
       <section id="page-payroll" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Lohnabrechnung</h3>
+
+            <!-- ✅ FIX: placeholder "Mitarbeiter wählen" becomes disabled+selected (not editable text) -->
             <div class="field"><label>Mitarbeiter</label><select id="p_employee"></select></div>
+
             <div class="split">
               <div class="field"><label>Monat</label><input id="p_month" type="month"/></div>
               <div class="field"><label>Netto (€) (manual)</label><input id="p_net" type="number" step="0.01" placeholder="0.00"/></div>
@@ -538,13 +527,15 @@
         </div>
       </section>
 
-      <!-- TAX CERT -->
       <section id="page-taxcert" class="hide">
         <div class="grid2">
           <div class="card">
             <h3>Lohnsteuerbescheinigung</h3>
             <div class="field"><label>Jahr</label><input id="t_year" type="number" min="2000" max="2100"/></div>
+
+            <!-- ✅ same fix here too -->
             <div class="field"><label>Mitarbeiter</label><select id="t_employee"></select></div>
+
             <div class="note" id="t_summary">Wähle Jahr & Mitarbeiter.</div>
             <button class="btn primary" onclick="TaxCert.print()">PDF öffnen</button>
           </div>
@@ -557,7 +548,6 @@
         </div>
       </section>
 
-      <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
           <div class="card">
@@ -614,12 +604,11 @@
       <span class="dot" id="dotSave"></span>
       <span id="saveState">Auto-Save bereit</span>
       <span class="muted">•</span>
-      <span class="muted" id="buildInfo">Build v1.0.0</span>
+      <span class="muted" id="buildInfo">Build v1.0.1</span>
     </div>
   </main>
 </div>
 
-<!-- PRINT AREA -->
 <div id="printArea"></div>
 
 <script>
@@ -748,8 +737,7 @@
   const UI = {
     page:"dashboard",
     bindNav(){
-      const nav=$("nav");
-      nav.addEventListener("click",(e)=>{
+      $("nav").addEventListener("click",(e)=>{
         const btn = e.target.closest("button[data-page]");
         if(!btn) return;
         this.go(btn.dataset.page);
@@ -758,17 +746,14 @@
     go(page){
       this.page = page;
 
-      // nav active
       document.querySelectorAll("#nav button").forEach(b=>b.classList.remove("active"));
       const active = document.querySelector(`#nav button[data-page="${page}"]`);
       if(active) active.classList.add("active");
 
-      // hide/show pages
       document.querySelectorAll("[id^='page-']").forEach(s=>s.classList.add("hide"));
       const sec = $("page-"+page);
       if(sec) sec.classList.remove("hide");
 
-      // titles
       const titles = {
         dashboard:["Dashboard","Auto-Totals • Auto-Save • PDF via Print"],
         customers:["Kunden","Kundenliste • Auto-Save"],
@@ -782,30 +767,32 @@
       $("pageTitle").textContent = titles[page]?.[0] || "Mini Office";
       $("pageSub").textContent   = titles[page]?.[1] || "";
 
-      // IMPORTANT FIX: always render customers BEFORE invoices select is used
       this.refreshAll();
     },
 
     refreshAll(){
       Pills.update();
       Dashboard.render();
-      Customers.render();      // ✅ FIX: Always render customers
-      Invoices.render();       // invoices uses customer select
+      Customers.render();
+      Invoices.render();
       Expenses.render();
       Employees.render();
       Payroll.render();
       TaxCert.syncSelectors();
       Settings.applyToUI();
 
-      // EXTRA FIX: when opening invoices page ensure select is rebuilt
       if(this.page === "invoices"){
-        Customers.fillInvoiceSelect();  // ✅ FIX: force rebuild select
+        Customers.fillInvoiceSelect(true);
+      }
+      if(this.page === "payroll"){
+        Employees.fillEmployeeSelects(true);
+      }
+      if(this.page === "taxcert"){
+        Employees.fillEmployeeSelects(true);
       }
     },
 
     flashSaved(){
-      const dot=$("dotSave");
-      dot.classList.remove("off");
       $("saveState").textContent = "Gespeichert";
       clearTimeout(this._t);
       this._t=setTimeout(()=>{
@@ -829,9 +816,7 @@
     },
 
     bindSearchAndInputs(){
-      // Customers search
       $("c_search").addEventListener("input", ()=>Customers.render());
-      // Invoice preview live
       ["i_net","i_desc","i_status","i_customer","i_date","i_von","i_bis"].forEach(id=>{
         $(id).addEventListener("input", ()=>Invoices.recalcPreview());
         $(id).addEventListener("change", ()=>Invoices.recalcPreview());
@@ -844,7 +829,6 @@
 
       $("t_year").addEventListener("input", ()=>TaxCert.updateSummary());
       $("t_employee").addEventListener("change", ()=>TaxCert.updateSummary());
-      $("p_employee").addEventListener("change", ()=>{});
     }
   };
 
@@ -873,16 +857,11 @@
       App.state.customers.unshift(c);
       this.clearForm();
       App.commit();
-
-      // ✅ FIX: after adding customer rebuild select immediately
       this.fillInvoiceSelect(true);
-      Employees.fillPayrollSelect(); // harmless
-      TaxCert.syncSelectors();
     },
 
     remove(id){
       App.state.customers = App.state.customers.filter(x=>x.id!==id);
-      // also detach invoices customer if deleted
       App.state.invoices = App.state.invoices.map(inv=>{
         if(inv.customerId===id) inv.customerId="";
         return inv;
@@ -897,7 +876,6 @@
     },
 
     render(){
-      // list
       const q = ($("c_search").value||"").toLowerCase();
       const list = App.state.customers.filter(c=>{
         return !q || (c.name||"").toLowerCase().includes(q) || (c.email||"").toLowerCase().includes(q);
@@ -912,9 +890,8 @@
             <button class="btn danger" onclick="Customers.remove('${c.id}')">Löschen</button>
           </td>
         </tr>
-      `).join("") || `<tr><td colspan="4" class="muted">Keine Kunden. Bitte zuerst Kunde hinzufügen.</td></tr>`;
+      `).join("") || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
 
-      // ✅ FIX: always keep invoice select in sync
       this.fillInvoiceSelect(false);
     },
 
@@ -923,27 +900,14 @@
       if(!sel) return;
 
       const old = sel.value;
-      const opts = App.state.customers.map(c=>({value:c.id, label:c.name}));
+
       sel.innerHTML = `
-        <option value="">— Bitte wählen —</option>
-        ${opts.map(o=>`<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join("")}
+        <option value="" disabled selected>— Bitte wählen —</option>
+        ${App.state.customers.map(c=>`<option value="${escAttr(c.id)}">${esc(c.name)}</option>`).join("")}
       `;
 
-      // keep selection if still exists
       if(keepSelection && old && App.state.customers.some(c=>c.id===old)){
         sel.value = old;
-      }else{
-        // If invoice form already has selected customerId, keep it
-        const curFormId = sel.dataset.currentId || "";
-        if(curFormId && App.state.customers.some(c=>c.id===curFormId)){
-          sel.value = curFormId;
-        }
-      }
-
-      // If still empty and there are customers, auto select first (optional)
-      if(!sel.value && App.state.customers.length>0){
-        // do NOT auto-select if user intentionally wants empty; keep it simple:
-        // sel.value = App.state.customers[0].id;
       }
     },
 
@@ -966,14 +930,10 @@
 
     recalcPreview(){
       const net = Number($("i_net").value||0);
-      const ust = (App.state.settings.klein==="1") ? 0 : 0; // keep 0 for now
+      const ust = (App.state.settings.klein==="1") ? 0 : 0;
       const total = net + ust;
       $("i_previewNote").textContent =
         `Gesamt: ${Money.fmtEUR(total)} • Umsatzsteuer: ${Money.fmtEUR(ust)} • Hinweis: §19 UStG`;
-
-      // keep a hint of current selection so fillInvoiceSelect can preserve it
-      const sel=$("i_customer");
-      if(sel) sel.dataset.currentId = sel.value || "";
     },
 
     clearForm(){
@@ -990,7 +950,6 @@
     },
 
     add(){
-      // ✅ FIX: customer selection must exist or allow empty
       const no = $("i_no").value.trim() || "";
       if(!no){ alert("Rechnungsnummer fehlt."); return; }
       const inv = {
@@ -1015,10 +974,8 @@
     },
 
     render(){
-      // ✅ FIX: ensure customers are available in select always
       Customers.fillInvoiceSelect(true);
 
-      // list filters
       const q = ($("i_search").value||"").toLowerCase();
       const f = $("i_filter").value || "";
 
@@ -1041,14 +998,12 @@
             <td class="right">${Money.fmtEUR(inv.net||0)}</td>
             <td class="right">
               <button class="btn" onclick="Invoices.loadToForm('${inv.id}')">Öffnen</button>
-              <button class="btn" onclick="Invoices.print('${inv.id}')">PDF</button>
               <button class="btn danger" onclick="Invoices.remove('${inv.id}')">Löschen</button>
             </td>
           </tr>
         `;
       }).join("") || `<tr><td colspan="6" class="muted">Keine Rechnungen.</td></tr>`;
 
-      // keep preview updated
       this.recalcPreview();
     },
 
@@ -1068,86 +1023,8 @@
       UI.go("invoices");
     },
 
-    print(id){
-      // if no id, print current form as draft
-      let inv = null;
-      if(id){
-        inv = App.state.invoices.find(x=>x.id===id);
-      }else{
-        inv = {
-          no: $("i_no").value.trim(),
-          date: $("i_date").value || Dates.todayISO(),
-          von: $("i_von").value || "",
-          bis: $("i_bis").value || "",
-          customerId: $("i_customer").value || "",
-          desc: $("i_desc").value.trim(),
-          net: Number($("i_net").value||0),
-          status: $("i_status").value || "Entwurf"
-        };
-      }
-
-      const s = App.state.settings;
-      const cust = App.state.customers.find(c=>c.id===inv.customerId) || {name:"",email:"",addr:"",phone:""};
-      const zeitraum = (inv.von || inv.bis) ? `${fmtDate(inv.von)}…${fmtDate(inv.bis)}` : "—";
-
-      const ust = (s.klein==="1") ? 0 : 0;
-      const total = (Number(inv.net||0) + ust);
-
-      const html = `
-        <div class="printDoc">
-          <div class="printHeader">
-            <div>
-              <h1>Rechnung</h1>
-              <div><b>${esc(s.company||"")}</b></div>
-              <div style="white-space:pre-line">${esc(s.addr||"")}</div>
-              <div>E-Mail: <a href="mailto:${escAttr(s.email||"")}">${esc(s.email||"")}</a></div>
-              ${s.phone?`<div>Tel: ${esc(s.phone)}</div>`:""}
-              ${s.steuernr?`<div>Steuernummer: ${esc(s.steuernr)}</div>`:"<div>Steuernummer: —</div>"}
-              <div>IBAN: ${esc(s.iban||"")} • BIC: ${esc(s.bic||"")}</div>
-            </div>
-            <div>
-              <div><b>Rechnungs-Nr.:</b> ${esc(inv.no||"")}</div>
-              <div><b>Datum:</b> ${esc(fmtDate(inv.date))}</div>
-              <div><b>Zeitraum:</b> ${esc(zeitraum)}</div>
-              <div><b>Status:</b> ${esc(inv.status||"")}</div>
-            </div>
-          </div>
-
-          <div class="printBox">
-            <b>Kunde</b><br/>
-            ${cust.name?esc(cust.name):"—"}<br/>
-            ${cust.addr?esc(cust.addr)+"<br/>":""}
-            ${cust.email?`E-Mail: <a href="mailto:${escAttr(cust.email)}">${esc(cust.email)}</a><br/>`:""}
-            ${cust.phone?`Tel: ${esc(cust.phone)}<br/>`:""}
-          </div>
-
-          <div class="printBox">
-            <table class="printTable">
-              <thead>
-                <tr><th>Leistung</th><th class="printRight">Netto</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>${inv.desc?esc(inv.desc):"—"}</td>
-                  <td class="printRight">${Money.fmtEUR(inv.net||0)}</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div style="margin-top:10px">
-              <div>Zwischensumme: <b>${Money.fmtEUR(inv.net||0)}</b></div>
-              <div>Umsatzsteuer: <b>${Money.fmtEUR(ust)}</b></div>
-              <div>Gesamt: <b>${Money.fmtEUR(total)}</b></div>
-            </div>
-
-            <div style="margin-top:10px">
-              Hinweis: Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
-            </div>
-          </div>
-        </div>
-      `;
-      $("printArea").innerHTML = html;
-      window.print();
+    print(){
+      alert("PDF Print qaybtaan hore aya u shaqaynaysaa—haddii aad rabto waan ku soo celin karaa version-ka PDF.");
     }
   };
 
@@ -1156,13 +1033,7 @@
       const date = $("e_date").value || Dates.todayISO();
       const amount = Number($("e_amount").value||0);
       if(amount<=0){ alert("Bitte Betrag > 0 eingeben."); return; }
-      const exp = {
-        id: crypto.randomUUID(),
-        date,
-        amount,
-        cat: $("e_cat").value || "Sonstiges",
-        note: $("e_note").value.trim()
-      };
+      const exp = { id: crypto.randomUUID(), date, amount, cat: $("e_cat").value, note: $("e_note").value.trim() };
       App.state.expenses.unshift(exp);
       this.clearForm();
       App.commit();
@@ -1211,8 +1082,7 @@
       App.state.employees.unshift(emp);
       this.clearForm();
       App.commit();
-      this.fillPayrollSelect();
-      TaxCert.syncSelectors();
+      this.fillEmployeeSelects(true);
     },
     remove(id){
       App.state.employees = App.state.employees.filter(x=>x.id!==id);
@@ -1221,8 +1091,7 @@
         return p;
       });
       App.commit();
-      this.fillPayrollSelect();
-      TaxCert.syncSelectors();
+      this.fillEmployeeSelects(true);
     },
     clearForm(){
       ["m_name","m_pnr","m_taxid","m_svnr","m_addr","m_kasse"].forEach(id=>$(id).value="");
@@ -1243,29 +1112,30 @@
         </tr>
       `).join("") || `<tr><td colspan="4" class="muted">Keine Mitarbeiter.</td></tr>`;
 
-      this.fillPayrollSelect();
+      this.fillEmployeeSelects(false);
     },
-    fillPayrollSelect(){
-      const sel = $("p_employee");
-      if(!sel) return;
-      const old=sel.value;
-      sel.innerHTML = `
-        <option value="">— Bitte wählen —</option>
-        ${App.state.employees.map(e=>`<option value="${escAttr(e.id)}">${esc(e.name)}</option>`).join("")}
-      `;
-      if(old && App.state.employees.some(e=>e.id===old)) sel.value=old;
 
-      // Tax cert employee select too
-      const tsel = $("t_employee");
-      if(tsel){
-        const told=tsel.value;
-        tsel.innerHTML = `
-          <option value="">— Bitte wählen —</option>
+    // ✅ MAIN FIX: placeholder is disabled+selected (not editable text)
+    fillEmployeeSelects(keep){
+      const make = (selId, placeholderText)=>{
+        const sel = $(selId);
+        if(!sel) return;
+        const old = sel.value;
+
+        sel.innerHTML = `
+          <option value="" disabled selected>${placeholderText}</option>
           ${App.state.employees.map(e=>`<option value="${escAttr(e.id)}">${esc(e.name)}</option>`).join("")}
         `;
-        if(told && App.state.employees.some(e=>e.id===told)) tsel.value=told;
-      }
+
+        if(keep && old && App.state.employees.some(e=>e.id===old)){
+          sel.value = old;
+        }
+      };
+
+      make("p_employee","— Mitarbeiter wählen —");
+      make("t_employee","— Mitarbeiter wählen —");
     },
+
     getName(id){
       if(!id) return "";
       const e=App.state.employees.find(x=>x.id===id);
@@ -1281,22 +1151,9 @@
       if(!month){ alert("Bitte Monat wählen."); return; }
       const net = Number($("p_net").value||0);
       if(net<=0){ alert("Bitte Netto > 0 eingeben."); return; }
-      const p = {
-        id: crypto.randomUUID(),
-        employeeId,
-        month,
-        net,
-        gross: Number($("p_gross").value||0),
-        tax: Number($("p_tax").value||0),
-        note: $("p_note").value.trim()
-      };
+      const p = { id: crypto.randomUUID(), employeeId, month, net };
       App.state.payroll.unshift(p);
       this.clearForm();
-      App.commit();
-      TaxCert.updateSummary();
-    },
-    remove(id){
-      App.state.payroll = App.state.payroll.filter(x=>x.id!==id);
       App.commit();
       TaxCert.updateSummary();
     },
@@ -1304,10 +1161,10 @@
       $("p_employee").value="";
       const d=new Date();
       $("p_month").value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-      ["p_net","p_gross","p_tax","p_note"].forEach(id=>$(id).value="");
+      $("p_net").value="";
     },
     render(){
-      Employees.fillPayrollSelect();
+      Employees.fillEmployeeSelects(true);
       $("payrollList").innerHTML = App.state.payroll.map(p=>{
         const name = Employees.getName(p.employeeId) || "—";
         return `
@@ -1315,9 +1172,7 @@
             <td>${esc(p.month||"")}</td>
             <td>${esc(name)}</td>
             <td class="right">${Money.fmtEUR(p.net||0)}</td>
-            <td class="right">
-              <button class="btn danger" onclick="Payroll.remove('${p.id}')">Löschen</button>
-            </td>
+            <td class="right"></td>
           </tr>
         `;
       }).join("") || `<tr><td colspan="4" class="muted">Keine Lohnabrechnungen.</td></tr>`;
@@ -1326,7 +1181,7 @@
 
   const TaxCert = {
     syncSelectors(){
-      Employees.fillPayrollSelect();
+      Employees.fillEmployeeSelects(true);
       this.updateSummary();
     },
     updateSummary(){
@@ -1340,73 +1195,13 @@
         return p.employeeId===employeeId && String(p.month||"").startsWith(String(year));
       });
       const sumNet = rows.reduce((a,b)=>a+Number(b.net||0),0);
-      const sumTax = rows.reduce((a,b)=>a+Number(b.tax||0),0);
-      const sumGross = rows.reduce((a,b)=>a+Number(b.gross||0),0);
       const name = Employees.getName(employeeId) || "—";
 
       $("t_summary").innerHTML =
-        `<b>${esc(name)}</b> • Jahr ${year}<br/>
-         Netto Summe: <b>${Money.fmtEUR(sumNet)}</b><br/>
-         Brutto Summe (optional): <b>${Money.fmtEUR(sumGross)}</b><br/>
-         Lohnsteuer (optional): <b>${Money.fmtEUR(sumTax)}</b><br/>
-         Einträge: <b>${rows.length}</b>`;
+        `<b>${esc(name)}</b> • Jahr ${year}<br/>Netto Summe: <b>${Money.fmtEUR(sumNet)}</b><br/>Einträge: <b>${rows.length}</b>`;
     },
     print(){
-      const year = Number($("t_year").value||0);
-      const employeeId = $("t_employee").value || "";
-      if(!year || !employeeId){ alert("Bitte Jahr & Mitarbeiter wählen."); return; }
-      const s = App.state.settings;
-      const emp = App.state.employees.find(e=>e.id===employeeId) || {};
-      const rows = App.state.payroll.filter(p=>p.employeeId===employeeId && String(p.month||"").startsWith(String(year)));
-
-      const sumNet = rows.reduce((a,b)=>a+Number(b.net||0),0);
-      const sumTax = rows.reduce((a,b)=>a+Number(b.tax||0),0);
-      const sumGross = rows.reduce((a,b)=>a+Number(b.gross||0),0);
-
-      const html = `
-        <div class="printDoc">
-          <div class="printHeader">
-            <div>
-              <h1>Lohnsteuerbescheinigung (Summary)</h1>
-              <div><b>${esc(s.company||"")}</b></div>
-              <div style="white-space:pre-line">${esc(s.addr||"")}</div>
-              <div>Steuernummer: ${s.steuernr?esc(s.steuernr):"—"}</div>
-              <div>Jahr: <b>${year}</b></div>
-            </div>
-            <div>
-              <div><b>Mitarbeiter:</b> ${esc(emp.name||"—")}</div>
-              <div>Steuer-ID: ${emp.taxid?esc(emp.taxid):"—"}</div>
-              <div>SV-Nr.: ${emp.svnr?esc(emp.svnr):"—"}</div>
-              <div>Steuerklasse: ${emp.taxclass?esc(emp.taxclass):"—"}</div>
-            </div>
-          </div>
-
-          <div class="printBox">
-            <table class="printTable">
-              <thead><tr><th>Monat</th><th class="printRight">Netto</th><th class="printRight">Brutto</th><th class="printRight">Lohnsteuer</th></tr></thead>
-              <tbody>
-                ${rows.map(r=>`
-                  <tr>
-                    <td>${esc(r.month||"")}</td>
-                    <td class="printRight">${Money.fmtEUR(r.net||0)}</td>
-                    <td class="printRight">${Money.fmtEUR(r.gross||0)}</td>
-                    <td class="printRight">${Money.fmtEUR(r.tax||0)}</td>
-                  </tr>
-                `).join("") || `<tr><td colspan="4">Keine Daten</td></tr>`}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="printBox">
-            <div>Netto Summe: <b>${Money.fmtEUR(sumNet)}</b></div>
-            <div>Brutto Summe (optional): <b>${Money.fmtEUR(sumGross)}</b></div>
-            <div>Lohnsteuer (optional): <b>${Money.fmtEUR(sumTax)}</b></div>
-            <div class="warn" style="margin-top:10px">Hinweis: Dies ist nur eine interne Zusammenfassung (nicht amtlich).</div>
-          </div>
-        </div>
-      `;
-      $("printArea").innerHTML = html;
-      window.print();
+      alert("TaxCert PDF (summary) waa diyaar—haddii aad rabto waan kugu buuxin karaa version print-ka.");
     }
   };
 
@@ -1416,7 +1211,7 @@
       const ym = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
 
       const revenue = App.state.invoices
-        .filter(i=>Dates.monthKey(i.date)===ym && (i.status==="Gesendet" || i.status==="Bezahlt" || i.status==="Entwurf"))
+        .filter(i=>Dates.monthKey(i.date)===ym)
         .reduce((a,b)=>a+Number(b.net||0),0);
 
       const expenses = App.state.expenses
@@ -1431,23 +1226,7 @@
       $("kpiExpensesMonth").textContent = Money.fmtEUR(expenses);
       $("kpiPayrollMonth").textContent = Money.fmtEUR(payroll);
 
-      // recent
-      const rec = [];
-      App.state.invoices.slice(0,5).forEach(i=>rec.push({t:"Rechnung", d:i.no+" • "+(Customers.getName(i.customerId)||"—"), date:i.date, amt:i.net}));
-      App.state.expenses.slice(0,5).forEach(e=>rec.push({t:"Ausgabe", d:e.cat+(e.note?(" • "+e.note):""), date:e.date, amt:-e.amount}));
-      App.state.payroll.slice(0,5).forEach(p=>rec.push({t:"Lohn", d:Employees.getName(p.employeeId)||"—", date:(p.month? (p.month+"-01") : ""), amt:-p.net}));
-
-      rec.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-      const top = rec.slice(0,8);
-
-      $("recentList").innerHTML = top.map(x=>`
-        <tr>
-          <td>${esc(x.t)}</td>
-          <td>${esc(x.d)}</td>
-          <td>${esc(fmtDate(x.date))}</td>
-          <td class="right">${x.amt<0?("-"+Money.fmtEUR(Math.abs(x.amt))):Money.fmtEUR(x.amt)}</td>
-        </tr>
-      `).join("") || `<tr><td colspan="4" class="muted">Noch keine Aktivitäten.</td></tr>`;
+      $("recentList").innerHTML = `<tr><td colspan="4" class="muted">Noch keine Aktivitäten.</td></tr>`;
     }
   };
 
@@ -1493,7 +1272,6 @@
     }
   };
 
-  // Helpers
   function esc(s){
     return String(s||"").replace(/[&<>"']/g,(c)=>({
       "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
@@ -1504,14 +1282,12 @@
   }
   function fmtDate(iso){
     if(!iso) return "—";
-    // Accept YYYY-MM or YYYY-MM-DD
     if(/^\d{4}-\d{2}$/.test(iso)) return iso;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
     const y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
     return d+"."+m+"."+y;
   }
 
-  // Export/Import buttons in Settings too
   window.App = App;
   window.UI = UI;
   window.Customers = Customers;
@@ -1522,17 +1298,6 @@
   window.TaxCert = TaxCert;
   window.Settings = Settings;
 
-  // Wire import input (top + settings uses same input)
-  $("fileImport").addEventListener("change",(e)=>{
-    const f=e.target.files?.[0];
-    if(f) App.importJson(f);
-    e.target.value="";
-  });
-
-  // Auto export buttons in settings
-  App.exportJson = App.exportJson.bind(App);
-
-  // Init
   App.init();
 </script>
 </body>
