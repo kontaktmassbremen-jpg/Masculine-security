@@ -184,6 +184,7 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
+    /* ✅ FIX: placeholder option (nicht editierbar) */
     select option[disabled]{ color: rgba(147,164,198,.9) }
 
     /* PRINT */
@@ -262,7 +263,7 @@
     <div class="foot">
       <div><b>Offline:</b> Daten bleiben im Browser (local).</div>
       <div class="muted">Auto-Save: wax kasta markaad qorto si toos ah ayuu u kaydiyaa.</div>
-      <div class="muted"><span class="warn">Hinweis:</span> ESt/LSt xisaabtan waa “estimate”. Official → ELSTER/Steuerberater.</div>
+      <div class="muted"><span class="warn">Hinweis:</span> ESt/LSt waa estimate. Official → ELSTER/Steuerberater.</div>
     </div>
   </aside>
 
@@ -331,9 +332,9 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>Kunden wählen System:</b> Erst Kunde speichern → dann in Rechnung auswählen.<br/>
-              <b>Mitarbeiter wählen System:</b> Erst Mitarbeiter speichern → dann Payroll auswählen.<br/>
-              <b>Direkt Email:</b> Button “Direkt Email” öffnet dein Mail-Programm (mailto).
+              <b>Kunden wählen:</b> Erst Kunde speichern → dann in Rechnung auswählen.<br/>
+              <b>Mitarbeiter wählen:</b> Erst Mitarbeiter speichern → dann in Payroll auswählen.<br/>
+              <b>Direkt Email:</b> Öffnet dein Mail-Programm (mailto).
             </div>
             <div class="hr"></div>
             <button class="btn primary" onclick="UI.go('customers')">+ Kunde</button>
@@ -376,6 +377,7 @@
         <div class="grid2">
           <div class="card">
             <h3>Rechnung</h3>
+
             <div class="split">
               <div class="field"><label>Rechnungs-Nr. (auto)</label><input id="i_no" placeholder="MS-2026-0001"/></div>
               <div class="field"><label>Rechnungsdatum</label><input id="i_date" type="date"/></div>
@@ -492,12 +494,7 @@
               <div class="field"><label>Adresse</label><input id="m_addr" placeholder="Straße, PLZ Ort"/></div>
               <div class="field"><label>Steuerklasse</label>
                 <select id="m_taxclass">
-                  <option>I</option>
-                  <option>II</option>
-                  <option>III</option>
-                  <option>IV</option>
-                  <option>V</option>
-                  <option>VI</option>
+                  <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option>
                 </select>
               </div>
             </div>
@@ -505,11 +502,7 @@
             <div class="split">
               <div class="field"><label>KV-Kasse (optional)</label><input id="m_kasse" placeholder="z.B. Barmer"/></div>
               <div class="field"><label>Beschäftigung</label>
-                <select id="m_type">
-                  <option>Vollzeit/Teilzeit</option>
-                  <option>Minijob</option>
-                  <option>Kurzfristig</option>
-                </select>
+                <select id="m_type"><option>Vollzeit/Teilzeit</option><option>Minijob</option><option>Kurzfristig</option></select>
               </div>
             </div>
 
@@ -571,9 +564,7 @@
           </div>
           <div class="card">
             <h3>Hinweis</h3>
-            <div class="note">
-              Official Lohnsteuerbescheinigung waxaa laga sameeyaa ELSTER / Steuerberater.
-            </div>
+            <div class="note">Official Lohnsteuerbescheinigung → ELSTER/Steuerberater.</div>
           </div>
         </div>
       </section>
@@ -586,7 +577,7 @@
             <div class="note">
               <b>Einkommensteuer (ESt):</b> Gewinn (Umsatz - Ausgaben) → estimate (Satz in Einstellungen).<br/>
               <b>Lohnsteuer (LSt):</b> aus Payroll summiert (oder manuell).<br/>
-              <span class="warn">Hinweis:</span> Das ist eine Orientierung – keine amtliche Berechnung.
+              <span class="warn">Hinweis:</span> Orientierung – keine amtliche Berechnung.
             </div>
             <div class="hr"></div>
             <div class="split">
@@ -603,11 +594,11 @@
               <div class="hr"></div>
               <div class="split">
                 <div><div class="muted">Gewinn</div><div style="font-weight:900;font-size:18px" id="x_profit">0,00 €</div></div>
-                <div><div class="muted">ESt (estimate)</div><div style="font-weight:900;font-size:18px" id="x_est">0,00 €</div></div>
+                <div><div class="muted">ESt (estimate)</div><div style="font-weight:900;font-size:18px" id="x_est_calc">0,00 €</div></div>
               </div>
               <div class="hr"></div>
               <div class="split">
-                <div><div class="muted">Lohnsteuer Summe (Payroll)</div><div style="font-weight:900;font-size:18px" id="x_lost">0,00 €</div></div>
+                <div><div class="muted">Lohnsteuer Summe (Payroll)</div><div style="font-weight:900;font-size:18px" id="x_lost_sum">0,00 €</div></div>
                 <div><div class="muted">ESt-Satz</div><div class="muted" id="x_rate">—</div></div>
               </div>
             </div>
@@ -650,16 +641,10 @@
 
             <div class="split">
               <div class="field"><label>Theme</label>
-                <select id="s_theme">
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                </select>
+                <select id="s_theme"><option value="dark">Dark</option><option value="light">Light</option></select>
               </div>
               <div class="field"><label>Kleinunternehmer (§19 UStG)</label>
-                <select id="s_klein">
-                  <option value="1">Ja (USt=0)</option>
-                  <option value="0">Nein</option>
-                </select>
+                <select id="s_klein"><option value="1">Ja (USt=0)</option><option value="0">Nein</option></select>
               </div>
             </div>
 
@@ -674,9 +659,7 @@
 
           <div class="card">
             <h3>Daten</h3>
-            <div class="note">
-              Export/Import JSON waa backup. Dhammaan data localStorage ayuu ku jiraa.
-            </div>
+            <div class="note">Export/Import JSON waa backup. Dhammaan data localStorage ayuu ku jiraa.</div>
             <div class="hr"></div>
             <button class="btn good" onclick="App.exportJson()">Export JSON</button>
             <button class="btn" onclick="document.getElementById('fileImport').click()">Import JSON</button>
@@ -689,7 +672,7 @@
       <span class="dot" id="dotSave"></span>
       <span id="saveState">Auto-Save bereit</span>
       <span class="muted">•</span>
-      <span class="muted" id="buildInfo">Build v1.1.0</span>
+      <span class="muted" id="buildInfo">Build v1.2.0</span>
     </div>
   </main>
 </div>
@@ -729,7 +712,7 @@
   };
 
   const Store = {
-    key:"ms-mini-office-v11",
+    key:"ms-mini-office-v12",
     load(){
       try{
         const raw = localStorage.getItem(this.key);
@@ -978,9 +961,7 @@
           <td><b>${esc(c.name)}</b>${c.phone?`<div class="muted" style="font-size:12px">${esc(c.phone)}</div>`:""}</td>
           <td>${c.email?`<a href="mailto:${escAttr(c.email)}">${esc(c.email)}</a>`:"<span class='muted'>—</span>"}</td>
           <td>${c.addr?esc(c.addr):"<span class='muted'>—</span>"}</td>
-          <td class="right">
-            <button class="btn danger" onclick="Customers.remove('${c.id}')">Löschen</button>
-          </td>
+          <td class="right"><button class="btn danger" onclick="Customers.remove('${c.id}')">Löschen</button></td>
         </tr>
       `).join("") || `<tr><td colspan="4" class="muted">Keine Kunden.</td></tr>`;
 
@@ -1000,12 +981,8 @@
       if(keepSelection && old && App.state.customers.some(c=>c.id===old)) sel.value = old;
     },
 
-    get(id){
-      return App.state.customers.find(x=>x.id===id) || null;
-    },
-    getName(id){
-      return this.get(id)?.name || "";
-    }
+    get(id){ return App.state.customers.find(x=>x.id===id) || null; },
+    getName(id){ return this.get(id)?.name || ""; }
   };
 
   const Invoices = {
@@ -1049,6 +1026,7 @@
     add(){
       const no = $("i_no").value.trim() || "";
       if(!no){ alert("Rechnungsnummer fehlt."); return; }
+
       const inv = {
         id: crypto.randomUUID(),
         no,
@@ -1210,14 +1188,9 @@
           </div>
 
           <table class="printTable">
-            <thead>
-              <tr><th>Leistung / Beschreibung</th><th class="printRight">Netto</th></tr>
-            </thead>
+            <thead><tr><th>Leistung / Beschreibung</th><th class="printRight">Netto</th></tr></thead>
             <tbody>
-              <tr>
-                <td>${inv.desc?esc(inv.desc):"—"}</td>
-                <td class="printRight">${Money.fmtEUR(inv.net||0)}</td>
-              </tr>
+              <tr><td>${inv.desc?esc(inv.desc):"—"}</td><td class="printRight">${Money.fmtEUR(inv.net||0)}</td></tr>
             </tbody>
           </table>
 
@@ -1230,9 +1203,7 @@
             <div>Auszahlungsbetrag: <b>${Money.fmtEUR(payout)}</b></div>
           </div>
 
-          <div style="font-size:12px">
-            Hinweis: Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
-          </div>
+          <div style="font-size:12px">Hinweis: Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
         </div>
       `;
     }
@@ -1343,12 +1314,8 @@
       make("t_employee","— Mitarbeiter wählen —");
     },
 
-    get(id){
-      return App.state.employees.find(x=>x.id===id) || null;
-    },
-    getName(id){
-      return this.get(id)?.name || "";
-    }
+    get(id){ return App.state.employees.find(x=>x.id===id) || null; },
+    getName(id){ return this.get(id)?.name || ""; }
   };
 
   const Payroll = {
@@ -1398,9 +1365,7 @@
         `;
       }).join("") || `<tr><td colspan="5" class="muted">Keine Lohnabrechnungen.</td></tr>`;
     },
-    print(){
-      alert("Bitte Eintrag in Liste wählen → PDF.");
-    },
+    print(){ alert("Bitte Eintrag in Liste wählen → PDF."); },
     printById(id){
       const p = App.state.payroll.find(x=>x.id===id);
       if(!p) return;
@@ -1429,9 +1394,7 @@
             ${p.note?`<div>Notiz: ${esc(p.note)}</div>`:""}
           </div>
 
-          <div style="font-size:12px">
-            Hinweis: Dieses Dokument ist intern (nicht amtlich). Official → ELSTER/Steuerberater.
-          </div>
+          <div style="font-size:12px">Hinweis: Intern (nicht amtlich). Official → ELSTER/Steuerberater.</div>
         </div>
       `;
       window.print();
@@ -1495,9 +1458,7 @@
             <div>Einträge: <b>${rows.length}</b></div>
           </div>
 
-          <div style="font-size:12px">
-            Hinweis: Nur Summary (intern). Official Bescheinigung → ELSTER/Steuerberater.
-          </div>
+          <div style="font-size:12px">Hinweis: Nur Summary (intern). Official → ELSTER/Steuerberater.</div>
         </div>
       `;
       window.print();
@@ -1508,7 +1469,7 @@
     render(){
       const s = App.state.settings;
       const year = Number($("x_year").value||0) || new Date().getFullYear();
-      const month = ($("x_month").value||"").trim(); // optional
+      const month = ($("x_month").value||"").trim();
 
       const inv = App.state.invoices.filter(i=>{
         if(month) return Dates.monthKey(i.date)===month;
@@ -1532,8 +1493,8 @@
       $("x_rev").textContent = Money.fmtEUR(revenue);
       $("x_exp").textContent = Money.fmtEUR(expenses);
       $("x_profit").textContent = Money.fmtEUR(profit);
-      $("x_est").textContent = Money.fmtEUR(est);
-      $("x_lost").textContent = Money.fmtEUR(lost);
+      $("x_est_calc").textContent = Money.fmtEUR(est);
+      $("x_lost_sum").textContent = Money.fmtEUR(lost);
       $("x_rate").textContent = (Number(s.estRate||0).toFixed(2)) + " %";
     }
   };
