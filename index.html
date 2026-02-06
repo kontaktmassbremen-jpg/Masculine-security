@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Rechnung App (Auto Stunden)</title>
+  <title>Masculine Security — Rechnung App (Auto Stunden + SV + Mitarbeiter)</title>
   <style>
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
@@ -195,6 +195,9 @@
       border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); font-size:12px; font-weight:900; color:var(--muted)
     }
 
+    .checkRow{display:flex; align-items:center; gap:10px}
+    .checkRow input{width:18px; height:18px}
+
     @media (max-width: 980px){
       .app{grid-template-columns: 1fr}
       .sidebar{position:relative; height:auto}
@@ -207,7 +210,7 @@
 
 <!-- VERSION STAMP -->
 <div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#000a;color:#fff;padding:6px 10px;border-radius:10px;font:12px Arial">
-  v4-taxid-auto-hours
+  v5-employees-sv-taxid
 </div>
 
 <div class="app">
@@ -216,20 +219,21 @@
       <div class="logo" id="brandLogo">MS</div>
       <div>
         <h1 id="brandTitle">Masculine Security</h1>
-        <small>Rechnung App • Auto Stunden → Auto Betrag</small>
+        <small>Rechnung • Mitarbeiter • SV (Schätzung)</small>
       </div>
     </div>
 
     <div class="nav" id="nav">
       <button data-page="invoices" class="active"><span>🧾 Rechnungen</span><span class="pill" id="pillInvoices">0</span></button>
       <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCustomers">0</span></button>
+      <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmployees">0</span></button>
       <button data-page="settings"><span>⚙️ Einstellungen</span><span class="pill" id="pillStore">Auto</span></button>
     </div>
 
     <div class="foot">
-      <div><b>Hinweis:</b> §19 UStG (Kleinunternehmer) → USt = 0.</div>
-      <div class="muted">Backup: Export JSON.</div>
-      <div class="muted">Haddii update uusan muuqan: fur link-ga ?v=99 ama Incognito.</div>
+      <div><b>§19 UStG:</b> USt = 0.</div>
+      <div class="muted"><b>SV:</b> nur Schätzung (Payroll-light), nicht offizielle Lohnabrechnung.</div>
+      <div class="muted">Update nicht sichtbar? Link: <b>?v=99</b> ama Incognito.</div>
     </div>
   </aside>
 
@@ -280,6 +284,10 @@
               <select id="i_customer"></select>
             </div>
 
+            <div class="field"><label>Mitarbeiter (optional)</label>
+              <select id="i_employee"></select>
+            </div>
+
             <div class="hr"></div>
 
             <!-- AUTO STUNDEN CALC -->
@@ -293,7 +301,7 @@
               <div class="field"><label>Total Stunden (auto)</label><input id="w_total_hours" readonly/></div>
             </div>
             <div class="note" id="w_note">
-              Geli Tage + Std/Tag + €/h → Position 1 si toos ah ayaa loo buuxinayaa (Menge = Stunden, Preis = €/h).
+              Geli Tage + Std/Tag + €/h → Position 1 auto (Menge = Stunden, Preis = €/h).
             </div>
 
             <div class="hr"></div>
@@ -325,7 +333,20 @@
 
             <div class="note" id="i_preview">Positionen: 0 • Gesamt: 0,00 € • USt: 0,00 €</div>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <!-- SV PREVIEW -->
+            <div class="hr"></div>
+            <h3 style="margin:0 0 8px 0">SV Vorschau (Schätzung)</h3>
+            <div class="split">
+              <div class="field"><label>Brutto (aus Stunden×€/h)</label><input id="sv_brutto" readonly/></div>
+              <div class="field"><label>Netto (Schätzung)</label><input id="sv_netto" readonly/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>SV Arbeitnehmer</label><input id="sv_an" readonly/></div>
+              <div class="field"><label>SV Arbeitgeber</label><input id="sv_ag" readonly/></div>
+            </div>
+            <div class="note" id="sv_note">Hinweis: SV ist nur eine Schätzung. Offizielle Lohnabrechnung macht Steuerberater/Payroll-Software.</div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
               <button class="btn primary" id="btnSaveInvoice">Speichern</button>
               <button class="btn" id="btnPrint">PDF (A4)</button>
             </div>
@@ -395,6 +416,68 @@
         </div>
       </section>
 
+      <!-- EMPLOYEES -->
+      <section id="page-employees" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Mitarbeiter anlegen</h3>
+            <div class="field"><label>Suche</label><input id="e_search" placeholder="Suche name..."/></div>
+            <div class="hr"></div>
+
+            <div class="split">
+              <div class="field"><label>Name</label><input id="e_name" placeholder="Vorname Nachname"/></div>
+              <div class="field"><label>€/h</label><input id="e_rate" type="number" step="0.01" placeholder="z.B. 16"/></div>
+            </div>
+
+            <div class="split">
+              <div class="field"><label>Steuerklasse</label>
+                <select id="e_taxclass">
+                  <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option>
+                </select>
+              </div>
+              <div class="field"><label>Steuer-ID (optional)</label><input id="e_taxid" placeholder="IdNr. optional"/></div>
+            </div>
+
+            <div class="checkRow">
+              <input id="e_sv_required" type="checkbox" checked/>
+              <label for="e_sv_required" style="font-weight:900;color:var(--muted);font-size:12px">SV-pflichtig (normal)</label>
+            </div>
+            <div class="muted" style="font-size:12px;margin-top:6px">MiniJob/sonderfälle: hier nicht 100% exakt – nur Schätzung.</div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
+              <button class="btn primary" id="btnEmployeeSave">Speichern</button>
+              <button class="btn danger" id="btnEmployeeClear">Leeren</button>
+            </div>
+
+            <div class="hr"></div>
+
+            <h3>SV Rechner (Mitarbeiter)</h3>
+            <div class="field"><label>Mitarbeiter wählen</label><select id="sv_emp_sel"></select></div>
+            <div class="split">
+              <div class="field"><label>Stunden</label><input id="sv_hours" type="number" step="0.25" placeholder="z.B. 160"/></div>
+              <div class="field"><label>€/h</label><input id="sv_rate" type="number" step="0.01" placeholder="auto" /></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>Brutto</label><input id="sv_calc_brutto" readonly/></div>
+              <div class="field"><label>Netto (Schätzung)</label><input id="sv_calc_netto" readonly/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>SV Arbeitnehmer</label><input id="sv_calc_an" readonly/></div>
+              <div class="field"><label>SV Arbeitgeber</label><input id="sv_calc_ag" readonly/></div>
+            </div>
+            <button class="btn good" id="btnPayrollCSV">Export Payroll CSV</button>
+          </div>
+
+          <div class="card">
+            <h3>Mitarbeiterliste</h3>
+            <table class="table">
+              <thead><tr><th>Name</th><th class="right">€/h</th><th>Klasse</th><th class="right">SV</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="employeesList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
@@ -411,13 +494,21 @@
               <div class="field"><label>BIC</label><input id="s_bic" placeholder="NTSBDEB1XXX"/></div>
             </div>
 
-            <!-- NEW: TAX ID / STEUERNUMMER -->
             <div class="field">
               <label>Steuernummer / Steuer-ID</label>
               <input id="s_taxid" placeholder="z.B. 12/345/67890"/>
             </div>
 
             <div class="field"><label>§19 Hinweis</label><input id="s_hint"/></div>
+
+            <div class="hr"></div>
+            <h3>SV Sätze (Standard, %)</h3>
+            <div class="muted" style="font-size:12px;margin-bottom:10px">Du kannst hier deine Default-Raten ändern (Schätzung).</div>
+            <div class="split">
+              <div class="field"><label>AN Summe %</label><input id="s_sv_an" type="number" step="0.01"/></div>
+              <div class="field"><label>AG Summe %</label><input id="s_sv_ag" type="number" step="0.01"/></div>
+            </div>
+            <div class="field"><label>AG Unfallversicherung % (optional)</label><input id="s_sv_unfall" type="number" step="0.01"/></div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap">
               <button class="btn primary" id="btnSettingsSave">Speichern</button>
@@ -463,7 +554,7 @@
    Utils
 ========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_rechnung_app_v4_taxid_auto_hours";
+const DB_KEY = "ms_rechnung_app_v5_employees_sv";
 
 const Toast = {
   t:null,
@@ -532,17 +623,26 @@ const Store = {
           phone:"",
           iban:"DE98 1001 1001 2333 0146 96",
           bic:"NTSBDEB1XXX",
-          taxid:"", /* NEW */
-          hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+          taxid:"",
+          hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",
+          // Default SV sums (Schätzung)
+          sv_an_sum: 20.45,   // ca. RV 9.3 + KV 8.15 + PV 1.7 + ALV 1.3
+          sv_ag_sum: 20.45,
+          sv_unfall: 1.30     // optional
         },
         customers:[],
+        employees:[],
         invoices:[]
       };
       this.save(true);
     } else {
-      // ensure new field exists for older saves
+      // Migrate fields
       this.data.settings = this.data.settings || {};
       if(this.data.settings.taxid === undefined) this.data.settings.taxid = "";
+      if(this.data.settings.sv_an_sum === undefined) this.data.settings.sv_an_sum = 20.45;
+      if(this.data.settings.sv_ag_sum === undefined) this.data.settings.sv_ag_sum = 20.45;
+      if(this.data.settings.sv_unfall === undefined) this.data.settings.sv_unfall = 1.30;
+      if(!Array.isArray(this.data.employees)) this.data.employees = [];
     }
     return this.data;
   },
@@ -568,15 +668,16 @@ const UI = {
     document.querySelectorAll("#nav button").forEach(b=>{
       b.classList.toggle("active", b.dataset.page===page);
     });
-    ["invoices","customers","settings"].forEach(p=>{
+    ["invoices","customers","employees","settings"].forEach(p=>{
       const sec=$("page-"+p);
       if(sec) sec.classList.toggle("hide", p!==page);
     });
 
     const titles={
-      invoices:["Rechnungen","Tage + Std/Tag + €/h → Auto"],
+      invoices:["Rechnungen","Tage + Std/Tag + €/h → Auto • SV Vorschau"],
       customers:["Kunden","Speichern • Liste • Auswahl in Rechnung"],
-      settings:["Einstellungen","Firma Daten • Storage Info"]
+      employees:["Mitarbeiter","€/h speichern • SV Rechner • Payroll CSV"],
+      settings:["Einstellungen","Firma Daten • SV Sätze • Storage Info"]
     };
     $("pageTitle").textContent=titles[page][0];
     $("pageSub").textContent=titles[page][1];
@@ -590,6 +691,22 @@ function setStorageUI(){
   $("storeTag").textContent = "Storage: " + StorageDriver.type;
   $("storageNote").textContent = "Storage: " + StorageDriver.type + (StorageDriver.type!=="localStorage" ? " • Export JSON empfohlen" : "");
   $("dot").classList.toggle("off", StorageDriver.type==="memory");
+}
+
+/* =========================
+   SV Calc (Schätzung)
+========================= */
+function svCalc(brutto, sv_required=true){
+  const s=Store.data.settings;
+  const b = Math.max(0, num(brutto));
+  if(!sv_required || b<=0){
+    return { brutto: round2(b), an:0, ag:0, netto: round2(b), totalCost: round2(b) };
+  }
+  const an = round2(b * (num(s.sv_an_sum)/100));
+  const ag = round2(b * ((num(s.sv_ag_sum)+num(s.sv_unfall))/100));
+  const netto = round2(b - an);
+  const totalCost = round2(b + ag);
+  return { brutto: round2(b), an, ag, netto, totalCost };
 }
 
 /* =========================
@@ -675,6 +792,108 @@ function renderCustomers(){
 }
 
 /* =========================
+   Employees
+========================= */
+const Employees = {
+  clearForm(){
+    $("e_name").value="";
+    $("e_rate").value="";
+    $("e_taxclass").value="I";
+    $("e_taxid").value="";
+    $("e_sv_required").checked=true;
+  },
+  save(){
+    const name = $("e_name").value.trim();
+    const rate = num($("e_rate").value);
+    if(!name){ Toast.show("Bitte Mitarbeiter Name"); return; }
+    if(rate<=0){ Toast.show("Bitte €/h eingeben"); return; }
+    Store.data.employees.unshift({
+      id:uid(),
+      name,
+      rate: round2(rate),
+      taxclass: $("e_taxclass").value || "I",
+      taxid: $("e_taxid").value.trim(),
+      sv_required: !!$("e_sv_required").checked
+    });
+    Store.save();
+    this.clearForm();
+    renderAll();
+    Toast.show("Mitarbeiter gespeichert");
+  },
+  del(id){
+    Store.data.employees = Store.data.employees.filter(e=>e.id!==id);
+    Store.data.invoices.forEach(inv=>{ if(inv.employeeId===id) inv.employeeId=""; });
+    Store.save();
+    renderAll();
+    Toast.show("Mitarbeiter gelöscht");
+  }
+};
+
+function renderEmployees(){
+  const d=Store.data;
+  $("pillEmployees").textContent=d.employees.length;
+
+  const q=($("e_search").value||"").toLowerCase().trim();
+  const list = d.employees.filter(e=>{
+    const s=(e.name+" "+(e.taxid||"")+" "+(e.taxclass||"")).toLowerCase();
+    return !q || s.includes(q);
+  });
+
+  const tbody=$("employeesList");
+  tbody.innerHTML="";
+  if(list.length===0){
+    tbody.innerHTML=`<tr><td class="muted" colspan="5">Keine Mitarbeiter</td></tr>`;
+  }else{
+    for(const e of list){
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${escapeHtml(e.name)}</b><div class="muted" style="font-size:12px">${escapeHtml(e.taxid||"")}</div></td>
+        <td class="right">${fmtEUR(e.rate||0)}</td>
+        <td>${escapeHtml(e.taxclass||"")}</td>
+        <td class="right">${e.sv_required ? "✅" : "—"}</td>
+        <td class="right"><button class="btn danger" data-del="${e.id}">Löschen</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+    tbody.querySelectorAll("[data-del]").forEach(btn=>{
+      btn.addEventListener("click", ()=>Employees.del(btn.getAttribute("data-del")));
+    });
+  }
+
+  // Invoice dropdown
+  const sel=$("i_employee");
+  const current=sel.value;
+  sel.innerHTML="";
+  const opt0=document.createElement("option");
+  opt0.value="";
+  opt0.textContent = d.employees.length ? "Optional: Mitarbeiter wählen" : "Erst Mitarbeiter anlegen";
+  sel.appendChild(opt0);
+  for(const e of d.employees){
+    const opt=document.createElement("option");
+    opt.value=e.id;
+    opt.textContent = `${e.name} • ${fmtEUR(e.rate)}/h`;
+    sel.appendChild(opt);
+  }
+  if(current && d.employees.some(x=>x.id===current)) sel.value=current;
+
+  // SV calculator dropdown
+  const sel2=$("sv_emp_sel");
+  const cur2=sel2.value;
+  sel2.innerHTML="";
+  const o2=document.createElement("option");
+  o2.value="";
+  o2.textContent = d.employees.length ? "Mitarbeiter wählen" : "Keine Mitarbeiter";
+  sel2.appendChild(o2);
+  for(const e of d.employees){
+    const opt=document.createElement("option");
+    opt.value=e.id;
+    opt.textContent = `${e.name} • ${fmtEUR(e.rate)}/h`;
+    sel2.appendChild(opt);
+  }
+  if(cur2 && d.employees.some(x=>x.id===cur2)) sel2.value=cur2;
+}
+
+/* =========================
    Invoices + Lines
 ========================= */
 function nextInvoiceNo(){
@@ -708,6 +927,7 @@ function ensureDraft(){
       due:"",
       status:"Entwurf",
       customerId:"",
+      employeeId:"",
       work:{days:"", hpd:"", rate:""},
       lines:[ {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""} ]
     };
@@ -725,6 +945,7 @@ function draftFromForm(){
   d.due = $("i_due").value || "";
   d.status = $("i_status").value || "Entwurf";
   d.customerId = $("i_customer").value || "";
+  d.employeeId = $("i_employee").value || "";
 
   d.work.days = $("w_days").value || "";
   d.work.hpd  = $("w_hpd").value || "";
@@ -835,8 +1056,46 @@ function renderLines(){
   });
 }
 
+function applyEmployeeRate(){
+  const empId = $("i_employee").value || "";
+  if(!empId) return;
+  const emp = Store.data.employees.find(e=>e.id===empId);
+  if(!emp) return;
+  // Fill €/h only if empty or 0
+  const cur = num($("w_rate").value);
+  if(cur<=0){
+    $("w_rate").value = Number(emp.rate||0).toFixed(2);
+  }
+}
+
+function calcSVPreview(){
+  const d = draftFromForm();
+  const hours = num($("w_total_hours").value) || round2(num(d.work.days)*num(d.work.hpd));
+  const rate  = num(d.work.rate);
+  const brutto = round2(hours * rate);
+
+  const emp = d.employeeId ? Store.data.employees.find(e=>e.id===d.employeeId) : null;
+  const sv_required = emp ? !!emp.sv_required : true; // default true if not set
+  const sv = svCalc(brutto, sv_required);
+
+  $("sv_brutto").value = fmtEUR(sv.brutto);
+  $("sv_an").value     = fmtEUR(sv.an);
+  $("sv_ag").value     = fmtEUR(sv.ag);
+  $("sv_netto").value  = fmtEUR(sv.netto);
+
+  if(!d.employeeId){
+    $("sv_note").textContent = "Wähle optional einen Mitarbeiter für bessere SV Vorschau. (SV = Schätzung)";
+  } else {
+    $("sv_note").textContent = `SV Schätzung für Mitarbeiter. Firma-Kosten (Brutto+AG) ≈ ${fmtEUR(sv.totalCost)}.`;
+  }
+}
+
 function calcTotals(){
   const d = draftFromForm();
+
+  // If employee selected, auto-fill rate (when missing)
+  applyEmployeeRate();
+  d.work.rate = $("w_rate").value || d.work.rate;
 
   const days=num(d.work.days);
   const hpd=num(d.work.hpd);
@@ -872,6 +1131,8 @@ function calcTotals(){
     const cell=tr.querySelector("[data-net]");
     if(cell && line) cell.textContent = fmtEUR(lineNet(line));
   });
+
+  calcSVPreview();
 }
 
 function resetDraft(){
@@ -884,6 +1145,7 @@ function resetDraft(){
     due:"",
     status:"Entwurf",
     customerId:"",
+    employeeId:"",
     work:{days:"", hpd:"", rate:""},
     lines:[ {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""} ]
   };
@@ -901,6 +1163,7 @@ function loadDraftToForm(){
   $("i_due").value=d.due||"";
   $("i_status").value=d.status||"Entwurf";
   $("i_customer").value=d.customerId||"";
+  $("i_employee").value=d.employeeId||"";
 
   $("w_days").value = d.work?.days || "";
   $("w_hpd").value  = d.work?.hpd  || "";
@@ -930,6 +1193,7 @@ function saveInvoice(){
     due: draft.due,
     status: draft.status,
     customerId: draft.customerId,
+    employeeId: draft.employeeId || "",
     work: draft.work,
     lines: draft.lines
   };
@@ -965,6 +1229,7 @@ function openInvoice(id){
     due:inv.due,
     status:inv.status,
     customerId:inv.customerId,
+    employeeId:inv.employeeId || "",
     work:inv.work || {days:"",hpd:"",rate:""},
     lines:Array.isArray(inv.lines) && inv.lines.length ? inv.lines : [{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}]
   };
@@ -1034,8 +1299,11 @@ const Settings = {
     $("s_phone").value=s.phone||"";
     $("s_iban").value=s.iban||"";
     $("s_bic").value=s.bic||"";
-    $("s_taxid").value=s.taxid||""; /* NEW */
+    $("s_taxid").value=s.taxid||"";
     $("s_hint").value=s.hint||"";
+    $("s_sv_an").value = Number(s.sv_an_sum||0).toFixed(2);
+    $("s_sv_ag").value = Number(s.sv_ag_sum||0).toFixed(2);
+    $("s_sv_unfall").value = Number(s.sv_unfall||0).toFixed(2);
 
     $("brandTitle").textContent=s.company||"Masculine Security";
     const initials=(s.company||"MS").split(/\s+/).map(x=>x[0]).slice(0,2).join("").toUpperCase();
@@ -1049,10 +1317,14 @@ const Settings = {
     s.phone=$("s_phone").value.trim();
     s.iban=$("s_iban").value.trim();
     s.bic=$("s_bic").value.trim();
-    s.taxid=$("s_taxid").value.trim(); /* NEW */
+    s.taxid=$("s_taxid").value.trim();
     s.hint=$("s_hint").value.trim() || "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
+    s.sv_an_sum = round2(num($("s_sv_an").value));
+    s.sv_ag_sum = round2(num($("s_sv_ag").value));
+    s.sv_unfall = round2(num($("s_sv_unfall").value));
     Store.save();
     this.load();
+    calcSVPreview();
     Toast.show("Einstellungen gespeichert");
   }
 };
@@ -1078,7 +1350,11 @@ function importJSON(file){
       if(!data || typeof data!=="object") throw new Error("bad");
       data.settings=data.settings||Store.data.settings;
       if(data.settings.taxid === undefined) data.settings.taxid = "";
+      if(data.settings.sv_an_sum === undefined) data.settings.sv_an_sum = 20.45;
+      if(data.settings.sv_ag_sum === undefined) data.settings.sv_ag_sum = 20.45;
+      if(data.settings.sv_unfall === undefined) data.settings.sv_unfall = 1.30;
       data.customers=Array.isArray(data.customers)?data.customers:[];
+      data.employees=Array.isArray(data.employees)?data.employees:[];
       data.invoices=Array.isArray(data.invoices)?data.invoices:[];
       Store.data=data;
       Store.save(true);
@@ -1092,6 +1368,33 @@ function importJSON(file){
     }
   };
   r.readAsText(file);
+}
+
+/* =========================
+   Payroll CSV (simple)
+========================= */
+function exportPayrollCSV(){
+  // Exports current SV calc for selected employee/hours/rate
+  const empId = $("sv_emp_sel").value || "";
+  const emp = empId ? Store.data.employees.find(e=>e.id===empId) : null;
+  const hours = num($("sv_hours").value);
+  const rate  = num($("sv_rate").value);
+  const brutto = round2(hours*rate);
+  const sv = svCalc(brutto, emp ? !!emp.sv_required : true);
+
+  const rows = [
+    ["EmployeeName","Hours","RateEUR","BruttoEUR","SV_EmployeeEUR","SV_EmployerEUR","NettoEstimateEUR","TotalEmployerCostEUR"],
+    [emp ? emp.name : "", hours.toFixed(2), rate.toFixed(2), sv.brutto.toFixed(2), sv.an.toFixed(2), sv.ag.toFixed(2), sv.netto.toFixed(2), sv.totalCost.toFixed(2)]
+  ];
+  const csv = rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="payroll-sv-export.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+  Toast.show("Payroll CSV exportiert");
 }
 
 /* =========================
@@ -1202,18 +1505,49 @@ function printInvoicePDF(id){
 }
 
 /* =========================
+   Employee SV tool UI
+========================= */
+function svToolRecalc(){
+  const empId = $("sv_emp_sel").value || "";
+  const emp = empId ? Store.data.employees.find(e=>e.id===empId) : null;
+
+  // auto-fill rate from employee if empty
+  const curRate = num($("sv_rate").value);
+  if(emp && curRate<=0){
+    $("sv_rate").value = Number(emp.rate||0).toFixed(2);
+  }
+
+  const hours = num($("sv_hours").value);
+  const rate  = num($("sv_rate").value);
+  const brutto = round2(hours*rate);
+
+  const sv = svCalc(brutto, emp ? !!emp.sv_required : true);
+  $("sv_calc_brutto").value = fmtEUR(sv.brutto);
+  $("sv_calc_an").value     = fmtEUR(sv.an);
+  $("sv_calc_ag").value     = fmtEUR(sv.ag);
+  $("sv_calc_netto").value  = fmtEUR(sv.netto);
+}
+
+/* =========================
    Render + Bind
 ========================= */
 function renderAll(){
   setStorageUI();
   Settings.load();
   renderCustomers();
+  renderEmployees();
   renderInvoicesList();
 
   ensureDraft();
   if(UI.page==="invoices" && !DRAFT_LOADED){
     loadDraftToForm();
+  } else {
+    // keep SV preview updated
+    if(UI.page==="invoices") calcTotals();
   }
+
+  // refresh SV tool calc
+  svToolRecalc();
 }
 
 function bind(){
@@ -1235,7 +1569,7 @@ function bind(){
     calcTotals();
   });
 
-  ["i_no","i_date","i_von","i_bis","i_due","i_status","i_customer"].forEach(id=>{
+  ["i_no","i_date","i_von","i_bis","i_due","i_status","i_customer","i_employee"].forEach(id=>{
     $(id).addEventListener("input", ()=>{ calcTotals(); });
     $(id).addEventListener("change", ()=>{ calcTotals(); });
   });
@@ -1255,6 +1589,10 @@ function bind(){
   $("btnCustomerClear").addEventListener("click", ()=>Customers.clearForm());
   $("c_search").addEventListener("input", renderCustomers);
 
+  $("btnEmployeeSave").addEventListener("click", ()=>Employees.save());
+  $("btnEmployeeClear").addEventListener("click", ()=>Employees.clearForm());
+  $("e_search").addEventListener("input", renderEmployees);
+
   $("btnSettingsSave").addEventListener("click", ()=>Settings.save());
 
   $("btnExport").addEventListener("click", exportJSON);
@@ -1266,9 +1604,15 @@ function bind(){
   });
 
   $("btnWipe").addEventListener("click", ()=>{
-    const ok=confirm("Alles löschen? Kunden + Rechnungen + Einstellungen");
+    const ok=confirm("Alles löschen? Kunden + Mitarbeiter + Rechnungen + Einstellungen");
     if(ok) Store.wipe();
   });
+
+  // Employee SV tool
+  $("sv_emp_sel").addEventListener("change", ()=>{ $("sv_rate").value=""; svToolRecalc(); });
+  $("sv_hours").addEventListener("input", svToolRecalc);
+  $("sv_rate").addEventListener("input", svToolRecalc);
+  $("btnPayrollCSV").addEventListener("click", exportPayrollCSV);
 }
 
 /* =========================
