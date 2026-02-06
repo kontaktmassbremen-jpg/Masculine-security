@@ -187,7 +187,6 @@
       flex-wrap:wrap;
     }
     .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
-    .dot.off{background:rgba(255,255,255,.25)}
     .toast{
       position:fixed; right:16px; bottom:16px;
       max-width: 420px;
@@ -207,11 +206,7 @@
       .grid2,.grid3{grid-template-columns: 1fr}
     }
 
-    @media print{
-      body{background:#fff; color:#000}
-      .app, .sidebar, .topbar, .statusbar, .toast{display:none!important}
-      #printArea{display:block!important}
-    }
+    /* ✅ FIX #1 (PDF/Print): Print only #printArea */
     #printArea{display:none}
     .printDoc{font-family: Arial, sans-serif; padding:18px; color:#000;}
     .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
@@ -220,6 +215,17 @@
     .printTable{width:100%; border-collapse:collapse}
     .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
     .printRight{text-align:right}
+
+    @media print{
+      body{background:#fff; color:#000}
+      body *{ visibility:hidden !important; }
+      #printArea, #printArea *{ visibility:visible !important; }
+      #printArea{
+        display:block !important;
+        position:absolute; left:0; top:0;
+        width:100%;
+      }
+    }
 
     body.light{
       color:#0b1220;
@@ -448,7 +454,6 @@
               </div>
             </div>
 
-            <!-- ✅ Kunde column removed -->
             <table class="table">
               <thead>
                 <tr>
@@ -539,10 +544,6 @@
         </div>
       </section>
 
-      <!-- PRINT AREA -->
-      <section id="printArea">
-        <div class="printDoc" id="printDoc"></div>
-      </section>
     </div>
 
     <div class="statusbar">
@@ -552,6 +553,11 @@
     </div>
   </main>
 </div>
+
+<!-- ✅ FIX #1: printArea is OUTSIDE .app so it never gets hidden by print rules -->
+<section id="printArea">
+  <div class="printDoc" id="printDoc"></div>
+</section>
 
 <div class="toast" id="toast"></div>
 
@@ -609,7 +615,15 @@ const Store = {
     }
     return this.data;
   },
-  save(){ localStorage.setItem(DB_KEY, JSON.stringify(this.data)); UI.pulse(); },
+  save(){
+    try{
+      localStorage.setItem(DB_KEY, JSON.stringify(this.data));
+      UI.pulse();
+    }catch(e){
+      console.error(e);
+      Toast.show("Speichern Fehler (Browser storage)");
+    }
+  },
   wipe(){ localStorage.removeItem(DB_KEY); location.reload(); }
 };
 
@@ -617,9 +631,11 @@ const UI = {
   current:"dashboard",
   pulseTimer:null,
   pulse(){
-    $("statusText").textContent="Gespeichert ✔";
+    const st = $("statusText");
+    if(!st) return;
+    st.textContent="Gespeichert ✔";
     clearTimeout(this.pulseTimer);
-    this.pulseTimer=setTimeout(()=>{$("statusText").textContent="Bereit • Auto-Save aktiv";},1200);
+    this.pulseTimer=setTimeout(()=>{st.textContent="Bereit • Auto-Save aktiv";},1200);
   },
   go(page){
     this.current=page;
@@ -702,7 +718,9 @@ function renderCustomers(){
 
   const sel=$("i_customer");
   const current=sel.value;
-  sel.innerHTML=`<option value="" disabled ${d.customers.length?"":"selected"}>${d.customers.length?"Bitte Kunde wählen":"Erst Kunde anlegen"}</option>`;
+
+  // ✅ FIX #2 (Speichern): dropdown always has a selectable placeholder (NOT disabled selected)
+  sel.innerHTML=`<option value="">${d.customers.length ? "Bitte Kunde wählen" : "Erst Kunde anlegen"}</option>`;
   for(const c of d.customers){
     const opt=document.createElement("option");
     opt.value=c.id;
@@ -806,10 +824,8 @@ function renderInvoices(){
   const q=($("i_search").value||"").toLowerCase().trim();
   const st=$("i_filter").value;
 
-  /* ✅ Kunde column removed: row mapping updated */
   const rows=d.invoices
     .filter(inv=>{
-      // keep customerId internally, but hide customer in the list
       const s=(inv.no+" "+(inv.status||"")).toLowerCase();
       return (!q||s.includes(q)) && (!st||inv.status===st);
     })
@@ -852,42 +868,49 @@ const Invoices={
     $("i_no").dataset.editId="";
     invoiceTotalPreview();
   },
+
+  // ✅ FIX #3: Print & Email work even if you did NOT save yet (uses current form)
+  _fromForm(){
+    const d=Store.data;
+    return {
+      id: $("i_no").dataset.editId || "",
+      no: ($("i_no").value.trim() || nextInvoiceNo()),
+      date: ($("i_date").value || todayISO()),
+      von: ($("i_von").value||""),
+      bis: ($("i_bis").value||""),
+      customerId: ($("i_customer").value||""),
+      desc: ($("i_desc").value.trim() || "Sicherheitsdienstleistung"),
+      net: Number($("i_net").value||0),
+      due: ($("i_due").value||""),
+      status: ($("i_status").value||"Entwurf"),
+      hint: d.settings.hint || "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+    };
+  },
+
   save(){
     const d=Store.data;
-    const no=$("i_no").value.trim()||nextInvoiceNo();
-    const date=$("i_date").value||todayISO();
-    const customerId=$("i_customer").value||"";
-    const net=Number($("i_net").value||0);
-    if(!customerId){Toast.show("Bitte Kunde wählen");return;}
-    if(!net||net<=0){Toast.show("Bitte Netto Betrag eingeben");return;}
+    const inv=this._fromForm();
+
+    if(!inv.customerId){Toast.show("Bitte Kunde wählen");return;}
+    if(!inv.net || inv.net<=0){Toast.show("Bitte Netto Betrag eingeben");return;}
 
     const editId=$("i_no").dataset.editId;
-    const inv={
-      id: editId||uid(),
-      no, date,
-      von:$("i_von").value||"",
-      bis:$("i_bis").value||"",
-      customerId,
-      desc:$("i_desc").value.trim(),
-      net,
-      due:$("i_due").value||"",
-      status:$("i_status").value,
-      hint:d.settings.hint||$("i_hint").value
-    };
-
     if(editId){
       const idx=d.invoices.findIndex(x=>x.id===editId);
-      if(idx>=0) d.invoices[idx]=inv;
-      addRecent("Rechnung",`Aktualisiert: ${no}`,date,net);
+      if(idx>=0) d.invoices[idx]={...inv, id:editId};
+      addRecent("Rechnung",`Aktualisiert: ${inv.no}`,inv.date,inv.net);
       Toast.show("Rechnung aktualisiert");
     }else{
-      d.invoices.unshift(inv);
-      addRecent("Rechnung",`Gespeichert: ${no}`,date,net);
+      const newId=uid();
+      d.invoices.unshift({...inv, id:newId});
+      $("i_no").dataset.editId=newId; // keep as current
+      addRecent("Rechnung",`Gespeichert: ${inv.no}`,inv.date,inv.net);
       Toast.show("Rechnung gespeichert");
     }
     Store.save();
     renderAll();
   },
+
   load(id){
     const d=Store.data;
     const inv=d.invoices.find(x=>x.id===id);
@@ -907,6 +930,7 @@ const Invoices={
     invoiceTotalPreview();
     Toast.show("Rechnung geladen");
   },
+
   del(id){
     const d=Store.data;
     const inv=d.invoices.find(x=>x.id===id);
@@ -917,13 +941,17 @@ const Invoices={
     renderAll();
   },
 
-  // PDF: no Kunde box + no Bank section (already removed)
   print(id){
     const d=Store.data;
-    const inv=d.invoices.find(x=>x.id===id) || this._current();
-    if(!inv){Toast.show("Keine Rechnung gewählt");return;}
+    const inv = id ? d.invoices.find(x=>x.id===id) : this._fromForm();
+
+    if(!inv){Toast.show("Keine Rechnung");return;}
+    if(!inv.customerId){Toast.show("Bitte Kunde wählen (für PDF)");return;}
+    if(!inv.net || inv.net<=0){Toast.show("Netto Betrag fehlt");return;}
+
     const s=d.settings;
 
+    // ✅ Kunde box removed + Bank section removed (as you asked)
     const doc=`
       <div class="printHeader">
         <div>
@@ -980,12 +1008,16 @@ const Invoices={
     `;
 
     $("printDoc").innerHTML=doc;
-    window.print();
+
+    // small delay helps some browsers render print area before print
+    setTimeout(()=>window.print(), 50);
   },
 
   emailCurrent(){
-    const inv=this._current();
-    if(!inv){Toast.show("Erst Rechnung speichern oder öffnen");return;}
+    const inv=this._fromForm();
+    if(!inv.customerId){Toast.show("Bitte Kunde wählen");return;}
+    if(!inv.net || inv.net<=0){Toast.show("Netto Betrag fehlt");return;}
+
     const d=Store.data;
     const c=d.customers.find(x=>x.id===inv.customerId);
     if(!c?.email){Toast.show("Kunde hat keine Email");return;}
@@ -1005,11 +1037,6 @@ const Invoices={
     ];
     const mailto=`mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     location.href=mailto;
-  },
-  _current(){
-    const editId=$("i_no").dataset.editId;
-    if(editId) return Store.data.invoices.find(x=>x.id===editId);
-    return null;
   }
 };
 
@@ -1075,6 +1102,7 @@ function importJSON(file){
       Toast.show("Import erfolgreich");
       addRecent("Backup","Import JSON",todayISO(),"");
     }catch(e){
+      console.error(e);
       Toast.show("Import Fehler: JSON ungültig");
     }
   };
@@ -1135,7 +1163,10 @@ function bind(){
 
   $("btnInvoiceSave").addEventListener("click", ()=>Invoices.save());
   $("btnInvoiceClear").addEventListener("click", ()=>Invoices.clear());
+
+  // ✅ FIX #3: PDF button prints current form if not saved yet
   $("btnInvoicePrint").addEventListener("click", ()=>Invoices.print());
+
   $("btnInvoiceEmail").addEventListener("click", ()=>Invoices.emailCurrent());
   $("i_net").addEventListener("input", invoiceTotalPreview);
   $("i_search").addEventListener("input", renderInvoices);
