@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Mini Office (Rechnung + Mitarbeiter + Payroll) • CLICKABLE FIX</title>
+  <title>Masculine Security — Mini Office (Clickable Links + PDFs)</title>
   <style>
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
@@ -19,197 +19,74 @@
         radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.18), transparent 55%),
         linear-gradient(180deg, #07101f 0%, #070d18 100%);
     }
+
+    /* ===== CLICKABLE FIX ===== */
     a{color:inherit;text-decoration:underline;text-underline-offset:2px}
     a:hover{opacity:.9}
-    /* force clickable */
-    a, .note a, .card a{pointer-events:auto!important; cursor:pointer!important}
+    a, .note a, .card a { pointer-events:auto !important; cursor:pointer !important; }
+    /* In some layouts overlays block clicks -> ensure sections allow clicks */
+    .card, .note, .content, .main, .sidebar { position:relative; }
+    .main, .content { isolation:isolate; } /* prevents strange overlay click issues */
 
-    .app{
-      min-height:100vh;
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap:16px;
-      padding:16px;
-      max-width: 1500px;
-      margin:0 auto;
-    }
-    .sidebar{
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(16,32,58,.78), rgba(12,22,41,.78));
-      padding:14px;
-      position:sticky; top:14px;
-      height: calc(100vh - 28px);
-      display:flex; flex-direction:column;
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-      overflow:auto;
-    }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-      padding:10px; border-radius: var(--r2);
-      border:1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-    }
-    .logo{
-      width:44px; height:44px; border-radius: 14px;
-      display:grid; place-items:center; font-weight:900; letter-spacing:.5px;
-      color:#07101f;
-      background: linear-gradient(135deg, rgba(58,166,255,.95), rgba(43,212,189,.95));
-      box-shadow: 0 10px 30px rgba(58,166,255,.18);
-      user-select:none;
-    }
-    .brand h1{margin:0; font-size:14px; line-height:1.2}
-    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
-    .nav{margin-top:12px; display:flex; flex-direction:column; gap:8px}
-    .nav button{
-      all:unset; cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px; border-radius: 14px;
-      border:1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.02);
-      transition:.15s ease;
-    }
-    .nav button:hover{
-      transform: translateY(-1px);
-      border-color: rgba(58,166,255,.35);
-      background: rgba(58,166,255,.08);
-    }
-    .nav button.active{
-      border-color: rgba(58,166,255,.55);
-      background: rgba(58,166,255,.14);
-      box-shadow: 0 10px 26px rgba(0,0,0,.25);
-    }
-    .pill{
-      font-size:12px; color:var(--muted);
-      padding:4px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.16);
-      white-space:nowrap;
-    }
-    .foot{
-      margin-top:auto;
-      padding:10px;
-      border-top:1px solid rgba(255,255,255,.06);
-      color:var(--muted);
-      font-size:12px;
-    }
-    .main{
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(16,32,58,.55), rgba(12,22,41,.55));
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      min-height: calc(100vh - 32px);
-    }
-    .topbar{
-      padding:14px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background: rgba(0,0,0,.12);
-      flex-wrap:wrap;
-    }
-    .crumb h2{margin:0; font-size:14px}
+    .app{min-height:100vh;display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px;max-width:1500px;margin:0 auto;}
+    .sidebar{border:1px solid rgba(255,255,255,.06);border-radius:var(--r);background:linear-gradient(180deg, rgba(16,32,58,.78), rgba(12,22,41,.78));
+      padding:14px;position:sticky;top:14px;height:calc(100vh - 28px);display:flex;flex-direction:column;box-shadow:0 14px 40px rgba(0,0,0,.45);overflow:auto;}
+    .brand{display:flex;gap:12px;align-items:center;padding:10px;border-radius:var(--r2);border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);}
+    .logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:900;letter-spacing:.5px;color:#07101f;
+      background:linear-gradient(135deg, rgba(58,166,255,.95), rgba(43,212,189,.95));box-shadow:0 10px 30px rgba(58,166,255,.18);user-select:none;}
+    .brand h1{margin:0;font-size:14px;line-height:1.2}
+    .brand small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+
+    .nav{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .nav button{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:.15s ease;}
+    .nav button:hover{transform:translateY(-1px);border-color:rgba(58,166,255,.35);background:rgba(58,166,255,.08);}
+    .nav button.active{border-color:rgba(58,166,255,.55);background:rgba(58,166,255,.14);box-shadow:0 10px 26px rgba(0,0,0,.25);}
+    .pill{font-size:12px;color:var(--muted);padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.16);white-space:nowrap;}
+    .foot{margin-top:auto;padding:10px;border-top:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:12px;}
+
+    .main{border:1px solid rgba(255,255,255,.06);border-radius:var(--r);background:linear-gradient(180deg, rgba(16,32,58,.55), rgba(12,22,41,.55));
+      box-shadow:0 14px 40px rgba(0,0,0,.45);overflow:hidden;display:flex;flex-direction:column;min-height:calc(100vh - 32px);}
+    .topbar{padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.12);flex-wrap:wrap;}
+    .crumb h2{margin:0;font-size:14px}
     .crumb small{color:var(--muted)}
-    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
-    .btn{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      padding:9px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      transition:.15s ease;
-      font-weight:900;
-      font-size:13px;
-      user-select:none;
-    }
-    .btn:hover{transform: translateY(-1px); border-color: rgba(58,166,255,.4); background: rgba(58,166,255,.10)}
-    .btn.primary{border-color: rgba(58,166,255,.55); background: rgba(58,166,255,.16)}
-    .btn.good{border-color: rgba(43,212,189,.55); background: rgba(43,212,189,.14)}
-    .btn.danger{border-color: rgba(255,77,109,.45); background: rgba(255,77,109,.10)}
-    .content{padding:14px; display:grid; gap:14px}
-    .grid2{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
-    .card{
-      background: rgba(16,32,58,.55);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius: 12px;
-      padding:14px;
-      overflow:hidden;
-    }
-    .card h3{margin:0 0 10px 0; font-size:14px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+    .btn{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer;transition:.15s ease;font-weight:900;font-size:13px;user-select:none;}
+    .btn:hover{transform:translateY(-1px);border-color:rgba(58,166,255,.4);background:rgba(58,166,255,.10)}
+    .btn.primary{border-color:rgba(58,166,255,.55);background:rgba(58,166,255,.16)}
+    .btn.good{border-color:rgba(43,212,189,.55);background:rgba(43,212,189,.14)}
+    .btn.danger{border-color:rgba(255,77,109,.45);background:rgba(255,77,109,.10)}
+
+    .content{padding:14px;display:grid;gap:14px}
+    .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+    .card{background:rgba(16,32,58,.55);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;overflow:hidden;}
+    .card h3{margin:0 0 10px 0;font-size:14px}
     .muted{color:var(--muted)}
-    .field{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
-    .field label{font-size:12px; color:var(--muted); font-weight:900}
-    .field input, .field select, .field textarea{
-      width:100%;
-      padding:10px 12px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      outline:none;
-    }
-    .field textarea{min-height:90px; resize:vertical}
-    .split{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    .table{width:100%; border-collapse:collapse; overflow:hidden; border-radius: 12px; border:1px solid rgba(255,255,255,.06)}
-    .table th, .table td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      text-align:left;
-      font-size:13px;
-      vertical-align:top;
-    }
-    .table th{color:var(--muted); font-weight:900; font-size:12px}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+    .field label{font-size:12px;color:var(--muted);font-weight:900}
+    .field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text);outline:none;}
+    .field textarea{min-height:90px;resize:vertical}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+    .table th,.table td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;font-size:13px;vertical-align:top;}
+    .table th{color:var(--muted);font-weight:900;font-size:12px}
     .right{text-align:right}
     .hide{display:none!important}
-    .hr{height:1px; background: rgba(255,255,255,.06); margin:10px 0}
-    .note{
-      border:1px dashed rgba(58,166,255,.45);
-      background: rgba(58,166,255,.08);
-      padding:12px; border-radius: 12px;
-      font-size:13px;
-      white-space:pre-line;
-    }
-    .toast{
-      position:fixed; right:16px; bottom:16px;
-      max-width: 720px;
-      padding:12px 14px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(12,22,41,.92);
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-      color: var(--text);
-      z-index: 9999;
-      display:none;
-      white-space:pre-line;
-    }
-    .statusbar{
-      display:flex; align-items:center; gap:10px;
-      font-size:12px; color:var(--muted);
-      padding:6px 14px;
-      border-top:1px solid rgba(255,255,255,.06);
-      background: rgba(0,0,0,.10);
-      flex-wrap:wrap;
-    }
+    .hr{height:1px;background:rgba(255,255,255,.06);margin:10px 0}
+    .note{border:1px dashed rgba(58,166,255,.45);background:rgba(58,166,255,.08);padding:12px;border-radius:12px;font-size:13px;white-space:pre-line;}
+    .toast{position:fixed;right:16px;bottom:16px;max-width:720px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);
+      background:rgba(12,22,41,.92);box-shadow:0 14px 40px rgba(0,0,0,.45);color:var(--text);z-index:9999;display:none;white-space:pre-line;}
+    .statusbar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.10);flex-wrap:wrap;}
     .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
     .dot.off{background:rgba(255,255,255,.25)}
-    .tag{
-      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); font-size:12px; font-weight:900; color:var(--muted)
-    }
-    @media (max-width: 980px){
-      .app{grid-template-columns: 1fr}
-      .sidebar{position:relative; height:auto}
-      .grid2{grid-template-columns: 1fr}
-      .split{grid-template-columns: 1fr}
-    }
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);font-size:12px;font-weight:900;color:var(--muted)}
+    @media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.grid2{grid-template-columns:1fr}.split{grid-template-columns:1fr}}
   </style>
 </head>
 
 <body>
 <div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#000a;color:#fff;padding:6px 10px;border-radius:10px;font:12px Arial">
-  v11-clickable-100
+  v13-clickable
 </div>
 
 <div class="app">
@@ -218,7 +95,7 @@
       <div class="logo" id="brandLogo">MS</div>
       <div>
         <h1 id="brandTitle">Masculine Security</h1>
-        <small>Rechnung • Kunden • Mitarbeiter • Payroll • CLICKABLE 100%</small>
+        <small>Rechnung • Kunden • Mitarbeiter • Payroll • Bescheinigungen</small>
       </div>
     </div>
 
@@ -364,12 +241,10 @@
             </table>
 
             <div class="hr"></div>
-            <div class="note">
-              <b>CLICKABLE TEST:</b><br>
-              <span id="testEmail"></span><br>
-              <span id="testTel"></span><br>
-              <span id="testWeb"></span>
-            </div>
+
+            <!-- Dedicated Clickable panel (not inputs) -->
+            <h3 style="margin-top:0">Firma Links (CLICKABLE)</h3>
+            <div class="note" id="firmLinksBox">—</div>
           </div>
         </div>
       </section>
@@ -446,13 +321,7 @@
               <div class="field"><label>Krankenkasse (AOK/Barmer/...)</label>
                 <select id="m_kasse">
                   <option value="">(bitte wählen)</option>
-                  <option>AOK</option>
-                  <option>Barmer</option>
-                  <option>TK</option>
-                  <option>DAK</option>
-                  <option>IKK</option>
-                  <option>Knappschaft</option>
-                  <option>Sonstige</option>
+                  <option>AOK</option><option>Barmer</option><option>TK</option><option>DAK</option><option>IKK</option><option>Knappschaft</option><option>Sonstige</option>
                 </select>
               </div>
               <div class="field"><label>Versicherungs-Nr. (optional)</label><input id="m_kasse_no" placeholder="optional"/></div>
@@ -512,14 +381,22 @@
             <div style="display:flex; gap:10px; flex-wrap:wrap">
               <button class="btn primary" id="btnPayCalc">Berechnen</button>
               <button class="btn" id="btnLohnPDF">Lohnabrechnung (A4)</button>
+              <button class="btn" id="btnArbeitsPDF">Arbeitbescheinigung (A4)</button>
+              <button class="btn" id="btnLStPDF">Lohnsteuerbescheinigung (A4)</button>
+            </div>
+
+            <div class="hr"></div>
+            <div class="note">
+              <b>Hinweis:</b> Lohnsteuerbescheinigung ist hier ein <b>Template/Preview</b>.
             </div>
           </div>
 
           <div class="card">
             <h3>Firma Links (CLICKABLE)</h3>
-            <div class="note" id="settingsLinks">—</div>
+            <div class="note" id="firmLinksBox2">—</div>
             <div class="hr"></div>
-            <div class="note" id="firmPreview">—</div>
+            <h3>Kunde Links (CLICKABLE)</h3>
+            <div class="note" id="customerLinksBox">—</div>
           </div>
         </div>
       </section>
@@ -565,7 +442,7 @@
             <div class="note" id="settingsLinks2">—</div>
             <div class="hr"></div>
             <div class="note">
-              Haddii input-ka aad taabato ma noqonayo link (waa text field). Link-ga clickable wuxuu ka muuqanayaa halkan.
+              Input fields ma noqonayaan links. Links clickable waxay ka muuqanayaan box-kan.
             </div>
           </div>
         </div>
@@ -584,9 +461,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   HARD FIX: disable/unregister service workers + clear caches
-============================================================ */
 (async () => {
   try{
     if ("serviceWorker" in navigator) {
@@ -600,11 +474,8 @@
   }catch(e){}
 })();
 
-/* =========================
-   Utils
-========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_onefile_office_v11_clickable_100";
+const DB_KEY = "ms_onefile_office_v13_clickable";
 
 const Toast = {
   t:null,
@@ -651,9 +522,7 @@ function todayISO(){
   const p=(x)=>String(x).padStart(2,"0");
   return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
 }
-function uid(){
-  return Math.random().toString(16).slice(2) + Date.now().toString(16);
-}
+function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
 function escapeHtml(str){
   return String(str??"").replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
 }
@@ -666,10 +535,7 @@ function openPrint(html){
   w.document.open(); w.document.write(html); w.document.close();
 }
 
-/* =========================
-   CLICKABLE HELPERS (FIXED)
-   - DO NOT encode @ (%40) => some Android mail apps fail
-========================= */
+/* ===== CLICKABLE HELPERS ===== */
 function safeMailto(email){
   const e = String(email||"").trim();
   if(!e) return "";
@@ -694,9 +560,6 @@ function safeUrl(url){
   }
 }
 
-/* =========================
-   Store
-========================= */
 const Store = {
   data:null,
   load(){
@@ -729,6 +592,8 @@ const Store = {
       this.data.invoices ||= [];
       const s=this.data.settings;
       if(s.website===undefined) s.website="";
+      if(s.phone===undefined) s.phone="";
+      if(s.taxid===undefined) s.taxid="";
     }
   },
   save(silent=false){
@@ -738,6 +603,7 @@ const Store = {
       UI.setStatus("Gespeichert", true);
       UI.updateCounts();
       UI.updateStorageNote();
+      Settings.renderLinksEverywhere();
       return true;
     }catch(e){
       UI.setStatus("Storage ERROR", false);
@@ -755,9 +621,6 @@ const Store = {
   }
 };
 
-/* =========================
-   UI Navigation
-========================= */
 const UI = {
   page:"invoices",
   go(page){
@@ -767,24 +630,21 @@ const UI = {
       if(!el) return;
       el.classList.toggle("hide", p!==page);
     });
-
     document.querySelectorAll("#nav button").forEach(b=>{
       b.classList.toggle("active", b.dataset.page===page);
     });
-
     const titles = {
       invoices:["Rechnung","Tage + Std/Tag + €/h → Stunden → Position 1"],
       customers:["Kunden","Kunden speichern • Auswahl in Rechnung"],
       employees:["Mitarbeiter","Kasse + Kinder + Steuerklasse gespeichert"],
-      payroll:["Payroll","PDF Lohnabrechnung (Simulation)"],
-      settings:["Firma","Kontakt Links clickable in Preview"]
+      payroll:["Payroll","PDF: Lohnabrechnung + Arbeitbescheinigung + Lohnsteuerbescheinigung"],
+      settings:["Firma","Kontakt Links clickable in Boxes"]
     };
     $("pageTitle").textContent = titles[page][0];
     $("pageSub").textContent = titles[page][1];
-
     this.updateStorageNote();
-    if(page==="settings") Settings.loadToForm(); // refresh link previews
-    if(page==="payroll") Payroll.renderFirmLinks();
+    if(page==="settings") Settings.loadToForm();
+    if(page==="payroll") Payroll.renderCustomerLinks();
   },
   setStatus(text, ok=true){
     $("statusText").textContent = text;
@@ -813,31 +673,24 @@ const UI = {
     Invoices.fillCustomerSelect();
     Payroll.fillEmployeeSelect();
     Settings.loadToForm();
+    Settings.renderLinksEverywhere();
   }
 };
 
-/* =========================
-   Customers
-========================= */
 const Customers = {
-  clearForm(){
-    $("c_name").value="";
-    $("c_email").value="";
-    $("c_phone").value="";
-    $("c_addr").value="";
-  },
+  clearForm(){ $("c_name").value=""; $("c_email").value=""; $("c_phone").value=""; $("c_addr").value=""; },
   save(){
     const name = $("c_name").value.trim();
     if(!name){ Toast.show("Name/Firma fehlt"); return; }
     const email = $("c_email").value.trim();
     const phone = $("c_phone").value.trim();
     const addr = $("c_addr").value.trim();
-
     Store.data.customers.push({ id: uid(), name, email, phone, addr });
     Store.save();
     this.clearForm();
     this.render();
     Invoices.fillCustomerSelect();
+    Payroll.renderCustomerLinks();
   },
   remove(id){
     if(!confirm("Kunde löschen?")) return;
@@ -845,6 +698,7 @@ const Customers = {
     Store.save();
     this.render();
     Invoices.fillCustomerSelect();
+    Payroll.renderCustomerLinks();
   },
   render(){
     const q = ($("c_search").value||"").toLowerCase().trim();
@@ -866,28 +720,15 @@ const Customers = {
   }
 };
 
-/* =========================
-   Employees
-========================= */
 const Employees = {
   clearForm(){
-    $("m_name").value="";
-    $("m_persnr").value="";
-    $("m_addr").value="";
-    $("m_dob").value="";
-    $("m_taxid").value="";
-    $("m_taxclass").value="I";
-    $("m_family").value="single";
-    $("m_children").value="0";
-    $("m_kasse").value="";
-    $("m_kasse_no").value="";
-    $("m_sv").value="yes";
-    $("m_rate").value="";
+    $("m_name").value=""; $("m_persnr").value=""; $("m_addr").value=""; $("m_dob").value="";
+    $("m_taxid").value=""; $("m_taxclass").value="I"; $("m_family").value="single"; $("m_children").value="0";
+    $("m_kasse").value=""; $("m_kasse_no").value=""; $("m_sv").value="yes"; $("m_rate").value="";
   },
   save(){
     const name = $("m_name").value.trim();
     if(!name){ Toast.show("Name fehlt"); return; }
-
     const emp = {
       id: uid(),
       name,
@@ -939,28 +780,15 @@ const Employees = {
   }
 };
 
-/* =========================
-   Invoice Lines
-========================= */
 const Lines = {
   data:[],
   set(lines){
-    this.data = (lines||[]).map(l=>({
-      id: l.id || uid(),
-      desc: l.desc || "",
-      qty: num(l.qty),
-      price: num(l.price),
-      auto: !!l.auto
-    }));
+    this.data = (lines||[]).map(l=>({ id:l.id||uid(), desc:l.desc||"", qty:num(l.qty), price:num(l.price), auto:!!l.auto }));
     if(this.data.length===0) this.data=[this.newLine(false)];
     this.render();
   },
-  get(){
-    return this.data.map(l=>({id:l.id, desc:l.desc, qty:num(l.qty), price:num(l.price), auto:!!l.auto}));
-  },
-  newLine(auto=false){
-    return { id: uid(), desc: auto ? "Sicherheitsdienstleistung (Arbeitszeit)" : "", qty:0, price:0, auto };
-  },
+  get(){ return this.data.map(l=>({id:l.id, desc:l.desc, qty:num(l.qty), price:num(l.price), auto:!!l.auto})); },
+  newLine(auto=false){ return { id:uid(), desc:auto?"Sicherheitsdienstleistung (Arbeitszeit)":"", qty:0, price:0, auto }; },
   ensureAutoLine(hours, rate){
     let line = this.data.find(l=>l.auto);
     if(!line){
@@ -969,8 +797,7 @@ const Lines = {
       if(!this.data[0].desc) this.data[0].desc = "Sicherheitsdienstleistung (Arbeitszeit)";
       line = this.data[0];
     }
-    line.qty = hours;
-    line.price = rate;
+    line.qty = hours; line.price = rate;
     this.render();
   },
   add(){ this.data.push(this.newLine(false)); this.render(); },
@@ -979,60 +806,41 @@ const Lines = {
     this.data = this.data.filter(l=>l.id!==id);
     if(this.data.length===0) this.data=[this.newLine(false)];
     this.render();
-    this.recalcTotals();
   },
   render(){
     const rows = this.data.map(l=>{
       const net = round2(num(l.qty)*num(l.price));
       return `
         <tr>
-          <td>
-            <input style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
-              value="${escapeHtml(l.desc)}"
-              oninput="Lines.update('${l.id}','desc',this.value)"/>
-          </td>
-          <td class="right">
-            <input style="width:110px;text-align:right;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
-              value="${fmt2(num(l.qty))}"
-              oninput="Lines.update('${l.id}','qty',this.value)"/>
-          </td>
-          <td class="right">
-            <input style="width:110px;text-align:right;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
-              value="${fmt2(num(l.price))}"
-              oninput="Lines.update('${l.id}','price',this.value)"/>
-          </td>
+          <td><input style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
+            value="${escapeHtml(l.desc)}" oninput="Lines.update('${l.id}','desc',this.value)"/></td>
+          <td class="right"><input style="width:110px;text-align:right;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
+            value="${fmt2(num(l.qty))}" oninput="Lines.update('${l.id}','qty',this.value)"/></td>
+          <td class="right"><input style="width:110px;text-align:right;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:var(--text)"
+            value="${fmt2(num(l.price))}" oninput="Lines.update('${l.id}','price',this.value)"/></td>
           <td class="right"><b>${fmtEUR(net)}</b></td>
-          <td class="right">
-            <button class="btn danger" onclick="Lines.remove('${l.id}')">Löschen</button>
-          </td>
-        </tr>
-      `;
+          <td class="right"><button class="btn danger" onclick="Lines.remove('${l.id}')">Löschen</button></td>
+        </tr>`;
     }).join("");
     $("linesBody").innerHTML = rows;
     this.recalcTotals();
   },
-  update(id, key, val){
-    const l = this.data.find(x=>x.id===id);
-    if(!l) return;
-    if(key==="desc") l.desc = val;
-    if(key==="qty") l.qty = num(val);
-    if(key==="price") l.price = num(val);
+  update(id,key,val){
+    const l = this.data.find(x=>x.id===id); if(!l) return;
+    if(key==="desc") l.desc=val;
+    if(key==="qty") l.qty=num(val);
+    if(key==="price") l.price=num(val);
     this.recalcTotals();
   },
   recalcTotals(){
     let sum = 0;
-    for(const l of this.data){
-      sum = round2(sum + round2(num(l.qty)*num(l.price)));
-    }
+    for(const l of this.data) sum = round2(sum + round2(num(l.qty)*num(l.price)));
     $("sum_net").value = fmtEUR(sum);
     $("sum_total").value = fmtEUR(sum);
     $("i_preview").textContent = `Positionen: ${this.data.length} • Gesamt: ${fmtEUR(sum)} • USt: ${fmtEUR(0)}`;
   }
 };
 
-/* =========================
-   Invoices
-========================= */
 const Invoices = {
   newNo(){
     const year = new Date().getFullYear();
@@ -1040,105 +848,88 @@ const Invoices = {
     return `MS-${year}-${String(n).padStart(4,"0")}`;
   },
   initForm(){
-    $("i_no").value = this.newNo();
-    $("i_date").value = todayISO();
-    $("i_von").value = "";
-    $("i_bis").value = "";
-    $("i_due").value = "";
-    $("i_status").value = "Entwurf";
-    $("i_edit_id").value = "";
-    $("w_days").value = "";
-    $("w_hpd").value = "";
-    $("w_rate").value = "";
-    $("w_total_hours").value = "";
+    $("i_no").value=this.newNo();
+    $("i_date").value=todayISO();
+    $("i_von").value=""; $("i_bis").value=""; $("i_due").value="";
+    $("i_status").value="Entwurf"; $("i_edit_id").value="";
+    $("w_days").value=""; $("w_hpd").value=""; $("w_rate").value=""; $("w_total_hours").value="";
     Lines.set([]);
     this.fillCustomerSelect();
     this.calc();
+    Payroll.renderCustomerLinks();
   },
   fillCustomerSelect(){
-    const sel = $("i_customer");
-    const current = sel.value;
+    const sel=$("i_customer");
+    const current=sel.value;
     sel.innerHTML = [`<option value="">Bitte Kunde wählen</option>`].concat(
       Store.data.customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`)
     ).join("");
-    if(current) sel.value = current;
+    if(current) sel.value=current;
   },
   calc(){
-    const days = num($("w_days").value);
-    const hpd  = num($("w_hpd").value);
-    const rate = num($("w_rate").value);
-    const totalHours = round2(days * hpd);
-    $("w_total_hours").value = totalHours ? fmt2(totalHours) : "";
-    if(totalHours>0 && rate>0){
-      Lines.ensureAutoLine(totalHours, rate);
-    } else {
-      Lines.recalcTotals();
-    }
+    const days=num($("w_days").value), hpd=num($("w_hpd").value), rate=num($("w_rate").value);
+    const totalHours=round2(days*hpd);
+    $("w_total_hours").value = totalHours?fmt2(totalHours):"";
+    if(totalHours>0 && rate>0) Lines.ensureAutoLine(totalHours, rate);
+    else Lines.recalcTotals();
   },
   save(){
-    const no = $("i_no").value.trim() || this.newNo();
-    const customerId = $("i_customer").value;
+    const no=$("i_no").value.trim()||this.newNo();
+    const customerId=$("i_customer").value;
     if(!customerId){ Toast.show("Kunde wählen"); return; }
-
-    const inv = {
-      id: $("i_edit_id").value || uid(),
+    const inv={
+      id:$("i_edit_id").value||uid(),
       no,
-      date: $("i_date").value || todayISO(),
-      von: $("i_von").value || "",
-      bis: $("i_bis").value || "",
-      due: $("i_due").value || "",
-      status: $("i_status").value || "Entwurf",
+      date:$("i_date").value||todayISO(),
+      von:$("i_von").value||"",
+      bis:$("i_bis").value||"",
+      due:$("i_due").value||"",
+      status:$("i_status").value||"Entwurf",
       customerId,
       lines: Lines.get()
     };
-
-    const idx = Store.data.invoices.findIndex(x=>x.id===inv.id);
-    if(idx>=0) Store.data.invoices[idx]=inv;
-    else Store.data.invoices.unshift(inv);
-
+    const idx=Store.data.invoices.findIndex(x=>x.id===inv.id);
+    if(idx>=0) Store.data.invoices[idx]=inv; else Store.data.invoices.unshift(inv);
     if(Store.save()){
       this.renderList();
       Toast.show("✅ Rechnung gespeichert");
-      $("i_edit_id").value = inv.id;
-      $("i_no").value = inv.no;
+      $("i_edit_id").value=inv.id;
+      $("i_no").value=inv.no;
     }
   },
   edit(id){
-    const inv = Store.data.invoices.find(x=>x.id===id);
-    if(!inv) return;
+    const inv=Store.data.invoices.find(x=>x.id===id); if(!inv) return;
     UI.go("invoices");
-    $("i_edit_id").value = inv.id;
-    $("i_no").value = inv.no;
-    $("i_date").value = inv.date||todayISO();
-    $("i_von").value = inv.von||"";
-    $("i_bis").value = inv.bis||"";
-    $("i_due").value = inv.due||"";
-    $("i_status").value = inv.status||"Entwurf";
+    $("i_edit_id").value=inv.id;
+    $("i_no").value=inv.no;
+    $("i_date").value=inv.date||todayISO();
+    $("i_von").value=inv.von||""; $("i_bis").value=inv.bis||""; $("i_due").value=inv.due||"";
+    $("i_status").value=inv.status||"Entwurf";
     this.fillCustomerSelect();
-    $("i_customer").value = inv.customerId||"";
+    $("i_customer").value=inv.customerId||"";
     Lines.set(inv.lines||[]);
+    Payroll.renderCustomerLinks();
   },
   remove(id){
     if(!confirm("Rechnung löschen?")) return;
-    Store.data.invoices = Store.data.invoices.filter(x=>x.id!==id);
+    Store.data.invoices=Store.data.invoices.filter(x=>x.id!==id);
     Store.save();
     this.renderList();
   },
   renderList(){
-    const q = ($("inv_search").value||"").toLowerCase().trim();
-    const f = ($("inv_filter").value||"").trim();
-
+    const q=($("inv_search").value||"").toLowerCase().trim();
+    const f=($("inv_filter").value||"").trim();
     const rows = Store.data.invoices
       .filter(inv=>{
         if(f && inv.status!==f) return false;
         if(!q) return true;
-        const c = Store.data.customers.find(x=>x.id===inv.customerId);
-        const cname = (c?.name||"").toLowerCase();
+        const c=Store.data.customers.find(x=>x.id===inv.customerId);
+        const cname=(c?.name||"").toLowerCase();
         return (inv.no||"").toLowerCase().includes(q) || (inv.status||"").toLowerCase().includes(q) || cname.includes(q);
       })
       .map(inv=>{
-        const c = Store.data.customers.find(x=>x.id===inv.customerId);
-        const total = round2((inv.lines||[]).reduce((s,l)=>s + round2(num(l.qty)*num(l.price)), 0));
+        const c=Store.data.customers.find(x=>x.id===inv.customerId);
+        const total=round2((inv.lines||[]).reduce((s,l)=>s + round2(num(l.qty)*num(l.price)), 0));
         return `
           <tr>
             <td>${escapeHtml(inv.no)}</td>
@@ -1149,35 +940,30 @@ const Invoices = {
               <button class="btn" onclick="Invoices.edit('${inv.id}')">Öffnen</button>
               <button class="btn danger" onclick="Invoices.remove('${inv.id}')">Löschen</button>
             </td>
-          </tr>
-        `;
+          </tr>`;
       }).join("");
-
     $("invoicesList").innerHTML = rows || `<tr><td colspan="5" class="muted">Keine Rechnungen</td></tr>`;
     UI.updateCounts();
   },
   print(){
-    const customerId = $("i_customer").value;
+    const customerId=$("i_customer").value;
     if(!customerId){ Toast.show("Kunde wählen"); return; }
-
-    const inv = {
-      no: $("i_no").value.trim(),
-      date: $("i_date").value || todayISO(),
-      von: $("i_von").value || "",
-      bis: $("i_bis").value || "",
-      due: $("i_due").value || "",
-      status: $("i_status").value || "Entwurf",
+    const inv={
+      no:$("i_no").value.trim(),
+      date:$("i_date").value||todayISO(),
+      von:$("i_von").value||"",
+      bis:$("i_bis").value||"",
+      due:$("i_due").value||"",
+      status:$("i_status").value||"Entwurf",
       customerId,
       lines: Lines.get()
     };
-
-    const s = Store.data.settings;
-    const c = Store.data.customers.find(x=>x.id===inv.customerId) || {};
-    const total = round2(inv.lines.reduce((sum,l)=>sum + round2(num(l.qty)*num(l.price)),0));
-    const timeframe = (inv.von && inv.bis) ? `${inv.von} … ${inv.bis}` : "";
-
+    const s=Store.data.settings;
+    const c=Store.data.customers.find(x=>x.id===inv.customerId)||{};
+    const total=round2(inv.lines.reduce((sum,l)=>sum + round2(num(l.qty)*num(l.price)),0));
+    const timeframe=(inv.von && inv.bis)?`${inv.von} … ${inv.bis}`:"";
     const linesHtml = inv.lines.map((l,i)=>{
-      const net = round2(num(l.qty)*num(l.price));
+      const net=round2(num(l.qty)*num(l.price));
       return `<tr>
         <td>${i+1}</td>
         <td>${escapeHtml(l.desc||"")}</td>
@@ -1186,9 +972,7 @@ const Invoices = {
         <td class="right">${fmtEUR(net)}</td>
       </tr>`;
     }).join("");
-
-    const html = `
-<!doctype html><html><head><meta charset="utf-8">
+    const html = `<!doctype html><html><head><meta charset="utf-8">
 <title>Rechnung ${escapeHtml(inv.no||"")}</title>
 <style>
 @page{size:A4;margin:12mm}
@@ -1240,17 +1024,9 @@ a{color:#000;text-decoration:underline}
 
 <table>
   <thead>
-    <tr>
-      <th>#</th>
-      <th>Leistung</th>
-      <th class="right">Menge</th>
-      <th class="right">Preis</th>
-      <th class="right">Netto</th>
-    </tr>
+    <tr><th>#</th><th>Leistung</th><th class="right">Menge</th><th class="right">Preis</th><th class="right">Netto</th></tr>
   </thead>
-  <tbody>
-    ${linesHtml || `<tr><td colspan="5" class="small">Keine Positionen</td></tr>`}
-  </tbody>
+  <tbody>${linesHtml || `<tr><td colspan="5" class="small">Keine Positionen</td></tr>`}</tbody>
 </table>
 
 <div class="hr"></div>
@@ -1276,29 +1052,28 @@ a{color:#000;text-decoration:underline}
   }
 };
 
-/* =========================
-   Payroll (very simple)
-========================= */
 const Payroll = {
   fillEmployeeSelect(){
-    const sel = $("p_emp");
-    const current = sel.value;
+    const sel=$("p_emp");
+    const current=sel.value;
     sel.innerHTML = [`<option value="">Bitte Mitarbeiter wählen</option>`].concat(
       Store.data.employees.map(e=>`<option value="${e.id}">${escapeHtml(e.name)}${e.persnr?` (PersNr ${escapeHtml(e.persnr)})`:""}</option>`)
     ).join("");
-    if(current) sel.value = current;
+    if(current) sel.value=current;
   },
-  renderFirmLinks(){
-    const s = Store.data.settings||{};
+  renderCustomerLinks(){
+    const cid = $("i_customer")?.value || "";
+    const c = Store.data.customers.find(x=>x.id===cid);
+    if(!c){ $("customerLinksBox").innerHTML = "—"; return; }
     const html =
-      `<div><b>Email:</b> ${safeMailto(s.email||"")}</div>`+
-      (s.phone?`<div><b>Telefon:</b> ${safeTel(s.phone)}</div>`:"")+
-      (s.website?`<div><b>Website:</b> ${safeUrl(s.website)}</div>`:"");
-    if($("settingsLinks")) $("settingsLinks").innerHTML = html;
-    if($("settingsLinks2")) $("settingsLinks2").innerHTML = html;
+      `<div><b>Name:</b> ${escapeHtml(c.name||"")}</div>`+
+      (c.email?`<div><b>Email:</b> ${safeMailto(c.email)}</div>`:"")+
+      (c.phone?`<div><b>Telefon:</b> ${safeTel(c.phone)}</div>`:"")+
+      (c.addr?`<div><b>Adresse:</b><div style="white-space:pre-line">${escapeHtml(c.addr)}</div></div>`:"");
+    $("customerLinksBox").innerHTML = html;
   },
   employeeChanged(){
-    const e = Store.data.employees.find(x=>x.id===$("p_emp").value);
+    const e=Store.data.employees.find(x=>x.id===$("p_emp").value);
     if(e){
       $("p_rate").value = e.rate ? fmt2(e.rate) : "";
       $("p_persnr").value = $("p_persnr").value.trim() || (e.persnr||"");
@@ -1306,104 +1081,212 @@ const Payroll = {
     this.calc();
   },
   calc(){
-    const e = Store.data.employees.find(x=>x.id===$("p_emp").value);
-    const hours = num($("p_hours").value);
-    const rate  = num($("p_rate").value);
-    const brutto = round2(hours*rate);
-    const netto = brutto; // simple for now
+    const emp=Store.data.employees.find(x=>x.id===$("p_emp").value);
+    const hours=num($("p_hours").value);
+    const rate=num($("p_rate").value);
+    const brutto=round2(hours*rate);
+
+    const svEmployee = emp?.sv ? round2(brutto * 0.20) : 0; // demo
+    const lst = round2(brutto * 0.10); // demo
+    const netto = round2(brutto - svEmployee - lst);
+
     $("payTable").innerHTML = `
       <tr><td>Stunden</td><td class="right">${fmt2(hours)}</td></tr>
       <tr><td>€/h</td><td class="right">${fmt2(rate)}</td></tr>
       <tr><td><b>Brutto</b></td><td class="right"><b>${fmtEUR(brutto)}</b></td></tr>
-      <tr><td><b>Netto (simple)</b></td><td class="right"><b>${fmtEUR(netto)}</b></td></tr>
+      <tr><td>SV Arbeitnehmer (demo)</td><td class="right">${fmtEUR(svEmployee)}</td></tr>
+      <tr><td>Lohnsteuer (demo)</td><td class="right">${fmtEUR(lst)}</td></tr>
+      <tr><td><b>Netto</b></td><td class="right"><b>${fmtEUR(netto)}</b></td></tr>
     `;
-    const s=Store.data.settings||{};
-    $("firmPreview").textContent =
-      `${s.company||""}\n${s.addr||""}\n${s.email||""}\n${s.phone||""}\n${s.website||""}\nIBAN: ${s.iban||""}\nBIC: ${s.bic||""}\n${s.taxid?("Tax: "+s.taxid):""}`;
-    this.renderFirmLinks();
-    return {e, hours, rate, brutto, netto};
+    return { emp, month: ($("p_month").value||"").trim()||todayISO().slice(0,7), persnr: ($("p_persnr").value||"").trim(), hours, rate, brutto, svEmployee, lst, netto };
   },
   lohnPDF(){
-    const calc = this.calc();
-    const emp = Store.data.employees.find(x=>x.id===$("p_emp").value);
-    if(!emp){ Toast.show("Mitarbeiter wählen"); return; }
-    const s = Store.data.settings||{};
-    const month = ($("p_month").value||"").trim() || todayISO().slice(0,7);
-    const html = `
-<!doctype html><html><head><meta charset="utf-8"><title>Lohnabrechnung</title>
-<style>@page{size:A4;margin:12mm}body{font-family:Arial;color:#000}h1{margin:0 0 8px 0;font-size:18px}.small{font-size:11px;color:#333}table{width:100%;border-collapse:collapse;font-size:11px}td{border-bottom:1px solid #ddd;padding:6px}.right{text-align:right}a{color:#000;text-decoration:underline}</style>
-</head><body>
-<h1>Lohnabrechnung (Simulation)</h1>
-<div class="small">Monat: <b>${escapeHtml(month)}</b></div>
+    const c=this.calc();
+    if(!c.emp){ Toast.show("Mitarbeiter wählen"); return; }
+    const s=Store.data.settings||{};
+    const e=c.emp;
+    const pers = c.persnr || e.persnr || "";
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Lohnabrechnung</title>
+<style>@page{size:A4;margin:12mm}body{font-family:Arial;color:#000}h1{margin:0 0 8px 0;font-size:18px}
+.small{font-size:11px;color:#333}table{width:100%;border-collapse:collapse;font-size:11px}td{border-bottom:1px solid #ddd;padding:6px}.right{text-align:right}
+a{color:#000;text-decoration:underline}</style></head><body>
+<h1>Lohn- und Gehaltsabrechnung (Simulation)</h1>
+<div class="small">Monat: <b>${escapeHtml(c.month)}</b></div>
 <hr>
-<b>Arbeitgeber:</b> ${escapeHtml(s.company||"")} • E-Mail: ${safeMailto(s.email||"")}<br>
-${s.phone?`<b>Tel:</b> ${safeTel(s.phone)}<br>`:""}
-${s.website?`<b>Web:</b> ${safeUrl(s.website)}<br>`:""}
+<div class="small"><b>Arbeitgeber:</b> ${escapeHtml(s.company||"")} • E-Mail: ${safeMailto(s.email||"")}</div>
+<div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
+${s.phone?`<div class="small">Tel: ${safeTel(s.phone)}</div>`:""}
+${s.website?`<div class="small">Web: ${safeUrl(s.website)}</div>`:""}
 <hr>
-<b>Mitarbeiter:</b> ${escapeHtml(emp.name||"")} • PersNr: ${escapeHtml($("p_persnr").value||emp.persnr||"")}<br>
-<b>Kasse:</b> ${escapeHtml(emp.krankenkasse||"")} • Kinder: ${escapeHtml(emp.children||"0")} • Steuerklasse: ${escapeHtml(emp.taxclass||"I")}
+<div class="small"><b>Mitarbeiter:</b> ${escapeHtml(e.name||"")} • Pers.-Nr.: ${escapeHtml(pers)}</div>
+<div class="small"><b>Krankenkasse:</b> ${escapeHtml(e.krankenkasse||"")} ${e.krankenkasse_no?`• Nr: ${escapeHtml(e.krankenkasse_no)}`:""}</div>
+<div class="small"><b>Steuerklasse:</b> ${escapeHtml(e.taxclass||"I")} • Familienstand: ${escapeHtml(e.family||"")} • Kinder: ${escapeHtml(e.children||"0")}</div>
 <hr>
 <table>
-  <tr><td>Stunden</td><td class="right">${fmt2(calc.hours)}</td></tr>
-  <tr><td>€/h</td><td class="right">${fmt2(calc.rate)}</td></tr>
-  <tr><td><b>Brutto</b></td><td class="right"><b>${fmt2(calc.brutto)} €</b></td></tr>
-  <tr><td><b>Netto (simple)</b></td><td class="right"><b>${fmt2(calc.netto)} €</b></td></tr>
+  <tr><td>Stunden</td><td class="right">${fmt2(c.hours)}</td></tr>
+  <tr><td>€/h</td><td class="right">${fmt2(c.rate)}</td></tr>
+  <tr><td><b>Brutto</b></td><td class="right"><b>${fmt2(c.brutto)} €</b></td></tr>
+  <tr><td>SV Arbeitnehmer (demo)</td><td class="right">${fmt2(c.svEmployee)} €</td></tr>
+  <tr><td>Lohnsteuer (demo)</td><td class="right">${fmt2(c.lst)} €</td></tr>
+  <tr><td><b>Netto</b></td><td class="right"><b>${fmt2(c.netto)} €</b></td></tr>
 </table>
+<div class="small" style="margin-top:10px;color:#666">Hinweis: Nur interne Simulation — keine offizielle Abrechnung.</div>
+<script>window.onload=()=>setTimeout(()=>window.print(),150);<\/script>
+</body></html>`;
+    openPrint(html);
+  },
+  arbeitPDF(){
+    const c=this.calc();
+    if(!c.emp){ Toast.show("Mitarbeiter wählen"); return; }
+    const s=Store.data.settings||{};
+    const e=c.emp;
+    const pers = c.persnr || e.persnr || "";
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Arbeitbescheinigung</title>
+<style>@page{size:A4;margin:12mm}body{font-family:Arial;color:#000}h1{margin:0 0 8px 0;font-size:18px}
+.small{font-size:11px;color:#333}.box{border:1px solid #ddd;padding:10px;margin:10px 0}table{width:100%;border-collapse:collapse;font-size:11px}
+td{border-bottom:1px solid #ddd;padding:6px}.right{text-align:right}a{color:#000;text-decoration:underline}</style></head><body>
+<h1>Arbeitbescheinigung (Template)</h1>
+<div class="small">Datum: <b>${escapeHtml(todayISO())}</b></div>
+
+<div class="box">
+  <div class="small"><b>Arbeitgeber</b></div>
+  <div><b>${escapeHtml(s.company||"")}</b></div>
+  <div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
+  <div class="small">E-Mail: ${safeMailto(s.email||"")}</div>
+  ${s.phone?`<div class="small">Tel: ${safeTel(s.phone)}</div>`:""}
+  ${s.website?`<div class="small">Web: ${safeUrl(s.website)}</div>`:""}
+</div>
+
+<div class="box">
+  <div class="small"><b>Arbeitnehmer</b></div>
+  <div><b>${escapeHtml(e.name||"")}</b> (Pers.-Nr.: ${escapeHtml(pers)})</div>
+  <div class="small" style="white-space:pre-line">${escapeHtml(e.addr||"")}</div>
+  ${e.dob?`<div class="small">Geburtsdatum: ${escapeHtml(e.dob)}</div>`:""}
+  ${e.taxid?`<div class="small">Steuer-ID: ${escapeHtml(e.taxid)}</div>`:""}
+  <div class="small">Krankenkasse: ${escapeHtml(e.krankenkasse||"")} ${e.krankenkasse_no?`(Nr: ${escapeHtml(e.krankenkasse_no)})`:""}</div>
+</div>
+
+<div class="box">
+  <div class="small"><b>Beschäftigungsdaten (aus Payroll Eingabe)</b></div>
+  <table>
+    <tr><td>Monat</td><td class="right">${escapeHtml(c.month)}</td></tr>
+    <tr><td>Stunden</td><td class="right">${fmt2(c.hours)}</td></tr>
+    <tr><td>€/h</td><td class="right">${fmt2(c.rate)}</td></tr>
+    <tr><td>Brutto (Template)</td><td class="right">${fmtEUR(c.brutto)}</td></tr>
+  </table>
+</div>
+
+<div class="small" style="margin-top:12px">
+  Unterschrift Arbeitgeber: ____________________________ &nbsp;&nbsp;&nbsp;
+  Unterschrift Arbeitnehmer: ____________________________
+</div>
+
+<script>window.onload=()=>setTimeout(()=>window.print(),150);<\/script>
+</body></html>`;
+    openPrint(html);
+  },
+  lohnsteuerPDF(){
+    const c=this.calc();
+    if(!c.emp){ Toast.show("Mitarbeiter wählen"); return; }
+    const s=Store.data.settings||{};
+    const e=c.emp;
+    const pers = c.persnr || e.persnr || "";
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Lohnsteuerbescheinigung</title>
+<style>
+@page{size:A4;margin:12mm}
+body{font-family:Arial;color:#000}
+h1{margin:0 0 8px 0;font-size:18px}
+.small{font-size:11px;color:#333}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{border:1px solid #ddd;padding:10px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+td{border-bottom:1px solid #ddd;padding:6px;vertical-align:top}
+.right{text-align:right}
+a{color:#000;text-decoration:underline}
+</style></head><body>
+<h1>Lohnsteuerbescheinigung (Template/Preview)</h1>
+<div class="small">Jahr/Monat: <b>${escapeHtml(c.month)}</b> • Stand: ${escapeHtml(todayISO())}</div>
+
+<div class="grid" style="margin-top:10px">
+  <div class="box">
+    <div class="small"><b>Arbeitgeber</b></div>
+    <div><b>${escapeHtml(s.company||"")}</b></div>
+    <div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
+    <div class="small">E-Mail: ${safeMailto(s.email||"")}</div>
+    ${s.phone?`<div class="small">Tel: ${safeTel(s.phone)}</div>`:""}
+    ${s.website?`<div class="small">Web: ${safeUrl(s.website)}</div>`:""}
+    ${s.taxid?`<div class="small">Steuernummer/ID: ${escapeHtml(s.taxid)}</div>`:""}
+  </div>
+  <div class="box">
+    <div class="small"><b>Arbeitnehmer</b></div>
+    <div><b>${escapeHtml(e.name||"")}</b> (Pers.-Nr.: ${escapeHtml(pers)})</div>
+    <div class="small">Steuer-ID: ${escapeHtml(e.taxid||"")}</div>
+    <div class="small">Steuerklasse: ${escapeHtml(e.taxclass||"I")} • Kinder: ${escapeHtml(e.children||"0")}</div>
+    <div class="small">Krankenkasse: ${escapeHtml(e.krankenkasse||"")}</div>
+  </div>
+</div>
+
+<div class="box" style="margin-top:10px">
+  <div class="small"><b>Beträge (Template)</b></div>
+  <table>
+    <tr><td>Bruttoarbeitslohn (Zeitraum)</td><td class="right"><b>${fmtEUR(c.brutto)}</b></td></tr>
+    <tr><td>Lohnsteuer (Zeitraum)</td><td class="right">${fmtEUR(c.lst)}</td></tr>
+    <tr><td>SV Arbeitnehmer (Zeitraum)</td><td class="right">${fmtEUR(c.svEmployee)}</td></tr>
+    <tr><td><b>Netto (Zeitraum)</b></td><td class="right"><b>${fmtEUR(c.netto)}</b></td></tr>
+  </table>
+</div>
+
+<div class="small" style="margin-top:10px;color:#666">
+  Hinweis: Template/Preview. Offiziell über Payroll/ELSTER/DATEV.
+</div>
+
 <script>window.onload=()=>setTimeout(()=>window.print(),150);<\/script>
 </body></html>`;
     openPrint(html);
   }
 };
 
-/* =========================
-   Settings
-========================= */
 const Settings = {
   loadToForm(){
     const s=Store.data.settings;
-    $("s_company").value = s.company||"";
-    $("s_addr").value = s.addr||"";
-    $("s_email").value = s.email||"";
-    $("s_phone").value = s.phone||"";
-    $("s_website").value = s.website||"";
-    $("s_iban").value = s.iban||"";
-    $("s_bic").value = s.bic||"";
-    $("s_taxid").value = s.taxid||"";
-    $("s_hint").value = s.hint||"";
+    $("s_company").value=s.company||"";
+    $("s_addr").value=s.addr||"";
+    $("s_email").value=s.email||"";
+    $("s_phone").value=s.phone||"";
+    $("s_website").value=s.website||"";
+    $("s_iban").value=s.iban||"";
+    $("s_bic").value=s.bic||"";
+    $("s_taxid").value=s.taxid||"";
+    $("s_hint").value=s.hint||"";
     $("brandTitle").textContent = s.company || "Masculine Security";
-
-    // CLICKABLE PREVIEW (NOT INPUT)
+    this.renderLinksEverywhere();
+  },
+  renderLinksEverywhere(){
+    const s=Store.data.settings||{};
     const html =
       `<div><b>Email:</b> ${safeMailto(s.email||"")}</div>`+
       (s.phone?`<div><b>Telefon:</b> ${safeTel(s.phone)}</div>`:"")+
       (s.website?`<div><b>Website:</b> ${safeUrl(s.website)}</div>`:"");
-    if($("settingsLinks2")) $("settingsLinks2").innerHTML = html;
-    Payroll.renderFirmLinks();
-
-    // test area in invoice list
-    if($("testEmail")) $("testEmail").innerHTML = "<b>Email test:</b> " + safeMailto(s.email||"kontakt.mass.bremen@hotmail.com");
-    if($("testTel")) $("testTel").innerHTML = "<b>Tel test:</b> " + safeTel(s.phone||"+49 000 000000");
-    if($("testWeb")) $("testWeb").innerHTML = "<b>Web test:</b> " + safeUrl(s.website||"example.com");
+    $("settingsLinks2").innerHTML = html;
+    $("firmLinksBox").innerHTML = html;
+    $("firmLinksBox2").innerHTML = html;
   },
   saveFromForm(){
     const s=Store.data.settings;
-    s.company = $("s_company").value.trim();
-    s.addr = $("s_addr").value.trim();
-    s.email = $("s_email").value.trim();
-    s.phone = $("s_phone").value.trim();
-    s.website = $("s_website").value.trim();
-    s.iban = $("s_iban").value.trim();
-    s.bic = $("s_bic").value.trim();
-    s.taxid = $("s_taxid").value.trim();
-    s.hint = $("s_hint").value.trim();
+    s.company=$("s_company").value.trim();
+    s.addr=$("s_addr").value.trim();
+    s.email=$("s_email").value.trim();
+    s.phone=$("s_phone").value.trim();
+    s.website=$("s_website").value.trim();
+    s.iban=$("s_iban").value.trim();
+    s.bic=$("s_bic").value.trim();
+    s.taxid=$("s_taxid").value.trim();
+    s.hint=$("s_hint").value.trim();
     Store.save();
-    this.loadToForm(); // refresh clickable preview
+    this.loadToForm();
   }
 };
 
-/* =========================
-   Export / Import
-========================= */
 function exportJSON(){
   const blob = new Blob([JSON.stringify(Store.data,null,2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
@@ -1437,9 +1320,6 @@ function importJSON(file){
   reader.readAsText(file);
 }
 
-/* =========================
-   Wire Events
-========================= */
 function wire(){
   document.querySelectorAll("#nav button").forEach(b=>{
     b.addEventListener("click", ()=>UI.go(b.dataset.page));
@@ -1452,6 +1332,7 @@ function wire(){
   ["w_days","w_hpd","w_rate"].forEach(id=> $(id).addEventListener("input", ()=>Invoices.calc()));
   $("inv_search").addEventListener("input", ()=>Invoices.renderList());
   $("inv_filter").addEventListener("change", ()=>Invoices.renderList());
+  $("i_customer").addEventListener("change", ()=>Payroll.renderCustomerLinks());
 
   $("btnCustomerSave").addEventListener("click", ()=>Customers.save());
   $("btnCustomerClear").addEventListener("click", ()=>Customers.clearForm());
@@ -1463,6 +1344,8 @@ function wire(){
 
   $("btnPayCalc").addEventListener("click", ()=>Payroll.calc());
   $("btnLohnPDF").addEventListener("click", ()=>Payroll.lohnPDF());
+  $("btnArbeitsPDF").addEventListener("click", ()=>Payroll.arbeitPDF());
+  $("btnLStPDF").addEventListener("click", ()=>Payroll.lohnsteuerPDF());
   $("p_emp").addEventListener("change", ()=>Payroll.employeeChanged());
   ["p_hours","p_rate","p_month","p_persnr"].forEach(id=> $(id).addEventListener("input", ()=>Payroll.calc()));
 
@@ -1478,9 +1361,6 @@ function wire(){
   $("btnWipe").addEventListener("click", ()=>Store.wipe());
 }
 
-/* =========================
-   Boot
-========================= */
 (function boot(){
   Store.load();
   wire();
@@ -1490,6 +1370,5 @@ function wire(){
   UI.setStatus("Bereit", true);
 })();
 </script>
-
 </body>
 </html>
