@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Rechnung App</title>
+  <title>Masculine Security — Rechnung App (Auto Stunden)</title>
   <style>
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
@@ -204,13 +204,19 @@
   </style>
 </head>
 <body>
+
+<!-- VERSION STAMP (si aad u hubiso update-ka) -->
+<div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#000a;color:#fff;padding:6px 10px;border-radius:10px;font:12px Arial">
+  v3-auto-hours
+</div>
+
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
       <div class="logo" id="brandLogo">MS</div>
       <div>
         <h1 id="brandTitle">Masculine Security</h1>
-        <small>Rechnung App • Offline • Auto Calc</small>
+        <small>Rechnung App • Auto Stunden → Auto Betrag</small>
       </div>
     </div>
 
@@ -222,7 +228,8 @@
 
     <div class="foot">
       <div><b>Hinweis:</b> §19 UStG (Kleinunternehmer) → USt = 0.</div>
-      <div class="muted">Backup: Export JSON (si aadan u lumin).</div>
+      <div class="muted">Backup: Export JSON.</div>
+      <div class="muted">Haddii update uusan muuqan: fur link-ga ?v=99 ama Incognito.</div>
     </div>
   </aside>
 
@@ -230,7 +237,7 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Rechnungen</h2>
-        <small id="pageSub" class="muted">Positionen • PDF (A4) • Auto Calc</small>
+        <small id="pageSub" class="muted">Tage + Std/Tag + €/h → Auto</small>
       </div>
       <div class="actions">
         <button class="btn primary" id="btnNewInvoice">+ Neue Rechnung</button>
@@ -271,6 +278,22 @@
 
             <div class="field"><label>Kunde</label>
               <select id="i_customer"></select>
+            </div>
+
+            <div class="hr"></div>
+
+            <!-- AUTO STUNDEN CALC -->
+            <h3 style="margin:0 0 8px 0">Auto Stunden (optional)</h3>
+            <div class="split">
+              <div class="field"><label>Tage (inta bari)</label><input id="w_days" type="number" step="1" placeholder="z.B. 18"/></div>
+              <div class="field"><label>Std/Tag (saacado maalintii)</label><input id="w_hpd" type="number" step="0.25" placeholder="z.B. 12"/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>€/h (qiime saacaddii)</label><input id="w_rate" type="number" step="0.01" placeholder="z.B. 16"/></div>
+              <div class="field"><label>Total Stunden (auto)</label><input id="w_total_hours" readonly/></div>
+            </div>
+            <div class="note" id="w_note">
+              Geli Tage + Std/Tag + €/h → Position 1 si toos ah ayaa loo buuxinayaa (Menge = Stunden, Preis = €/h).
             </div>
 
             <div class="hr"></div>
@@ -413,11 +436,30 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================
+   IMPORTANT FIX: Disable Service Worker + clear caches
+   (Your repo has service-worker.js, it blocks updates!)
+============================================================ */
+(async () => {
+  try{
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const r of regs) await r.unregister();
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      for (const k of keys) await caches.delete(k);
+    }
+  }catch(e){
+    // ignore
+  }
+})();
+
 /* =========================
    Utils
 ========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_rechnung_app_v2_no_discount";
+const DB_KEY = "ms_rechnung_app_v3_auto_hours";
 
 const Toast = {
   t:null,
@@ -442,8 +484,7 @@ const StorageDriver = (()=>{
     type: canLocal ? "localStorage" : (canSession ? "sessionStorage" : "memory"),
     getItem:(k)=> driver ? driver.getItem(k) : (window.__MS_MEM__ ?? null),
     setItem:(k,v)=> { if(driver) driver.setItem(k,v); else window.__MS_MEM__=v; },
-    removeItem:(k)=> { if(driver) driver.removeItem(k); else window.__MS_MEM__=null; },
-    canPersist:()=> Boolean(driver)
+    removeItem:(k)=> { if(driver) driver.removeItem(k); else window.__MS_MEM__=null; }
   };
 })();
 
@@ -451,7 +492,7 @@ function fmtEUR(n){
   const v = Number(n||0);
   return v.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
 }
-function n(v){
+function num(v){
   const x = Number(String(v??"").replace(",", "."));
   return Number.isFinite(x) ? x : 0;
 }
@@ -499,7 +540,7 @@ const Store = {
   save(silent=false){
     try{
       StorageDriver.setItem(DB_KEY, JSON.stringify(this.data));
-      if(!silent) UI.pulse("Gespeichert ✔");
+      if(!silent) Toast.show("Gespeichert ✔");
     }catch(e){
       console.error(e);
       Toast.show("Speichern Fehler: Storage blockiert. Export JSON samee.");
@@ -513,15 +554,6 @@ const Store = {
 
 const UI = {
   page:"invoices",
-  pulseTimer:null,
-  pulse(msg){
-    const st=$("statusText");
-    const dot=$("dot");
-    if(dot) dot.classList.remove("off");
-    if(st) st.textContent=msg || "OK";
-    clearTimeout(this.pulseTimer);
-    this.pulseTimer=setTimeout(()=>{ if(st) st.textContent="Bereit"; }, 1200);
-  },
   go(page){
     this.page=page;
     document.querySelectorAll("#nav button").forEach(b=>{
@@ -533,7 +565,7 @@ const UI = {
     });
 
     const titles={
-      invoices:["Rechnungen","Positionen • PDF (A4) • Auto Calc"],
+      invoices:["Rechnungen","Tage + Std/Tag + €/h → Auto"],
       customers:["Kunden","Speichern • Liste • Auswahl in Rechnung"],
       settings:["Einstellungen","Firma Daten • Storage Info"]
     };
@@ -616,7 +648,6 @@ function renderCustomers(){
     });
   }
 
-  // select in invoice
   const sel=$("i_customer");
   const current=sel.value;
   sel.innerHTML="";
@@ -635,7 +666,7 @@ function renderCustomers(){
 }
 
 /* =========================
-   Invoices + Positionen (NO DISCOUNT)
+   Invoices + Lines
 ========================= */
 function nextInvoiceNo(){
   const year = new Date().getFullYear();
@@ -648,10 +679,9 @@ function nextInvoiceNo(){
   const next = (nums.length ? Math.max(...nums)+1 : 1);
   return prefix + String(next).padStart(4,"0");
 }
-
 function lineNet(line){
-  const qty=n(line.qty);
-  const unit=n(line.unit);
+  const qty=num(line.qty);
+  const unit=num(line.unit);
   let net = qty*unit;
   if(net<0) net=0;
   return round2(net);
@@ -669,9 +699,8 @@ function ensureDraft(){
       due:"",
       status:"Entwurf",
       customerId:"",
-      lines:[
-        {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}
-      ]
+      work:{days:"", hpd:"", rate:""},
+      lines:[ {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""} ]
     };
     DRAFT_LOADED=false;
   }
@@ -688,6 +717,10 @@ function draftFromForm(){
   d.status = $("i_status").value || "Entwurf";
   d.customerId = $("i_customer").value || "";
 
+  d.work.days = $("w_days").value || "";
+  d.work.hpd  = $("w_hpd").value || "";
+  d.work.rate = $("w_rate").value || "";
+
   const rows = document.querySelectorAll("#linesBody tr[data-line-id]");
   const lines=[];
   rows.forEach(tr=>{
@@ -698,28 +731,8 @@ function draftFromForm(){
     lines.push({id, desc:String(desc??""), qty:String(qty??""), unit:String(unit??"")});
   });
   d.lines = lines.length ? lines : d.lines;
+
   return d;
-}
-
-function calcTotals(){
-  const d = draftFromForm();
-  let sumNet = 0;
-  d.lines.forEach(line=>{ sumNet += lineNet(line); });
-  sumNet = round2(sumNet);
-  const total = sumNet; // Kleinunternehmer: USt 0
-
-  $("sum_net").value = sumNet.toFixed(2);
-  $("sum_total").value = total.toFixed(2);
-  $("i_preview").textContent = `Positionen: ${d.lines.length} • Gesamt: ${fmtEUR(total)} • USt: 0,00 €`;
-
-  document.querySelectorAll("#linesBody tr[data-line-id]").forEach(tr=>{
-    const id=tr.getAttribute("data-line-id");
-    const line=d.lines.find(x=>x.id===id);
-    const cell=tr.querySelector("[data-net]");
-    if(cell && line) cell.textContent = fmtEUR(lineNet(line));
-  });
-
-  return {sumNet, total};
 }
 
 function renderLines(){
@@ -779,7 +792,6 @@ function renderLines(){
     tr.appendChild(tdAct);
     tbody.appendChild(tr);
 
-    // style inputs
     [inpDesc, inpQty, inpUnit].forEach(inp=>{
       inp.style.width="100%";
       inp.style.padding="10px 12px";
@@ -796,6 +808,7 @@ function renderLines(){
     });
 
     btnDel.addEventListener("click", ()=>{
+      draftFromForm();
       window.__DRAFT__.lines = window.__DRAFT__.lines.filter(x=>x.id!==line.id);
       if(window.__DRAFT__.lines.length===0){
         window.__DRAFT__.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}];
@@ -805,15 +818,52 @@ function renderLines(){
     });
 
     btnDup.addEventListener("click", ()=>{
-      window.__DRAFT__.lines.push({
-        id:uid(),
-        desc:line.desc,
-        qty:line.qty,
-        unit:line.unit
-      });
+      draftFromForm();
+      window.__DRAFT__.lines.push({ id:uid(), desc:line.desc, qty:line.qty, unit:line.unit });
       renderLines();
       calcTotals();
     });
+  });
+}
+
+function calcTotals(){
+  const d = draftFromForm();
+
+  // Auto Hours → fill Position 1
+  const days=num(d.work.days);
+  const hpd=num(d.work.hpd);
+  const rate=num(d.work.rate);
+  const totalHours = round2(days*hpd);
+  $("w_total_hours").value = totalHours ? totalHours.toFixed(2) : "";
+
+  if(totalHours>0 && rate>0){
+    if(!d.lines || d.lines.length===0){
+      d.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}];
+      renderLines();
+    }
+    const firstRow = document.querySelector("#linesBody tr[data-line-id]");
+    if(firstRow){
+      firstRow.querySelector("[data-f='desc']").value = "Sicherheitsdienstleistung (Arbeitszeit)";
+      firstRow.querySelector("[data-f='qty']").value  = totalHours.toFixed(2);
+      firstRow.querySelector("[data-f='unit']").value = rate.toFixed(2);
+    }
+    draftFromForm(); // sync after DOM update
+  }
+
+  let sumNet=0;
+  d.lines.forEach(line=>{ sumNet += lineNet(line); });
+  sumNet=round2(sumNet);
+  const total=sumNet;
+
+  $("sum_net").value = sumNet.toFixed(2);
+  $("sum_total").value = total.toFixed(2);
+  $("i_preview").textContent = `Positionen: ${d.lines.length} • Gesamt: ${fmtEUR(total)} • USt: 0,00 €`;
+
+  document.querySelectorAll("#linesBody tr[data-line-id]").forEach(tr=>{
+    const id=tr.getAttribute("data-line-id");
+    const line=d.lines.find(x=>x.id===id);
+    const cell=tr.querySelector("[data-net]");
+    if(cell && line) cell.textContent = fmtEUR(lineNet(line));
   });
 }
 
@@ -827,9 +877,8 @@ function resetDraft(){
     due:"",
     status:"Entwurf",
     customerId:"",
-    lines:[
-      {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}
-    ]
+    work:{days:"", hpd:"", rate:""},
+    lines:[ {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""} ]
   };
   DRAFT_LOADED=false;
   loadDraftToForm();
@@ -845,6 +894,12 @@ function loadDraftToForm(){
   $("i_due").value=d.due||"";
   $("i_status").value=d.status||"Entwurf";
   $("i_customer").value=d.customerId||"";
+
+  $("w_days").value = d.work?.days || "";
+  $("w_hpd").value  = d.work?.hpd  || "";
+  $("w_rate").value = d.work?.rate || "";
+  $("w_total_hours").value = "";
+
   renderLines();
   calcTotals();
   DRAFT_LOADED=true;
@@ -852,7 +907,8 @@ function loadDraftToForm(){
 
 function saveInvoice(){
   const draft = draftFromForm();
-  const {total} = calcTotals();
+  calcTotals();
+  const total = num($("sum_total").value);
 
   if(!draft.customerId){ Toast.show("Bitte Kunde wählen"); return; }
   if(total<=0){ Toast.show("Betrag fehlt"); return; }
@@ -867,6 +923,7 @@ function saveInvoice(){
     due: draft.due,
     status: draft.status,
     customerId: draft.customerId,
+    work: draft.work,
     lines: draft.lines
   };
 
@@ -892,7 +949,6 @@ function delInvoice(id){
 function openInvoice(id){
   const inv=Store.data.invoices.find(x=>x.id===id);
   if(!inv) return;
-
   window.__DRAFT__ = {
     id:inv.id,
     no:inv.no,
@@ -902,9 +958,9 @@ function openInvoice(id){
     due:inv.due,
     status:inv.status,
     customerId:inv.customerId,
+    work:inv.work || {days:"",hpd:"",rate:""},
     lines:Array.isArray(inv.lines) && inv.lines.length ? inv.lines : [{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}]
   };
-
   loadDraftToForm();
   Toast.show("Rechnung geladen");
 }
@@ -912,8 +968,7 @@ function openInvoice(id){
 function computeInvoiceTotal(inv){
   let sum=0;
   (inv.lines||[]).forEach(line=>sum+=lineNet(line));
-  sum=round2(sum);
-  return sum;
+  return round2(sum);
 }
 
 function renderInvoicesList(){
@@ -1006,7 +1061,6 @@ function exportJSON(){
   URL.revokeObjectURL(url);
   Toast.show("Export gestartet");
 }
-
 function importJSON(file){
   const r=new FileReader();
   r.onload=()=>{
@@ -1164,7 +1218,6 @@ function bind(){
 
   $("btnAddLine").addEventListener("click", ()=>{
     ensureDraft();
-    // IMPORTANT: keep existing values before pushing new line
     draftFromForm();
     window.__DRAFT__.lines.push({id:uid(), desc:"", qty:"", unit:""});
     renderLines();
@@ -1172,6 +1225,11 @@ function bind(){
   });
 
   ["i_no","i_date","i_von","i_bis","i_due","i_status","i_customer"].forEach(id=>{
+    $(id).addEventListener("input", ()=>{ calcTotals(); });
+    $(id).addEventListener("change", ()=>{ calcTotals(); });
+  });
+
+  ["w_days","w_hpd","w_rate"].forEach(id=>{
     $(id).addEventListener("input", ()=>{ calcTotals(); });
     $(id).addEventListener("change", ()=>{ calcTotals(); });
   });
@@ -1208,12 +1266,10 @@ function bind(){
 (function init(){
   Store.load();
   setStorageUI();
-  if(StorageDriver.type!=="localStorage"){
-    Toast.show("Storage: "+StorageDriver.type+" • Export JSON recommended");
-  }
   bind();
   UI.go("invoices");
 })();
 </script>
+
 </body>
 </html>
