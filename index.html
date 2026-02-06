@@ -3,36 +3,30 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Masculine Security — Office + Rechnung + Payroll</title>
+<title>Masculine Security — Rechnung App</title>
 
 <style>
 :root{
-  --bg:#0b1220;--panel:#111c33;--card:#15264a;--accent:#3aa6ff;
-  --text:#eee;--muted:#9fb2ff;--danger:#c44;
+--bg:#0b1220;--panel:#0f1a2f;--card:#10203a;--text:#e7eeff;
+--muted:#93a4c6;--accent:#3aa6ff;--good:#2bd4bd;--bad:#ff4d6d;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
-.app{display:grid;grid-template-columns:260px 1fr;height:100vh}
-.sidebar{background:var(--panel);padding:14px}
-.sidebar button{
-  width:100%;margin-bottom:8px;padding:10px;border-radius:8px;
-  border:none;background:#1c2f55;color:#fff;cursor:pointer;font-weight:700
-}
-.sidebar button.active{background:var(--accent)}
-.main{padding:18px;overflow:auto}
-.card{background:var(--card);border-radius:10px;padding:14px;margin-bottom:14px}
-h2,h3{margin:0 0 10px}
-input,select,textarea{
-  width:100%;padding:8px;border-radius:6px;
-  border:1px solid #333;background:#081427;color:#fff
-}
+body{margin:0;font-family:system-ui;background:#07101f;color:var(--text)}
+.app{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:16px;max-width:1400px;margin:auto}
+.sidebar{background:linear-gradient(#10203a,#0c1629);padding:14px;border-radius:14px}
+.nav button{all:unset;display:flex;justify-content:space-between;padding:10px;border-radius:12px;border:1px solid #1a2a4b;cursor:pointer}
+.nav button.active{background:rgba(58,166,255,.2)}
+.main{background:linear-gradient(#10203a,#0c1629);border-radius:14px;overflow:hidden}
+.card{background:#0f1a2f;padding:14px;border-radius:12px;margin-bottom:14px}
+.field{display:flex;flex-direction:column;margin-bottom:8px}
+input,select,textarea{padding:8px;border-radius:8px;border:1px solid #1a2a4b;background:#050b16;color:#fff}
 .table{width:100%;border-collapse:collapse}
-.table th,.table td{border-bottom:1px solid #333;padding:6px}
+.table th,.table td{border-bottom:1px solid #1a2a4b;padding:6px}
 .right{text-align:right}
-.btn{padding:8px 12px;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
-.btn.danger{background:var(--danger)}
-hr{border:0;border-top:1px solid #333;margin:12px 0}
-.note{font-size:12px;color:#ddd}
+.hide{display:none}
+.btn{background:#3aa6ff;border:none;padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer}
+.btn.danger{background:#c44}
+.note{font-size:12px;color:#ccc}
 </style>
 </head>
 
@@ -40,219 +34,140 @@ hr{border:0;border-top:1px solid #333;margin:12px 0}
 
 <div class="app">
 
-<!-- ================= SIDEBAR ================= -->
-<div class="sidebar">
-  <button data-p="invoice" class="active">🧾 Rechnung</button>
-  <button data-p="employees">👤 Mitarbeiter</button>
-  <button data-p="payroll">💶 Payroll / SV</button>
-  <button data-p="settings">⚙️ Firma</button>
+<aside class="sidebar">
+<h3>Masculine Security</h3>
+<div class="nav">
+<button data-page="invoices" class="active">🧾 Rechnungen</button>
+<button data-page="customers">👤 Kunden</button>
+<button data-page="settings">⚙️ Einstellungen</button>
 </div>
+</aside>
 
-<!-- ================= MAIN ================= -->
-<div class="main">
+<main class="main">
 
-<!-- ============== RECHNUNG ============== -->
-<section id="p-invoice">
-<div class="card">
-<h2>Rechnung Rechner</h2>
+<section id="page-invoices" class="card">
+<h2>Rechnung</h2>
 
-<label>Tage</label><input id="i_days" type="number">
-<label>Std / Tag</label><input id="i_hpd" type="number">
-<label>€/h</label><input id="i_rate" type="number">
-
-<label>Total Stunden</label><input id="i_totalh" readonly>
-<label>Gesamt €</label><input id="i_total" readonly>
-
-<button class="btn" id="btnCalcInv">Berechnen</button>
-<button class="btn" id="btnPDFInv">PDF</button>
-
-<p class="note">Auto: Tage × Std/Tag × €/h</p>
-</div>
-</section>
-
-<!-- ============== MITARBEITER ============== -->
-<section id="p-employees" hidden>
-<div class="card">
-<h2>Mitarbeiter</h2>
-
-<input id="e_name" placeholder="Name">
-<input id="e_rate" placeholder="€/h">
-<label><input type="checkbox" id="e_sv"> Sozialversicherungspflichtig</label>
-
-<button class="btn" id="btnSaveEmp">Speichern</button>
+<div class="field"><label>Tage</label><input id="w_days" type="number"></div>
+<div class="field"><label>Std/Tag</label><input id="w_hpd" type="number"></div>
+<div class="field"><label>€/h</label><input id="w_rate" type="number"></div>
+<div class="field"><label>Total Stunden</label><input id="w_total" readonly></div>
 
 <table class="table">
-<thead><tr><th>Name</th><th>€/h</th><th>SV</th><th></th></tr></thead>
-<tbody id="empList"></tbody>
+<thead><tr><th>Beschreibung</th><th class="right">Menge</th><th class="right">Preis</th><th class="right">Netto</th></tr></thead>
+<tbody id="linesBody"></tbody>
 </table>
-</div>
+
+<div class="field"><label>Gesamt</label><input id="sum_total" readonly></div>
+
+<button class="btn" id="btnSaveInvoice">Speichern</button>
+<button class="btn" id="btnPrint">PDF</button>
 </section>
 
-<!-- ============== PAYROLL ============== -->
-<section id="p-payroll" hidden>
-<div class="card">
-<h2>Payroll / Sozialversicherung</h2>
-
-<select id="p_emp"></select>
-<label>Stunden</label><input id="p_hours" type="number">
-
-<button class="btn" id="btnCalcPay">Berechnen</button>
-
-<div id="payResult"></div>
-
-<hr>
-
-<button class="btn" id="btnPDFLohn">📄 Lohnabrechnung</button>
-<button class="btn" id="btnPDFArbeits">📄 Arbeitsbescheinigung</button>
-<button class="btn" id="btnPDFSteuer">📄 Steuerübersicht</button>
-
-<p class="note">Hinweis: Nur interne Berechnung – kein offizielles Dokument.</p>
-</div>
+<section id="page-customers" class="card hide">
+<h2>Kunden</h2>
+<input id="c_name" placeholder="Firma">
+<button class="btn" id="btnCustomerSave">Speichern</button>
+<table class="table"><tbody id="customersList"></tbody></table>
 </section>
 
-<!-- ============== SETTINGS ============== -->
-<section id="p-settings" hidden>
-<div class="card">
+<section id="page-settings" class="card hide">
 <h2>Firma</h2>
-<input id="s_name" placeholder="Firma">
-<textarea id="s_addr" placeholder="Adresse"></textarea>
-<button class="btn" id="btnSaveSettings">Speichern</button>
-</div>
+<input id="s_company">
+<textarea id="s_addr"></textarea>
+<input id="s_taxid" placeholder="Steuernummer">
+<button class="btn" id="btnSettingsSave">Speichern</button>
 </section>
 
-</div>
+</main>
 </div>
 
 <script>
-/* ================= STORAGE ================= */
-const DB="ms_complete_v30";
+const $=id=>document.getElementById(id);
+const DB="ms_final_v5";
+
 let DATA=JSON.parse(localStorage.getItem(DB)||"{}");
-DATA.emps ||= [];
-DATA.settings ||= {name:"Masculine Security",addr:"Bremen"};
+DATA.settings ||= {company:"Masculine Security",addr:"Bremen",taxid:""};
+DATA.customers ||= [];
+DATA.invoices ||= [];
 
 function save(){localStorage.setItem(DB,JSON.stringify(DATA));}
 
-/* ================= NAV ================= */
-document.querySelectorAll(".sidebar button").forEach(b=>{
-  b.onclick=()=>{
-    document.querySelectorAll(".sidebar button").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    document.querySelectorAll("section").forEach(s=>s.hidden=true);
-    document.getElementById("p-"+b.dataset.p).hidden=false;
-  };
+/* NAV */
+document.querySelectorAll(".nav button").forEach(b=>{
+ b.onclick=()=>{
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll("section").forEach(s=>s.classList.add("hide"));
+  $("page-"+b.dataset.page).classList.remove("hide");
+ };
 });
 
-/* ================= EMPLOYEES ================= */
-function renderEmp(){
-  let t=empList;
-  let sel=p_emp;
-  t.innerHTML=""; sel.innerHTML="";
-  DATA.emps.forEach(e=>{
-    let tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${e.name}</td>
-      <td>${e.rate}</td>
-      <td>${e.sv?"ja":"nein"}</td>
-      <td><button data-id="${e.id}" class="btn danger">X</button></td>`;
-    t.appendChild(tr);
-
-    let o=document.createElement("option");
-    o.value=e.id;o.textContent=e.name;
-    sel.appendChild(o);
-  });
-
-  t.querySelectorAll("button").forEach(b=>{
-    b.onclick=()=>{
-      DATA.emps=DATA.emps.filter(e=>e.id!=b.dataset.id);
-      save();renderEmp();
-    };
-  });
+/* AUTO CALC */
+function calc(){
+ let h=(+w_days.value||0)*(+w_hpd.value||0);
+ w_total.value=h;
+ let rate=+w_rate.value||0;
+ let net=h*rate;
+ linesBody.innerHTML=`<tr>
+ <td>Sicherheitsdienstleistung</td>
+ <td class="right">${h}</td>
+ <td class="right">${rate.toFixed(2)}</td>
+ <td class="right">${net.toFixed(2)}</td>
+ </tr>`;
+ sum_total.value=net.toFixed(2);
 }
 
-btnSaveEmp.onclick=()=>{
-  if(!e_name.value)return alert("Name fehlt");
-  let e={
-    id:Date.now(),
-    name:e_name.value,
-    rate:+e_rate.value||0,
-    sv:e_sv.checked
-  };
-  DATA.emps.push(e);save();renderEmp();
-  e_name.value="";e_rate.value="";e_sv.checked=false;
+["w_days","w_hpd","w_rate"].forEach(id=>$(id).oninput=calc);
+
+/* SAVE INVOICE */
+btnSaveInvoice.onclick=()=>{
+ DATA.invoices.push({hours:w_total.value,total:sum_total.value});
+ save();
+ alert("Gespeichert");
 };
 
-/* ================= INVOICE ================= */
-btnCalcInv.onclick=()=>{
-  let h=(+i_days.value||0)*(+i_hpd.value||0);
-  i_totalh.value=h.toFixed(2);
-  i_total.value=(h*(+i_rate.value||0)).toFixed(2);
+/* PDF */
+btnPrint.onclick=()=>{
+ let w=window.open("");
+ w.document.write(`
+ <h1>Rechnung</h1>
+ <b>${DATA.settings.company}</b><br>
+ ${DATA.settings.addr}<br>
+ Steuer: ${DATA.settings.taxid}<hr>
+ Stunden:${w_total.value}<br>
+ Gesamt:${sum_total.value}€
+ `);
+ w.print();
 };
 
-btnPDFInv.onclick=()=>{
-  let w=window.open("");
-  w.document.write(`
-    <h1>Rechnung</h1>
-    <b>${DATA.settings.name}</b><br>
-    ${DATA.settings.addr}<hr>
-    Stunden: ${i_totalh.value}<br>
-    Gesamt: ${i_total.value} €<br>
-  `);
-  w.print();
+/* CUSTOMERS */
+btnCustomerSave.onclick=()=>{
+ DATA.customers.push({name:c_name.value});
+ save();
+ renderCustomers();
 };
-
-/* ================= PAYROLL ================= */
-const SV_AN=0.203;
-const SV_AG=0.203;
-
-btnCalcPay.onclick=()=>{
-  let e=DATA.emps.find(x=>x.id==p_emp.value);
-  if(!e)return alert("Mitarbeiter wählen");
-
-  let brutto=(+p_hours.value||0)*e.rate;
-  let an=e.sv?brutto*SV_AN:0;
-  let ag=e.sv?brutto*SV_AG:0;
-
-  payResult.innerHTML=`
-    <p>Brutto: ${brutto.toFixed(2)} €</p>
-    <p>AN-SV: ${an.toFixed(2)} €</p>
-    <p><b>Netto (estimate): ${(brutto-an).toFixed(2)} €</b></p>
-    <p>AG-SV: ${ag.toFixed(2)} €</p>
-    <p><b>Gesamtkosten Firma: ${(brutto+ag).toFixed(2)} €</b></p>
-  `;
-};
-
-function payrollPDF(title){
-  let e=DATA.emps.find(x=>x.id==p_emp.value);
-  if(!e)return;
-  let brutto=(+p_hours.value||0)*e.rate;
-  let w=window.open("");
-  w.document.write(`
-    <h1>${title}</h1>
-    <b>${DATA.settings.name}</b><hr>
-    Mitarbeiter: ${e.name}<br>
-    Stunden: ${p_hours.value}<br>
-    Brutto: ${brutto.toFixed(2)} €<br>
-    <small>Nur interne Berechnung</small>
-  `);
-  w.print();
+function renderCustomers(){
+ customersList.innerHTML="";
+ DATA.customers.forEach(c=>{
+  customersList.innerHTML+=`<tr><td>${c.name}</td></tr>`;
+ });
 }
 
-btnPDFLohn.onclick=()=>payrollPDF("Lohnabrechnung (intern)");
-btnPDFArbeits.onclick=()=>payrollPDF("Arbeitsbescheinigung");
-btnPDFSteuer.onclick=()=>payrollPDF("Steuerübersicht");
-
-/* ================= SETTINGS ================= */
-btnSaveSettings.onclick=()=>{
-  DATA.settings.name=s_name.value||DATA.settings.name;
-  DATA.settings.addr=s_addr.value||DATA.settings.addr;
-  save();
-  alert("Gespeichert");
+/* SETTINGS */
+btnSettingsSave.onclick=()=>{
+ DATA.settings.company=s_company.value;
+ DATA.settings.addr=s_addr.value;
+ DATA.settings.taxid=s_taxid.value;
+ save();
+ alert("Gespeichert");
 };
 
 /* INIT */
-renderEmp();
-s_name.value=DATA.settings.name;
+s_company.value=DATA.settings.company;
 s_addr.value=DATA.settings.addr;
+s_taxid.value=DATA.settings.taxid;
+renderCustomers();
 </script>
 
 </body>
