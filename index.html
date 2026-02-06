@@ -187,13 +187,14 @@
       flex-wrap:wrap;
     }
     .dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+    .dot.off{background:rgba(255,255,255,.25)}
     .toast{
       position:fixed; right:16px; bottom:16px;
-      max-width: 420px;
+      max-width: 460px;
       padding:12px 14px;
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(12,22,41,.85);
+      background: rgba(12,22,41,.92);
       box-shadow: 0 14px 40px rgba(0,0,0,.45);
       color: var(--text);
       z-index: 9999;
@@ -204,27 +205,6 @@
       .app{grid-template-columns: 1fr}
       .sidebar{position:relative; height:auto}
       .grid2,.grid3{grid-template-columns: 1fr}
-    }
-
-    /* ✅ FIX #1 (PDF/Print): Print only #printArea */
-    #printArea{display:none}
-    .printDoc{font-family: Arial, sans-serif; padding:18px; color:#000;}
-    .printHeader{display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
-      border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:10px;}
-    .printHeader h1{margin:0; font-size:18px}
-    .printTable{width:100%; border-collapse:collapse}
-    .printTable th,.printTable td{border-bottom:1px solid #eee; padding:8px; text-align:left; font-size:12px}
-    .printRight{text-align:right}
-
-    @media print{
-      body{background:#fff; color:#000}
-      body *{ visibility:hidden !important; }
-      #printArea, #printArea *{ visibility:visible !important; }
-      #printArea{
-        display:block !important;
-        position:absolute; left:0; top:0;
-        width:100%;
-      }
     }
 
     body.light{
@@ -279,9 +259,9 @@
     </div>
 
     <div class="foot">
-      <div><b>Offline:</b> Daten bleiben im Browser (localStorage).</div>
-      <div class="muted">Haddii uusan update muuqan: Ctrl+Shift+R (hard refresh).</div>
-      <div class="muted"><b>Hinweis:</b> Rechnung = Einzelunternehmer • §19 UStG (Kleinunternehmer).</div>
+      <div><b>Offline:</b> Daten bleiben im Browser.</div>
+      <div class="muted">Haddii save diido → Export JSON u samee (backup).</div>
+      <div class="muted"><b>Hinweis:</b> Rechnung = §19 UStG (Kleinunternehmer).</div>
     </div>
   </aside>
 
@@ -289,7 +269,7 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Dashboard</h2>
-        <small id="pageSub" class="muted">Auto-Save • PDF via Print</small>
+        <small id="pageSub" class="muted">Auto-Save • PDF (1 Seite)</small>
       </div>
       <div class="actions" id="topActions">
         <button class="btn primary" id="btnQuickInvoice">+ Rechnung</button>
@@ -331,7 +311,7 @@
               <div>
                 <div class="label">Rechnungen</div>
                 <div class="value" id="kpiInvoices">0</div>
-                <div class="muted" style="font-size:12px">PDF via Print</div>
+                <div class="muted" style="font-size:12px">PDF: 1 Seite</div>
               </div>
               <span class="tag">🧾</span>
             </div>
@@ -349,7 +329,7 @@
           <div class="card">
             <h3>Schnellstart</h3>
             <div class="note">
-              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → PDF (Print).<br/>
+              <b>1)</b> Kunde speichern → <b>2)</b> Rechnung erstellen → <b>PDF</b> (Print).<br/>
               <b>Von…Bis</b> waa timeframe, wuxuuna ka soo muuqanayaa PDF.
             </div>
             <div class="hr"></div>
@@ -435,7 +415,7 @@
             <div class="note" id="i_previewNote">Gesamt: 0,00 € • USt: 0,00 € • Hinweis: §19 UStG</div>
 
             <button class="btn primary" id="btnInvoiceSave">Speichern</button>
-            <button class="btn" id="btnInvoicePrint">PDF öffnen</button>
+            <button class="btn" id="btnInvoicePrint">PDF (1 Seite)</button>
             <button class="btn" id="btnInvoiceEmail">Email Rechnung</button>
             <button class="btn danger" id="btnInvoiceClear">Leeren</button>
           </div>
@@ -535,10 +515,9 @@
 
           <div class="card">
             <h3>Info</h3>
-            <div class="note">
-              <b>Auto-Save:</b> wax walba browser-ka ayuu ku keydinayaa.<br/>
-              <b>Export/Import:</b> JSON si aad u backup gareyso.<br/>
-              <b>Email:</b> links waa clickable (mailto).<br/>
+            <div class="note" id="storageNote">
+              <b>Speichern:</b> OK (localStorage).<br/>
+              Haddii storage la xiro (private mode ama browser restrictions) → Export JSON samee.
             </div>
           </div>
         </div>
@@ -554,17 +533,69 @@
   </main>
 </div>
 
-<!-- ✅ FIX #1: printArea is OUTSIDE .app so it never gets hidden by print rules -->
-<section id="printArea">
-  <div class="printDoc" id="printDoc"></div>
-</section>
-
 <div class="toast" id="toast"></div>
 
 <script>
-const DB_KEY = "ms_mini_office_v1";
+/* =========================
+   STORAGE FIX (Speichern)
+   - detect if localStorage works
+   - if blocked -> fallback to sessionStorage + auto-warning
+   - always provide Export JSON backup
+========================= */
+const DB_KEY = "ms_mini_office_v2";
 const $ = (id)=>document.getElementById(id);
 
+const Toast = {
+  t:null,
+  show(msg){
+    const el=$("toast");
+    el.textContent=msg;
+    el.style.display="block";
+    clearTimeout(this.t);
+    this.t=setTimeout(()=>{el.style.display="none";},2500);
+  }
+};
+
+function storageWorks(which){
+  try{
+    const k="__ms_test__"+Math.random();
+    which.setItem(k,"1");
+    which.removeItem(k);
+    return true;
+  }catch(e){ return false; }
+}
+
+const StorageDriver = (()=>{
+  const canLocal = storageWorks(window.localStorage);
+  const canSession = storageWorks(window.sessionStorage);
+  const driver = canLocal ? window.localStorage : (canSession ? window.sessionStorage : null);
+  return {
+    type: canLocal ? "localStorage" : (canSession ? "sessionStorage" : "memory"),
+    getItem:(k)=> driver ? driver.getItem(k) : null,
+    setItem:(k,v)=> { if(driver) driver.setItem(k,v); else window.__MS_MEM__=v; },
+    removeItem:(k)=> { if(driver) driver.removeItem(k); else window.__MS_MEM__=null; },
+    canPersist: () => (canLocal || canSession)
+  };
+})();
+
+function setStorageUI(){
+  const info=$("dbInfo");
+  const note=$("storageNote");
+  if(info) info.textContent = StorageDriver.type;
+  if(note){
+    if(StorageDriver.type==="localStorage"){
+      note.innerHTML = `<b>Speichern:</b> OK (localStorage).<br/>Daten bleiben im Browser.`;
+    }else if(StorageDriver.type==="sessionStorage"){
+      note.innerHTML = `<b>Speichern:</b> nur Session (sessionStorage).<br/><b>Wichtig:</b> haddii tab-ka la xiro → data wuu lumi karaa. Export JSON samee!`;
+    }else{
+      note.innerHTML = `<b>Speichern:</b> xiran (Browser blocks storage).<br/><b>Wichtig:</b> Export JSON isticmaaal, ama ku furo Chrome (normal mode).`;
+    }
+  }
+}
+
+/* =========================
+   HELPERS
+========================= */
 const fmtEUR = (n)=>{
   const v = Number(n||0);
   return v.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
@@ -577,25 +608,25 @@ const todayISO = ()=>{
 const monthKey = (isoDate)=> isoDate ? isoDate.slice(0,7) : "";
 const uid = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
 
-const Toast = {
-  t:null,
-  show(msg){
-    const el=$("toast");
-    el.textContent=msg;
-    el.style.display="block";
-    clearTimeout(this.t);
-    this.t=setTimeout(()=>{el.style.display="none";},2200);
-  }
-};
+function escapeHtml(str){
+  return String(str??"").replace(/[&<>"']/g, s=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
+}
 
+/* =========================
+   STORE
+========================= */
 const Store = {
   data:null,
   load(){
-    const raw=localStorage.getItem(DB_KEY);
-    if(raw){ try{ this.data=JSON.parse(raw);}catch(e){this.data=null;} }
+    const raw = StorageDriver.getItem(DB_KEY);
+    if(raw){
+      try{ this.data=JSON.parse(raw); }catch(e){ this.data=null; }
+    }
     if(!this.data){
       this.data={
-        version:1,
+        version:2,
         theme:"dark",
         settings:{
           company:"Masculine Security",
@@ -611,20 +642,20 @@ const Store = {
         invoices:[],
         recent:[]
       };
-      this.save();
+      this.save(true);
     }
     return this.data;
   },
-  save(){
+  save(silent=false){
     try{
-      localStorage.setItem(DB_KEY, JSON.stringify(this.data));
-      UI.pulse();
+      StorageDriver.setItem(DB_KEY, JSON.stringify(this.data));
+      if(!silent) UI.pulse();
     }catch(e){
       console.error(e);
-      Toast.show("Speichern Fehler (Browser storage)");
+      Toast.show("Speichern Fehler: Storage blockiert. Export JSON samee.");
     }
   },
-  wipe(){ localStorage.removeItem(DB_KEY); location.reload(); }
+  wipe(){ StorageDriver.removeItem(DB_KEY); location.reload(); }
 };
 
 const UI = {
@@ -647,11 +678,11 @@ const UI = {
       if(sec) sec.classList.toggle("hide", p!==page);
     });
     const titles={
-      dashboard:["Dashboard","Auto-Save • PDF via Print"],
-      customers:["Kunden","Kunden speichern • Suche • Email clickable"],
-      invoices:["Rechnungen","§19 UStG • Von…Bis • PDF via Print"],
+      dashboard:["Dashboard","Auto-Save • PDF (1 Seite)"],
+      customers:["Kunden","Speichern • Suche • Email clickable"],
+      invoices:["Rechnungen","§19 UStG • Von…Bis • PDF (1 Seite)"],
       employees:["Mitarbeiter","Liste • Speicherung"],
-      settings:["Einstellungen","Firma • Hinweis • Backup"]
+      settings:["Einstellungen","Firma • Backup"]
     };
     $("pageTitle").textContent=titles[page][0];
     $("pageSub").textContent=titles[page][1];
@@ -659,19 +690,15 @@ const UI = {
   }
 };
 
-function escapeHtml(str){
-  return String(str??"").replace(/[&<>"']/g, s=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[s]));
-}
-
+/* =========================
+   RECENT
+========================= */
 function addRecent(type, desc, dateISO, amount){
   const d=Store.data;
   d.recent.unshift({id:uid(),type,desc,date:dateISO||todayISO(),amount:amount??""});
   d.recent=d.recent.slice(0,12);
   Store.save();
 }
-
 function renderRecent(){
   const d=Store.data;
   const tbody=$("recentList");
@@ -691,11 +718,14 @@ function renderRecent(){
   }
 }
 
-/* CUSTOMERS */
+/* =========================
+   CUSTOMERS
+========================= */
 function renderCustomers(){
   const d=Store.data;
   $("pillCustomers").textContent=d.customers.length;
   const q=($("c_search").value||"").toLowerCase().trim();
+
   const rows=d.customers
     .filter(c=>{
       const s=(c.name+" "+c.email+" "+c.addr).toLowerCase();
@@ -714,12 +744,12 @@ function renderCustomers(){
         </td>
       </tr>`;
     }).join("");
+
   $("customersList").innerHTML=rows||`<tr><td class="muted" colspan="4">Keine Kunden gefunden</td></tr>`;
 
   const sel=$("i_customer");
   const current=sel.value;
 
-  // ✅ FIX #2 (Speichern): dropdown always has a selectable placeholder (NOT disabled selected)
   sel.innerHTML=`<option value="">${d.customers.length ? "Bitte Kunde wählen" : "Erst Kunde anlegen"}</option>`;
   for(const c of d.customers){
     const opt=document.createElement("option");
@@ -756,11 +786,14 @@ const Customers={
   use(id){ UI.go("invoices"); $("i_customer").value=id; Toast.show("Kunde gewählt"); }
 };
 
-/* EMPLOYEES */
+/* =========================
+   EMPLOYEES
+========================= */
 function renderEmployees(){
   const d=Store.data;
   $("pillEmployees").textContent=d.employees.length;
   const q=($("m_search").value||"").toLowerCase().trim();
+
   const rows=d.employees
     .filter(m=>{
       const s=(m.name+" "+m.taxid+" "+m.taxclass).toLowerCase();
@@ -773,6 +806,7 @@ function renderEmployees(){
         <td>${escapeHtml(m.taxclass||"")}</td>
         <td class="right"><button class="btn danger" onclick="Employees.del('${m.id}')">Löschen</button></td>
       </tr>`).join("");
+
   $("employeesList").innerHTML=rows||`<tr><td class="muted" colspan="4">Keine Mitarbeiter gefunden</td></tr>`;
 }
 
@@ -800,7 +834,9 @@ const Employees={
   }
 };
 
-/* INVOICES */
+/* =========================
+   INVOICES
+========================= */
 function nextInvoiceNo(){
   const year=new Date().getFullYear();
   const prefix="MS-"+year+"-";
@@ -869,7 +905,6 @@ const Invoices={
     invoiceTotalPreview();
   },
 
-  // ✅ FIX #3: Print & Email work even if you did NOT save yet (uses current form)
   _fromForm(){
     const d=Store.data;
     return {
@@ -890,7 +925,6 @@ const Invoices={
   save(){
     const d=Store.data;
     const inv=this._fromForm();
-
     if(!inv.customerId){Toast.show("Bitte Kunde wählen");return;}
     if(!inv.net || inv.net<=0){Toast.show("Bitte Netto Betrag eingeben");return;}
 
@@ -903,11 +937,18 @@ const Invoices={
     }else{
       const newId=uid();
       d.invoices.unshift({...inv, id:newId});
-      $("i_no").dataset.editId=newId; // keep as current
+      $("i_no").dataset.editId=newId;
       addRecent("Rechnung",`Gespeichert: ${inv.no}`,inv.date,inv.net);
       Toast.show("Rechnung gespeichert");
     }
+
     Store.save();
+
+    // haddii storage la xiro → si automatic ah uga dig
+    if(!StorageDriver.canPersist()){
+      Toast.show("Browser wuxuu xidhay storage → Export JSON samee si uusan u lumin.");
+    }
+
     renderAll();
   },
 
@@ -941,87 +982,134 @@ const Invoices={
     renderAll();
   },
 
+  /* =========================
+     PDF FIX + "HAL PAGE"
+     -> opens a NEW window with a single A4 page print layout
+     -> forces one-page look (no breaks)
+  ========================= */
   print(id){
     const d=Store.data;
     const inv = id ? d.invoices.find(x=>x.id===id) : this._fromForm();
-
     if(!inv){Toast.show("Keine Rechnung");return;}
     if(!inv.customerId){Toast.show("Bitte Kunde wählen (für PDF)");return;}
     if(!inv.net || inv.net<=0){Toast.show("Netto Betrag fehlt");return;}
 
     const s=d.settings;
 
-    // ✅ Kunde box removed + Bank section removed (as you asked)
-    const doc=`
-      <div class="printHeader">
-        <div>
-          <h1>Rechnung</h1>
-          <div><b>${escapeHtml(s.company||"")}</b></div>
-          <div style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
-          <div>E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a></div>
-          ${s.phone?`<div>Tel: ${escapeHtml(s.phone)}</div>`:""}
-        </div>
-        <div style="text-align:right">
-          <div><b>Rechnungs-Nr.:</b> ${escapeHtml(inv.no||"")}</div>
-          <div><b>Rechnungsdatum:</b> ${escapeHtml(inv.date||"")}</div>
-          <div><b>Zeitraum:</b> ${escapeHtml(inv.von||"")}…${escapeHtml(inv.bis||"")}</div>
-        </div>
+    const html = `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Rechnung ${escapeHtml(inv.no||"")}</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  html,body{margin:0;padding:0;font-family:Arial, sans-serif;color:#000;}
+  .page{width:100%; max-width: 210mm; margin:0 auto;}
+  .hdr{display:flex; justify-content:space-between; gap:12mm; border-bottom:1px solid #ddd; padding-bottom:6mm; margin-bottom:6mm;}
+  .hdr h1{margin:0;font-size:16px;}
+  .small{font-size:11px; color:#333;}
+  .right{text-align:right}
+  table{width:100%; border-collapse:collapse; font-size:11px;}
+  th,td{padding:6px 6px; border-bottom:1px solid #eee; vertical-align:top;}
+  th{font-weight:700; text-align:left; color:#333;}
+  .sum td{border-bottom:none;}
+  .sumline td{border-top:1px solid #ddd; font-weight:700;}
+  /* Force single-page feel */
+  .noBreak{break-inside:avoid; page-break-inside:avoid;}
+  .foot{margin-top:6mm; font-size:10.5px; color:#333;}
+  /* If browser still tries to break, scale down a bit */
+  @media print{
+    body{zoom:0.98;}
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="hdr noBreak">
+      <div>
+        <h1>Rechnung</h1>
+        <div><b>${escapeHtml(s.company||"")}</b></div>
+        <div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
+        <div class="small">E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a></div>
+        ${s.phone?`<div class="small">Tel: ${escapeHtml(s.phone)}</div>`:""}
       </div>
+      <div class="right small">
+        <div><b>Rechnungs-Nr.:</b> ${escapeHtml(inv.no||"")}</div>
+        <div><b>Rechnungsdatum:</b> ${escapeHtml(inv.date||"")}</div>
+        <div><b>Zeitraum:</b> ${escapeHtml(inv.von||"")}…${escapeHtml(inv.bis||"")}</div>
+        ${inv.due?`<div><b>Fällig am:</b> ${escapeHtml(inv.due)}</div>`:""}
+      </div>
+    </div>
 
-      <table class="printTable">
+    <div class="noBreak">
+      <table>
         <thead>
           <tr>
-            <th>Leistung</th>
-            <th>Hinweis</th>
-            <th class="printRight">Netto</th>
+            <th style="width:55%">Leistung</th>
+            <th style="width:30%">Hinweis</th>
+            <th style="width:15%" class="right">Netto</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>
               <b>${escapeHtml(inv.desc||"Sicherheitsdienstleistung")}</b><br/>
-              <span style="font-size:12px;color:#666">Von ${escapeHtml(inv.von||"")} bis ${escapeHtml(inv.bis||"")}</span>
+              <span class="small">Von ${escapeHtml(inv.von||"")} bis ${escapeHtml(inv.bis||"")}</span>
             </td>
-            <td style="font-size:12px;color:#666">${escapeHtml(inv.hint||s.hint||"")}</td>
-            <td class="printRight">${fmtEUR(inv.net||0)}</td>
+            <td class="small">${escapeHtml(inv.hint||s.hint||"")}</td>
+            <td class="right">${fmtEUR(inv.net||0)}</td>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" class="printRight"><b>Gesamt (Netto)</b></td>
-            <td class="printRight"><b>${fmtEUR(inv.net||0)}</b></td>
+        <tbody class="sum noBreak">
+          <tr class="sumline">
+            <td colspan="2" class="right">Gesamt (Netto)</td>
+            <td class="right">${fmtEUR(inv.net||0)}</td>
           </tr>
           <tr>
-            <td colspan="2" class="printRight">Umsatzsteuer</td>
-            <td class="printRight">0,00 €</td>
+            <td colspan="2" class="right">Umsatzsteuer</td>
+            <td class="right">0,00 €</td>
           </tr>
-          <tr>
-            <td colspan="2" class="printRight"><b>Zu zahlen</b></td>
-            <td class="printRight"><b>${fmtEUR(inv.net||0)}</b></td>
+          <tr class="sumline">
+            <td colspan="2" class="right">Zu zahlen</td>
+            <td class="right">${fmtEUR(inv.net||0)}</td>
           </tr>
-        </tfoot>
+        </tbody>
       </table>
+    </div>
 
-      <div style="font-size:12px;color:#555;margin-top:10px">
-        <b>Hinweis:</b> ${escapeHtml(inv.hint||s.hint||"")}
-      </div>
-    `;
+    <div class="foot noBreak">
+      <b>Hinweis:</b> ${escapeHtml(inv.hint||s.hint||"")}<br/>
+      <span class="small">§19 UStG: Keine Umsatzsteuer wird ausgewiesen.</span>
+    </div>
+  </div>
 
-    $("printDoc").innerHTML=doc;
+<script>
+  window.onload = () => {
+    setTimeout(()=>window.print(), 150);
+  };
+<\/script>
+</body>
+</html>`;
 
-    // small delay helps some browsers render print area before print
-    setTimeout(()=>window.print(), 50);
+    const w = window.open("", "_blank");
+    if(!w){
+      Toast.show("Popup blockiert. Erlaube Popups ama isticmaal Chrome.");
+      return;
+    }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
   },
 
   emailCurrent(){
     const inv=this._fromForm();
     if(!inv.customerId){Toast.show("Bitte Kunde wählen");return;}
     if(!inv.net || inv.net<=0){Toast.show("Netto Betrag fehlt");return;}
-
     const d=Store.data;
     const c=d.customers.find(x=>x.id===inv.customerId);
     if(!c?.email){Toast.show("Kunde hat keine Email");return;}
-
     const subject=`Rechnung ${inv.no} – ${d.settings.company}`;
     const bodyLines=[
       `Guten Tag,`,
@@ -1040,7 +1128,9 @@ const Invoices={
   }
 };
 
-/* SETTINGS */
+/* =========================
+   SETTINGS
+========================= */
 const Settings={
   load(){
     const s=Store.data.settings;
@@ -1071,7 +1161,9 @@ const Settings={
   }
 };
 
-/* EXPORT / IMPORT */
+/* =========================
+   EXPORT / IMPORT
+========================= */
 function exportJSON(){
   const blob=new Blob([JSON.stringify(Store.data,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
@@ -1114,7 +1206,31 @@ function applyTheme(){
   document.body.classList.toggle("light", t==="light");
 }
 
+/* =========================
+   RENDER + AUTOSAVE FIX
+   - Auto-save on inputs (debounced)
+========================= */
+let saveDebounce=null;
+function autoSaveNow(){
+  clearTimeout(saveDebounce);
+  saveDebounce=setTimeout(()=>{
+    Store.save(true);
+    // show dot status
+    const dot=$("dot");
+    if(dot){ dot.classList.remove("off"); }
+  }, 350);
+}
+
+function wireAutoSaveInputs(){
+  // any input/select/textarea changes -> save (debounced)
+  document.querySelectorAll("input,select,textarea").forEach(el=>{
+    el.addEventListener("input", autoSaveNow);
+    el.addEventListener("change", autoSaveNow);
+  });
+}
+
 function renderAll(){
+  setStorageUI();
   Settings.load();
   renderRecent();
   renderCustomers();
@@ -1124,6 +1240,9 @@ function renderAll(){
   if(!$("i_no").value) Invoices.clear();
 }
 
+/* =========================
+   BIND
+========================= */
 function bind(){
   document.querySelectorAll("#nav button").forEach(b=>{
     b.addEventListener("click", ()=>UI.go(b.dataset.page));
@@ -1163,10 +1282,7 @@ function bind(){
 
   $("btnInvoiceSave").addEventListener("click", ()=>Invoices.save());
   $("btnInvoiceClear").addEventListener("click", ()=>Invoices.clear());
-
-  // ✅ FIX #3: PDF button prints current form if not saved yet
   $("btnInvoicePrint").addEventListener("click", ()=>Invoices.print());
-
   $("btnInvoiceEmail").addEventListener("click", ()=>Invoices.emailCurrent());
   $("i_net").addEventListener("input", invoiceTotalPreview);
   $("i_search").addEventListener("input", renderInvoices);
@@ -1181,6 +1297,8 @@ function bind(){
   ["s_company","s_addr","s_email","s_phone","s_iban","s_bic","s_hint"].forEach(id=>{
     $(id).addEventListener("change", ()=>Settings.save());
   });
+
+  wireAutoSaveInputs();
 }
 
 (function init(){
@@ -1189,6 +1307,11 @@ function bind(){
   bind();
   renderAll();
   UI.go("dashboard");
+
+  // show storage warning once (if needed)
+  if(StorageDriver.type!=="localStorage"){
+    Toast.show("Speichern: " + StorageDriver.type + " (haddii data lumayo → Export JSON).");
+  }
 })();
 </script>
 </body>
