@@ -19,6 +19,8 @@
         radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.18), transparent 55%),
         linear-gradient(180deg, #07101f 0%, #070d18 100%);
     }
+    a{color:inherit}
+
     .app{
       min-height:100vh;
       display:grid;
@@ -208,7 +210,7 @@
       <div class="logo" id="brandLogo">MS</div>
       <div>
         <h1 id="brandTitle">Masculine Security</h1>
-        <small>Rechnung App • Offline • Auto-Save</small>
+        <small>Rechnung App • Offline • Auto Calc</small>
       </div>
     </div>
 
@@ -228,7 +230,7 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Rechnungen</h2>
-        <small id="pageSub" class="muted">Multi-Position • PDF (A4) • Auto Calc</small>
+        <small id="pageSub" class="muted">Positionen • PDF (A4) • Auto Calc</small>
       </div>
       <div class="actions">
         <button class="btn primary" id="btnNewInvoice">+ Neue Rechnung</button>
@@ -240,7 +242,7 @@
     </div>
 
     <div class="content">
-      <!-- INVOICES PAGE -->
+      <!-- INVOICES -->
       <section id="page-invoices">
         <div class="grid2">
           <div class="card">
@@ -284,7 +286,6 @@
                   <th>Beschreibung</th>
                   <th class="right">Menge</th>
                   <th class="right">Preis</th>
-                  <th class="right">Rabatt (€)</th>
                   <th class="right">Netto</th>
                   <th class="right">Aktion</th>
                 </tr>
@@ -293,11 +294,6 @@
             </table>
 
             <div class="hr"></div>
-
-            <div class="split">
-              <div class="field"><label>Rabatt Gesamt (%) optional</label><input id="g_disc_pct" type="number" step="0.01" placeholder="0.00"/></div>
-              <div class="field"><label>Rabatt Gesamt (€) optional</label><input id="g_disc_eur" type="number" step="0.01" placeholder="0.00"/></div>
-            </div>
 
             <div class="split">
               <div class="field"><label>Summe Netto (auto)</label><input id="sum_net" readonly/></div>
@@ -345,7 +341,7 @@
         </div>
       </section>
 
-      <!-- CUSTOMERS PAGE -->
+      <!-- CUSTOMERS -->
       <section id="page-customers" class="hide">
         <div class="grid2">
           <div class="card">
@@ -376,7 +372,7 @@
         </div>
       </section>
 
-      <!-- SETTINGS PAGE -->
+      <!-- SETTINGS -->
       <section id="page-settings" class="hide">
         <div class="grid2">
           <div class="card">
@@ -421,7 +417,7 @@
    Utils
 ========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_rechnung_app_v1";
+const DB_KEY = "ms_rechnung_app_v2_no_discount";
 
 const Toast = {
   t:null,
@@ -438,7 +434,6 @@ function storageWorks(which){
   try{ const k="__ms_test__"+Math.random(); which.setItem(k,"1"); which.removeItem(k); return true; }
   catch(e){ return false; }
 }
-
 const StorageDriver = (()=>{
   const canLocal = storageWorks(window.localStorage);
   const canSession = storageWorks(window.sessionStorage);
@@ -469,7 +464,9 @@ function todayISO(){
 function uid(){
   return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
-function safeText(s){ return String(s??""); }
+function escapeHtml(str){
+  return String(str??"").replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
 
 /* =========================
    Store
@@ -536,7 +533,7 @@ const UI = {
     });
 
     const titles={
-      invoices:["Rechnungen","Multi-Position • PDF (A4) • Auto Calc"],
+      invoices:["Rechnungen","Positionen • PDF (A4) • Auto Calc"],
       customers:["Kunden","Speichern • Liste • Auswahl in Rechnung"],
       settings:["Einstellungen","Firma Daten • Storage Info"]
     };
@@ -546,6 +543,13 @@ const UI = {
     renderAll();
   }
 };
+
+function setStorageUI(){
+  $("pillStore").textContent = StorageDriver.type;
+  $("storeTag").textContent = "Storage: " + StorageDriver.type;
+  $("storageNote").textContent = "Storage: " + StorageDriver.type + (StorageDriver.type!=="localStorage" ? " • Export JSON empfohlen" : "");
+  $("dot").classList.toggle("off", StorageDriver.type==="memory");
+}
 
 /* =========================
    Customers
@@ -574,7 +578,6 @@ const Customers = {
   },
   del(id){
     Store.data.customers = Store.data.customers.filter(c=>c.id!==id);
-    // detach customer in invoices
     Store.data.invoices.forEach(inv=>{ if(inv.customerId===id) inv.customerId=""; });
     Store.save();
     renderAll();
@@ -601,9 +604,9 @@ function renderCustomers(){
       const tr=document.createElement("tr");
       const mail = c.email ? `<a href="mailto:${encodeURIComponent(c.email)}">${c.email}</a>` : "";
       tr.innerHTML = `
-        <td><b>${c.name}</b><div class="muted" style="font-size:12px">${c.phone||""}</div></td>
+        <td><b>${escapeHtml(c.name)}</b><div class="muted" style="font-size:12px">${escapeHtml(c.phone||"")}</div></td>
         <td>${mail}</td>
-        <td class="muted" style="white-space:pre-line">${c.addr||""}</td>
+        <td class="muted" style="white-space:pre-line">${escapeHtml(c.addr||"")}</td>
         <td class="right"><button class="btn danger" data-del="${c.id}">Löschen</button></td>
       `;
       tbody.appendChild(tr);
@@ -613,7 +616,7 @@ function renderCustomers(){
     });
   }
 
-  // customer select in invoice form
+  // select in invoice
   const sel=$("i_customer");
   const current=sel.value;
   sel.innerHTML="";
@@ -632,7 +635,7 @@ function renderCustomers(){
 }
 
 /* =========================
-   Invoice + Lines (DOM-safe, stable)
+   Invoices + Positionen (NO DISCOUNT)
 ========================= */
 function nextInvoiceNo(){
   const year = new Date().getFullYear();
@@ -649,14 +652,13 @@ function nextInvoiceNo(){
 function lineNet(line){
   const qty=n(line.qty);
   const unit=n(line.unit);
-  const disc=n(line.discEur);
-  let net = qty*unit - disc;
+  let net = qty*unit;
   if(net<0) net=0;
   return round2(net);
 }
 
-function ensureInvoiceDraft(){
-  // keep current draft in memory (form-based)
+let DRAFT_LOADED=false;
+function ensureDraft(){
   if(!window.__DRAFT__){
     window.__DRAFT__ = {
       id:"",
@@ -667,12 +669,11 @@ function ensureInvoiceDraft(){
       due:"",
       status:"Entwurf",
       customerId:"",
-      globalDiscPct:"",
-      globalDiscEur:"",
       lines:[
-        {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:"", discEur:""}
+        {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}
       ]
     };
+    DRAFT_LOADED=false;
   }
 }
 
@@ -686,10 +687,7 @@ function draftFromForm(){
   d.due = $("i_due").value || "";
   d.status = $("i_status").value || "Entwurf";
   d.customerId = $("i_customer").value || "";
-  d.globalDiscPct = $("g_disc_pct").value || "";
-  d.globalDiscEur = $("g_disc_eur").value || "";
 
-  // read lines from DOM
   const rows = document.querySelectorAll("#linesBody tr[data-line-id]");
   const lines=[];
   rows.forEach(tr=>{
@@ -697,36 +695,23 @@ function draftFromForm(){
     const desc=tr.querySelector("[data-f='desc']").value;
     const qty=tr.querySelector("[data-f='qty']").value;
     const unit=tr.querySelector("[data-f='unit']").value;
-    const disc=tr.querySelector("[data-f='disc']").value;
-    lines.push({id, desc:safeText(desc), qty:safeText(qty), unit:safeText(unit), discEur:safeText(disc)});
+    lines.push({id, desc:String(desc??""), qty:String(qty??""), unit:String(unit??"")});
   });
   d.lines = lines.length ? lines : d.lines;
-
   return d;
 }
 
 function calcTotals(){
   const d = draftFromForm();
   let sumNet = 0;
-  // update per-line net cells
-  d.lines.forEach(line=>{
-    sumNet += lineNet(line);
-  });
+  d.lines.forEach(line=>{ sumNet += lineNet(line); });
   sumNet = round2(sumNet);
-
-  let total = sumNet;
-  const pct = n(d.globalDiscPct);
-  const eur = n(d.globalDiscEur);
-  if(pct>0) total = total - (total*(pct/100));
-  if(eur>0) total = total - eur;
-  if(total<0) total=0;
-  total = round2(total);
+  const total = sumNet; // Kleinunternehmer: USt 0
 
   $("sum_net").value = sumNet.toFixed(2);
   $("sum_total").value = total.toFixed(2);
   $("i_preview").textContent = `Positionen: ${d.lines.length} • Gesamt: ${fmtEUR(total)} • USt: 0,00 €`;
 
-  // update line net display
   document.querySelectorAll("#linesBody tr[data-line-id]").forEach(tr=>{
     const id=tr.getAttribute("data-line-id");
     const line=d.lines.find(x=>x.id===id);
@@ -741,8 +726,9 @@ function renderLines(){
   const tbody=$("linesBody");
   tbody.innerHTML="";
   const d = window.__DRAFT__;
+
   if(!Array.isArray(d.lines) || d.lines.length===0){
-    d.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:"", discEur:""}];
+    d.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}];
   }
 
   d.lines.forEach(line=>{
@@ -774,15 +760,6 @@ function renderLines(){
     inpUnit.style.textAlign="right";
     tdUnit.appendChild(inpUnit);
 
-    const tdDisc=document.createElement("td"); tdDisc.className="right";
-    const inpDisc=document.createElement("input");
-    inpDisc.setAttribute("data-f","disc");
-    inpDisc.type="number"; inpDisc.step="0.01";
-    inpDisc.value=line.discEur||"";
-    inpDisc.placeholder="0.00";
-    inpDisc.style.textAlign="right";
-    tdDisc.appendChild(inpDisc);
-
     const tdNet=document.createElement("td"); tdNet.className="right";
     const netSpan=document.createElement("span");
     netSpan.setAttribute("data-net","1");
@@ -798,13 +775,12 @@ function renderLines(){
     tr.appendChild(tdDesc);
     tr.appendChild(tdQty);
     tr.appendChild(tdUnit);
-    tr.appendChild(tdDisc);
     tr.appendChild(tdNet);
     tr.appendChild(tdAct);
     tbody.appendChild(tr);
 
-    // style inputs same as others
-    [inpDesc, inpQty, inpUnit, inpDisc].forEach(inp=>{
+    // style inputs
+    [inpDesc, inpQty, inpUnit].forEach(inp=>{
       inp.style.width="100%";
       inp.style.padding="10px 12px";
       inp.style.borderRadius="12px";
@@ -814,20 +790,18 @@ function renderLines(){
       inp.style.outline="none";
     });
 
-    // bind calc + autosave
-    [inpDesc, inpQty, inpUnit, inpDisc].forEach(inp=>{
-      inp.addEventListener("input", ()=>{ calcTotals(); autoSave(); });
-      inp.addEventListener("change", ()=>{ calcTotals(); autoSave(); });
+    [inpDesc, inpQty, inpUnit].forEach(inp=>{
+      inp.addEventListener("input", ()=>{ calcTotals(); });
+      inp.addEventListener("change", ()=>{ calcTotals(); });
     });
 
     btnDel.addEventListener("click", ()=>{
       window.__DRAFT__.lines = window.__DRAFT__.lines.filter(x=>x.id!==line.id);
       if(window.__DRAFT__.lines.length===0){
-        window.__DRAFT__.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:"", discEur:""}];
+        window.__DRAFT__.lines=[{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}];
       }
       renderLines();
       calcTotals();
-      autoSave();
     });
 
     btnDup.addEventListener("click", ()=>{
@@ -835,12 +809,10 @@ function renderLines(){
         id:uid(),
         desc:line.desc,
         qty:line.qty,
-        unit:line.unit,
-        discEur:line.discEur
+        unit:line.unit
       });
       renderLines();
       calcTotals();
-      autoSave();
     });
   });
 }
@@ -855,12 +827,11 @@ function resetDraft(){
     due:"",
     status:"Entwurf",
     customerId:"",
-    globalDiscPct:"",
-    globalDiscEur:"",
     lines:[
-      {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:"", discEur:""}
+      {id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}
     ]
   };
+  DRAFT_LOADED=false;
   loadDraftToForm();
 }
 
@@ -874,10 +845,9 @@ function loadDraftToForm(){
   $("i_due").value=d.due||"";
   $("i_status").value=d.status||"Entwurf";
   $("i_customer").value=d.customerId||"";
-  $("g_disc_pct").value=d.globalDiscPct||"";
-  $("g_disc_eur").value=d.globalDiscEur||"";
   renderLines();
   calcTotals();
+  DRAFT_LOADED=true;
 }
 
 function saveInvoice(){
@@ -897,8 +867,6 @@ function saveInvoice(){
     due: draft.due,
     status: draft.status,
     customerId: draft.customerId,
-    globalDiscPct: draft.globalDiscPct,
-    globalDiscEur: draft.globalDiscEur,
     lines: draft.lines
   };
 
@@ -909,17 +877,15 @@ function saveInvoice(){
   Store.save();
   $("i_edit_id").value=id;
   window.__DRAFT__.id=id;
-  renderAll();
+  renderInvoicesList();
   Toast.show("Rechnung gespeichert");
 }
 
 function delInvoice(id){
   Store.data.invoices = Store.data.invoices.filter(x=>x.id!==id);
   Store.save();
-  if($("i_edit_id").value===id){
-    resetDraft();
-  }
-  renderAll();
+  if($("i_edit_id").value===id) resetDraft();
+  renderInvoicesList();
   Toast.show("Rechnung gelöscht");
 }
 
@@ -936,13 +902,18 @@ function openInvoice(id){
     due:inv.due,
     status:inv.status,
     customerId:inv.customerId,
-    globalDiscPct:inv.globalDiscPct||"",
-    globalDiscEur:inv.globalDiscEur||"",
-    lines:Array.isArray(inv.lines) && inv.lines.length ? inv.lines : [{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:"", discEur:""}]
+    lines:Array.isArray(inv.lines) && inv.lines.length ? inv.lines : [{id:uid(), desc:"Sicherheitsdienstleistung", qty:"", unit:""}]
   };
 
   loadDraftToForm();
   Toast.show("Rechnung geladen");
+}
+
+function computeInvoiceTotal(inv){
+  let sum=0;
+  (inv.lines||[]).forEach(line=>sum+=lineNet(line));
+  sum=round2(sum);
+  return sum;
 }
 
 function renderInvoicesList(){
@@ -971,9 +942,9 @@ function renderInvoicesList(){
     const total = computeInvoiceTotal(inv);
     const tr=document.createElement("tr");
     tr.innerHTML=`
-      <td><b>${inv.no||""}</b><div class="muted" style="font-size:12px">${inv.date||""}</div></td>
-      <td>${cust}</td>
-      <td>${inv.status||""}</td>
+      <td><b>${escapeHtml(inv.no||"")}</b><div class="muted" style="font-size:12px">${escapeHtml(inv.date||"")}</div></td>
+      <td>${escapeHtml(cust)}</td>
+      <td>${escapeHtml(inv.status||"")}</td>
       <td class="right"><b>${fmtEUR(total)}</b></td>
       <td class="right">
         <button class="btn" data-open="${inv.id}">Öffnen</button>
@@ -987,19 +958,6 @@ function renderInvoicesList(){
   tbody.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", ()=>openInvoice(b.getAttribute("data-open"))));
   tbody.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click", ()=>delInvoice(b.getAttribute("data-del"))));
   tbody.querySelectorAll("[data-pdf]").forEach(b=>b.addEventListener("click", ()=>printInvoicePDF(b.getAttribute("data-pdf"))));
-}
-
-function computeInvoiceTotal(inv){
-  let sum=0;
-  (inv.lines||[]).forEach(line=>sum+=lineNet(line));
-  sum=round2(sum);
-  let total=sum;
-  const pct=n(inv.globalDiscPct);
-  const eur=n(inv.globalDiscEur);
-  if(pct>0) total = total - (total*(pct/100));
-  if(eur>0) total = total - eur;
-  if(total<0) total=0;
-  return round2(total);
 }
 
 /* =========================
@@ -1035,13 +993,6 @@ const Settings = {
   }
 };
 
-function setStorageUI(){
-  $("pillStore").textContent = StorageDriver.type;
-  $("storeTag").textContent = "Storage: " + StorageDriver.type;
-  $("storageNote").textContent = "Storage: " + StorageDriver.type + (StorageDriver.type!=="localStorage" ? " • Export JSON empfohlen" : "");
-  $("dot").classList.toggle("off", StorageDriver.type==="memory");
-}
-
 /* =========================
    Export / Import
 ========================= */
@@ -1067,7 +1018,7 @@ function importJSON(file){
       data.invoices=Array.isArray(data.invoices)?data.invoices:[];
       Store.data=data;
       Store.save(true);
-      ensureInvoiceDraft();
+      ensureDraft();
       Settings.load();
       renderAll();
       Toast.show("Import OK");
@@ -1090,7 +1041,7 @@ function printInvoicePDF(id){
   const c=Store.data.customers.find(x=>x.id===inv.customerId);
 
   const total = computeInvoiceTotal(inv);
-  const net = round2((inv.lines||[]).reduce((a,l)=>a+lineNet(l),0));
+  const net = total;
 
   if(!c){ Toast.show("Kunde fehlt"); return; }
   if(!inv.no){ Toast.show("Rechnungs-Nr. fehlt"); return; }
@@ -1103,7 +1054,6 @@ function printInvoicePDF(id){
         <td><b>${escapeHtml(l.desc||"")}</b></td>
         <td class="right">${escapeHtml(l.qty||"")}</td>
         <td class="right">${fmtEUR(l.unit||0)}</td>
-        <td class="right">${fmtEUR(l.discEur||0)}</td>
         <td class="right">${fmtEUR(lineNet(l))}</td>
       </tr>
     `;
@@ -1157,11 +1107,10 @@ function printInvoicePDF(id){
       <thead>
         <tr>
           <th style="width:4%">#</th>
-          <th style="width:44%">Leistung</th>
-          <th style="width:10%" class="right">Menge</th>
-          <th style="width:14%" class="right">Preis</th>
-          <th style="width:14%" class="right">Rabatt</th>
-          <th style="width:14%" class="right">Netto</th>
+          <th style="width:50%">Leistung</th>
+          <th style="width:12%" class="right">Menge</th>
+          <th style="width:17%" class="right">Preis</th>
+          <th style="width:17%" class="right">Netto</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -1187,33 +1136,17 @@ function printInvoicePDF(id){
   w.document.open(); w.document.write(html); w.document.close();
 }
 
-function escapeHtml(str){
-  return String(str??"").replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
-}
-
 /* =========================
-   Auto-save (debounced)
-========================= */
-let saveT=null;
-function autoSave(){
-  clearTimeout(saveT);
-  saveT=setTimeout(()=>{
-    // keep draft in memory only; store persists only on explicit save invoice/settings/customer
-    UI.pulse("Auto");
-  }, 400);
-}
-
-/* =========================
-   Render
+   Render + Bind
 ========================= */
 function renderAll(){
   setStorageUI();
   Settings.load();
   renderCustomers();
   renderInvoicesList();
-  // ensure draft loaded only on invoice page
-  if(UI.page==="invoices"){
-    ensureInvoiceDraft();
+
+  ensureDraft();
+  if(UI.page==="invoices" && !DRAFT_LOADED){
     loadDraftToForm();
   }
 }
@@ -1224,22 +1157,23 @@ function bind(){
   });
 
   $("btnNewInvoice").addEventListener("click", ()=>{
-    ensureInvoiceDraft();
+    ensureDraft();
     resetDraft();
     Toast.show("Neue Rechnung");
   });
 
   $("btnAddLine").addEventListener("click", ()=>{
-    ensureInvoiceDraft();
-    window.__DRAFT__.lines.push({id:uid(), desc:"", qty:"", unit:"", discEur:""});
+    ensureDraft();
+    // IMPORTANT: keep existing values before pushing new line
+    draftFromForm();
+    window.__DRAFT__.lines.push({id:uid(), desc:"", qty:"", unit:""});
     renderLines();
     calcTotals();
-    autoSave();
   });
 
-  ["i_no","i_date","i_von","i_bis","i_due","i_status","i_customer","g_disc_pct","g_disc_eur"].forEach(id=>{
-    $(id).addEventListener("input", ()=>{ calcTotals(); autoSave(); });
-    $(id).addEventListener("change", ()=>{ calcTotals(); autoSave(); });
+  ["i_no","i_date","i_von","i_bis","i_due","i_status","i_customer"].forEach(id=>{
+    $(id).addEventListener("input", ()=>{ calcTotals(); });
+    $(id).addEventListener("change", ()=>{ calcTotals(); });
   });
 
   $("btnSaveInvoice").addEventListener("click", saveInvoice);
