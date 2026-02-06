@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Office (Rechnung + Mitarbeiter + Payroll)</title>
+  <title>Masculine Security — Office (Rechnung + Kunden + Mitarbeiter + Payroll/SV)</title>
 
   <style>
     :root{
@@ -125,6 +125,7 @@
     .btn.primary{border-color: rgba(58,166,255,.55); background: rgba(58,166,255,.16)}
     .btn.good{border-color: rgba(43,212,189,.55); background: rgba(43,212,189,.14)}
     .btn.danger{border-color: rgba(255,77,109,.45); background: rgba(255,77,109,.10)}
+    .btn.ghost{background:transparent}
 
     .content{padding:14px; display:grid; gap:14px}
     .grid2{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px}
@@ -197,6 +198,10 @@
       border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18);
       font-size:12px; font-weight:900; color:var(--muted)
     }
+    .rowActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    .mini{font-size:12px;padding:6px 10px;border-radius:10px}
+    .kpi{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+    .kpi b{font-size:18px}
     @media (max-width: 980px){
       .app{grid-template-columns: 1fr}
       .sidebar{position:relative; height:auto}
@@ -213,9 +218,8 @@
 </head>
 
 <body>
-<!-- VERSION (si aad u hubiso update) -->
 <div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#000a;color:#fff;padding:6px 10px;border-radius:10px;font:12px Arial">
-  v6-layout-fix
+  v7-lexoffice-lite
 </div>
 
 <div class="app">
@@ -224,19 +228,20 @@
       <div class="logo" id="brandLogo">MS</div>
       <div>
         <h1 id="brandTitle">Masculine Security</h1>
-        <small>Rechnung • Mitarbeiter • Payroll/SV</small>
+        <small>Kunden • Rechnungen • Mitarbeiter • Payroll/SV</small>
       </div>
     </div>
 
     <div class="nav" id="nav">
-      <button data-page="invoices" class="active"><span>🧾 Rechnung</span><span class="pill">Auto</span></button>
+      <button data-page="invoices" class="active"><span>🧾 Rechnung</span><span class="pill" id="pillInv">0</span></button>
+      <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCus">0</span></button>
       <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmp">0</span></button>
       <button data-page="payroll"><span>💶 Payroll / SV</span><span class="pill">PDF</span></button>
       <button data-page="settings"><span>⚙️ Firma</span><span class="pill" id="pillStore">Storage</span></button>
     </div>
 
     <div class="foot">
-      <div><b>Hinweis:</b> PDFs waa “Print → Save as PDF”.</div>
+      <div><b>PDF:</b> Print → Save as PDF</div>
       <div class="muted">Update ma muuqdo? fur link-ga: <b>?v=999</b></div>
       <div class="muted">§19 UStG: USt = 0</div>
     </div>
@@ -246,9 +251,10 @@
     <div class="topbar">
       <div class="crumb">
         <h2 id="pageTitle">Rechnung</h2>
-        <small id="pageSub" class="muted">Tage + Std/Tag + €/h → Auto</small>
+        <small id="pageSub" class="muted">Kunde + Zeitraum + Auto Stunden</small>
       </div>
       <div class="actions">
+        <button class="btn primary" id="btnNewInvoice">+ Neue Rechnung</button>
         <button class="btn good" id="btnExport">Export JSON</button>
         <button class="btn" id="btnImport">Import JSON</button>
         <input id="fileImport" type="file" accept="application/json" class="hide"/>
@@ -258,11 +264,12 @@
 
     <div class="content">
 
-      <!-- ================== RECHNUNG ================== -->
+      <!-- ================== INVOICES ================== -->
       <section id="page-invoices">
         <div class="grid2">
+
           <div class="card">
-            <h3>Rechnung erstellen</h3>
+            <h3>Rechnung erstellen / bearbeiten</h3>
 
             <div class="split">
               <div class="field"><label>Rechnungs-Nr.</label><input id="i_no" placeholder="MS-2026-0001"/></div>
@@ -270,20 +277,42 @@
             </div>
 
             <div class="split">
-              <div class="field"><label>Tage (inta bari)</label><input id="w_days" type="number" step="1" placeholder="z.B. 18"/></div>
-              <div class="field"><label>Std/Tag</label><input id="w_hpd" type="number" step="0.25" placeholder="z.B. 12"/></div>
+              <div class="field"><label>Von</label><input id="i_von" type="date"/></div>
+              <div class="field"><label>Bis</label><input id="i_bis" type="date"/></div>
             </div>
 
             <div class="split">
-              <div class="field"><label>€/h</label><input id="w_rate" type="number" step="0.01" placeholder="z.B. 16"/></div>
-              <div class="field"><label>Total Stunden (auto)</label><input id="w_total_hours" readonly/></div>
+              <div class="field"><label>Fällig am</label><input id="i_due" type="date"/></div>
+              <div class="field"><label>Status</label>
+                <select id="i_status">
+                  <option>Entwurf</option>
+                  <option>Gesendet</option>
+                  <option>Bezahlt</option>
+                </select>
+              </div>
             </div>
 
-            <div class="note">Menge = <b>Stunden</b>. Preis = <b>€/h</b>. Netto = Stunden × €/h.</div>
+            <div class="field">
+              <label>Kunde</label>
+              <select id="i_customer"></select>
+            </div>
 
             <div class="hr"></div>
 
-            <h3 style="margin:0 0 10px 0">Position</h3>
+            <h3 style="margin:0 0 8px 0">Auto Stunden</h3>
+            <div class="split">
+              <div class="field"><label>Tage (inta bari)</label><input id="w_days" type="number" step="1" placeholder="z.B. 18"/></div>
+              <div class="field"><label>Std/Tag</label><input id="w_hpd" type="number" step="0.25" placeholder="z.B. 12"/></div>
+            </div>
+            <div class="split">
+              <div class="field"><label>€/h</label><input id="w_rate" type="number" step="0.01" placeholder="z.B. 22"/></div>
+              <div class="field"><label>Total Stunden (auto)</label><input id="w_total_hours" readonly/></div>
+            </div>
+
+            <div class="note">Menge = Stunden • Preis = €/h • Netto = Stunden × €/h</div>
+
+            <div class="hr"></div>
+
             <table class="table">
               <thead>
                 <tr>
@@ -303,23 +332,82 @@
               <div class="field"><label>Zu zahlen</label><input id="sum_total" readonly/></div>
             </div>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn primary" id="btnPrintInvoice">PDF Rechnung</button>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn primary" id="btnSaveInvoice">Speichern</button>
+              <button class="btn" id="btnPrintInvoice">PDF Rechnung</button>
+            </div>
+
+            <input id="i_edit_id" class="hide"/>
+          </div>
+
+          <div class="card">
+            <h3>Rechnungen (Liste)</h3>
+            <div class="split">
+              <div class="field"><label>Suche</label><input id="inv_search" placeholder="Nr / Kunde"/></div>
+              <div class="field"><label>Status</label>
+                <select id="inv_filter">
+                  <option value="">Alle</option>
+                  <option>Entwurf</option>
+                  <option>Gesendet</option>
+                  <option>Bezahlt</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="kpi">
+              <div><div class="muted" style="font-size:12px">Monat Umsatz (bezahlt)</div><b id="kpiMonth">0,00 €</b></div>
+              <span class="tag">§19 UStG</span>
+            </div>
+
+            <div class="hr"></div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nr.</th>
+                  <th>Kunde</th>
+                  <th>Status</th>
+                  <th class="right">Total</th>
+                  <th class="right">Aktion</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceList"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================== CUSTOMERS ================== -->
+      <section id="page-customers" class="hide">
+        <div class="grid2">
+          <div class="card">
+            <h3>Kunde hinzufügen</h3>
+
+            <div class="field"><label>Name / Firma</label><input id="c_name" placeholder="z.B. Beispiel GmbH"/></div>
+            <div class="split">
+              <div class="field"><label>Email</label><input id="c_email" placeholder="kunde@email.de"/></div>
+              <div class="field"><label>Telefon (optional)</label><input id="c_phone" placeholder="+49 ..."/></div>
+            </div>
+            <div class="field"><label>Adresse</label><textarea id="c_addr" placeholder="Straße, PLZ Ort"></textarea></div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn primary" id="btnCustomerSave">Speichern</button>
+              <button class="btn danger" id="btnCustomerClear">Leeren</button>
             </div>
           </div>
 
           <div class="card">
-            <h3>Quick Info</h3>
-            <div class="note">
-              <b>Su’aashaada:</b> “qaabkaan badal” → waxaan kuu sameeyay layout-ka
-              sida professional app (sidebar + pages + cards).<br><br>
-              Haddii wax aan muuqan: fur link-ga adigoo ku daraya <b>?v=999</b>.
-            </div>
+            <h3>Kundenliste</h3>
+            <table class="table">
+              <thead><tr><th>Name</th><th>Email</th><th>Adresse</th><th class="right">Aktion</th></tr></thead>
+              <tbody id="customerList"></tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      <!-- ================== MITARBEITER ================== -->
+      <!-- ================== EMPLOYEES ================== -->
       <section id="page-employees" class="hide">
         <div class="grid2">
           <div class="card">
@@ -358,7 +446,7 @@
               <div class="field"><label>€/h</label><input id="p_rate" type="number" step="0.01" placeholder="auto"/></div>
             </div>
 
-            <div class="note">SV waa <b>estimate</b> (internal), ma aha official Lohnabrechnung.</div>
+            <div class="note">SV = estimate (internal). Keine offizielle Lohnabrechnung.</div>
             <div class="hr"></div>
 
             <table class="table">
@@ -367,15 +455,15 @@
             </table>
 
             <div class="hr"></div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
               <button class="btn primary" id="btnPayCalc">Berechnen</button>
               <button class="btn" id="btnPayPDF">PDF Payroll</button>
             </div>
           </div>
 
           <div class="card">
-            <h3>SV Sätze (Default)</h3>
-            <div class="note">Waxaad ka beddeli kartaa Settings (AN/AG %).</div>
+            <h3>SV Sätze</h3>
+            <div class="note">Settings → AN% / AG% waa la beddeli karaa.</div>
           </div>
         </div>
       </section>
@@ -413,6 +501,7 @@
           </div>
         </div>
       </section>
+
     </div>
 
     <div class="statusbar">
@@ -424,7 +513,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
 <div id="printArea"></div>
 
 <script>
@@ -492,7 +580,7 @@ function uid(){
   return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
 
-const DB_KEY = "ms_office_v6_layout_fix";
+const DB_KEY = "ms_office_v7_lexoffice_lite";
 
 const Store = {
   data:null,
@@ -505,15 +593,17 @@ const Store = {
       this.data = {
         settings:{
           company:"Masculine Security",
-          addr:"Bremen",
-          email:"",
+          addr:"Werschenregerstraße 6\n28237 Bremen",
+          email:"kontakt.mass.bremen@hotmail.com",
           phone:"",
-          iban:"",
-          bic:"",
+          iban:"DE98 1001 1001 2333 0146 96",
+          bic:"NTSBDEB1XXX",
           taxid:"",
           sv_an: 20.30,
           sv_ag: 20.30
         },
+        customers:[],
+        invoices:[],
         employees:[]
       };
       this.save(true);
@@ -521,6 +611,8 @@ const Store = {
       this.data.settings ||= {};
       if(this.data.settings.sv_an===undefined) this.data.settings.sv_an=20.30;
       if(this.data.settings.sv_ag===undefined) this.data.settings.sv_ag=20.30;
+      if(!Array.isArray(this.data.customers)) this.data.customers=[];
+      if(!Array.isArray(this.data.invoices)) this.data.invoices=[];
       if(!Array.isArray(this.data.employees)) this.data.employees=[];
     }
     return this.data;
@@ -544,12 +636,13 @@ const UI = {
     document.querySelectorAll("#nav button").forEach(b=>{
       b.classList.toggle("active", b.dataset.page===page);
     });
-    ["invoices","employees","payroll","settings"].forEach(p=>{
+    ["invoices","customers","employees","payroll","settings"].forEach(p=>{
       const sec = $("page-"+p);
       if(sec) sec.classList.toggle("hide", p!==page);
     });
     const titles={
-      invoices:["Rechnung","Tage + Std/Tag + €/h → Auto"],
+      invoices:["Rechnung","Kunde + Zeitraum + Auto Stunden"],
+      customers:["Kunden","Speichern • Liste • Löschen"],
       employees:["Mitarbeiter","Speichern • Liste • €/h"],
       payroll:["Payroll / SV","Stunden × €/h + SV % (estimate)"],
       settings:["Firma","Daten + SV % speichern"]
@@ -567,12 +660,78 @@ function setStorageUI(){
   $("dot").classList.toggle("off", StorageDriver.type==="memory");
 }
 
-function nextInvoiceNo(){
+function invoiceSeq(){
+  // simple sequential per store
+  Store.data.settings._seq = (Store.data.settings._seq||0) + 1;
+  Store.save(true);
   const year = new Date().getFullYear();
-  return "MS-"+year+"-"+String(Math.floor(Math.random()*9999)).padStart(4,"0");
+  return "MS-"+year+"-"+String(Store.data.settings._seq).padStart(4,"0");
 }
 
-/* ===== RECHNUNG ===== */
+/* ===== Customers ===== */
+function renderCustomers(){
+  const list = Store.data.customers;
+  $("pillCus").textContent = list.length;
+  const tbody = $("customerList");
+  tbody.innerHTML = list.length ? "" : `<tr><td class="muted" colspan="4">Keine Kunden</td></tr>`;
+  for(const c of list){
+    const tr=document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${escapeHtml(c.name)}</b></td>
+      <td>${escapeHtml(c.email||"")}</td>
+      <td style="white-space:pre-line">${escapeHtml(c.addr||"")}</td>
+      <td class="right"><button class="btn danger mini" data-del="${c.id}">Löschen</button></td>
+    `;
+    tbody.appendChild(tr);
+  }
+  tbody.querySelectorAll("[data-del]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const id=b.getAttribute("data-del");
+      // prevent delete if used by invoice (soft rule)
+      const used = Store.data.invoices.some(inv=>inv.customerId===id);
+      if(used && !confirm("Kunde ist in Rechnungen verwendet. Trotzdem löschen?")) return;
+      Store.data.customers = Store.data.customers.filter(x=>x.id!==id);
+      Store.save();
+      renderAll();
+    });
+  });
+
+  // invoice customer select
+  const sel=$("i_customer");
+  const cur=sel.value;
+  sel.innerHTML="";
+  const o0=document.createElement("option");
+  o0.value="";
+  o0.textContent = list.length ? "Bitte Kunde wählen" : "Keine Kunden";
+  sel.appendChild(o0);
+  for(const c of list){
+    const o=document.createElement("option");
+    o.value=c.id;
+    o.textContent = c.name;
+    sel.appendChild(o);
+  }
+  if(cur && list.some(x=>x.id===cur)) sel.value=cur;
+}
+
+function customerSave(){
+  const name=($("c_name").value||"").trim();
+  if(!name){Toast.show("Name fehlt");return;}
+  Store.data.customers.unshift({
+    id:uid(),
+    name,
+    email:($("c_email").value||"").trim(),
+    phone:($("c_phone").value||"").trim(),
+    addr:($("c_addr").value||"").trim()
+  });
+  Store.save();
+  $("c_name").value="";$("c_email").value="";$("c_phone").value="";$("c_addr").value="";
+  renderAll();
+}
+function customerClear(){
+  $("c_name").value="";$("c_email").value="";$("c_phone").value="";$("c_addr").value="";
+}
+
+/* ===== Invoice ===== */
 function calcInvoice(){
   const days = num($("w_days").value);
   const hpd  = num($("w_hpd").value);
@@ -581,32 +740,181 @@ function calcInvoice(){
   const net = round2(hours*rate);
 
   $("w_total_hours").value = hours ? hours.toFixed(2) : "";
-  $("sum_net").value = net ? net.toFixed(2) : "0.00";
-  $("sum_total").value = $("sum_net").value;
+  $("sum_net").value = net.toFixed(2);
+  $("sum_total").value = net.toFixed(2);
 
-  const desc = "Sicherheitsdienstleistung (Arbeitszeit)";
   $("invLineBody").innerHTML = `
     <tr>
-      <td><b>${escapeHtml(desc)}</b></td>
-      <td class="right">${hours ? hours.toFixed(2) : ""}</td>
-      <td class="right">${rate ? rate.toFixed(2) : "0.00"}</td>
+      <td><b>Sicherheitsdienstleistung (Arbeitszeit)</b></td>
+      <td class="right">${hours?hours.toFixed(2):"0.00"}</td>
+      <td class="right">${rate?rate.toFixed(2):"0.00"}</td>
       <td class="right"><b>${fmtEUR(net)}</b></td>
     </tr>
   `;
 }
 
+function newInvoice(){
+  $("i_edit_id").value="";
+  $("i_no").value = invoiceSeq();
+  $("i_date").value = todayISO();
+  $("i_von").value="";
+  $("i_bis").value="";
+  $("i_due").value="";
+  $("i_status").value="Entwurf";
+  $("i_customer").value="";
+  $("w_days").value="";
+  $("w_hpd").value="";
+  $("w_rate").value="";
+  calcInvoice();
+  Toast.show("Neue Rechnung");
+}
+
+function saveInvoice(){
+  const id = $("i_edit_id").value || uid();
+  const inv = {
+    id,
+    no: ($("i_no").value||"").trim() || invoiceSeq(),
+    date: $("i_date").value || todayISO(),
+    von: $("i_von").value || "",
+    bis: $("i_bis").value || "",
+    due: $("i_due").value || "",
+    status: $("i_status").value || "Entwurf",
+    customerId: $("i_customer").value || "",
+    days: num($("w_days").value),
+    hpd: num($("w_hpd").value),
+    rate: num($("w_rate").value),
+    hours: num($("w_total_hours").value),
+    total: num($("sum_total").value)
+  };
+
+  const idx = Store.data.invoices.findIndex(x=>x.id===id);
+  if(idx>=0) Store.data.invoices[idx]=inv;
+  else Store.data.invoices.unshift(inv);
+
+  $("i_edit_id").value = inv.id;
+  Store.save();
+  renderAll();
+}
+
+function renderInvoices(){
+  const list = Store.data.invoices;
+  $("pillInv").textContent = list.length;
+
+  const q = ($("inv_search").value||"").toLowerCase().trim();
+  const f = ($("inv_filter").value||"").trim();
+
+  const tbody = $("invoiceList");
+  tbody.innerHTML = "";
+
+  const customersById = Object.fromEntries(Store.data.customers.map(c=>[c.id,c]));
+
+  let monthPaid=0;
+  const now = new Date();
+  const m = now.getMonth();
+  const y = now.getFullYear();
+
+  const filtered = list.filter(inv=>{
+    const cname = (customersById[inv.customerId]?.name||"").toLowerCase();
+    const okQ = !q || inv.no.toLowerCase().includes(q) || cname.includes(q);
+    const okF = !f || inv.status===f;
+    return okQ && okF;
+  });
+
+  if(!filtered.length){
+    tbody.innerHTML = `<tr><td class="muted" colspan="5">Keine Rechnungen</td></tr>`;
+  }else{
+    for(const inv of filtered){
+      const c = customersById[inv.customerId];
+      const cname = c ? c.name : "(ohne Kunde)";
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${escapeHtml(inv.no)}</b><div class="muted" style="font-size:12px">${escapeHtml(inv.date||"")}</div></td>
+        <td>${escapeHtml(cname)}</td>
+        <td>${escapeHtml(inv.status||"")}</td>
+        <td class="right"><b>${fmtEUR(inv.total||0)}</b></td>
+        <td class="right">
+          <div class="rowActions">
+            <button class="btn mini" data-edit="${inv.id}">Edit</button>
+            <button class="btn mini danger" data-del="${inv.id}">Del</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      // KPI month paid
+      if(inv.status==="Bezahlt" && inv.date){
+        const d=new Date(inv.date);
+        if(d.getFullYear()===y && d.getMonth()===m) monthPaid += num(inv.total||0);
+      }
+    }
+  }
+
+  $("kpiMonth").textContent = fmtEUR(monthPaid);
+
+  tbody.querySelectorAll("[data-edit]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const id=b.getAttribute("data-edit");
+      const inv=Store.data.invoices.find(x=>x.id===id);
+      if(!inv) return;
+      $("i_edit_id").value=inv.id;
+      $("i_no").value=inv.no||"";
+      $("i_date").value=inv.date||todayISO();
+      $("i_von").value=inv.von||"";
+      $("i_bis").value=inv.bis||"";
+      $("i_due").value=inv.due||"";
+      $("i_status").value=inv.status||"Entwurf";
+      $("i_customer").value=inv.customerId||"";
+      $("w_days").value=inv.days||"";
+      $("w_hpd").value=inv.hpd||"";
+      $("w_rate").value=inv.rate||"";
+      calcInvoice();
+      Toast.show("Edit: "+inv.no);
+    });
+  });
+
+  tbody.querySelectorAll("[data-del]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const id=b.getAttribute("data-del");
+      if(confirm("Rechnung löschen?")){
+        Store.data.invoices = Store.data.invoices.filter(x=>x.id!==id);
+        Store.save();
+        renderAll();
+      }
+    });
+  });
+}
+
 function printInvoice(){
   const s = Store.data.settings;
-  const no = ($("i_no").value||"").trim() || nextInvoiceNo();
-  const date = $("i_date").value || todayISO();
-  const hours = $("w_total_hours").value || "0.00";
-  const rate = num($("w_rate").value).toFixed(2);
-  const total = num($("sum_total").value).toFixed(2);
+  const invId = $("i_edit_id").value;
+  // build invoice object from inputs (so you can print without saving)
+  const inv = {
+    no: ($("i_no").value||"").trim() || invoiceSeq(),
+    date: $("i_date").value || todayISO(),
+    von: $("i_von").value || "",
+    bis: $("i_bis").value || "",
+    due: $("i_due").value || "",
+    status: $("i_status").value || "Entwurf",
+    customerId: $("i_customer").value || "",
+    hours: num($("w_total_hours").value),
+    rate: num($("w_rate").value),
+    total: num($("sum_total").value)
+  };
+
+  const c = Store.data.customers.find(x=>x.id===inv.customerId);
+  const custBox = c ? `
+    <div style="border:1px solid #eee;padding:8px;margin:10px 0">
+      <b>Rechnung an:</b><br>
+      ${escapeHtml(c.name)}<br>
+      <div style="white-space:pre-line">${escapeHtml(c.addr||"")}</div>
+      ${c.email ? `<div>E-Mail: <a href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a></div>`:""}
+      ${c.phone ? `<div>Tel: ${escapeHtml(c.phone)}</div>`:""}
+    </div>` : `<div style="border:1px solid #eee;padding:8px;margin:10px 0"><b>Rechnung an:</b> (kein Kunde gewählt)</div>`;
 
   const html = `
 <!doctype html><html><head>
 <meta charset="utf-8"/>
-<title>Rechnung ${escapeHtml(no)}</title>
+<title>Rechnung ${escapeHtml(inv.no)}</title>
 <style>
 @page{size:A4;margin:10mm}
 body{font-family:Arial;margin:0;color:#000}
@@ -616,6 +924,7 @@ table{width:100%;border-collapse:collapse;font-size:11px}
 th,td{border-bottom:1px solid #eee;padding:6px}
 .right{text-align:right}
 .box{border:1px solid #eee;padding:8px;margin-top:6mm}
+a{color:#000;text-decoration:none}
 </style>
 </head><body>
 <div class="h">
@@ -624,29 +933,41 @@ th,td{border-bottom:1px solid #eee;padding:6px}
     <div style="font-weight:800">${escapeHtml(s.company||"")}</div>
     <div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
     ${s.taxid ? `<div class="small">Steuernummer/Steuer-ID: ${escapeHtml(s.taxid)}</div>` : ""}
+    ${s.email ? `<div class="small">E-Mail: <a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></div>`:""}
+    ${s.phone ? `<div class="small">Tel: ${escapeHtml(s.phone)}</div>`:""}
   </div>
   <div class="small right">
-    <div><b>Nr.:</b> ${escapeHtml(no)}</div>
-    <div><b>Datum:</b> ${escapeHtml(date)}</div>
+    <div><b>Nr.:</b> ${escapeHtml(inv.no)}</div>
+    <div><b>Datum:</b> ${escapeHtml(inv.date)}</div>
+    ${inv.von||inv.bis ? `<div><b>Zeitraum:</b> ${escapeHtml(inv.von||"")} – ${escapeHtml(inv.bis||"")}</div>`:""}
+    ${inv.due ? `<div><b>Fällig:</b> ${escapeHtml(inv.due)}</div>`:""}
+    <div><b>Status:</b> ${escapeHtml(inv.status)}</div>
   </div>
 </div>
+
+${custBox}
 
 <table>
 <thead><tr><th>Leistung</th><th class="right">Menge (Std)</th><th class="right">Preis €/h</th><th class="right">Netto</th></tr></thead>
 <tbody>
 <tr>
   <td>Sicherheitsdienstleistung (Arbeitszeit)</td>
-  <td class="right">${escapeHtml(hours)}</td>
-  <td class="right">${escapeHtml(rate)}</td>
-  <td class="right"><b>${fmtEUR(total)}</b></td>
+  <td class="right">${inv.hours.toFixed(2)}</td>
+  <td class="right">${inv.rate.toFixed(2)}</td>
+  <td class="right"><b>${fmtEUR(inv.total)}</b></td>
 </tr>
 </tbody>
 </table>
 
-<div class="box small right">
-  <div>Summe Netto: <b>${fmtEUR(total)}</b></div>
-  <div>USt: 0,00 € (§19 UStG)</div>
-  <div style="font-size:13px;margin-top:6px">Zu zahlen: <b>${fmtEUR(total)}</b></div>
+<div class="box small">
+  <div class="right">Summe Netto: <b>${fmtEUR(inv.total)}</b></div>
+  <div class="right">USt: 0,00 € (${escapeHtml("§19 UStG")})</div>
+  <div class="right" style="font-size:13px;margin-top:6px">Zu zahlen: <b>${fmtEUR(inv.total)}</b></div>
+  ${(s.iban||s.bic) ? `<div style="margin-top:8px"><b>Zahlung:</b> Bitte überweisen Sie auf folgendes Konto:<br>
+    ${s.iban ? `<b>IBAN:</b> ${escapeHtml(s.iban)}<br>`:""}
+    ${s.bic ? `<b>BIC:</b> ${escapeHtml(s.bic)}<br>`:""}
+  </div>`:""}
+  <div style="margin-top:8px">${escapeHtml("Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.")}</div>
 </div>
 
 <script>window.onload=()=>setTimeout(()=>window.print(),150);<\/script>
@@ -656,11 +977,10 @@ th,td{border-bottom:1px solid #eee;padding:6px}
   w.document.open(); w.document.write(html); w.document.close();
 }
 
-/* ===== MITARBEITER ===== */
+/* ===== Employees ===== */
 function renderEmployees(){
   const list = Store.data.employees;
   $("pillEmp").textContent = list.length;
-
   const tbody = $("empList");
   tbody.innerHTML = list.length ? "" : `<tr><td class="muted" colspan="4">Keine Mitarbeiter</td></tr>`;
   for(const e of list){
@@ -669,7 +989,7 @@ function renderEmployees(){
       <td><b>${escapeHtml(e.name)}</b></td>
       <td class="right">${fmtEUR(e.rate)}/h</td>
       <td class="right">${e.sv ? "✅" : "—"}</td>
-      <td class="right"><button class="btn danger" data-del="${e.id}">Löschen</button></td>
+      <td class="right"><button class="btn danger mini" data-del="${e.id}">Löschen</button></td>
     `;
     tbody.appendChild(tr);
   }
@@ -711,13 +1031,14 @@ function empSave(){
   renderAll();
 }
 
-/* ===== PAYROLL ===== */
+/* ===== Payroll ===== */
 function payrollFillRate(){
   const id = $("p_emp").value;
   const emp = Store.data.employees.find(x=>x.id===id);
   if(emp){
-    const cur = num($("p_rate").value);
-    if(cur<=0) $("p_rate").value = emp.rate.toFixed(2);
+    $("p_rate").value = emp.rate.toFixed(2);
+  }else{
+    $("p_rate").value = "";
   }
 }
 function payrollCalc(){
@@ -738,7 +1059,7 @@ function payrollCalc(){
     <tr><td>Brutto</td><td class="right"><b>${fmtEUR(brutto)}</b></td></tr>
     <tr><td>SV Arbeitnehmer</td><td class="right">${fmtEUR(an)}</td></tr>
     <tr><td>Netto (estimate)</td><td class="right"><b>${fmtEUR(netto)}</b></td></tr>
-    <tr><td>SV Arbeitgeber</td><td class="right">${fmtEUR(ag)}</td></tr>
+    <tr><td>SV Arbeitgeber</td><td class="right">${fmtEUR(ag)}</b></td></tr>
     <tr><td>Gesamtkosten Firma</td><td class="right"><b>${fmtEUR(cost)}</b></td></tr>
   `;
 }
@@ -799,7 +1120,7 @@ th,td{border-bottom:1px solid #eee;padding:6px}
   w.document.open(); w.document.write(html); w.document.close();
 }
 
-/* ===== SETTINGS ===== */
+/* ===== Settings ===== */
 function settingsLoad(){
   const s = Store.data.settings;
   $("s_company").value = s.company||"";
@@ -832,7 +1153,7 @@ function settingsSave(){
   Toast.show("Settings saved");
 }
 
-/* ===== EXPORT / IMPORT ===== */
+/* ===== Export / Import ===== */
 function exportJSON(){
   const blob=new Blob([JSON.stringify(Store.data,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
@@ -848,6 +1169,8 @@ function importJSON(file){
       const d=JSON.parse(r.result);
       if(!d || typeof d!=="object") throw new Error("bad");
       d.settings ||= Store.data.settings;
+      if(!Array.isArray(d.customers)) d.customers=[];
+      if(!Array.isArray(d.invoices)) d.invoices=[];
       if(!Array.isArray(d.employees)) d.employees=[];
       if(d.settings.sv_an===undefined) d.settings.sv_an=20.30;
       if(d.settings.sv_ag===undefined) d.settings.sv_ag=20.30;
@@ -862,18 +1185,21 @@ function importJSON(file){
   r.readAsText(file);
 }
 
-/* ===== RENDER ALL ===== */
+/* ===== Render All ===== */
 function renderAll(){
   setStorageUI();
   settingsLoad();
+  renderCustomers();
   renderEmployees();
-  // invoice defaults
+  renderInvoices();
+
+  // defaults
   if(!$("i_date").value) $("i_date").value = todayISO();
-  if(!$("i_no").value) $("i_no").value = nextInvoiceNo();
+  if(!$("i_no").value) $("i_no").value = invoiceSeq();
   calcInvoice();
 }
 
-/* ===== BIND ===== */
+/* ===== Bind ===== */
 function bind(){
   document.querySelectorAll("#nav button").forEach(b=>{
     b.addEventListener("click", ()=>UI.go(b.dataset.page));
@@ -884,11 +1210,19 @@ function bind(){
     $(id).addEventListener("change", calcInvoice);
   });
 
+  $("btnNewInvoice").addEventListener("click", newInvoice);
+  $("btnSaveInvoice").addEventListener("click", saveInvoice);
   $("btnPrintInvoice").addEventListener("click", printInvoice);
+
+  $("btnCustomerSave").addEventListener("click", customerSave);
+  $("btnCustomerClear").addEventListener("click", customerClear);
+
+  $("inv_search").addEventListener("input", renderInvoices);
+  $("inv_filter").addEventListener("change", renderInvoices);
 
   $("btnEmpSave").addEventListener("click", empSave);
 
-  $("p_emp").addEventListener("change", ()=>{ $("p_rate").value=""; payrollFillRate(); payrollCalc(); });
+  $("p_emp").addEventListener("change", ()=>{ payrollFillRate(); payrollCalc(); });
   $("p_hours").addEventListener("input", payrollCalc);
   $("p_rate").addEventListener("input", payrollCalc);
   $("btnPayCalc").addEventListener("click", payrollCalc);
@@ -905,7 +1239,7 @@ function bind(){
   });
 
   $("btnWipe").addEventListener("click", ()=>{
-    const ok=confirm("Reset? (Employees + Settings)");
+    const ok=confirm("Reset? (All data)");
     if(ok) Store.wipe();
   });
 }
@@ -917,5 +1251,6 @@ function bind(){
   UI.go("invoices");
 })();
 </script>
+
 </body>
 </html>
