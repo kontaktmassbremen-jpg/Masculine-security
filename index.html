@@ -205,9 +205,9 @@
 </head>
 <body>
 
-<!-- VERSION STAMP (si aad u hubiso update-ka) -->
+<!-- VERSION STAMP -->
 <div style="position:fixed;left:10px;bottom:10px;z-index:99999;background:#000a;color:#fff;padding:6px 10px;border-radius:10px;font:12px Arial">
-  v3-auto-hours
+  v4-taxid-auto-hours
 </div>
 
 <div class="app">
@@ -410,6 +410,13 @@
               <div class="field"><label>IBAN</label><input id="s_iban" placeholder="DE..."/></div>
               <div class="field"><label>BIC</label><input id="s_bic" placeholder="NTSBDEB1XXX"/></div>
             </div>
+
+            <!-- NEW: TAX ID / STEUERNUMMER -->
+            <div class="field">
+              <label>Steuernummer / Steuer-ID</label>
+              <input id="s_taxid" placeholder="z.B. 12/345/67890"/>
+            </div>
+
             <div class="field"><label>§19 Hinweis</label><input id="s_hint"/></div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap">
@@ -438,7 +445,6 @@
 <script>
 /* ============================================================
    IMPORTANT FIX: Disable Service Worker + clear caches
-   (Your repo has service-worker.js, it blocks updates!)
 ============================================================ */
 (async () => {
   try{
@@ -450,16 +456,14 @@
       const keys = await caches.keys();
       for (const k of keys) await caches.delete(k);
     }
-  }catch(e){
-    // ignore
-  }
+  }catch(e){}
 })();
 
 /* =========================
    Utils
 ========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_rechnung_app_v3_auto_hours";
+const DB_KEY = "ms_rechnung_app_v4_taxid_auto_hours";
 
 const Toast = {
   t:null,
@@ -528,12 +532,17 @@ const Store = {
           phone:"",
           iban:"DE98 1001 1001 2333 0146 96",
           bic:"NTSBDEB1XXX",
+          taxid:"", /* NEW */
           hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
         },
         customers:[],
         invoices:[]
       };
       this.save(true);
+    } else {
+      // ensure new field exists for older saves
+      this.data.settings = this.data.settings || {};
+      if(this.data.settings.taxid === undefined) this.data.settings.taxid = "";
     }
     return this.data;
   },
@@ -829,7 +838,6 @@ function renderLines(){
 function calcTotals(){
   const d = draftFromForm();
 
-  // Auto Hours → fill Position 1
   const days=num(d.work.days);
   const hpd=num(d.work.hpd);
   const rate=num(d.work.rate);
@@ -847,17 +855,16 @@ function calcTotals(){
       firstRow.querySelector("[data-f='qty']").value  = totalHours.toFixed(2);
       firstRow.querySelector("[data-f='unit']").value = rate.toFixed(2);
     }
-    draftFromForm(); // sync after DOM update
+    draftFromForm();
   }
 
   let sumNet=0;
   d.lines.forEach(line=>{ sumNet += lineNet(line); });
   sumNet=round2(sumNet);
-  const total=sumNet;
 
   $("sum_net").value = sumNet.toFixed(2);
-  $("sum_total").value = total.toFixed(2);
-  $("i_preview").textContent = `Positionen: ${d.lines.length} • Gesamt: ${fmtEUR(total)} • USt: 0,00 €`;
+  $("sum_total").value = sumNet.toFixed(2);
+  $("i_preview").textContent = `Positionen: ${d.lines.length} • Gesamt: ${fmtEUR(sumNet)} • USt: 0,00 €`;
 
   document.querySelectorAll("#linesBody tr[data-line-id]").forEach(tr=>{
     const id=tr.getAttribute("data-line-id");
@@ -1027,6 +1034,7 @@ const Settings = {
     $("s_phone").value=s.phone||"";
     $("s_iban").value=s.iban||"";
     $("s_bic").value=s.bic||"";
+    $("s_taxid").value=s.taxid||""; /* NEW */
     $("s_hint").value=s.hint||"";
 
     $("brandTitle").textContent=s.company||"Masculine Security";
@@ -1041,6 +1049,7 @@ const Settings = {
     s.phone=$("s_phone").value.trim();
     s.iban=$("s_iban").value.trim();
     s.bic=$("s_bic").value.trim();
+    s.taxid=$("s_taxid").value.trim(); /* NEW */
     s.hint=$("s_hint").value.trim() || "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
     Store.save();
     this.load();
@@ -1068,6 +1077,7 @@ function importJSON(file){
       const data=JSON.parse(r.result);
       if(!data || typeof data!=="object") throw new Error("bad");
       data.settings=data.settings||Store.data.settings;
+      if(data.settings.taxid === undefined) data.settings.taxid = "";
       data.customers=Array.isArray(data.customers)?data.customers:[];
       data.invoices=Array.isArray(data.invoices)?data.invoices:[];
       Store.data=data;
@@ -1137,6 +1147,7 @@ function printInvoicePDF(id){
       <h1>Rechnung</h1>
       <div><b>${escapeHtml(s.company||"")}</b></div>
       <div class="small" style="white-space:pre-line">${escapeHtml(s.addr||"")}</div>
+      ${s.taxid ? `<div class="small">Steuernummer/Steuer-ID: ${escapeHtml(s.taxid)}</div>` : ``}
       <div class="small">E-Mail: <a href="mailto:${encodeURIComponent(s.email||"")}">${escapeHtml(s.email||"")}</a></div>
       ${s.phone?`<div class="small">Tel: ${escapeHtml(s.phone)}</div>`:""}
     </div>
