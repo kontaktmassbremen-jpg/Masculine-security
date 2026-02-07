@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security – Office</title>
+  <title>Masculine Security</title>
+
   <style>
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
@@ -193,32 +194,6 @@
       border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); font-size:12px; font-weight:900; color:var(--muted)
     }
 
-    /* ====== PRINT (PDF) ====== */
-    @media print{
-      body{background:#fff !important; color:#000 !important}
-      .app,.sidebar,.topbar,.statusbar,.toast,.no-print{display:none !important}
-      .print-area{display:block !important}
-      a{color:#000 !important; text-decoration:underline !important}
-      .pwrap{padding:18mm}
-      .paper{font-family: Arial, Helvetica, sans-serif; color:#000; font-size:12px}
-      .paper h1{font-size:18px;margin:0}
-      .paper h2{font-size:14px;margin:0}
-      .paper .mut{color:#444}
-      .paper .row{display:flex; gap:14px}
-      .paper .col{flex:1}
-      .box{
-        border:1px solid #999; padding:10px; min-height:72px;
-      }
-      .line{height:1px;background:#999;margin:10px 0}
-      .ptable{width:100%; border-collapse:collapse}
-      .ptable th,.ptable td{border-bottom:1px solid #bbb; padding:8px 6px; vertical-align:top}
-      .ptable th{font-size:11px; text-transform:none}
-      .tright{text-align:right}
-      .tcenter{text-align:center}
-      .small{font-size:10px}
-      .totbox{border:1px solid #999; padding:10px}
-    }
-
     @media (max-width: 980px){
       .app{grid-template-columns: 1fr}
       .sidebar{position:relative; height:auto}
@@ -227,6 +202,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -243,13 +219,13 @@
       <button data-page="invoices" class="active"><span>🧾 Rechnung</span><span class="pill" id="pillInvoices">0</span></button>
       <button data-page="customers"><span>👤 Kunden</span><span class="pill" id="pillCustomers">0</span></button>
       <button data-page="employees"><span>🧑‍💼 Mitarbeiter</span><span class="pill" id="pillEmployees">0</span></button>
-      <button data-page="payroll"><span>💶 Payroll</span><span class="pill" id="pillPayroll">PDF</span></button>
-      <button data-page="docs"><span>📄 Bescheinigungen</span><span class="pill" id="pillDocs">PDF</span></button>
+      <button data-page="payroll"><span>💶 Payroll</span><span class="pill">PDF</span></button>
+      <button data-page="docs"><span>📄 Bescheinigungen</span><span class="pill">PDF</span></button>
       <button data-page="settings"><span>⚙️ Firma</span><span class="pill" id="pillStore">Auto</span></button>
     </div>
 
     <div class="note" style="margin-top:auto">
-      <b>Datum-Format:</b> <span id="dateFormatHint">07.02.2026</span><br/>
+      <b>Datum-Format:</b> 07.02.2026<br/>
       <span class="muted">Wenn Update nicht sichtbar: Link öffnen mit <b>?v=999</b> oder im Inkognito.</span>
     </div>
   </aside>
@@ -476,10 +452,6 @@
               <button class="btn danger" id="btnEmployeeClear">Leeren</button>
             </div>
 
-            <div class="note" style="margin-top:10px">
-              <b>Info:</b> Krankenkasse (AOK/Barmer/…) & Familienstand/Kinder sind hier gespeichert und werden automatisch in Payroll/Bescheinigungen genutzt.
-            </div>
-
             <input id="e_edit_id" class="hide"/>
           </div>
 
@@ -524,11 +496,6 @@
               <div class="field"><label>Netto (auto)</label><input id="p_net" readonly/></div>
             </div>
 
-            <div class="note">
-              <b>Wichtig:</b> Für <u>amtliche</u> Lohnabrechnung sind ELStAM & echte SV-Sätze nötig.
-              Hier steuerst du die Sätze manuell – und die PDF nutzt genau diese Werte (ohne “Muster/Simulation”-Text).
-            </div>
-
             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
               <button class="btn primary" id="btnPayrollSave">Speichern</button>
               <button class="btn" id="btnPrintPayroll">PDF Lohnabrechnung</button>
@@ -570,11 +537,6 @@
               <div class="field"><label>Jahr</label><input id="d_year" type="number" step="1" min="2000" max="2100"/></div>
             </div>
 
-            <div class="note">
-              Beide Dokumente nutzen <b>denselben Template-Aufbau</b> (wie du wolltest).
-              Inhalte sind <b>editable</b> über die Felder unten.
-            </div>
-
             <div class="hr"></div>
 
             <h3 style="margin:0 0 10px 0">Editable Felder</h3>
@@ -589,12 +551,10 @@
           </div>
 
           <div class="card">
-            <h3>Hinweis</h3>
+            <h3>Klickbar</h3>
             <div class="note">
-              <b>Clickables:</b><br/>
-              E-Mail wird als <b>mailto:</b> Link gedruckt und am Bildschirm klickbar.<br/>
-              Telefon wird als <b>tel:</b> Link am Bildschirm klickbar.<br/>
-              (Ob PDF-Links klickbar sind, hängt vom Browser/PDF-Viewer ab.)
+              E-Mail = <b>mailto:</b> • Telefon = <b>tel:</b><br/>
+              In PDF ist es klickbar, wenn der PDF-Viewer Links unterstützt.
             </div>
           </div>
         </div>
@@ -641,30 +601,25 @@
             <h3>Status</h3>
             <div class="note" id="storageNote">Storage: ...</div>
             <div class="note">
-              <b>Service Worker:</b> Diese Version deaktiviert Service Worker automatisch, damit GitHub Pages Updates sofort sichtbar werden.
+              <b>WICHTIG (PDF Kopf/Fuß):</b><br/>
+              Diese Version druckt über ein <b>neues Print-Fenster</b>, damit oben kein „Masculine Security – Office“ erscheint.
+              (Wenn du trotzdem Kopf/Fuß siehst: im Druckdialog „Kopf- und Fußzeilen“ AUS.)
             </div>
           </div>
         </div>
       </section>
     </div>
 
+    <!-- Statusbar bleibt in App, aber wird NIE in PDF gedruckt -->
     <div class="statusbar">
       <span class="dot" id="dot"></span>
       <span id="statusText">Bereit</span>
       <span class="tag" id="storeTag">Storage</span>
-      <span class="tag" id="verTag">v7-ddmmyyyy-clickable</span>
     </div>
   </main>
 </div>
 
 <div class="toast" id="toast"></div>
-
-<!-- PRINT AREA (only visible in print) -->
-<section class="print-area hide">
-  <div class="pwrap">
-    <div class="paper" id="printRoot"></div>
-  </div>
-</section>
 
 <script>
 /* ============================================================
@@ -687,7 +642,7 @@
    Utils
 ========================= */
 const $ = (id)=>document.getElementById(id);
-const DB_KEY = "ms_office_v7_ddmmyyyy_clickable";
+const DB_KEY = "ms_office_v8_ddmmyyyy_printwindow";
 
 const Toast = {
   t:null,
@@ -732,12 +687,11 @@ function todayISO(){
 }
 function isoToDE(iso){
   if(!iso) return "";
-  // iso may be YYYY-MM-DD
   const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if(!m) return "";
   return `${m[3]}.${m[2]}.${m[1]}`;
 }
-function monthToDE(ym){ // YYYY-MM
+function monthToDE(ym){
   if(!ym) return "";
   const m = String(ym).match(/^(\d{4})-(\d{2})$/);
   if(!m) return "";
@@ -783,10 +737,10 @@ const Store = {
           bic:"NTSBDEB1XXX",
           taxid:"",
           hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.",
-          tax_pct: 10.0,     // Default manual %
-          sv_an_pct: 20.0,   // Default manual %
-          sv_ag_pct: 20.0,   // Default manual %
-          kids_pct: 0.0      // Default extra %
+          tax_pct: 10.0,
+          sv_an_pct: 20.0,
+          sv_ag_pct: 20.0,
+          kids_pct: 0.0
         },
         customers:[],
         employees:[],
@@ -795,7 +749,6 @@ const Store = {
       };
       this.save(true);
     } else {
-      // migrations
       this.data.settings ||= {};
       const s=this.data.settings;
       if(s.tax_pct==null) s.tax_pct=10.0;
@@ -821,7 +774,7 @@ const Store = {
 };
 
 /* =========================
-   UI helpers
+   Status + Pages
 ========================= */
 function setStatus(ok, msg){
   $("dot").classList.toggle("off", !ok);
@@ -832,23 +785,20 @@ function setStatus(ok, msg){
 }
 function setPage(page){
   const pages = ["invoices","customers","employees","payroll","docs","settings"];
-  pages.forEach(p=>{
-    $("page-"+p).classList.toggle("hide", p!==page);
-  });
-  document.querySelectorAll("#nav button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.page===page);
-  });
+  pages.forEach(p=> $("page-"+p).classList.toggle("hide", p!==page));
+  document.querySelectorAll("#nav button").forEach(b=> b.classList.toggle("active", b.dataset.page===page));
+
   const titles = {
-    invoices:["Rechnung","Tage + Std/Tag + €/h → Auto • DD.MM.YYYY"],
+    invoices:["Rechnung","DD.MM.YYYY • Auto Stunden • PDF"],
     customers:["Kunden","Anlegen • Liste"],
-    employees:["Mitarbeiter","Anlegen • Krankenkasse • Steuerklasse • Kinder"],
-    payroll:["Payroll","Lohnabrechnung als PDF • Werte aus Eingaben"],
-    docs:["Bescheinigungen","Arbeitbescheinigung • Lohnsteuerbescheinigung (gleicher Template)"],
-    settings:["Firma","Daten • Default Sätze"]
+    employees:["Mitarbeiter","Anlegen • Daten speichern"],
+    payroll:["Payroll","Lohnabrechnung PDF"],
+    docs:["Bescheinigungen","Arbeitbescheinigung • Lohnsteuerbescheinigung"],
+    settings:["Firma","Daten • Default-Sätze"]
   };
   $("pageTitle").textContent = titles[page][0];
   $("pageSub").textContent = titles[page][1];
-  // primary button label by page
+
   const primaryMap = {
     invoices:"+ Neue Rechnung",
     customers:"+ Neuer Kunde",
@@ -869,16 +819,14 @@ function setPage(page){
 }
 
 /* =========================
-   Data binding
+   Selects + Settings UI
 ========================= */
 function refreshPills(){
   $("pillInvoices").textContent = Store.data.invoices.length;
   $("pillCustomers").textContent = Store.data.customers.length;
   $("pillEmployees").textContent = Store.data.employees.length;
 }
-
 function fillSelectOptions(){
-  // customers
   const custSel = $("i_customer");
   custSel.innerHTML = "";
   const blank = document.createElement("option");
@@ -891,7 +839,6 @@ function fillSelectOptions(){
     custSel.appendChild(o);
   });
 
-  // payroll employee selects
   const pEmp = $("p_emp");
   const dEmp = $("d_emp");
   pEmp.innerHTML=""; dEmp.innerHTML="";
@@ -910,7 +857,6 @@ function fillSelectOptions(){
     dEmp.appendChild(o2);
   });
 }
-
 function initSettingsUI(){
   const s=Store.data.settings;
   $("s_company").value = s.company||"";
@@ -947,22 +893,52 @@ function saveSettings(){
   Toast.show("Firma gespeichert");
 }
 
-/* =========================
-   INVOICE logic
-========================= */
-function ensureInvoiceDefaults(){
-  if(!$("i_date").value) $("i_date").value = todayISO();
-  if(!$("i_due").value){
-    // due in 14 days
-    const d=new Date();
-    d.setDate(d.getDate()+14);
-    $("i_due").value = d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
-  }
-  if(!$("i_von").value) $("i_von").value = "";
-  if(!$("i_bis").value) $("i_bis").value = "";
-  if(!$("i_no").value) $("i_no").value = nextInvoiceNumber();
-  if(!$("i_status").value) $("i_status").value = "Entwurf";
+/* ============================================================
+   IMPORTANT: PRINT via NEW WINDOW (no title/header like screenshot)
+   -> This removes "Masculine Security – Office" from the PDF top.
+============================================================ */
+function openPrintWindow(bodyHtml){
+  const css = `
+    <style>
+      @page { margin: 18mm; }
+      html,body{background:#fff!important;color:#000!important}
+      body{margin:0;font-family: Arial, Helvetica, sans-serif;font-size:12px}
+      a{color:#000!important;text-decoration:underline!important}
+      h1{font-size:18px;margin:0}
+      .mut{color:#444}
+      .small{font-size:10px}
+      .line{height:1px;background:#999;margin:10px 0}
+      .row{display:flex;gap:14px}
+      .col{flex:1}
+      .box{border:1px solid #999;padding:10px;min-height:72px}
+      .ptable{width:100%;border-collapse:collapse}
+      .ptable th,.ptable td{border-bottom:1px solid #bbb;padding:8px 6px;vertical-align:top}
+      .ptable th{font-size:11px}
+      .tright{text-align:right}
+      .tcenter{text-align:center}
+      .totbox{border:1px solid #999;padding:10px}
+    </style>
+  `;
+  // New window title = empty -> avoids PDF header text
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title></title>${css}</head>
+    <body>${bodyHtml}
+      <script>
+        // Some browsers still show header/footer if enabled in print dialog.
+        // User can disable "Kopf- und Fußzeilen" in print dialog if needed.
+        window.onload=()=>{ window.focus(); window.print(); };
+      <\/script>
+    </body></html>`;
+
+  const w = window.open("", "_blank");
+  if(!w){ alert("Popup blockiert. Bitte Popups erlauben oder anderen Browser nutzen."); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
 }
+
+/* =========================
+   INVOICE
+========================= */
 function nextInvoiceNumber(){
   const year = new Date().getFullYear();
   const prefix = `MS-${year}-`;
@@ -974,12 +950,15 @@ function nextInvoiceNumber(){
   const next = (nums.length ? Math.max(...nums) : 0) + 1;
   return prefix + String(next).padStart(4,"0");
 }
-function newInvoice(){
-  clearInvoiceForm();
-  ensureInvoiceDefaults();
-  addLine({desc:"Sicherheitsdienstleistung – Objektbewachung", qty:0, price:0});
-  recalcInvoice();
-  Toast.show("Neue Rechnung");
+function ensureInvoiceDefaults(){
+  if(!$("i_date").value) $("i_date").value = todayISO();
+  if(!$("i_due").value){
+    const d=new Date();
+    d.setDate(d.getDate()+14);
+    $("i_due").value = d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+  }
+  if(!$("i_no").value) $("i_no").value = nextInvoiceNumber();
+  if(!$("i_status").value) $("i_status").value = "Entwurf";
 }
 function clearInvoiceForm(){
   $("i_edit_id").value="";
@@ -1000,10 +979,15 @@ function clearInvoiceForm(){
   $("sum_total").value="";
   $("i_preview").textContent="Positionen: 0 • Gesamt: 0,00 €";
 }
+function newInvoice(){
+  clearInvoiceForm();
+  ensureInvoiceDefaults();
+  addLine({desc:"Sicherheitsdienstleistung – Objektbewachung", qty:0, price:0});
+  recalcInvoice();
+  Toast.show("Neue Rechnung");
+}
 function addLine(line){
-  const id=uid();
   const tr=document.createElement("tr");
-  tr.dataset.id=id;
   tr.innerHTML = `
     <td><input class="li_desc" style="width:100%" value="${escapeHtml(line.desc||"")}"></td>
     <td class="right"><input class="li_qty" style="width:100px;text-align:right" type="number" step="0.01" value="${Number(line.qty||0)}"></td>
@@ -1046,7 +1030,6 @@ function getLines(){
   }));
 }
 function recalcInvoice(){
-  // auto hours
   const days = num($("w_days").value);
   const hpd = num($("w_hpd").value);
   const rate = num($("w_rate").value);
@@ -1054,7 +1037,6 @@ function recalcInvoice(){
   if(days>0 && hpd>0){
     $("w_total_hours").value = totalHours.toFixed(2);
     $("w_hint").value = "Menge=Stunden • Preis=€/h";
-    // apply to first line (if exists)
     const first = $("linesBody").querySelector("tr");
     if(first){
       if(rate>0) first.querySelector(".li_price").value = rate.toFixed(2);
@@ -1079,7 +1061,6 @@ function recalcInvoice(){
   $("sum_total").value = fmtEUR(sum);
   $("i_preview").textContent = `Positionen: ${rows.length} • Gesamt: ${fmtEUR(sum)}`;
 }
-
 function saveInvoice(){
   ensureInvoiceDefaults();
   const id = $("i_edit_id").value || uid();
@@ -1092,15 +1073,8 @@ function saveInvoice(){
     due: $("i_due").value,
     status: $("i_status").value,
     customerId: $("i_customer").value,
-    auto:{
-      days: num($("w_days").value),
-      hpd: num($("w_hpd").value),
-      rate: num($("w_rate").value),
-      totalHours: num($("w_total_hours").value)
-    },
     lines: getLines()
   };
-  // validate
   if(!inv.no){ Toast.show("Rechnungs-Nr fehlt"); return; }
   if(!inv.date){ Toast.show("Rechnungsdatum fehlt"); return; }
   if(!inv.customerId){ Toast.show("Bitte Kunde wählen"); return; }
@@ -1114,7 +1088,6 @@ function saveInvoice(){
   refreshPills();
   Toast.show("Rechnung gespeichert");
 }
-
 function loadInvoice(id){
   const inv = Store.data.invoices.find(x=>x.id===id);
   if(!inv) return;
@@ -1127,15 +1100,11 @@ function loadInvoice(id){
   $("i_due").value = inv.due||"";
   $("i_status").value = inv.status||"Entwurf";
   $("i_customer").value = inv.customerId||"";
-  $("w_days").value = inv.auto?.days ?? "";
-  $("w_hpd").value = inv.auto?.hpd ?? "";
-  $("w_rate").value = inv.auto?.rate ?? "";
   $("linesBody").innerHTML="";
   (inv.lines||[]).forEach(l=>addLine(l));
   recalcInvoice();
   Toast.show("Rechnung geladen");
 }
-
 function deleteInvoice(id){
   Store.data.invoices = Store.data.invoices.filter(x=>x.id!==id);
   Store.save();
@@ -1143,7 +1112,6 @@ function deleteInvoice(id){
   refreshPills();
   Toast.show("Rechnung gelöscht");
 }
-
 function refreshInvoicesList(){
   const q = $("inv_search").value.trim().toLowerCase();
   const filter = $("inv_filter").value;
@@ -1179,7 +1147,7 @@ function refreshInvoicesList(){
 }
 
 /* =========================
-   CUSTOMER logic
+   CUSTOMER
 ========================= */
 function clearCustomerForm(){
   $("c_edit_id").value="";
@@ -1220,7 +1188,6 @@ function loadCustomer(id){
 }
 function deleteCustomer(id){
   Store.data.customers = Store.data.customers.filter(x=>x.id!==id);
-  // detach from invoices
   Store.data.invoices = Store.data.invoices.map(inv=> inv.customerId===id ? {...inv, customerId:""} : inv);
   Store.save();
   refreshCustomersList();
@@ -1255,7 +1222,7 @@ function refreshCustomersList(){
 }
 
 /* =========================
-   EMPLOYEE logic
+   EMPLOYEE
 ========================= */
 function clearEmployeeForm(){
   $("e_edit_id").value="";
@@ -1358,7 +1325,7 @@ function refreshEmployeesList(){
 }
 
 /* =========================
-   PAYROLL logic
+   PAYROLL
 ========================= */
 function payrollDefaults(){
   $("p_month").value ||= (new Date().getFullYear()+"-"+pad2(new Date().getMonth()+1));
@@ -1393,7 +1360,6 @@ function recalcPayroll(){
   const svAnPct = num($("p_sv_an_pct").value);
   const kidsPct = num($("p_kids_pct").value);
 
-  // simple: kids extra reduces SV for employee (you can set negative if needed)
   const svAn = round2(gross * (svAnPct/100));
   const kidsAdj = round2(gross * (kidsPct/100) * Math.max(0,(emp?.kids||0)));
   const svAnTotal = round2(svAn + kidsAdj);
@@ -1424,23 +1390,7 @@ function savePayroll(){
   const svAg = round2(gross * (svAgPct/100));
 
   const id = $("p_edit_id").value || uid();
-  const p = {
-    id,
-    empId,
-    month,
-    hours,
-    rate,
-    gross,
-    taxPct,
-    svAnPct,
-    svAgPct,
-    kidsPct,
-    svAnTotal,
-    lohnsteuer,
-    net,
-    svAg,
-    createdAt: new Date().toISOString()
-  };
+  const p = { id, empId, month, hours, rate, gross, taxPct, svAnPct, svAgPct, kidsPct, svAnTotal, lohnsteuer, net, svAg };
   const idx=Store.data.payroll.findIndex(x=>x.id===id);
   if(idx>=0) Store.data.payroll[idx]=p;
   else Store.data.payroll.unshift(p);
@@ -1496,7 +1446,7 @@ function refreshPayrollList(){
 }
 
 /* =========================
-   EXPORT / IMPORT
+   Export/Import/Wipe
 ========================= */
 function exportJSON(){
   const blob = new Blob([JSON.stringify(Store.data,null,2)], {type:"application/json"});
@@ -1516,7 +1466,6 @@ function importJSON(file){
       const obj=JSON.parse(fr.result);
       if(!obj || typeof obj!=="object") throw new Error("bad");
       Store.data=obj;
-      // ensure keys exist
       Store.data.settings ||= {};
       Store.data.customers ||= [];
       Store.data.employees ||= [];
@@ -1533,16 +1482,8 @@ function importJSON(file){
 }
 
 /* =========================
-   PRINT (PDF) builders
+   PDF Builders (NO header/footer text inside)
 ========================= */
-function setPrint(html){
-  $("printRoot").innerHTML = html;
-  document.querySelector(".print-area").classList.remove("hide");
-  window.print();
-  // hide again after printing
-  setTimeout(()=>{ document.querySelector(".print-area").classList.add("hide"); $("printRoot").innerHTML=""; }, 300);
-}
-
 function printInvoice(){
   const invId = $("i_edit_id").value;
   if(!invId){ Toast.show("Bitte erst speichern"); return; }
@@ -1557,7 +1498,10 @@ function printInvoice(){
     return `
       <tr>
         <td class="tcenter">${idx+1}</td>
-        <td>${escapeHtml(l.desc||"")}${(inv.von||inv.bis)?`<div class="small mut">Abrechnungszeitraum: ${escapeHtml(inv.von?isoToDE(inv.von):"-")} – ${escapeHtml(inv.bis?isoToDE(inv.bis):"-")}</div>`:""}</td>
+        <td>
+          ${escapeHtml(l.desc||"")}
+          ${(inv.von||inv.bis)?`<div class="small mut">Abrechnungszeitraum: ${escapeHtml(inv.von?isoToDE(inv.von):"-")} – ${escapeHtml(inv.bis?isoToDE(inv.bis):"-")}</div>`:""}
+        </td>
         <td class="tright">${num(l.qty).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
         <td class="tright">${num(l.price).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})} €</td>
         <td class="tright">${fmtEUR(net)}</td>
@@ -1567,8 +1511,8 @@ function printInvoice(){
 
   const total = (inv.lines||[]).reduce((a,l)=>round2(a + round2(num(l.qty)*num(l.price))), 0);
 
-  const html = `
-    <div class="paper">
+  const body = `
+    <div style="padding:18mm">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div class="mut small">${escapeHtml(isoToDE(inv.date))}</div>
@@ -1610,9 +1554,7 @@ function printInvoice(){
             <th class="tright" style="width:110px">Netto</th>
           </tr>
         </thead>
-        <tbody>
-          ${lines}
-        </tbody>
+        <tbody>${lines}</tbody>
       </table>
 
       <div class="line"></div>
@@ -1631,14 +1573,9 @@ function printInvoice(){
       </div>
     </div>
   `;
-  setPrint(html);
+  openPrintWindow(body);
 }
 
-function printPayrollCurrent(){
-  const id = $("p_edit_id").value;
-  if(!id){ Toast.show("Bitte erst speichern"); return; }
-  printPayrollById(id);
-}
 function printPayrollById(id){
   const p=Store.data.payroll.find(x=>x.id===id);
   if(!p){ Toast.show("Payroll nicht gefunden"); return; }
@@ -1646,17 +1583,15 @@ function printPayrollById(id){
   const e=Store.data.employees.find(x=>x.id===p.empId);
 
   const monthStr = monthToDE(p.month);
-  const created = nowDEDateTime();
-
   const tax = round2(p.gross * (p.taxPct/100));
   const svAn = p.svAnTotal;
   const svAg = p.svAg;
 
-  const html=`
-    <div class="paper">
+  const body = `
+    <div style="padding:18mm">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
-          <div class="mut small">${created}</div>
+          <div class="mut small">${escapeHtml(nowDEDateTime())}</div>
           <h1>Lohn- und Gehaltsabrechnung</h1>
           <div class="mut">Monat: <b>${escapeHtml(monthStr)}</b></div>
         </div>
@@ -1700,7 +1635,7 @@ function printPayrollById(id){
       </table>
     </div>
   `;
-  setPrint(html);
+  openPrintWindow(body);
 }
 
 function printDoc(){
@@ -1715,12 +1650,10 @@ function printDoc(){
   const year = $("d_year").value || new Date().getFullYear();
   const note = $("d_note").value.trim();
   const amount = num($("d_amount").value);
-
   const title = (type==="arbeit") ? "Arbeitbescheinigung" : "Lohnsteuerbescheinigung";
 
-  // unified template (same layout)
-  const html=`
-    <div class="paper">
+  const body = `
+    <div style="padding:18mm">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div class="mut small">${escapeHtml(nowDEDateTime())}</div>
@@ -1764,31 +1697,21 @@ function printDoc(){
       </table>
     </div>
   `;
-  setPrint(html);
+  openPrintWindow(body);
 }
 
 /* =========================
-   BOOT + Events
+   Boot + Events
 ========================= */
 function bootUI(){
   initSettingsUI();
   refreshPills();
   fillSelectOptions();
-
-  // default dates in docs
-  $("d_year").value = new Date().getFullYear();
-  $("d_from").value = "";
-  $("d_to").value = "";
-
-  // render lists
   refreshCustomersList();
   refreshEmployeesList();
   refreshInvoicesList();
   refreshPayrollList();
-
-  // default invoice
   if(Store.data.invoices.length===0) newInvoice();
-
   setStatus(true, "Bereit");
 }
 
@@ -1796,24 +1719,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
   Store.load();
   setStatus(true, "Start…");
 
-  // nav
-  document.querySelectorAll("#nav button").forEach(b=>{
-    b.addEventListener("click", ()=>setPage(b.dataset.page));
-  });
+  document.querySelectorAll("#nav button").forEach(b=> b.addEventListener("click", ()=>setPage(b.dataset.page)));
 
-  // global buttons
   $("btnExport").onclick = exportJSON;
   $("btnImport").onclick = ()=>$("fileImport").click();
   $("fileImport").onchange = (e)=>{ const f=e.target.files?.[0]; if(f) importJSON(f); e.target.value=""; };
   $("btnWipe").onclick = ()=>{
     if(confirm("Alles löschen?")){
-      Store.wipe();
-      bootUI();
-      Toast.show("Alles gelöscht");
+      Store.wipe(); bootUI(); Toast.show("Alles gelöscht");
     }
   };
 
-  // invoice events
   $("btnAddLine").onclick = ()=>addLine({desc:"",qty:0,price:0});
   $("btnSaveInvoice").onclick = saveInvoice;
   $("btnPrintInvoice").onclick = ()=>{ saveInvoice(); printInvoice(); };
@@ -1825,19 +1741,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
   $("inv_search").addEventListener("input", refreshInvoicesList);
   $("inv_filter").addEventListener("change", refreshInvoicesList);
 
-  // customer events
   $("btnCustomerSave").onclick = saveCustomer;
   $("btnCustomerClear").onclick = clearCustomerForm;
   $("c_search").addEventListener("input", refreshCustomersList);
 
-  // employee events
   $("btnEmployeeSave").onclick = saveEmployee;
   $("btnEmployeeClear").onclick = clearEmployeeForm;
   $("e_search").addEventListener("input", refreshEmployeesList);
 
-  // payroll events
   $("btnPayrollSave").onclick = savePayroll;
-  $("btnPrintPayroll").onclick = ()=>{ savePayroll(); printPayrollCurrent(); };
+  $("btnPrintPayroll").onclick = ()=>{ savePayroll(); printPayrollById($("p_edit_id").value); };
   ["p_emp","p_month","p_hours","p_rate","p_tax_pct","p_sv_an_pct","p_sv_ag_pct","p_kids_pct"].forEach(id=>{
     $(id).addEventListener("input", recalcPayroll);
     $(id).addEventListener("change", recalcPayroll);
@@ -1849,16 +1762,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     recalcPayroll();
   });
 
-  // docs
   $("btnPrintDoc").onclick = printDoc;
-
-  // settings
   $("btnSettingsSave").onclick = saveSettings;
 
-  // primary button is dynamic
   setPage("invoices");
-
-  // init
   bootUI();
 });
 </script>
