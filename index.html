@@ -3,646 +3,205 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Masculine Security – Rechnung</title>
+<title>Masculine Security – Rechnung App</title>
 
 <style>
-:root{
-  --bg:#0b1220;
-  --panel:rgba(255,255,255,.08);
-  --panel2:rgba(255,255,255,.06);
-  --text:#eaf2ff;
-  --muted:rgba(234,242,255,.7);
-  --line:rgba(255,255,255,.18);
-  --accent:#4ea8ff;
-  --accent2:#2bd4bd;
-  --shadow: 0 18px 50px rgba(0,0,0,.35);
-  --r:18px;
-  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:var(--font);
-  color:var(--text);
-  background:
-    radial-gradient(900px 520px at 20% -10%, rgba(78,168,255,.25), transparent 60%),
-    radial-gradient(900px 600px at 90% 0%, rgba(43,212,189,.18), transparent 55%),
-    linear-gradient(180deg, #0b1220, #070b12);
-}
-a{color:inherit;text-decoration:underline;text-underline-offset:3px}
-.wrap{max-width:1100px;margin:0 auto;padding:24px}
-.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:14px}
-.brand{display:flex;gap:12px;align-items:center}
-.badge{
-  width:44px;height:44px;border-radius:14px;
-  background:linear-gradient(135deg, rgba(78,168,255,.9), rgba(43,212,189,.85));
-  color:#06101f;display:grid;place-items:center;
-  font-weight:900;letter-spacing:.5px;
-}
-h1{margin:0;font-size:20px}
-.sub{margin:0;color:var(--muted);font-size:12px}
-
-.grid{display:grid;grid-template-columns:1fr;gap:14px}
-@media (min-width: 980px){ .grid{grid-template-columns:1.06fr .94fr} }
-
-.card{
-  background:linear-gradient(180deg, var(--panel), var(--panel2));
-  border:1px solid var(--line);
-  border-radius:var(--r);
-  box-shadow:var(--shadow);
-  padding:14px;
-}
-.card h2{margin:0 0 10px 0;font-size:14px;letter-spacing:.2px}
-hr.sep{border:0;border-top:1px solid var(--line);margin:12px 0}
-
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#fff}
+.app{padding:20px;max-width:1100px;margin:auto}
+h1{text-align:center}
+.btn{padding:12px 18px;border:0;border-radius:10px;background:#3aa6ff;color:#000;font-weight:700;cursor:pointer}
+input,textarea{padding:8px;border-radius:6px;border:1px solid #ccc;width:100%}
+.card{background:#10203a;padding:16px;border-radius:12px;margin-bottom:16px}
 .row{display:flex;gap:12px;flex-wrap:wrap}
-.col{flex:1;min-width:220px}
-label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 0}
-input,textarea,select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(10,14,22,.55);
-  color:var(--text);
-  outline:none;
-}
-textarea{min-height:92px;resize:vertical}
-input:focus,textarea:focus,select:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3px rgba(78,168,255,.15)}
-
-.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.btn{
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.08);
-  color:var(--text);
-  padding:10px 14px;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:800;
-}
-.btn.primary{
-  background:linear-gradient(135deg, rgba(78,168,255,.95), rgba(43,212,189,.75));
-  color:#06101f;border:0;
-}
-.btn:active{transform:translateY(1px)}
-
-.sum{
-  display:grid;gap:8px;
-  padding:12px;border-radius:16px;
-  border:1px dashed rgba(255,255,255,.25);
-  background:rgba(255,255,255,.06);
-}
-.sumRow{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
-.sumRow b{color:var(--text);font-size:14px}
-
-.inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.pill{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.07);
-  font-size:12px;color:var(--muted)
-}
-.pill input{width:auto;padding:0;border:0}
-.small{font-size:12px;color:var(--muted)}
+.col{flex:1;min-width:240px}
 </style>
 </head>
 
 <body>
-<div class="wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="badge">MS</div>
-      <div>
-        <h1>Masculine Security – Rechnung</h1>
-        <p class="sub">90% Auto • 10% Writing • Speichern • Kunde speichern • PDF/Print</p>
-      </div>
-    </div>
+<div class="app">
 
-    <div class="actions">
-      <button class="btn" type="button" onclick="loadDraft()">Draft laden</button>
-      <button class="btn" type="button" onclick="saveDraft()">Speichern</button>
-      <button class="btn primary" type="button" onclick="printInvoice()">PDF / Drucken</button>
-    </div>
-  </div>
+<h1>Masculine Security – Rechnung Generator</h1>
 
-  <div class="grid">
+<!-- FIRMA -->
+<div class="card">
+<h3>Firma</h3>
+<input id="s_company" placeholder="Firmenname">
+<textarea id="s_addr" placeholder="Adresse"></textarea>
+<input id="s_email" placeholder="E-Mail Firma">
+<input id="s_taxid" placeholder="Steuernummer">
+<input id="s_iban" placeholder="IBAN">
+<input id="s_bic" placeholder="BIC">
+<textarea id="s_hint" placeholder="§19 Hinweis"></textarea>
+</div>
 
-    <!-- LEFT -->
-    <div class="card">
-      <h2>Firma</h2>
-      <div class="row">
-        <div class="col">
-          <label>Firmenname</label>
-          <input id="s_company" placeholder="Masculine Security">
-        </div>
-        <div class="col">
-          <label>E-Mail (oben im PDF, clickable)</label>
-          <input id="s_email" placeholder="kontakt.mass.bremen@hotmail.com">
-        </div>
-      </div>
+<!-- KUNDE -->
+<div class="card">
+<h3>Kunde</h3>
+<input id="c_name" placeholder="Name">
+<textarea id="c_addr" placeholder="Adresse"></textarea>
+<input id="c_email" placeholder="E-Mail Kunde">
+</div>
 
-      <div class="row">
-        <div class="col">
-          <label>Adresse</label>
-          <textarea id="s_addr" placeholder="Werschenregerstraße 6&#10;28237 Bremen"></textarea>
-        </div>
-      </div>
+<!-- RECHNUNG -->
+<div class="card">
+<h3>Rechnung</h3>
 
-      <div class="row">
-        <div class="col">
-          <label>Steuernummer</label>
-          <input id="s_taxid" placeholder="...">
-        </div>
-        <div class="col">
-          <label>IBAN</label>
-          <input id="s_iban" placeholder="DE...">
-        </div>
-        <div class="col">
-          <label>BIC</label>
-          <input id="s_bic" placeholder="...">
-        </div>
-      </div>
+<div class="row">
+<div class="col"><input id="i_no" placeholder="Rechnungsnummer"></div>
+<div class="col"><input id="i_date" type="date"></div>
+</div>
 
-      <div class="row">
-        <div class="col">
-          <label>Hinweis (z.B. § 19 UStG)</label>
-          <textarea id="s_hint" placeholder="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."></textarea>
-        </div>
-      </div>
+<div class="row">
+<div class="col"><input id="i_von" type="date"></div>
+<div class="col"><input id="i_bis" type="date"></div>
+</div>
 
-      <hr class="sep">
+<div class="row">
+<div class="col"><input id="i_due" type="date"></div>
+</div>
 
-      <h2>Kunde</h2>
-      <div class="row">
-        <div class="col">
-          <label>Kunde auswählen (gespeichert)</label>
-          <select id="c_select"></select>
-        </div>
-        <div class="col">
-          <label>&nbsp;</label>
-          <button class="btn" type="button" onclick="deleteSelectedCustomer()">Kunde löschen</button>
-        </div>
-      </div>
+<h4>Position</h4>
+<input id="l_desc" placeholder="Leistung">
 
-      <div class="row">
-        <div class="col">
-          <label>Name</label>
-          <input id="c_name" placeholder="Kundenname">
-        </div>
-        <div class="col">
-          <label>Adresse</label>
-          <textarea id="c_addr" placeholder="Straße 1&#10;PLZ Ort"></textarea>
-        </div>
-      </div>
+<div class="row">
+<div class="col"><input id="l_qty" type="number" step="0.01" placeholder="Stunden"></div>
+<div class="col"><input id="l_price" type="number" step="0.01" placeholder="€/Std"></div>
+</div>
 
-      <div class="inline">
-        <button class="btn" type="button" onclick="saveCustomer()">Kunde speichern</button>
-        <span class="small">Kunde wuxuu ku keydsanayaa browser-ka (localStorage).</span>
-      </div>
-    </div>
+<button class="btn" onclick="printInvoice()">PDF erzeugen</button>
+</div>
 
-    <!-- RIGHT -->
-    <div class="card">
-      <h2>Rechnung</h2>
-
-      <div class="row">
-        <div class="col">
-          <label>Rechnungsnummer</label>
-          <input id="i_no" placeholder="MS-2026-0001">
-        </div>
-        <div class="col">
-          <label>Rechnungsdatum</label>
-          <input id="i_date" type="date">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <label>Von</label>
-          <input id="i_von" type="date">
-        </div>
-        <div class="col">
-          <label>Bis</label>
-          <input id="i_bis" type="date">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <label>Fällig am</label>
-          <input id="i_due" type="date">
-        </div>
-      </div>
-
-      <hr class="sep">
-
-      <div class="inline">
-        <span class="pill">
-          <input id="auto_on" type="checkbox" checked>
-          <label for="auto_on" style="margin:0;color:inherit">Auto-Berechnung (90%)</label>
-        </span>
-        <span class="small">Auto: Tage × Std/Tag = Stunden, Stunden × €/h = Netto</span>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <label>Tage</label>
-          <input id="a_days" type="number" step="0.01" placeholder="14">
-        </div>
-        <div class="col">
-          <label>Std/Tag</label>
-          <input id="a_hpd" type="number" step="0.01" placeholder="12">
-        </div>
-        <div class="col">
-          <label>€/h</label>
-          <input id="a_rate" type="number" step="0.01" placeholder="22.00">
-        </div>
-      </div>
-
-      <hr class="sep">
-
-      <h2>Position 1 (10% Writing)</h2>
-      <div class="row">
-        <div class="col">
-          <label>Leistungsbeschreibung</label>
-          <input id="l_desc" placeholder="Sicherheitsdienstleistung – Objektbewachung">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <label>Stunden (auto)</label>
-          <input id="l_qty" type="number" step="0.01" placeholder="z.B. 168">
-        </div>
-        <div class="col">
-          <label>Preis €/h (auto)</label>
-          <input id="l_price" type="number" step="0.01" placeholder="22.00">
-        </div>
-      </div>
-
-      <div class="sum" style="margin-top:14px">
-        <div class="sumRow"><span>Summe Netto</span><span id="ui_netto">0,00 €</span></div>
-        <div class="sumRow"><b>Zu zahlen</b><b id="ui_pay">0,00 €</b></div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script>
-/* ===================== Storage Keys ===================== */
-const KEY_SETTINGS="ms_settings_v1";
-const KEY_CUSTOMERS="ms_customers_v1";
-const KEY_DRAFT="ms_invoice_draft_v1";
-const KEY_NO="ms_invoice_no_v1";
-
-/* ===================== Helpers ===================== */
+function formatDateDE(d){
+ if(!d) return "";
+ const x=new Date(d);
+ return String(x.getDate()).padStart(2,"0")+"."+
+        String(x.getMonth()+1).padStart(2,"0")+"."+x.getFullYear();
+}
 function esc(s){
-  return String(s||"").replace(/[&<>"']/g,m=>(
-    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
-  ));
+ return String(s||"").replace(/[&<>"']/g,m=>(
+ {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
+ ));
+}
+function cleanAddr(t){
+ return esc(t||"").replace(/\\n/g,"<br>");
 }
 function eur(n){
-  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
-}
-function num(v){
-  const s=String(v||"").trim().replace(/\s/g,"").replace(",",".");
-  const n=parseFloat(s);
-  return isFinite(n)?n:0;
-}
-function formatDateDE(d){
-  if(!d) return "";
-  const x=new Date(d);
-  return String(x.getDate()).padStart(2,"0")+"."+String(x.getMonth()+1).padStart(2,"0")+"."+x.getFullYear();
-}
-function todayISO(){
-  const d=new Date();
-  return d.toISOString().slice(0,10);
-}
-function addDaysISO(iso, days){
-  const d=new Date(iso);
-  d.setDate(d.getDate()+days);
-  return d.toISOString().slice(0,10);
-}
-
-/* ===================== Auto Calc (90%) ===================== */
-function applyAuto(){
-  if(!auto_on.checked) return;
-  const days=num(a_days.value);
-  const hpd=num(a_hpd.value);
-  const rate=num(a_rate.value);
-  const hours=days*hpd;
-
-  // Auto write to line
-  l_qty.value = hours ? hours.toFixed(2) : "";
-  l_price.value = rate ? rate.toFixed(2) : "";
-
-  updateTotals();
-}
-function updateTotals(){
-  const net=num(l_qty.value)*num(l_price.value);
-  ui_netto.textContent=eur(net);
-  ui_pay.textContent=eur(net);
-}
-["input","change","keyup"].forEach(evt=>{
-  [a_days,a_hpd,a_rate,auto_on,l_qty,l_price].forEach(el=>el.addEventListener(evt, ()=>{
-    if(el===l_qty || el===l_price){ updateTotals(); }
-    else { applyAuto(); }
-  }));
-});
-updateTotals();
-
-/* ===================== Settings Save/Load ===================== */
-function getSettings(){
-  return {
-    company:s_company.value, email:s_email.value, addr:s_addr.value,
-    taxid:s_taxid.value, iban:s_iban.value, bic:s_bic.value, hint:s_hint.value
-  };
-}
-function setSettings(x){
-  s_company.value=x.company||"";
-  s_email.value=x.email||"";
-  s_addr.value=x.addr||"";
-  s_taxid.value=x.taxid||"";
-  s_iban.value=x.iban||"";
-  s_bic.value=x.bic||"";
-  s_hint.value=x.hint||"";
-}
-function saveSettings(){
-  localStorage.setItem(KEY_SETTINGS, JSON.stringify(getSettings()));
-}
-function loadSettings(){
-  const raw=localStorage.getItem(KEY_SETTINGS);
-  if(!raw) return;
-  try{ setSettings(JSON.parse(raw)); }catch{}
-}
-
-/* ===================== Customers Save/Load ===================== */
-function readCustomers(){
-  try{ return JSON.parse(localStorage.getItem(KEY_CUSTOMERS)||"[]"); }catch{ return []; }
-}
-function writeCustomers(list){
-  localStorage.setItem(KEY_CUSTOMERS, JSON.stringify(list||[]));
-}
-function refreshCustomerSelect(){
-  const list=readCustomers();
-  c_select.innerHTML="";
-  const opt0=document.createElement("option");
-  opt0.value="";
-  opt0.textContent="— auswählen —";
-  c_select.appendChild(opt0);
-
-  list.forEach((c,idx)=>{
-    const o=document.createElement("option");
-    o.value=String(idx);
-    o.textContent=(c.name||"Kunde")+" ("+(c.addr||"").split("\n")[0]+")";
-    c_select.appendChild(o);
-  });
-}
-function saveCustomer(){
-  const name=c_name.value.trim();
-  const addr=c_addr.value.trim();
-  if(!name && !addr) return;
-
-  const list=readCustomers();
-  // if same name exists -> update
-  const i=list.findIndex(x=>(x.name||"").toLowerCase()===name.toLowerCase());
-  if(i>=0) list[i]={name,addr};
-  else list.push({name,addr});
-  writeCustomers(list);
-  refreshCustomerSelect();
-}
-function loadCustomerByIndex(i){
-  const list=readCustomers();
-  const c=list[i];
-  if(!c) return;
-  c_name.value=c.name||"";
-  c_addr.value=c.addr||"";
-}
-function deleteSelectedCustomer(){
-  const idx=parseInt(c_select.value,10);
-  if(!isFinite(idx)) return;
-  const list=readCustomers();
-  if(!list[idx]) return;
-  list.splice(idx,1);
-  writeCustomers(list);
-  refreshCustomerSelect();
-  c_select.value="";
-}
-c_select.addEventListener("change", ()=>{
-  const idx=parseInt(c_select.value,10);
-  if(isFinite(idx)) loadCustomerByIndex(idx);
-});
-
-/* ===================== Invoice Number Auto ===================== */
-function nextInvoiceNo(){
-  let n=parseInt(localStorage.getItem(KEY_NO)||"1",10);
-  if(!isFinite(n) || n<1) n=1;
-  const yyyy=new Date().getFullYear();
-  const no=`MS-${yyyy}-${String(n).padStart(4,"0")}`;
-  localStorage.setItem(KEY_NO, String(n+1));
-  return no;
-}
-
-/* ===================== Draft Save/Load ===================== */
-function getDraft(){
-  return {
-    settings:getSettings(),
-    customer:{name:c_name.value, addr:c_addr.value},
-    invoice:{no:i_no.value, date:i_date.value, von:i_von.value, bis:i_bis.value, due:i_due.value},
-    auto:{on:auto_on.checked, days:a_days.value, hpd:a_hpd.value, rate:a_rate.value},
-    line:{desc:l_desc.value, qty:l_qty.value, price:l_price.value}
-  };
-}
-function setDraft(d){
-  if(d.settings) setSettings(d.settings);
-  if(d.customer){ c_name.value=d.customer.name||""; c_addr.value=d.customer.addr||""; }
-  if(d.invoice){
-    i_no.value=d.invoice.no||"";
-    i_date.value=d.invoice.date||"";
-    i_von.value=d.invoice.von||"";
-    i_bis.value=d.invoice.bis||"";
-    i_due.value=d.invoice.due||"";
-  }
-  if(d.auto){
-    auto_on.checked=!!d.auto.on;
-    a_days.value=d.auto.days||"";
-    a_hpd.value=d.auto.hpd||"";
-    a_rate.value=d.auto.rate||"";
-  }
-  if(d.line){
-    l_desc.value=d.line.desc||"";
-    l_qty.value=d.line.qty||"";
-    l_price.value=d.line.price||"";
-  }
-  applyAuto();
-  updateTotals();
-}
-function saveDraft(){
-  // save settings separately too
-  saveSettings();
-  localStorage.setItem(KEY_DRAFT, JSON.stringify(getDraft()));
-}
-function loadDraft(){
-  loadSettings();
-  const raw=localStorage.getItem(KEY_DRAFT);
-  if(!raw) return;
-  try{ setDraft(JSON.parse(raw)); }catch{}
-}
-
-/* ===================== Print (NO popup: iframe) ===================== */
-function printViaIframe(html){
-  const iframe=document.createElement("iframe");
-  iframe.style.position="fixed";
-  iframe.style.right="0";
-  iframe.style.bottom="0";
-  iframe.style.width="0";
-  iframe.style.height="0";
-  iframe.style.border="0";
-  // srcdoc works on modern browsers and GitHub Pages
-  iframe.srcdoc=html;
-
-  iframe.onload=()=>{
-    try{
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-    }catch(e){}
-    // cleanup
-    setTimeout(()=>iframe.remove(), 1200);
-  };
-
-  document.body.appendChild(iframe);
+ return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
 }
 
 function printInvoice(){
-  // ensure we store latest
-  saveDraft();
 
-  const settings=getSettings();
-  const customer={name:c_name.value, addr:c_addr.value};
-  const invoice={no:i_no.value, date:i_date.value, von:i_von.value, bis:i_bis.value, due:i_due.value};
-  const line={desc:l_desc.value, qty:num(l_qty.value), price:num(l_price.value)};
-  const net=line.qty*line.price;
+const qty=Number(l_qty.value||0);
+const price=Number(l_price.value||0);
+const net=qty*price;
 
-  const html=`
+const html=`
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<title>Rechnung ${esc(invoice.no)}</title>
+<meta charset="utf-8"/>
+<title>Rechnung</title>
 <style>
-@page{margin:18mm}
-body{font-family:Arial;color:#111}
-a{color:#111;text-decoration:underline;text-underline-offset:2px}
-.header{display:flex;justify-content:space-between;gap:16px;margin-bottom:18px}
-.hL{font-size:12px;line-height:1.35}
-.hR{text-align:right;font-size:12px;line-height:1.35}
-.title{font-size:22px;font-weight:800;margin:0 0 6px 0}
-.meta{font-size:12px;color:#333}
-.boxrow{display:flex;gap:14px;margin:14px 0 12px}
-.box{flex:1;border:1px solid #333;padding:10px;font-size:12px;line-height:1.35}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border-bottom:1px solid #333;padding:8px;font-size:12px}
-th{background:#f2f2f2;text-align:left}
+@page{margin:14mm}
+body{font-family:Arial;color:#000}
+.page{padding:12mm}
+.row{display:flex;justify-content:space-between;gap:12px}
+.box{border:1px solid #bbb;padding:10px;flex:1}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{border-bottom:1px solid #ddd;padding:6px;font-size:12px}
 .r{text-align:right}
-.footer{display:flex;gap:14px;margin-top:14px}
-.footer .box{font-size:12px}
+h1{margin:0}
+.footer{text-align:center;font-size:10px;margin-top:18px;color:#444}
 </style>
 </head>
+
 <body>
+<div class="page">
 
-<div class="header">
-  <div class="hL">
-    <div class="title">Rechnung</div>
-    <div class="meta">
-      Rechnungs-Nr.: <b>${esc(invoice.no)}</b><br>
-      ${invoice.von&&invoice.bis?`Zeitraum: ${formatDateDE(invoice.von)} – ${formatDateDE(invoice.bis)}<br>`:""}
-      ${invoice.due?`Fällig: ${formatDateDE(invoice.due)}<br>`:""}
-    </div>
-  </div>
-
-  <div class="hR">
-    <b>${esc(settings.company)}</b><br>
-    ${esc(settings.addr).replace(/\\n/g,"<br>")}<br>
-    ${settings.email?`E-Mail: <a href="mailto:${esc(settings.email)}">${esc(settings.email)}</a><br>`:""}
-    ${settings.taxid?`Steuernummer: ${esc(settings.taxid)}<br>`:""}
-    ${invoice.date?`Datum: ${formatDateDE(invoice.date)}`:""}
-  </div>
+<div class="row">
+<div>
+<h1>Rechnung</h1>
+<b>Nr:</b> ${esc(i_no.value)}<br>
+<b>Datum:</b> ${formatDateDE(i_date.value)}<br>
+<b>Fällig:</b> ${formatDateDE(i_due.value)}
 </div>
 
-<div class="boxrow">
-  <div class="box">
-    <b>Rechnung von</b><br>
-    ${esc(settings.company)}<br>
-    ${esc(settings.addr).replace(/\\n/g,"<br>")}
-  </div>
-  <div class="box">
-    <b>Rechnung an</b><br>
-    ${esc(customer.name)}<br>
-    ${esc(customer.addr).replace(/\\n/g,"<br>")}
-  </div>
+<div style="text-align:right">
+<b>${esc(s_company.value)}</b><br>
+${cleanAddr(s_addr.value)}<br>
+E-Mail: ${esc(s_email.value)}<br>
+Steuernummer: ${esc(s_taxid.value)}
+</div>
+</div>
+
+<hr>
+
+<div class="row">
+<div class="box">
+<b>Rechnung von</b><br>
+${esc(s_company.value)}<br>
+${cleanAddr(s_addr.value)}<br>
+E-Mail: ${esc(s_email.value)}
+</div>
+
+<div class="box">
+<b>Rechnung an</b><br>
+${esc(c_name.value)}<br>
+${cleanAddr(c_addr.value)}<br>
+E-Mail: ${esc(c_email.value)}
+</div>
 </div>
 
 <table>
-  <tr>
-    <th style="width:40px">#</th>
-    <th>Leistung</th>
-    <th class="r" style="width:120px">Stunden</th>
-    <th class="r" style="width:120px">Preis</th>
-    <th class="r" style="width:140px">Netto</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>${esc(line.desc)}</td>
-    <td class="r">${line.qty.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-    <td class="r">${eur(line.price)}</td>
-    <td class="r"><b>${eur(net)}</b></td>
-  </tr>
+<tr>
+<th>#</th><th>Leistung</th>
+<th class="r">Stunden</th>
+<th class="r">Preis</th>
+<th class="r">Netto</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>${esc(l_desc.value)}</td>
+<td class="r">${qty}</td>
+<td class="r">${eur(price)}</td>
+<td class="r"><b>${eur(net)}</b></td>
+</tr>
 </table>
 
-<div class="footer">
-  <div class="box">
-    <b>Zahlung</b><br>
-    IBAN: ${esc(settings.iban)}<br>
-    BIC: ${esc(settings.bic)}<br>
-    ${esc(settings.hint).replace(/\\n/g,"<br>")}
-  </div>
-  <div class="box">
-    <b>Summe</b><br>
-    Summe Netto: ${eur(net)}<br>
-    <b>Zu zahlen: ${eur(net)}</b>
-  </div>
+<div class="row">
+<div class="box">
+<b>Zahlung</b><br>
+IBAN: ${esc(s_iban.value)}<br>
+BIC: ${esc(s_bic.value)}<br>
+${esc(s_hint.value)}<br>
+E-Mail: ${esc(s_email.value)}
 </div>
 
+<div class="box">
+<b>Summe</b><br>
+Netto: <b>${eur(net)}</b><br>
+Zu zahlen: <b>${eur(net)}</b>
+</div>
+</div>
+
+<div class="footer">
+Masculine Security – Bremen – ${esc(s_email.value)}
+</div>
+
+</div>
 </body>
 </html>`;
 
-  printViaIframe(html);
+const w=window.open("");
+w.document.write(html);
+w.document.close();
+setTimeout(()=>w.print(),300);
 }
-
-/* ===================== First Run Defaults ===================== */
-function init(){
-  // load saved settings/customers/draft
-  loadSettings();
-  refreshCustomerSelect();
-  loadDraft();
-
-  // if invoice no empty -> auto generate
-  if(!i_no.value) i_no.value=nextInvoiceNo();
-
-  // default dates if empty
-  if(!i_date.value) i_date.value=todayISO();
-  if(!i_due.value) i_due.value=addDaysISO(i_date.value, 14);
-
-  // default description
-  if(!l_desc.value) l_desc.value="Sicherheitsdienstleistung – Objektbewachung";
-
-  applyAuto();
-  updateTotals();
-}
-init();
 </script>
+
 </body>
 </html>
