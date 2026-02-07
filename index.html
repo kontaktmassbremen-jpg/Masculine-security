@@ -1,112 +1,235 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Masculine Security – Rechnung Generator</title>
+
 <style>
-:root{
-  --bg:#0b1220;
-  --panel:#0f1a2f;
-  --card:#10203a;
-  --line:#1a2a4b;
-  --text:#e7eeff;
-  --muted:#93a4c6;
-  --accent:#3aa6ff;
-  --good:#2bd4bd;
-  --bad:#ff4d6d;
-  --radius:14px;
-  --font: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef2f6}
+.app{max-width:1100px;margin:0 auto;padding:30px}
+h1{margin-bottom:25px}
+.card{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1;min-width:220px}
+input,textarea{width:100%;padding:9px;border-radius:6px;border:1px solid #bbb}
+.btn{margin-top:12px;padding:14px 22px;border:0;border-radius:8px;background:#0b4aa8;color:#fff;font-weight:700;cursor:pointer}
+.small{font-size:12px;color:#333;margin-top:6px}
+.sumBox{
+  margin-top:14px;
+  padding:12px;
+  border:1px dashed #9aa3b2;
+  border-radius:10px;
+  background:#f7f9fc;
 }
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:var(--font);
-  background:
-    radial-gradient(900px 500px at 10% -10%, rgba(58,166,255,.25), transparent 60%),
-    radial-gradient(800px 500px at 90% 0%, rgba(43,212,189,.15), transparent 60%),
-    linear-gradient(180deg,#07101f,#070d18);
-  color:var(--text);
-}
-
-/* App wrapper */
-.app{
-  max-width:960px;
-  margin:40px auto;
-  padding:20px;
-}
-
-/* Title */
-h1{
-  text-align:center;
-  font-weight:900;
-  letter-spacing:.4px;
-  margin-bottom:22px;
-}
-
-/* Cards */
-.card{
-  background:linear-gradient(180deg,rgba(16,32,58,.9),rgba(12,22,41,.9));
-  border-radius:var(--radius);
-  padding:18px;
-  margin-bottom:18px;
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:0 18px 40px rgba(0,0,0,.45);
-}
-
-.card h3{
-  margin:0 0 12px;
-  font-size:15px;
-}
-
-/* Layout rows */
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-.col{width:100%}
-
-/* Inputs */
-input,textarea{
-  width:100%;
-  padding:11px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(0,0,0,.25);
-  color:var(--text);
-  outline:none;
-  transition:.15s ease;
-}
-
-input:focus,
-textarea:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(58,166,255,.2);
-}
-
-textarea{resize:vertical;min-height:70px}
-
-/* Button */
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:12px 18px;
-  border-radius:14px;
-  border:1px solid rgba(58,166,255,.45);
-  background:linear-gradient(180deg,rgba(58,166,255,.25),rgba(58,166,255,.15));
-  color:var(--text);
-  font-weight:900;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-  background:rgba(58,166,255,.35);
-  box-shadow:0 12px 28px rgba(0,0,0,.45);
-}
-
-/* Small screens */
-@media(max-width:720px){
-  .row{grid-template-columns:1fr}
-}
+.sumRow{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.sumRow b{font-size:15px}
 </style>
+</head>
+
+<body>
+<div class="app">
+
+<h1>Masculine Security – Rechnung Generator</h1>
+
+<div class="card">
+<h3>Firma</h3>
+<input id="s_company" placeholder="Firmenname"><br><br>
+<textarea id="s_addr" placeholder="Adresse"></textarea><br><br>
+<input id="s_email" placeholder="E-Mail"><br><br>
+<input id="s_taxid" placeholder="Steuernummer"><br><br>
+<input id="s_iban" placeholder="IBAN"><br><br>
+<input id="s_bic" placeholder="BIC"><br><br>
+<textarea id="s_hint" placeholder="§19 Hinweis"></textarea>
+</div>
+
+<div class="card">
+<h3>Kunde</h3>
+<input id="c_name" placeholder="Name"><br><br>
+<textarea id="c_addr" placeholder="Adresse"></textarea>
+</div>
+
+<div class="card">
+<h3>Rechnung</h3>
+
+<div class="row">
+  <div class="col"><input id="i_no" placeholder="Rechnungsnummer"></div>
+  <div class="col"><input id="i_date" type="date"></div>
+</div><br>
+
+<div class="row">
+  <div class="col"><input id="i_von" type="date"></div>
+  <div class="col"><input id="i_bis" type="date"></div>
+</div><br>
+
+<div class="row">
+  <div class="col"><input id="i_due" type="date"></div>
+</div><br>
+
+<h4>Position</h4>
+<input id="l_desc" placeholder="Leistungsbeschreibung"><br><br>
+
+<div class="row">
+  <div class="col">
+    <input id="l_qty" type="number" step="0.01" placeholder="Menge">
+    <div class="small">Tusaale: 120 (Stunden) ama 18 (Tage)</div>
+  </div>
+  <div class="col">
+    <input id="l_price" type="number" step="0.01" placeholder="Preis €">
+    <div class="small">Tusaale: 22.00</div>
+  </div>
+</div>
+
+<!-- LIVE SUM -->
+<div class="sumBox">
+  <div class="sumRow"><span>Netto</span><span id="ui_netto">0,00 €</span></div>
+  <div class="sumRow"><b>Zu zahlen</b><b id="ui_pay">0,00 €</b></div>
+</div>
+
+<button class="btn" onclick="printInvoice()">PDF erzeugen</button>
+</div>
+
+</div>
+
+<script>
+/* ---------- Helpers ---------- */
+function formatDateDE(d){
+  if(!d) return "";
+  const x=new Date(d);
+  return String(x.getDate()).padStart(2,"0")+"."+
+         String(x.getMonth()+1).padStart(2,"0")+"."+
+         x.getFullYear();
+}
+function eur(n){
+  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2})+" €";
+}
+function esc(s){
+  return String(s||"").replace(/[&<>"']/g,m=>(
+    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
+  ));
+}
+function num(v){
+  // Accept commas and dots
+  const s=String(v||"").trim().replace(/\s/g,"").replace(",",".");
+  const n=parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+
+/* ---------- AUTO CALC (LIVE) ---------- */
+function updateTotals(){
+  const qty=num(l_qty.value);
+  const price=num(l_price.value);
+  const net=qty*price;
+  ui_netto.textContent=eur(net);
+  ui_pay.textContent=eur(net);
+}
+["input","change","keyup"].forEach(evt=>{
+  l_qty.addEventListener(evt, updateTotals);
+  l_price.addEventListener(evt, updateTotals);
+});
+updateTotals();
+
+/* ---------- PRINT ---------- */
+function printInvoice(){
+  const qty=num(l_qty.value);
+  const price=num(l_price.value);
+  const net=qty*price;
+
+  const html=`
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Rechnung</title>
+<style>
+@page{margin:18mm}
+body{font-family:Arial;color:#000}
+.page{padding:5mm}
+.header{display:flex;justify-content:space-between;margin-bottom:25px}
+.boxrow{display:flex;gap:14px;margin-bottom:20px}
+.box{flex:1;border:1px solid #444;padding:10px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border-bottom:1px solid #444;padding:7px;font-size:12px}
+th{background:#f1f1f1}
+.r{text-align:right}
+.totalbox{display:flex;gap:14px;margin-top:20px}
+.totalbox .box{font-size:13px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div>
+    <b>${esc(s_company.value)}</b><br>
+    ${esc(s_addr.value).replace(/\\n/g,"<br>")}<br>
+    ${s_email.value ? `E-Mail: <a href="mailto:${esc(s_email.value)}">${esc(s_email.value)}</a><br>` : ``}
+    ${s_taxid.value ? `Steuernummer: ${esc(s_taxid.value)}` : ``}
+  </div>
+
+  <div style="text-align:right">
+    <b>Rechnungs-Nr:</b> ${esc(i_no.value)}<br>
+    <b>Datum:</b> ${formatDateDE(i_date.value)}<br>
+    ${i_von.value && i_bis.value ? `Zeitraum: ${formatDateDE(i_von.value)} – ${formatDateDE(i_bis.value)}<br>` : ``}
+    ${i_due.value ? `Fällig: ${formatDateDE(i_due.value)}` : ``}
+  </div>
+</div>
+
+<div class="boxrow">
+  <div class="box">
+    <b>Rechnung von</b><br>
+    ${esc(s_company.value)}<br>
+    ${esc(s_addr.value).replace(/\\n/g,"<br>")}
+  </div>
+
+  <div class="box">
+    <b>Rechnung an</b><br>
+    ${esc(c_name.value)}<br>
+    ${esc(c_addr.value).replace(/\\n/g,"<br>")}
+  </div>
+</div>
+
+<table>
+<tr>
+  <th>#</th>
+  <th>Leistung</th>
+  <th class="r">Menge</th>
+  <th class="r">Preis</th>
+  <th class="r">Netto</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td>${esc(l_desc.value)}</td>
+  <td class="r">${qty.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+  <td class="r">${eur(price)}</td>
+  <td class="r"><b>${eur(net)}</b></td>
+</tr>
+</table>
+
+<div class="totalbox">
+  <div class="box">
+    <b>Zahlung</b><br>
+    IBAN: ${esc(s_iban.value)}<br>
+    BIC: ${esc(s_bic.value)}<br>
+    ${esc(s_hint.value).replace(/\\n/g,"<br>")}
+  </div>
+
+  <div class="box">
+    <b>Summe</b><br>
+    Netto: ${eur(net)}<br>
+    <b>Zu zahlen: ${eur(net)}</b>
+  </div>
+</div>
+
+</div>
+</body>
+</html>`;
+
+  const w=window.open("");
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+</script>
+</body>
+</html>
