@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Mini Office</title>
+  <title>Masculine Security — Office</title>
 
   <style>
     :root{
@@ -49,34 +49,22 @@
     }
     .brand h1{font-size:14px;margin:0}
     .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
-    .nav{
-      display:flex; flex-direction:column; gap:8px;
-    }
+
+    .nav{display:flex; flex-direction:column; gap:8px;}
     .nav button{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      width:100%;
-      background:transparent;
-      border:1px solid var(--line);
-      color:var(--text);
-      padding:12px 12px;
-      border-radius:14px;
-      cursor:pointer;
+      width:100%; background:transparent;
+      border:1px solid var(--line); color:var(--text);
+      padding:12px 12px; border-radius:14px; cursor:pointer;
       transition:.15s transform, .15s background;
     }
     .nav button:hover{transform:translateY(-1px); background:rgba(255,255,255,.03)}
-    .nav button.active{
-      background:rgba(58,166,255,.12);
-      border-color:rgba(58,166,255,.35);
-    }
-    .nav .left{
-      display:flex; align-items:center; gap:10px;
-      font-weight:700; font-size:13px;
-    }
+    .nav button.active{background:rgba(58,166,255,.12); border-color:rgba(58,166,255,.35)}
+    .nav .left{display:flex; align-items:center; gap:10px; font-weight:700; font-size:13px;}
     .badge{
       font-size:12px; color:var(--muted);
       border:1px solid var(--line);
-      padding:2px 8px;
-      border-radius:999px;
+      padding:2px 8px; border-radius:999px;
       background:rgba(255,255,255,.02);
     }
 
@@ -89,17 +77,12 @@
       min-height:calc(100vh - 32px);
       overflow:hidden;
     }
-
     .topbar{
       display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:10px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:rgba(255,255,255,.02);
+      padding:10px; border:1px solid var(--line);
+      border-radius:14px; background:rgba(255,255,255,.02);
     }
-    .crumbs{
-      font-size:12px; color:var(--muted);
-    }
+    .crumbs{font-size:12px; color:var(--muted);}
     .actions{display:flex; gap:10px; flex-wrap:wrap}
     .btn{
       appearance:none; border:1px solid var(--line);
@@ -132,17 +115,9 @@
       border-radius:var(--r2);
       padding:14px;
     }
-    .panel h2{
-      margin:0 0 10px 0;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
+    .panel h2{margin:0 0 10px 0; font-size:14px; letter-spacing:.2px;}
     .muted{color:var(--muted); font-size:12px}
-    .form{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
+    .form{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
     .field{display:flex; flex-direction:column; gap:6px}
     label{font-size:12px;color:var(--muted)}
     input, select, textarea{
@@ -159,13 +134,8 @@
     .full{grid-column:1 / -1}
     .row2{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px}
-    .inline{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap
-    }
-
-    .kpi{
-      display:grid; grid-template-columns: 1fr 1fr; gap:12px;
-    }
+    .inline{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .kpi{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
     .kpi .box{
       border:1px solid var(--line);
       border-radius:14px;
@@ -174,10 +144,7 @@
     }
     .kpi .big{font-size:18px; font-weight:900}
     .kpi .cap{font-size:12px; color:var(--muted); margin-top:3px}
-
-    .list{
-      display:flex; flex-direction:column; gap:10px;
-    }
+    .list{display:flex; flex-direction:column; gap:10px;}
     .item{
       border:1px solid var(--line);
       border-radius:14px;
@@ -197,11 +164,10 @@
       font-size:12px;
       background:rgba(255,255,255,.02);
     }
-
     .hidden{display:none !important}
 
     @media (max-width: 980px){
-      .app{grid-template-columns:1fr; }
+      .app{grid-template-columns:1fr;}
       .sidebar{position:relative; height:auto}
       .grid{grid-template-columns:1fr}
     }
@@ -257,12 +223,12 @@
           <button class="btn primary" id="btnNew">➕ Neue</button>
           <button class="btn" id="btnExport">Export JSON</button>
           <button class="btn" id="btnImport">Import JSON</button>
-          <button class="btn good" id="btnPrint">PDF</button>
+          <button class="btn good" id="btnPrint">PDF (Print)</button>
+          <button class="btn good" id="btnOpenPDF">Open PDF (HTML)</button>
           <button class="btn danger" id="btnReset">Alles löschen</button>
         </div>
       </div>
 
-      <!-- ========= VIEW: RECHNUNG ========= -->
       <section id="view-rechnung" class="view">
         <div class="grid">
           <div class="panel">
@@ -337,7 +303,7 @@
                 </div>
 
                 <div class="hint">
-                  Auto: <b>Total Stunden = Tage × Std/Tag</b> • Netto = Stunden × €/h • (Du kannst Total Stunden auch manuell ändern)
+                  Auto: <b>Total Stunden = Tage × Std/Tag</b> • Netto = Stunden × €/h
                 </div>
               </div>
 
@@ -352,7 +318,7 @@
           </div>
 
           <div class="panel">
-            <h2>Vorschau (Klickbare Links)</h2>
+            <h2>Vorschau (klickbar)</h2>
             <div class="kpi">
               <div class="box">
                 <div class="big" id="kpi_net">0,00 €</div>
@@ -369,17 +335,13 @@
 
             <div class="inline" style="margin-top:10px">
               <button class="btn good" id="btnSaveInv">Speichern</button>
-              <button class="btn primary" id="btnPrint2">PDF</button>
-            </div>
-
-            <div class="hint">
-              PDF ist “real document style”: keine “Muster”, keine “Mini Office”, keine GitHub Texte, keine Footer-Hinweise.
+              <button class="btn primary" id="btnPrint2">PDF (Print)</button>
+              <button class="btn primary" id="btnOpenPDF2">Open PDF (HTML)</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ========= VIEW: KUNDEN ========= -->
       <section id="view-kunden" class="view hidden">
         <div class="grid">
           <div class="panel">
@@ -387,7 +349,7 @@
             <div class="form">
               <div class="field">
                 <label>Name</label>
-                <input id="c_name" placeholder="z.B. Proxxx / Firma / Person"/>
+                <input id="c_name" placeholder="z.B. Firma / Person"/>
               </div>
               <div class="field">
                 <label>E-Mail (klickbar)</label>
@@ -415,34 +377,27 @@
         </div>
       </section>
 
-      <!-- ========= VIEW: MITARBEITER (placeholder) ========= -->
       <section id="view-mitarbeiter" class="view hidden">
         <div class="panel">
           <h2>Mitarbeiter</h2>
-          <div class="hint">Dieses Modul ist vorbereitet. (Du kannst später Mitarbeiter + Stammdaten speichern.)</div>
+          <div class="hint">Vorbereitet.</div>
         </div>
       </section>
 
-      <!-- ========= VIEW: PAYROLL (placeholder) ========= -->
       <section id="view-payroll" class="view hidden">
         <div class="panel">
           <h2>Payroll</h2>
-          <div class="hint">
-            Für echte Lohnabrechnung brauchst du i.d.R. Software/Steuerberater (ELStAM, SV etc.).<br>
-            Hier kannst du später dein Layout hinzufügen.
-          </div>
+          <div class="hint">Vorbereitet.</div>
         </div>
       </section>
 
-      <!-- ========= VIEW: BESCHEINIGUNGEN (placeholder) ========= -->
       <section id="view-bescheinigungen" class="view hidden">
         <div class="panel">
           <h2>Bescheinigungen</h2>
-          <div class="hint">Hier kannst du später Arbeitbescheinigung / Lohnsteuerbescheinigung als PDF erstellen.</div>
+          <div class="hint">Vorbereitet.</div>
         </div>
       </section>
 
-      <!-- ========= VIEW: FIRMA ========= -->
       <section id="view-firma" class="view hidden">
         <div class="grid">
           <div class="panel">
@@ -487,11 +442,10 @@
           </div>
 
           <div class="panel">
-            <h2>Info</h2>
+            <h2>PDF Footer</h2>
             <div class="hint">
-              ✅ Alles wird automatisch gespeichert (localStorage).<br>
-              ✅ E-Mail/Telefon werden als <b>mailto:</b> / <b>tel:</b> im PDF klickbar.<br>
-              ✅ Keine Footer-Texte unten, kein “Muster”, kein “GitHub”, kein “Mini Office”.
+              Code-ku wuxuu dhigay: <b>@page margin: 0</b> (footer 0).<br>
+              Haddii browser-ku wali ku daro URL/footer → Print settings ka dami: <b>Headers and footers</b>.
             </div>
           </div>
         </div>
@@ -501,283 +455,186 @@
   </div>
 
 <script>
-/* ===========================
-   Storage Keys
-=========================== */
-const KEY = {
-  firma: "ms_firma_v1",
-  customers: "ms_customers_v1",
-  invoice: "ms_invoice_current_v1"
-};
-
-/* ===========================
-   Helpers
-=========================== */
+const KEY = { firma:"ms_firma_v1", customers:"ms_customers_v1", invoice:"ms_invoice_current_v1" };
 const $ = (id)=>document.getElementById(id);
 
 function pad2(n){ return String(n).padStart(2,"0"); }
-function toISO(dateObj){
-  const d = new Date(dateObj);
-  return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
-}
+function toISO(dateObj){ const d=new Date(dateObj); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
 function formatDE(iso){
   if(!iso) return "";
-  const d = new Date(iso);
+  const d=new Date(iso);
   if(Number.isNaN(d.getTime())) return "";
   return pad2(d.getDate())+"."+pad2(d.getMonth()+1)+"."+d.getFullYear();
 }
 function moneyEUR(n){
-  const x = Number(n||0);
-  return x.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+  const x=Number(n||0);
+  return x.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2})+" €";
 }
 function num(n){ return Number(String(n||"").replace(",", ".")) || 0; }
-function esc(s){
-  return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-}
+function esc(s){ return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
 function nl2br(s){ return esc(s).replace(/\\n/g,"<br>"); }
 function mailto(email){ return email ? `<a href="mailto:${esc(email)}">${esc(email)}</a>` : ""; }
 function telLink(tel){ return tel ? `<a href="tel:${esc(tel)}">${esc(tel)}</a>` : ""; }
 
-function downloadJSON(filename, data){
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = filename;
+function downloadJSON(filename,data){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
 }
 function pickFile(){
   return new Promise((resolve)=>{
-    const inp = document.createElement("input");
-    inp.type = "file"; inp.accept = "application/json";
-    inp.onchange = () => resolve(inp.files?.[0] || null);
+    const inp=document.createElement("input");
+    inp.type="file"; inp.accept="application/json";
+    inp.onchange=()=>resolve(inp.files?.[0]||null);
     inp.click();
   });
 }
 async function readFileText(file){
   return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result||""));
-    r.onerror = () => reject(new Error("File read error"));
+    const r=new FileReader();
+    r.onload=()=>resolve(String(r.result||""));
+    r.onerror=()=>reject(new Error("File read error"));
     r.readAsText(file);
   });
 }
 
-/* ===========================
-   State
-=========================== */
-let firma = loadFirma();
-let customers = loadCustomers();
-let invoice = loadInvoice();
-
-/* ===========================
-   Load/Save
-=========================== */
 function loadFirma(){
-  const def = {
-    name: "Masculine Security",
-    addr: "Werschenregerstraße 6\n28237 Bremen",
-    email: "kontakt.mass.bremen@hotmail.com",
-    tel: "+4915778697052",
-    tax: "",
-    iban: "DE98 1001 1001 2333 0146 96",
-    bic: "NTSBDEB1XXX",
-    hint: "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+  const def={
+    name:"Masculine Security",
+    addr:"Werschenregerstraße 6\n28237 Bremen",
+    email:"kontakt.mass.bremen@hotmail.com",
+    tel:"+4915778697052",
+    tax:"",
+    iban:"DE98 1001 1001 2333 0146 96",
+    bic:"NTSBDEB1XXX",
+    hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
   };
-  try{
-    const x = JSON.parse(localStorage.getItem(KEY.firma) || "null");
-    return x ? {...def, ...x} : def;
-  }catch{ return def; }
+  try{ const x=JSON.parse(localStorage.getItem(KEY.firma)||"null"); return x?({...def,...x}):def; }catch{return def;}
 }
-function saveFirma(){
-  localStorage.setItem(KEY.firma, JSON.stringify(firma));
-}
-function loadCustomers(){
-  try{
-    const x = JSON.parse(localStorage.getItem(KEY.customers) || "[]");
-    return Array.isArray(x) ? x : [];
-  }catch{ return []; }
-}
-function saveCustomers(){
-  localStorage.setItem(KEY.customers, JSON.stringify(customers));
-}
-function loadInvoice(){
-  const today = new Date();
-  const def = {
-    no: autoInvoiceNo(today),
-    date: toISO(today),
-    from: toISO(new Date(today.getFullYear(), today.getMonth(), 1)),
-    to: toISO(new Date(today.getFullYear(), today.getMonth()+1, 0)),
-    due: toISO(addDays(today, 14)),
-    status: "Entwurf",
-    customerId: "",
-    days: 10,
-    hoursPerDay: 12,
-    totalHours: 120,
-    rate: 22,
-    desc: "Sicherheitsdienstleistung — Objektbewachung"
-  };
-  try{
-    const x = JSON.parse(localStorage.getItem(KEY.invoice) || "null");
-    return x ? {...def, ...x} : def;
-  }catch{ return def; }
-}
-function saveInvoice(){
-  localStorage.setItem(KEY.invoice, JSON.stringify(invoice));
-}
+function saveFirma(){ localStorage.setItem(KEY.firma, JSON.stringify(firma)); }
 
-/* ===========================
-   Invoice Number
-=========================== */
+function loadCustomers(){
+  try{ const x=JSON.parse(localStorage.getItem(KEY.customers)||"[]"); return Array.isArray(x)?x:[]; }catch{return [];}
+}
+function saveCustomers(){ localStorage.setItem(KEY.customers, JSON.stringify(customers)); }
+
 function autoInvoiceNo(d){
-  const year = d.getFullYear();
-  // Simple auto number based on day + time (stable enough). You can overwrite.
-  const seed = (d.getMonth()+1)*100 + d.getDate();
+  const year=d.getFullYear();
+  const seed=(d.getMonth()+1)*100+d.getDate();
   return `MS-${year}-${String(seed).padStart(4,"0")}`;
 }
-function addDays(dateObj, days){
-  const d = new Date(dateObj);
-  d.setDate(d.getDate()+days);
-  return d;
-}
+function addDays(dateObj,days){ const d=new Date(dateObj); d.setDate(d.getDate()+days); return d; }
 
-/* ===========================
-   Navigation
-=========================== */
-const nav = $("nav");
+function loadInvoice(){
+  const today=new Date();
+  const def={
+    no:autoInvoiceNo(today),
+    date:toISO(today),
+    from:toISO(new Date(today.getFullYear(),today.getMonth(),1)),
+    to:toISO(new Date(today.getFullYear(),today.getMonth()+1,0)),
+    due:toISO(addDays(today,14)),
+    status:"Entwurf",
+    customerId:"",
+    days:10,
+    hoursPerDay:12,
+    totalHours:120,
+    rate:22,
+    desc:"Sicherheitsdienstleistung — Objektbewachung"
+  };
+  try{ const x=JSON.parse(localStorage.getItem(KEY.invoice)||"null"); return x?({...def,...x}):def; }catch{return def;}
+}
+function saveInvoice(){ localStorage.setItem(KEY.invoice, JSON.stringify(invoice)); }
+
+let firma=loadFirma();
+let customers=loadCustomers();
+let invoice=loadInvoice();
+
+const nav=$("nav");
 nav.addEventListener("click",(e)=>{
-  const btn = e.target.closest("button[data-view]");
+  const btn=e.target.closest("button[data-view]");
   if(!btn) return;
   setView(btn.dataset.view);
 });
 
 function setView(view){
-  // buttons
   document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
-  // sections
   document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
-  const section = $("view-"+view);
+  const section=$("view-"+view);
   if(section) section.classList.remove("hidden");
-
-  // crumbs
-  const map = {
-    rechnung: "Rechnung • Tage + Std/Tag + €/h → Auto",
-    kunden: "Kunden • Speichern & Auswählen",
-    mitarbeiter: "Mitarbeiter • (vorbereitet)",
-    payroll: "Payroll • (vorbereitet)",
-    bescheinigungen: "Bescheinigungen • (vorbereitet)",
-    firma: "Firma • PDF Kopfbereich"
+  const map={
+    rechnung:"Rechnung • Tage + Std/Tag + €/h → Auto",
+    kunden:"Kunden • Speichern & Auswählen",
+    mitarbeiter:"Mitarbeiter • (vorbereitet)",
+    payroll:"Payroll • (vorbereitet)",
+    bescheinigungen:"Bescheinigungen • (vorbereitet)",
+    firma:"Firma • PDF Kopfbereich"
   };
-  $("crumbs").textContent = map[view] || "Mini Office";
+  $("crumbs").textContent=map[view]||"Office";
   renderAll();
 }
 
-/* ===========================
-   Render
-=========================== */
-function renderAll(){
-  // badges
-  $("badgeKunden").textContent = String(customers.length);
-  $("badgeMitarbeiter").textContent = "0";
-
-  // Firma fields
-  $("f_name").value = firma.name || "";
-  $("f_addr").value = firma.addr || "";
-  $("f_email").value = firma.email || "";
-  $("f_tel").value = firma.tel || "";
-  $("f_tax").value = firma.tax || "";
-  $("f_iban").value = firma.iban || "";
-  $("f_bic").value = firma.bic || "";
-  $("f_hint").value = firma.hint || "";
-
-  // Kunden list & select
-  renderCustomersList();
-  renderCustomerSelect();
-
-  // Invoice fields
-  $("inv_no").value = invoice.no || "";
-  $("inv_date").value = invoice.date || "";
-  $("inv_from").value = invoice.from || "";
-  $("inv_to").value = invoice.to || "";
-  $("inv_due").value = invoice.due || "";
-  $("inv_status").value = invoice.status || "Entwurf";
-  $("inv_days").value = invoice.days ?? "";
-  $("inv_hoursPerDay").value = invoice.hoursPerDay ?? "";
-  $("inv_totalHours").value = invoice.totalHours ?? "";
-  $("inv_rate").value = invoice.rate ?? "";
-  $("inv_desc").value = invoice.desc || "";
-  $("inv_customer_select").value = invoice.customerId || "";
-
-  // calc + preview
-  syncCalc(true);
-  renderPreview();
-}
+function getSelectedCustomer(){ return customers.find(c=>c.id===invoice.customerId)||null; }
 
 function renderCustomerSelect(){
-  const sel = $("inv_customer_select");
-  const prev = sel.value;
-  sel.innerHTML = "";
-  const opt0 = document.createElement("option");
-  opt0.value = "";
-  opt0.textContent = "— Kunde auswählen —";
+  const sel=$("inv_customer_select");
+  const prev=sel.value;
+  sel.innerHTML="";
+  const opt0=document.createElement("option");
+  opt0.value=""; opt0.textContent="— Kunde auswählen —";
   sel.appendChild(opt0);
-
   customers.forEach(c=>{
-    const o = document.createElement("option");
-    o.value = c.id;
-    o.textContent = c.name ? c.name : "(ohne Name)";
+    const o=document.createElement("option");
+    o.value=c.id; o.textContent=c.name?c.name:"(ohne Name)";
     sel.appendChild(o);
   });
-
-  sel.value = invoice.customerId || prev || "";
+  sel.value=invoice.customerId||prev||"";
 }
 
 function renderCustomersList(){
-  const list = $("customerList");
-  list.innerHTML = "";
+  const list=$("customerList");
+  list.innerHTML="";
   if(customers.length===0){
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="hint";
     div.textContent="Noch keine Kunden gespeichert.";
     list.appendChild(div);
     return;
   }
   customers.forEach(c=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="item";
-    const left = document.createElement("div");
-    left.innerHTML = `
+    const left=document.createElement("div");
+    left.innerHTML=`
       <div class="title">${esc(c.name||"(ohne Name)")}</div>
       <div class="meta">${esc(c.addr||"")}${c.addr?"\n":""}${c.email?("E-Mail: "+c.email+"\n"):""}${c.tel?("Tel: "+c.tel):""}</div>
     `;
-    const right = document.createElement("div");
+    const right=document.createElement("div");
     right.className="right";
-    const bUse = document.createElement("button");
-    bUse.className="btn small primary";
-    bUse.textContent="Für Rechnung";
+    const bUse=document.createElement("button");
+    bUse.className="btn small primary"; bUse.textContent="Für Rechnung";
     bUse.onclick=()=>{
-      invoice.customerId = c.id;
+      invoice.customerId=c.id;
       saveInvoice();
       setView("rechnung");
-      $("inv_customer_select").value = c.id;
+      $("inv_customer_select").value=c.id;
       renderPreview();
     };
-    const bEdit = document.createElement("button");
-    bEdit.className="btn small";
-    bEdit.textContent="Bearbeiten";
+    const bEdit=document.createElement("button");
+    bEdit.className="btn small"; bEdit.textContent="Bearbeiten";
     bEdit.onclick=()=>{
-      $("c_name").value = c.name||"";
-      $("c_email").value = c.email||"";
-      $("c_tel").value = c.tel||"";
-      $("c_addr").value = c.addr||"";
-      $("btnSaveCustomer").dataset.editId = c.id;
+      $("c_name").value=c.name||"";
+      $("c_email").value=c.email||"";
+      $("c_tel").value=c.tel||"";
+      $("c_addr").value=c.addr||"";
+      $("btnSaveCustomer").dataset.editId=c.id;
       setView("kunden");
     };
-    const bDel = document.createElement("button");
-    bDel.className="btn small danger";
-    bDel.textContent="Löschen";
+    const bDel=document.createElement("button");
+    bDel.className="btn small danger"; bDel.textContent="Löschen";
     bDel.onclick=()=>{
-      customers = customers.filter(x=>x.id!==c.id);
+      customers=customers.filter(x=>x.id!==c.id);
       if(invoice.customerId===c.id) invoice.customerId="";
       saveCustomers(); saveInvoice();
       renderAll();
@@ -788,142 +645,133 @@ function renderCustomersList(){
   });
 }
 
-function getSelectedCustomer(){
-  return customers.find(c=>c.id===invoice.customerId) || null;
-}
-
-/* ===========================
-   Auto Calculation (90%)
-=========================== */
 function syncCalc(fromUI){
   if(fromUI){
-    invoice.days = num($("inv_days").value);
-    invoice.hoursPerDay = num($("inv_hoursPerDay").value);
-    invoice.rate = num($("inv_rate").value);
-
-    // If user manually changed totalHours, keep it.
-    invoice.totalHours = num($("inv_totalHours").value);
+    invoice.days=num($("inv_days").value);
+    invoice.hoursPerDay=num($("inv_hoursPerDay").value);
+    invoice.rate=num($("inv_rate").value);
+    invoice.totalHours=num($("inv_totalHours").value);
   }
-
-  // Auto totalHours if days & hoursPerDay present and user has not set manual to something else:
-  const autoHours = invoice.days * invoice.hoursPerDay;
-
-  // Rule: If totalHours is empty/0 OR close to auto value, then keep auto.
-  if(invoice.totalHours === 0 || Math.abs(invoice.totalHours - autoHours) < 0.001){
-    invoice.totalHours = autoHours;
+  const autoHours=invoice.days*invoice.hoursPerDay;
+  if(invoice.totalHours===0 || Math.abs(invoice.totalHours-autoHours)<0.001){
+    invoice.totalHours=autoHours;
   }
-
-  const net = invoice.totalHours * invoice.rate;
-
-  $("inv_totalHours").value = (invoice.totalHours || 0).toFixed(2);
-  $("inv_totalNet").value = moneyEUR(net);
-
-  $("kpi_hours").textContent = (invoice.totalHours||0).toFixed(2);
-  $("kpi_net").textContent = moneyEUR(net);
+  const net=invoice.totalHours*invoice.rate;
+  $("inv_totalHours").value=(invoice.totalHours||0).toFixed(2);
+  $("inv_totalNet").value=moneyEUR(net);
+  $("kpi_hours").textContent=(invoice.totalHours||0).toFixed(2);
+  $("kpi_net").textContent=moneyEUR(net);
 }
 
-/* ===========================
-   Preview
-=========================== */
 function renderPreview(){
-  const c = getSelectedCustomer();
-  const net = (invoice.totalHours||0) * (invoice.rate||0);
-
-  // Firma preview (klickbar in app)
-  const firmaHTML = `
+  const c=getSelectedCustomer();
+  const firmaHTML=`
     <b>Firma (PDF oben)</b><br>
     ${esc(firma.name)}<br>
     ${esc(firma.addr).replace(/\n/g,"<br>")}<br>
-    ${firma.email ? `E-Mail: <a href="mailto:${esc(firma.email)}">${esc(firma.email)}</a><br>` : ``}
-    ${firma.tel ? `Tel: <a href="tel:${esc(firma.tel)}">${esc(firma.tel)}</a>` : ``}
+    ${firma.email ? `E-Mail: ${mailto(firma.email)}<br>` : ``}
+    ${firma.tel ? `Tel: ${telLink(firma.tel)}` : ``}
   `;
-  $("previewCompany").innerHTML = firmaHTML;
+  $("previewCompany").innerHTML=firmaHTML;
 
-  // Kunde preview
-  const kundeHTML = c ? `
+  const kundeHTML=c ? `
     <b>Kunde</b><br>
     ${esc(c.name)}<br>
     ${esc(c.addr||"").replace(/\n/g,"<br>")}<br>
-    ${c.email ? `E-Mail: <a href="mailto:${esc(c.email)}">${esc(c.email)}</a><br>` : ``}
-    ${c.tel ? `Tel: <a href="tel:${esc(c.tel)}">${esc(c.tel)}</a>` : ``}
+    ${c.email ? `E-Mail: ${mailto(c.email)}<br>` : ``}
+    ${c.tel ? `Tel: ${telLink(c.tel)}` : ``}
   ` : `<b>Kunde</b><br><span class="muted">Kein Kunde ausgewählt</span>`;
-  $("previewCustomer").innerHTML = kundeHTML;
+  $("previewCustomer").innerHTML=kundeHTML;
 
-  // keep select
-  $("inv_customer_select").value = invoice.customerId || "";
-
-  // persist
+  $("inv_customer_select").value=invoice.customerId||"";
   saveInvoice();
 }
 
-/* ===========================
-   Events — Invoice
-=========================== */
+function renderAll(){
+  $("badgeKunden").textContent=String(customers.length);
+
+  $("f_name").value=firma.name||"";
+  $("f_addr").value=firma.addr||"";
+  $("f_email").value=firma.email||"";
+  $("f_tel").value=firma.tel||"";
+  $("f_tax").value=firma.tax||"";
+  $("f_iban").value=firma.iban||"";
+  $("f_bic").value=firma.bic||"";
+  $("f_hint").value=firma.hint||"";
+
+  renderCustomersList();
+  renderCustomerSelect();
+
+  $("inv_no").value=invoice.no||"";
+  $("inv_date").value=invoice.date||"";
+  $("inv_from").value=invoice.from||"";
+  $("inv_to").value=invoice.to||"";
+  $("inv_due").value=invoice.due||"";
+  $("inv_status").value=invoice.status||"Entwurf";
+  $("inv_days").value=invoice.days??"";
+  $("inv_hoursPerDay").value=invoice.hoursPerDay??"";
+  $("inv_totalHours").value=invoice.totalHours??"";
+  $("inv_rate").value=invoice.rate??"";
+  $("inv_desc").value=invoice.desc||"";
+  $("inv_customer_select").value=invoice.customerId||"";
+
+  syncCalc(true);
+  renderPreview();
+}
+
 ["inv_no","inv_date","inv_from","inv_to","inv_due","inv_status","inv_days","inv_hoursPerDay","inv_totalHours","inv_rate","inv_desc"].forEach(id=>{
   $(id).addEventListener("input",()=>{
-    invoice.no = $("inv_no").value.trim();
-    invoice.date = $("inv_date").value;
-    invoice.from = $("inv_from").value;
-    invoice.to = $("inv_to").value;
-    invoice.due = $("inv_due").value;
-    invoice.status = $("inv_status").value;
-    invoice.desc = $("inv_desc").value;
-
+    invoice.no=$("inv_no").value.trim();
+    invoice.date=$("inv_date").value;
+    invoice.from=$("inv_from").value;
+    invoice.to=$("inv_to").value;
+    invoice.due=$("inv_due").value;
+    invoice.status=$("inv_status").value;
+    invoice.desc=$("inv_desc").value;
     syncCalc(true);
     renderPreview();
   });
 });
 
 $("inv_customer_select").addEventListener("change",()=>{
-  invoice.customerId = $("inv_customer_select").value;
+  invoice.customerId=$("inv_customer_select").value;
   saveInvoice();
   renderPreview();
 });
 
-$("btnSaveInv").addEventListener("click",()=>{
-  // just ensure saved
-  saveInvoice();
-  renderPreview();
-  flash("Gespeichert.");
-});
+$("btnSaveInv").addEventListener("click",()=>{ saveInvoice(); renderPreview(); flash("Gespeichert."); });
 
-/* ===========================
-   Events — Firma
-=========================== */
 $("btnSaveFirma").addEventListener("click",()=>{
-  firma = {
-    name: $("f_name").value.trim(),
-    addr: $("f_addr").value,
-    email: $("f_email").value.trim(),
-    tel: $("f_tel").value.trim(),
-    tax: $("f_tax").value.trim(),
-    iban: $("f_iban").value.trim(),
-    bic: $("f_bic").value.trim(),
-    hint: $("f_hint").value
+  firma={
+    name:$("f_name").value.trim(),
+    addr:$("f_addr").value,
+    email:$("f_email").value.trim(),
+    tel:$("f_tel").value.trim(),
+    tax:$("f_tax").value.trim(),
+    iban:$("f_iban").value.trim(),
+    bic:$("f_bic").value.trim(),
+    hint:$("f_hint").value
   };
   saveFirma();
   renderAll();
   flash("Firma gespeichert.");
 });
 
-/* ===========================
-   Events — Kunden
-=========================== */
 $("btnSaveCustomer").addEventListener("click",()=>{
-  const data = {
-    name: $("c_name").value.trim(),
-    email: $("c_email").value.trim(),
-    tel: $("c_tel").value.trim(),
-    addr: $("c_addr").value
+  const data={
+    name:$("c_name").value.trim(),
+    email:$("c_email").value.trim(),
+    tel:$("c_tel").value.trim(),
+    addr:$("c_addr").value
   };
-  const editId = $("btnSaveCustomer").dataset.editId || "";
+  const editId=$("btnSaveCustomer").dataset.editId||"";
   if(editId){
-    customers = customers.map(c=> c.id===editId ? {...c, ...data} : c);
+    customers=customers.map(c=>c.id===editId?({...c,...data}):c);
     delete $("btnSaveCustomer").dataset.editId;
     flash("Kunde aktualisiert.");
   }else{
-    const id = "c_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
-    customers.unshift({id, ...data});
+    const id="c_"+Math.random().toString(16).slice(2)+Date.now().toString(16);
+    customers.unshift({id,...data});
     flash("Kunde gespeichert.");
   }
   saveCustomers();
@@ -936,45 +784,35 @@ $("btnClearCustomer").addEventListener("click",()=>{
   delete $("btnSaveCustomer").dataset.editId;
 });
 
-/* ===========================
-   Top Actions
-=========================== */
 $("btnNew").addEventListener("click",()=>{
-  const today = new Date();
-  invoice = {
-    ...invoice,
-    no: autoInvoiceNo(today),
-    date: toISO(today),
-    from: toISO(new Date(today.getFullYear(), today.getMonth(), 1)),
-    to: toISO(new Date(today.getFullYear(), today.getMonth()+1, 0)),
-    due: toISO(addDays(today, 14)),
-    status: "Entwurf"
+  const today=new Date();
+  invoice={...invoice,
+    no:autoInvoiceNo(today),
+    date:toISO(today),
+    from:toISO(new Date(today.getFullYear(),today.getMonth(),1)),
+    to:toISO(new Date(today.getFullYear(),today.getMonth()+1,0)),
+    due:toISO(addDays(today,14)),
+    status:"Entwurf"
   };
   saveInvoice();
   renderAll();
   flash("Neue Rechnung.");
 });
 
-$("btnExport").addEventListener("click",()=>{
-  const data = { firma, customers, invoice };
-  downloadJSON("masculine-security-mini-office.json", data);
-});
+$("btnExport").addEventListener("click",()=>downloadJSON("masculine-security-office.json",{firma,customers,invoice}));
 
 $("btnImport").addEventListener("click",async()=>{
-  const file = await pickFile();
-  if(!file) return;
+  const file=await pickFile(); if(!file) return;
   try{
-    const txt = await readFileText(file);
-    const data = JSON.parse(txt);
-    if(data.firma) firma = {...loadFirma(), ...data.firma};
-    if(Array.isArray(data.customers)) customers = data.customers;
-    if(data.invoice) invoice = {...loadInvoice(), ...data.invoice};
+    const txt=await readFileText(file);
+    const data=JSON.parse(txt);
+    if(data.firma) firma={...loadFirma(),...data.firma};
+    if(Array.isArray(data.customers)) customers=data.customers;
+    if(data.invoice) invoice={...loadInvoice(),...data.invoice};
     saveFirma(); saveCustomers(); saveInvoice();
     renderAll();
     flash("Import erfolgreich.");
-  }catch{
-    alert("Import fehlgeschlagen (JSON).");
-  }
+  }catch{ alert("Import fehlgeschlagen (JSON)."); }
 });
 
 $("btnReset").addEventListener("click",()=>{
@@ -982,60 +820,53 @@ $("btnReset").addEventListener("click",()=>{
   localStorage.removeItem(KEY.firma);
   localStorage.removeItem(KEY.customers);
   localStorage.removeItem(KEY.invoice);
-  firma = loadFirma();
-  customers = loadCustomers();
-  invoice = loadInvoice();
+  firma=loadFirma(); customers=loadCustomers(); invoice=loadInvoice();
   renderAll();
   flash("Gelöscht.");
 });
 
-/* ===========================
-   PDF Print (clean, no footer text)
-=========================== */
-$("btnPrint").addEventListener("click", printInvoicePDF);
-$("btnPrint2").addEventListener("click", printInvoicePDF);
+$("btnPrint").addEventListener("click",()=>openInvoicePDF({mode:"print"}));
+$("btnPrint2").addEventListener("click",()=>openInvoicePDF({mode:"print"}));
+$("btnOpenPDF").addEventListener("click",()=>openInvoicePDF({mode:"open"}));
+$("btnOpenPDF2").addEventListener("click",()=>openInvoicePDF({mode:"open"}));
 
-function printInvoicePDF(){
-  // refresh from UI
-  invoice.no = $("inv_no").value.trim();
-  invoice.date = $("inv_date").value;
-  invoice.from = $("inv_from").value;
-  invoice.to = $("inv_to").value;
-  invoice.due = $("inv_due").value;
-  invoice.status = $("inv_status").value;
-  invoice.days = num($("inv_days").value);
-  invoice.hoursPerDay = num($("inv_hoursPerDay").value);
-  invoice.totalHours = num($("inv_totalHours").value);
-  invoice.rate = num($("inv_rate").value);
-  invoice.desc = $("inv_desc").value;
-  invoice.customerId = $("inv_customer_select").value;
+function openInvoicePDF({mode}){
+  invoice.no=$("inv_no").value.trim();
+  invoice.date=$("inv_date").value;
+  invoice.from=$("inv_from").value;
+  invoice.to=$("inv_to").value;
+  invoice.due=$("inv_due").value;
+  invoice.status=$("inv_status").value;
+  invoice.days=num($("inv_days").value);
+  invoice.hoursPerDay=num($("inv_hoursPerDay").value);
+  invoice.totalHours=num($("inv_totalHours").value);
+  invoice.rate=num($("inv_rate").value);
+  invoice.desc=$("inv_desc").value;
+  invoice.customerId=$("inv_customer_select").value;
 
-  // ensure calc
   syncCalc(true);
 
-  const c = getSelectedCustomer();
-  const hours = invoice.totalHours || 0;
-  const rate = invoice.rate || 0;
-  const net = hours * rate;
+  const c=getSelectedCustomer();
+  const hours=invoice.totalHours||0;
+  const rate=invoice.rate||0;
+  const net=hours*rate;
 
-  // Build clean PDF HTML
-  const pdf = `
+  const pdf=`
 <!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
 <title>Rechnung ${esc(invoice.no)}</title>
 <style>
-  @page { margin: 14mm; }
+  /* FOOTER = 0 (our side) */
+  @page { margin: 0; }
   html,body{ margin:0; padding:0; background:#fff; color:#000; font-family: Arial, Helvetica, sans-serif; }
-  /* prevent blank page */
-  .page{ width:100%; }
+  .page{ padding: 14mm; } /* content margin inside */
   .top{ display:flex; justify-content:space-between; gap:18px; align-items:flex-start; }
   .h1{ font-size:30px; font-weight:900; margin:0; }
   .meta{ font-size:12px; line-height:1.45; text-align:right; }
   .boxrow{ display:flex; gap:12px; margin-top:14px; }
   .box{ flex:1; border:1px solid #bbb; padding:10px; }
-  .box b{ font-size:13px; }
   table{ width:100%; border-collapse:collapse; margin-top:14px; }
   th,td{ border-bottom:1px solid #ddd; padding:8px; font-size:12px; vertical-align:top; }
   th{ text-align:left; }
@@ -1114,34 +945,25 @@ function printInvoicePDF(){
     </div>
   </div>
 
-<script>
-  // print and close reliably
-  window.onload = () => {
-    setTimeout(() => {
-      window.focus();
-      window.print();
-      setTimeout(() => window.close(), 200);
-    }, 200);
-  };
-</script>
+  ${mode==="print" ? `
+  <script>
+    window.onload = () => setTimeout(() => { window.focus(); window.print(); }, 200);
+  </script>` : ``}
 </body>
 </html>`;
 
-  const w = window.open("", "_blank", "noopener,noreferrer");
+  const w=window.open("", "_blank", "noopener,noreferrer");
   if(!w){ alert("Popup blockiert. Bitte Popups erlauben."); return; }
   w.document.open();
   w.document.write(pdf);
   w.document.close();
 }
 
-/* ===========================
-   Flash (small)
-=========================== */
 let flashT=null;
 function flash(msg){
   clearTimeout(flashT);
-  const el = document.createElement("div");
-  el.textContent = msg;
+  const el=document.createElement("div");
+  el.textContent=msg;
   el.style.position="fixed";
   el.style.right="16px";
   el.style.bottom="16px";
@@ -1150,18 +972,14 @@ function flash(msg){
   el.style.borderRadius="14px";
   el.style.border="1px solid rgba(58,166,255,.35)";
   el.style.background="rgba(16,32,58,.92)";
-  el.style.color="var(--text)";
+  el.style.color="white";
   el.style.boxShadow="0 10px 30px rgba(0,0,0,.35)";
   el.style.fontWeight="800";
   document.body.appendChild(el);
-  flashT=setTimeout(()=>el.remove(), 1400);
+  flashT=setTimeout(()=>el.remove(),1400);
 }
 
-/* ===========================
-   Init
-=========================== */
 renderAll();
-// start view
 setView("rechnung");
 </script>
 </body>
