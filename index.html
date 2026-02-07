@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Masculine Security – Rechnung</title>
+<title>Masculine Security – Rechnung App</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b1220;color:#fff}
-.app{padding:20px}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#fff}
+.app{padding:20px;max-width:900px;margin:auto}
+.btn{padding:10px 16px;border:0;border-radius:8px;background:#3aa6ff;color:#000;font-weight:700;cursor:pointer}
+input,textarea{padding:8px;border-radius:6px;border:1px solid #ccc;width:100%}
 .card{background:#10203a;padding:16px;border-radius:10px;margin-bottom:16px}
-input,textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #ccc}
 .row{display:flex;gap:12px}
 .col{flex:1}
-button{padding:12px 16px;border:0;border-radius:8px;background:#3aa6ff;font-weight:700;cursor:pointer}
+h1{text-align:center}
 </style>
 </head>
 
@@ -20,22 +21,22 @@ button{padding:12px 16px;border:0;border-radius:8px;background:#3aa6ff;font-weig
 
 <div class="app">
 
-<h1>Masculine Security – Rechnung Generator</h1>
+<h1>Masculine Security – Rechnung</h1>
 
 <div class="card">
 <h3>Firma</h3>
-<input id="f_name" placeholder="Firmenname">
-<textarea id="f_addr" placeholder="Adresse"></textarea>
-<input id="f_email" placeholder="Email (nur oben im PDF)">
-<input id="f_tax" placeholder="Steuernummer">
-<input id="f_iban" placeholder="IBAN">
-<input id="f_bic" placeholder="BIC">
-<textarea id="f_note" placeholder="§19 Hinweis"></textarea>
+<input id="s_company" placeholder="Firma"><br><br>
+<textarea id="s_addr" placeholder="Adresse"></textarea><br><br>
+<input id="s_email" placeholder="Email (nur oben im PDF)"><br><br>
+<input id="s_taxid" placeholder="Steuernummer"><br><br>
+<input id="s_iban" placeholder="IBAN"><br><br>
+<input id="s_bic" placeholder="BIC"><br><br>
+<textarea id="s_hint" placeholder="§19 Hinweis"></textarea>
 </div>
 
 <div class="card">
 <h3>Kunde</h3>
-<input id="c_name" placeholder="Name">
+<input id="c_name" placeholder="Name"><br><br>
 <textarea id="c_addr" placeholder="Adresse"></textarea>
 </div>
 
@@ -43,121 +44,114 @@ button{padding:12px 16px;border:0;border-radius:8px;background:#3aa6ff;font-weig
 <h3>Rechnung</h3>
 
 <div class="row">
-<div class="col"><input id="r_no" placeholder="Rechnungsnummer"></div>
-<div class="col"><input id="r_date" type="date"></div>
-</div>
+<div class="col"><input id="i_no" placeholder="Rechnungsnummer"></div>
+<div class="col"><input id="i_date" type="date"></div>
+</div><br>
 
 <div class="row">
-<div class="col"><input id="r_from" type="date"></div>
-<div class="col"><input id="r_to" type="date"></div>
-</div>
+<div class="col"><input id="i_von" type="date"></div>
+<div class="col"><input id="i_bis" type="date"></div>
+</div><br>
 
 <div class="row">
-<div class="col"><input id="r_due" type="date"></div>
-</div>
+<div class="col"><input id="i_due" type="date"></div>
+</div><br>
 
 <h4>Position</h4>
-<input id="p_desc" placeholder="Leistung">
-<div class="row">
-<div class="col"><input id="p_qty" type="number"></div>
-<div class="col"><input id="p_price" type="number"></div>
-</div>
+<input id="l_desc" placeholder="Beschreibung"><br><br>
 
-<br>
-<button onclick="printPDF()">PDF erzeugen</button>
+<div class="row">
+<div class="col"><input id="l_qty" type="number" step="0.01" placeholder="Menge"></div>
+<div class="col"><input id="l_price" type="number" step="0.01" placeholder="Preis"></div>
+</div><br>
+
+<button class="btn" onclick="printInvoice()">PDF erzeugen</button>
 
 </div>
 </div>
 
 <script>
-function fmt(d){
+function esc(s){
+ return String(s||"").replace(/[&<>"']/g,m=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
+ ));
+}
+
+function formatDateDE(d){
+ if(!d) return "";
  const x=new Date(d);
  return String(x.getDate()).padStart(2,"0")+"."+
         String(x.getMonth()+1).padStart(2,"0")+"."+
         x.getFullYear();
 }
+
 function eur(n){
- return Number(n).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
+ return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
 }
 
-function printPDF(){
+function printInvoice(){
 
-const f={
- name:f_name.value,
- addr:f_addr.value,
- email:f_email.value,
- tax:f_tax.value,
- iban:f_iban.value,
- bic:f_bic.value,
- note:f_note.value
-};
-
-const c={
- name:c_name.value,
- addr:c_addr.value
-};
-
-const r={
- no:r_no.value,
- date:r_date.value,
- from:r_from.value,
- to:r_to.value,
- due:r_due.value
-};
-
-const qty=Number(p_qty.value||0);
-const price=Number(p_price.value||0);
-const total=qty*price;
+const qty=Number(l_qty.value||0);
+const price=Number(l_price.value||0);
+const net=qty*price;
 
 const html=`
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<title>Rechnung ${r.no}</title>
+<meta charset="utf-8"/>
+<title>Rechnung ${esc(i_no.value)}</title>
+
 <style>
 @page{margin:15mm}
-body{font-family:Arial}
-.box{border:1px solid #aaa;padding:10px}
-.row{display:flex;gap:10px}
-.col{flex:1}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{border-bottom:1px solid #ccc;padding:6px;font-size:12px}
+body{font-family:Arial;color:#000}
+.row{display:flex;justify-content:space-between;gap:12px}
+.col{flex:1;border:1px solid #bbb;padding:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border-bottom:1px solid #ddd;padding:6px;font-size:12px}
 .r{text-align:right}
+.line{border-top:1px solid #999;margin:14px 0}
+h2{margin-top:10px}
 </style>
 </head>
+
 <body>
 
 <div class="row">
 <div>
-<b>${f.name}</b><br>
-${f.addr.replace(/\\n/g,"<br>")}<br>
-E-Mail: ${f.email}<br>
-${f.tax?`Steuernummer: ${f.tax}`:""}
+<b>${esc(s_company.value)}</b><br>
+${esc(s_addr.value).replace(/\\n/g,"<br>")}<br>
+${s_email.value?`E-Mail: ${esc(s_email.value)}<br>`:""}
+${s_taxid.value?`Steuernummer: ${esc(s_taxid.value)}`:""}
 </div>
 
 <div style="text-align:right">
-<b>Rechnung</b><br>
-Nr: ${r.no}<br>
-Datum: ${fmt(r.date)}<br>
-Zeitraum: ${fmt(r.from)} – ${fmt(r.to)}<br>
-Fällig: ${fmt(r.due)}
+<b>Rechnungs-Nr:</b> ${esc(i_no.value)}<br>
+${i_date.value?`<b>Datum:</b> ${formatDateDE(i_date.value)}<br>`:""}
+${i_von.value?`Zeitraum: ${formatDateDE(i_von.value)} – ${formatDateDE(i_bis.value)}<br>`:""}
+${i_due.value?`Fällig: ${formatDateDE(i_due.value)}`:""}
 </div>
 </div>
 
-<hr>
+<div class="line"></div>
+
+<h2>Rechnung</h2>
 
 <div class="row">
-<div class="col box">
+<div class="col">
 <b>Rechnung von</b><br>
-${f.name}<br>${f.addr.replace(/\\n/g,"<br>")}
+${esc(s_company.value)}<br>
+${esc(s_addr.value).replace(/\\n/g,"<br>")}
 </div>
 
-<div class="col box">
+<div class="col">
 <b>Rechnung an</b><br>
-${c.name}<br>${c.addr.replace(/\\n/g,"<br>")}
+${esc(c_name.value)}<br>
+${esc(c_addr.value).replace(/\\n/g,"<br>")}
 </div>
 </div>
+
+<div class="line"></div>
 
 <table>
 <tr>
@@ -166,26 +160,29 @@ ${c.name}<br>${c.addr.replace(/\\n/g,"<br>")}
 <th class="r">Preis</th>
 <th class="r">Netto</th>
 </tr>
+
 <tr>
-<td>${p_desc.value}</td>
+<td>${esc(l_desc.value)}</td>
 <td class="r">${qty}</td>
 <td class="r">${eur(price)}</td>
-<td class="r"><b>${eur(total)}</b></td>
+<td class="r"><b>${eur(net)}</b></td>
 </tr>
 </table>
 
+<div class="line"></div>
+
 <div class="row">
-<div class="col box">
+<div class="col">
 <b>Zahlung</b><br>
-IBAN: ${f.iban}<br>
-BIC: ${f.bic}<br>
-${f.note}
+IBAN: ${esc(s_iban.value)}<br>
+BIC: ${esc(s_bic.value)}<br>
+${esc(s_hint.value||"")}
 </div>
 
-<div class="col box">
+<div class="col">
 <b>Summe</b><br>
-Netto: ${eur(total)}<br>
-<b>Zu zahlen: ${eur(total)}</b>
+Netto: <b>${eur(net)}</b><br>
+Zu zahlen: <b>${eur(net)}</b>
 </div>
 </div>
 
@@ -193,7 +190,8 @@ Netto: ${eur(total)}<br>
 </html>
 `;
 
-const w=window.open("");
+const w=window.open("","_blank");
+w.document.open();
 w.document.write(html);
 w.document.close();
 setTimeout(()=>w.print(),400);
