@@ -7,13 +7,12 @@
 
 <style>
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#fff}
-.app{padding:20px;max-width:900px;margin:auto}
-.btn{padding:10px 16px;border:0;border-radius:8px;background:#3aa6ff;color:#000;font-weight:700;cursor:pointer}
+.app{padding:20px}
+.btn{padding:10px 14px;border:0;border-radius:8px;background:#3aa6ff;color:#000;font-weight:700;cursor:pointer}
 input,textarea{padding:8px;border-radius:6px;border:1px solid #ccc;width:100%}
 .card{background:#10203a;padding:16px;border-radius:10px;margin-bottom:16px}
 .row{display:flex;gap:12px}
 .col{flex:1}
-h1{text-align:center}
 </style>
 </head>
 
@@ -24,10 +23,10 @@ h1{text-align:center}
 <h1>Masculine Security – Rechnung</h1>
 
 <div class="card">
-<h3>Firma</h3>
+<h3>Einstellungen (Firma)</h3>
 <input id="s_company" placeholder="Firma"><br><br>
 <textarea id="s_addr" placeholder="Adresse"></textarea><br><br>
-<input id="s_email" placeholder="Email"><br><br>
+<input id="s_email" placeholder="Email (nur oben im PDF)"><br><br>
 <input id="s_taxid" placeholder="Steuernummer"><br><br>
 <input id="s_iban" placeholder="IBAN"><br><br>
 <input id="s_bic" placeholder="BIC"><br><br>
@@ -71,31 +70,31 @@ h1{text-align:center}
 </div>
 
 <script>
-/* ================= HELPERS ================= */
-function esc(s){
- return String(s||"").replace(/[&<>"']/g,m=>(
-  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
- ));
+/* ========= HELPERS ========= */
+function formatDateDE(d){
+  if(!d) return "";
+  const x = new Date(d);
+  return String(x.getDate()).padStart(2,"0")+"."+
+         String(x.getMonth()+1).padStart(2,"0")+"."+
+         x.getFullYear();
 }
 
-function formatDateDE(d){
- if(!d) return "";
- const x=new Date(d);
- return String(x.getDate()).padStart(2,"0")+"."+
-        String(x.getMonth()+1).padStart(2,"0")+"."+
-        x.getFullYear();
+function esc(s){
+  return String(s||"").replace(/[&<>"']/g,m=>(
+    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
+  ));
 }
 
 function eur(n){
- return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
+  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
 }
 
-/* ================= PRINT ================= */
+/* ========= PRINT ========= */
 function printInvoice(){
 
-const qty=Number(l_qty.value||0);
-const price=Number(l_price.value||0);
-const net=qty*price;
+const qty = Number(l_qty.value || 0);
+const price = Number(l_price.value || 0);
+const net = qty * price;
 
 const html=`
 <!doctype html>
@@ -103,22 +102,22 @@ const html=`
 <head>
 <meta charset="utf-8"/>
 <title>Rechnung ${esc(i_no.value)}</title>
-
 <style>
-@page{margin:15mm}
+@page{margin:12mm}
 body{font-family:Arial;color:#000}
+.page{padding:16mm}
 .row{display:flex;justify-content:space-between;gap:12px}
 .col{flex:1;border:1px solid #bbb;padding:10px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
+table{width:100%;border-collapse:collapse}
 th,td{border-bottom:1px solid #ddd;padding:6px;font-size:12px}
 .r{text-align:right}
-.line{border-top:1px solid #999;margin:14px 0}
+.line{border-top:1px solid #bbb;margin:12px 0}
 </style>
 </head>
 
 <body>
+<div class="page">
 
-<!-- HEADER -->
 <div class="row">
 <div>
 <b>${esc(s_company.value)}</b><br>
@@ -129,7 +128,7 @@ ${s_taxid.value?`Steuernummer: ${esc(s_taxid.value)}`:""}
 
 <div style="text-align:right">
 <b>Rechnungs-Nr:</b> ${esc(i_no.value)}<br>
-${i_date.value?`<b>Datum:</b> ${formatDateDE(i_date.value)}<br>`:""}
+${i_date.value?`<b>Rechnungsdatum:</b> ${formatDateDE(i_date.value)}<br>`:""}
 ${i_von.value?`Zeitraum: ${formatDateDE(i_von.value)} – ${formatDateDE(i_bis.value)}<br>`:""}
 ${i_due.value?`Fällig: ${formatDateDE(i_due.value)}`:""}
 </div>
@@ -139,7 +138,6 @@ ${i_due.value?`Fällig: ${formatDateDE(i_due.value)}`:""}
 
 <h2>Rechnung</h2>
 
-<!-- ADDRESSES -->
 <div class="row">
 <div class="col">
 <b>Rechnung von</b><br>
@@ -156,7 +154,6 @@ ${esc(c_addr.value).replace(/\\n/g,"<br>")}
 
 <div class="line"></div>
 
-<!-- POSITIONS -->
 <table>
 <tr>
 <th>Leistung</th>
@@ -175,13 +172,11 @@ ${esc(c_addr.value).replace(/\\n/g,"<br>")}
 
 <div class="line"></div>
 
-<!-- TOTALS -->
 <div class="row">
 <div class="col">
 <b>Zahlung</b><br>
 IBAN: ${esc(s_iban.value)}<br>
 BIC: ${esc(s_bic.value)}<br>
-${s_email.value?`E-Mail: ${esc(s_email.value)}<br>`:""}
 ${esc(s_hint.value||"")}
 </div>
 
@@ -192,15 +187,15 @@ Zu zahlen: <b>${eur(net)}</b>
 </div>
 </div>
 
+</div>
 </body>
-</html>
-`;
+</html>`;
 
-const w=window.open("","_blank");
+const w = window.open("", "_blank");
 w.document.open();
 w.document.write(html);
 w.document.close();
-setTimeout(()=>w.print(),400);
+setTimeout(()=>w.print(),300);
 }
 </script>
 
