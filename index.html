@@ -1,60 +1,1075 @@
-/* service-worker.js — UPDATE FIX (GitHub Pages cache issue) */
-const CACHE_VER = "ms-cache-2026-02-08-01";
-const CORE = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./service-worker.js"
-];
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Masculine Security – Office</title>
 
-// Install: cache core
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_VER).then((cache) => cache.addAll(CORE)).catch(()=>{})
-  );
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
+      --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd; --bad:#ff4d6d;
+      --r:16px; --r2:12px; --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.22), transparent 55%),
+        radial-gradient(1000px 600px at 90% 10%, rgba(43,212,189,.16), transparent 50%),
+        radial-gradient(900px 600px at 40% 110%, rgba(255,77,109,.12), transparent 45%),
+        var(--bg);
+    }
+
+    /* Layout */
+    .shell{display:grid; grid-template-columns: 290px 1fr; gap:16px; padding:18px; min-height:100%;}
+    .side{
+      position:sticky; top:18px; height: calc(100vh - 36px);
+      background:linear-gradient(180deg, rgba(16,32,58,.92), rgba(15,26,47,.92));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:22px; box-shadow:var(--shadow);
+      padding:16px;
+      overflow:auto;
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; padding:10px 10px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      margin-bottom:12px;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, rgba(58,166,255,.9), rgba(58,166,255,.15));
+      display:grid; place-items:center; font-weight:800; letter-spacing:.5px;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .brand h1{font-size:14px; margin:0}
+    .brand .sub{font-size:12px; color:var(--muted); margin-top:2px}
+
+    .nav{display:flex; flex-direction:column; gap:10px; margin-top:12px}
+    .nav button{
+      all:unset; cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.03);
+      transition:.15s ease;
+    }
+    .nav button:hover{transform:translateY(-1px); border-color:rgba(58,166,255,.35)}
+    .nav .left{display:flex; align-items:center; gap:10px}
+    .pill{
+      font-size:11px; color:var(--muted);
+      border:1px solid rgba(255,255,255,.10);
+      padding:2px 8px; border-radius:999px;
+    }
+    .nav button.active{
+      border-color:rgba(58,166,255,.55);
+      background:linear-gradient(180deg, rgba(58,166,255,.18), rgba(255,255,255,.02));
+    }
+
+    .main{
+      min-height:100%;
+      background:linear-gradient(180deg, rgba(15,26,47,.88), rgba(16,32,58,.70));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:22px; box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:16px 16px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .topbar .title{font-size:14px; margin:0}
+    .topbar .hint{font-size:12px; color:var(--muted); margin-top:4px}
+    .actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    .btn{
+      border:0; cursor:pointer;
+      padding:10px 12px; border-radius:14px;
+      font-weight:800; letter-spacing:.2px;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      transition:.15s ease;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.18)}
+    .btn.primary{background:linear-gradient(180deg, rgba(58,166,255,.95), rgba(58,166,255,.65)); color:#07101f; border-color:rgba(58,166,255,.25)}
+    .btn.good{background:linear-gradient(180deg, rgba(43,212,189,.9), rgba(43,212,189,.55)); color:#07101f; border-color:rgba(43,212,189,.25)}
+    .btn.bad{background:rgba(255,77,109,.12); border-color:rgba(255,77,109,.35); color:#ffd1da}
+
+    .content{padding:16px}
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:14px}
+    .panel{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:18px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 10px; font-size:13px}
+    .muted{color:var(--muted); font-size:12px}
+
+    .form{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    .form .full{grid-column:1 / -1}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
+    input, textarea, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:86px; resize:vertical}
+    input::placeholder, textarea::placeholder{color:rgba(147,164,198,.55)}
+    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    .rowAuto{display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:10px}
+    .switch{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .switch input{width:auto}
+    .klist{
+      display:flex; flex-direction:column; gap:10px;
+      max-height:360px; overflow:auto; padding-right:6px;
+    }
+    .kcard{
+      border-radius:16px; border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      padding:12px;
+      display:flex; justify-content:space-between; gap:10px;
+    }
+    .kcard b{font-size:13px}
+    .kcard .small{font-size:12px; color:var(--muted); margin-top:4px; white-space:pre-line}
+    .kcard .kbtns{display:flex; flex-direction:column; gap:8px}
+    .kcard .kbtn{
+      padding:8px 10px; border-radius:12px; font-weight:800;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:var(--text); cursor:pointer;
+    }
+    .kcard .kbtn:hover{border-color:rgba(58,166,255,.35)}
+    .totals{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .big{
+      font-size:28px; font-weight:900; letter-spacing:.2px;
+    }
+    .hr{height:1px; background:rgba(255,255,255,.06); margin:10px 0}
+
+    .hidden{display:none !important}
+
+    @media (max-width: 980px){
+      .shell{grid-template-columns: 1fr}
+      .side{position:relative; height:auto}
+      .grid{grid-template-columns: 1fr}
+    }
+
+    /* Printable PDF (popup window) */
+    /* NOTE: Browser print header/footer (URL etc.) can't be forced off by code.
+       In print dialog: disable "Headers and footers". */
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <!-- Sidebar -->
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">MS</div>
+        <div>
+          <h1>Masculine Security</h1>
+          <div class="sub">Rechnung • Kunden • PDF</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="active" data-tab="tab-rechnung">
+          <div class="left">🧾 <span>Rechnung</span></div>
+          <span class="pill" id="pillRech">1</span>
+        </button>
+
+        <button data-tab="tab-kunden">
+          <div class="left">👤 <span>Kunden</span></div>
+          <span class="pill" id="pillKund">0</span>
+        </button>
+
+        <button data-tab="tab-firma">
+          <div class="left">🏢 <span>Firma</span></div>
+          <span class="pill" id="pillFirm">localStorage</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2 class="title" id="pageTitle">Rechnung</h2>
+          <div class="hint" id="pageHint">Tage × Std/Tag × €/h → Auto. Datum: dd.mm.yyyy. PDF: E-Mail ist klickbar.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn good" id="btnSaveAll">Speichern</button>
+          <button class="btn primary" id="btnPDF">Open PDF (print)</button>
+          <button class="btn" id="btnReset">Reset</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- TAB: Rechnung -->
+        <section id="tab-rechnung">
+          <div class="grid">
+
+            <div class="panel">
+              <h3>Rechnung erstellen / bearbeiten</h3>
+
+              <div class="form">
+
+                <div>
+                  <label>Rechnungs-Nr.</label>
+                  <input id="i_no" placeholder="z.B. MS-2026-0001">
+                </div>
+
+                <div>
+                  <label>Rechnungsdatum</label>
+                  <input id="i_date" type="date">
+                </div>
+
+                <div>
+                  <label>Von</label>
+                  <input id="i_von" type="date">
+                </div>
+
+                <div>
+                  <label>Bis</label>
+                  <input id="i_bis" type="date">
+                </div>
+
+                <div>
+                  <label>Fällig am</label>
+                  <input id="i_due" type="date">
+                </div>
+
+                <div>
+                  <label>Status</label>
+                  <select id="i_status">
+                    <option value="Entwurf">Entwurf</option>
+                    <option value="Gesendet">Gesendet</option>
+                    <option value="Bezahlt">Bezahlt</option>
+                  </select>
+                </div>
+
+                <div class="full">
+                  <label>Kunde auswählen (gespeichert)</label>
+                  <select id="k_select"></select>
+                </div>
+
+                <div class="full hr"></div>
+
+                <div class="full">
+                  <h3 style="margin:0 0 10px;font-size:13px">Automatik (90%)</h3>
+                </div>
+
+                <div class="full switch">
+                  <input id="auto_on" type="checkbox" checked>
+                  <div>
+                    <div style="font-weight:800">Auto aktiv</div>
+                    <div class="muted">Wenn AN: Menge = Stunden (Auto) und Netto wird automatisch berechnet.</div>
+                  </div>
+                </div>
+
+                <div class="full rowAuto">
+                  <div>
+                    <label>Tage</label>
+                    <input id="a_days" type="number" step="1" min="0" placeholder="z.B. 10">
+                  </div>
+                  <div>
+                    <label>Std/Tag</label>
+                    <input id="a_hpd" type="number" step="0.25" min="0" placeholder="z.B. 12">
+                  </div>
+                  <div>
+                    <label>€/h</label>
+                    <input id="a_rate" type="number" step="0.01" min="0" placeholder="z.B. 22">
+                  </div>
+                  <div>
+                    <label>Total Stunden (auto)</label>
+                    <input id="a_total_hours" type="text" readonly>
+                  </div>
+                </div>
+
+                <div class="full hr"></div>
+
+                <div class="full">
+                  <h3 style="margin:0 0 10px;font-size:13px">Position (10% Schreiben / Edit)</h3>
+                </div>
+
+                <div class="full">
+                  <label>Leistungsbeschreibung</label>
+                  <textarea id="l_desc" placeholder="z.B. Sicherheitsdienstleistung – Objektbewachung"></textarea>
+                </div>
+
+                <div class="row3 full">
+                  <div>
+                    <label>Menge (Std.)</label>
+                    <input id="l_qty" type="number" step="0.01" min="0" placeholder="z.B. 120">
+                  </div>
+                  <div>
+                    <label>Preis (€/h)</label>
+                    <input id="l_price" type="number" step="0.01" min="0" placeholder="z.B. 22">
+                  </div>
+                  <div>
+                    <label>Netto (auto)</label>
+                    <input id="l_net" type="text" readonly>
+                  </div>
+                </div>
+
+                <div class="full muted">
+                  Tipp: Wenn du im PDF “URL unten” siehst → im Druckfenster “Kopf- und Fußzeilen” AUS machen.
+                </div>
+
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Vorschau / Summe</h3>
+              <div class="totals">
+                <div>
+                  <div class="muted">Zu zahlen (Netto)</div>
+                  <div class="big" id="t_total">0,00 €</div>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="muted"><b>Firma (oben im PDF):</b></div>
+                <div class="muted" id="p_firma"></div>
+
+                <div class="hr"></div>
+
+                <div class="muted"><b>Kunde (PDF):</b></div>
+                <div class="muted" id="p_kunde"></div>
+
+                <div class="hr"></div>
+
+                <button class="btn primary" id="btnPDF2">Open PDF (print)</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB: Kunden -->
+        <section id="tab-kunden" class="hidden">
+          <div class="grid">
+
+            <div class="panel">
+              <h3>Kunde hinzufügen</h3>
+              <div class="form">
+                <div>
+                  <label>Name</label>
+                  <input id="c_name" placeholder="z.B. ProVvvv">
+                </div>
+                <div>
+                  <label>E-Mail</label>
+                  <input id="c_email" type="email" placeholder="kunde@example.com">
+                </div>
+                <div class="full">
+                  <label>Adresse</label>
+                  <textarea id="c_addr" placeholder="Straße Nr&#10;PLZ Ort"></textarea>
+                </div>
+                <div>
+                  <button class="btn good" id="btnSaveKunde">Kunde speichern</button>
+                </div>
+                <div>
+                  <button class="btn" id="btnClearKunde">Felder leeren</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Gespeicherte Kunden</h3>
+              <div class="klist" id="k_list"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB: Firma -->
+        <section id="tab-firma" class="hidden">
+          <div class="grid">
+
+            <div class="panel">
+              <h3>Firma (Speichern)</h3>
+              <div class="form">
+                <div class="full">
+                  <label>Firmenname</label>
+                  <input id="s_company" placeholder="Masculine Security">
+                </div>
+                <div class="full">
+                  <label>Adresse</label>
+                  <textarea id="s_addr" placeholder="Werschenregerstraße 6&#10;28237 Bremen"></textarea>
+                </div>
+
+                <div>
+                  <label>E-Mail (Firma)</label>
+                  <input id="s_email" type="email" placeholder="kontakt.mass.bremen@hotmail.com">
+                </div>
+                <div>
+                  <label>Telefon (optional)</label>
+                  <input id="s_tel" placeholder="+49...">
+                </div>
+
+                <div>
+                  <label>Steuernummer (optional)</label>
+                  <input id="s_taxid" placeholder="...">
+                </div>
+                <div></div>
+
+                <div>
+                  <label>IBAN</label>
+                  <input id="s_iban" placeholder="DE...">
+                </div>
+                <div>
+                  <label>BIC</label>
+                  <input id="s_bic" placeholder="...">
+                </div>
+
+                <div class="full">
+                  <label>Hinweis (z.B. § 19 UStG)</label>
+                  <textarea id="s_hint" placeholder="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."></textarea>
+                </div>
+
+                <div>
+                  <button class="btn good" id="btnSaveFirma">Firma speichern</button>
+                </div>
+                <div>
+                  <button class="btn bad" id="btnResetAll">Alles löschen (localStorage)</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Info</h3>
+              <div class="muted">
+                • E-Mail ist im PDF <b>klickbar</b> (mailto).<br>
+                • “Mini office / Muster / GitHub” wird <b>nicht</b> gedruckt.<br>
+                • Footer/URL vom Browser kann man nur im Druckfenster deaktivieren (Kopf-/Fußzeilen AUS).
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+<script>
+/* =========================
+   Storage Keys
+========================= */
+const KEY_FIRMA = "ms_office_firma_v1";
+const KEY_KUNDEN = "ms_office_kunden_v1";
+const KEY_RECH = "ms_office_rechnung_v1";
+
+/* =========================
+   Helpers
+========================= */
+const $ = (id)=>document.getElementById(id);
+
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+function formatDateDEFromISO(iso){
+  if(!iso) return "";
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return "";
+  const dd = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const yyyy = d.getFullYear();
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+function eur(n){
+  const x = Number(n || 0);
+  return x.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+
+function toNum(v){
+  const x = Number(v);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function nowISODate(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/* =========================
+   State
+========================= */
+let firma = {
+  company:"Masculine Security",
+  addr:"Werschenregerstraße 6\n28237 Bremen",
+  email:"kontakt.mass.bremen@hotmail.com",
+  tel:"",
+  taxid:"",
+  iban:"DE98 1001 1001 2333 0146 96",
+  bic:"NTSBDEB1XXX",
+  hint:"Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+};
+
+let kunden = []; // {id,name,email,addr}
+let rech = {
+  no:"MS-2026-0001",
+  date: nowISODate(),
+  von:"",
+  bis:"",
+  due:"",
+  status:"Entwurf",
+  kundeId:"",
+  autoOn:true,
+  days:0,
+  hpd:0,
+  rate:0,
+  desc:"Sicherheitsdienstleistung – Objektbewachung",
+  qty:0,
+  price:0
+};
+
+/* =========================
+   Tabs
+========================= */
+document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const tab = btn.dataset.tab;
+    ["tab-rechnung","tab-kunden","tab-firma"].forEach(id=>{
+      $(id).classList.toggle("hidden", id !== tab);
+    });
+
+    const titles = {
+      "tab-rechnung":["Rechnung","Tage × Std/Tag × €/h → Auto. Datum: dd.mm.yyyy. PDF: E-Mail ist klickbar."],
+      "tab-kunden":["Kunden","Kunden speichern, auswählen und im PDF automatisch nutzen."],
+      "tab-firma":["Firma","Firmadaten speichern (localStorage) und im PDF verwenden."]
+    };
+    $("pageTitle").textContent = titles[tab][0];
+    $("pageHint").textContent  = titles[tab][1];
+  });
 });
 
-// Activate: delete old caches
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE_VER ? caches.delete(k) : null)))
-    ).then(()=>self.clients.claim())
-  );
-});
+/* =========================
+   Load / Save
+========================= */
+function loadAll(){
+  try{
+    const f = localStorage.getItem(KEY_FIRMA);
+    const k = localStorage.getItem(KEY_KUNDEN);
+    const r = localStorage.getItem(KEY_RECH);
 
-// Fetch: network-first for html, cache-first for assets
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
+    if(f) firma = Object.assign(firma, JSON.parse(f));
+    if(k) kunden = JSON.parse(k) || [];
+    if(r) rech = Object.assign(rech, JSON.parse(r));
 
-  // Only same-origin
-  if (url.origin !== location.origin) return;
+  }catch(e){
+    console.warn("Load error", e);
+  }
+}
 
-  // Network-first for HTML (si update u muuqdo)
-  const isHTML = req.headers.get("accept")?.includes("text/html") || url.pathname.endsWith(".html") || url.pathname === "/" || url.pathname.endsWith("/");
+function saveAll(){
+  localStorage.setItem(KEY_FIRMA, JSON.stringify(firma));
+  localStorage.setItem(KEY_KUNDEN, JSON.stringify(kunden));
+  localStorage.setItem(KEY_RECH, JSON.stringify(rech));
+  refreshPills();
+}
 
-  if (isHTML) {
-    event.respondWith(
-      fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_VER).then((c) => c.put(req, copy)).catch(()=>{});
-        return res;
-      }).catch(() => caches.match(req).then((m) => m || caches.match("./index.html")))
-    );
+function resetAllStorage(){
+  localStorage.removeItem(KEY_FIRMA);
+  localStorage.removeItem(KEY_KUNDEN);
+  localStorage.removeItem(KEY_RECH);
+}
+
+/* =========================
+   Bind UI <-> State
+========================= */
+function fillFirmaUI(){
+  $("s_company").value = firma.company || "";
+  $("s_addr").value = firma.addr || "";
+  $("s_email").value = firma.email || "";
+  $("s_tel").value = firma.tel || "";
+  $("s_taxid").value = firma.taxid || "";
+  $("s_iban").value = firma.iban || "";
+  $("s_bic").value = firma.bic || "";
+  $("s_hint").value = firma.hint || "";
+}
+
+function readFirmaUI(){
+  firma.company = $("s_company").value.trim();
+  firma.addr    = $("s_addr").value.trim();
+  firma.email   = $("s_email").value.trim();
+  firma.tel     = $("s_tel").value.trim();
+  firma.taxid   = $("s_taxid").value.trim();
+  firma.iban    = $("s_iban").value.trim();
+  firma.bic     = $("s_bic").value.trim();
+  firma.hint    = $("s_hint").value.trim();
+}
+
+function fillRechUI(){
+  $("i_no").value = rech.no || "";
+  $("i_date").value = rech.date || nowISODate();
+  $("i_von").value = rech.von || "";
+  $("i_bis").value = rech.bis || "";
+  $("i_due").value = rech.due || "";
+  $("i_status").value = rech.status || "Entwurf";
+
+  $("auto_on").checked = !!rech.autoOn;
+  $("a_days").value = (rech.days ?? "");
+  $("a_hpd").value  = (rech.hpd ?? "");
+  $("a_rate").value = (rech.rate ?? "");
+
+  $("l_desc").value = rech.desc || "";
+  $("l_qty").value  = (rech.qty ?? "");
+  $("l_price").value= (rech.price ?? "");
+
+  buildKundenSelect();
+  $("k_select").value = rech.kundeId || "";
+}
+
+function readRechUI(){
+  rech.no = $("i_no").value.trim();
+  rech.date = $("i_date").value;
+  rech.von = $("i_von").value;
+  rech.bis = $("i_bis").value;
+  rech.due = $("i_due").value;
+  rech.status = $("i_status").value;
+
+  rech.autoOn = $("auto_on").checked;
+  rech.days = toNum($("a_days").value);
+  rech.hpd  = toNum($("a_hpd").value);
+  rech.rate = toNum($("a_rate").value);
+
+  rech.desc = $("l_desc").value.trim();
+  rech.qty  = toNum($("l_qty").value);
+  rech.price= toNum($("l_price").value);
+
+  rech.kundeId = $("k_select").value || "";
+}
+
+function refreshPills(){
+  $("pillKund").textContent = String(kunden.length);
+}
+
+/* =========================
+   Kunden list / select
+========================= */
+function buildKundenSelect(){
+  const sel = $("k_select");
+  sel.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = "— Bitte wählen —";
+  sel.appendChild(opt0);
+
+  kunden.forEach(k=>{
+    const o = document.createElement("option");
+    o.value = k.id;
+    o.textContent = k.name + (k.email ? ` (${k.email})` : "");
+    sel.appendChild(o);
+  });
+}
+
+function renderKundenList(){
+  const box = $("k_list");
+  box.innerHTML = "";
+
+  if(kunden.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.textContent = "Noch keine Kunden gespeichert.";
+    box.appendChild(empty);
     return;
   }
 
-  // Assets: cache-first
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_VER).then((c) => c.put(req, copy)).catch(()=>{});
-        return res;
-      });
-    })
-  );
-});
+  kunden.forEach(k=>{
+    const item = document.createElement("div");
+    item.className = "kcard";
+    item.innerHTML = `
+      <div>
+        <b>${esc(k.name || "-")}</b>
+        <div class="small">${esc((k.addr||"").trim())}</div>
+        <div class="small">${k.email ? `E-Mail: ${esc(k.email)}` : ""}</div>
+      </div>
+      <div class="kbtns">
+        <button class="kbtn" data-act="use">Nutzen</button>
+        <button class="kbtn" data-act="del">Löschen</button>
+      </div>
+    `;
+    item.querySelector('[data-act="use"]').addEventListener("click", ()=>{
+      rech.kundeId = k.id;
+      buildKundenSelect();
+      $("k_select").value = k.id;
+      updatePreview();
+      // jump to Rechnung tab
+      document.querySelector('.nav button[data-tab="tab-rechnung"]').click();
+    });
+    item.querySelector('[data-act="del"]').addEventListener("click", ()=>{
+      kunden = kunden.filter(x=>x.id !== k.id);
+      if(rech.kundeId === k.id) rech.kundeId = "";
+      saveAll();
+      buildKundenSelect();
+      renderKundenList();
+      updatePreview();
+    });
+    box.appendChild(item);
+  });
+}
+
+/* =========================
+   Auto calculation
+========================= */
+function applyAutoCalc(){
+  const autoOn = $("auto_on").checked;
+  const days = toNum($("a_days").value);
+  const hpd  = toNum($("a_hpd").value);
+  const rate = toNum($("a_rate").value);
+
+  const totalHours = days * hpd;
+  $("a_total_hours").value = totalHours ? totalHours.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2}) : "0,00";
+
+  if(autoOn){
+    $("l_qty").value = totalHours ? String(totalHours.toFixed(2)) : "";
+    $("l_price").value = rate ? String(rate.toFixed(2)) : "";
+    $("l_qty").readOnly = true;
+    $("l_price").readOnly = true;
+  }else{
+    $("l_qty").readOnly = false;
+    $("l_price").readOnly = false;
+  }
+
+  const qty = toNum($("l_qty").value);
+  const price = toNum($("l_price").value);
+  const net = qty * price;
+
+  $("l_net").value = eur(net);
+  $("t_total").textContent = eur(net);
+
+  updatePreview();
+}
+
+function getSelectedKunde(){
+  const id = $("k_select").value || "";
+  return kunden.find(k=>k.id === id) || null;
+}
+
+/* =========================
+   Preview box
+========================= */
+function updatePreview(){
+  // Firma preview (show email only once here, but PDF shows email clickable)
+  const fLines = [];
+  if(firma.company) fLines.push(firma.company);
+  if(firma.addr) fLines.push(firma.addr);
+  if(firma.email) fLines.push("E-Mail: " + firma.email);
+  $("p_firma").textContent = fLines.join("\n");
+
+  const k = getSelectedKunde();
+  const kLines = [];
+  if(k){
+    kLines.push(k.name || "");
+    if(k.addr) kLines.push(k.addr);
+    if(k.email) kLines.push("E-Mail: " + k.email);
+  }else{
+    kLines.push("— Kein Kunde ausgewählt —");
+  }
+  $("p_kunde").textContent = kLines.join("\n");
+
+  refreshPills();
+}
+
+/* =========================
+   PDF Print
+========================= */
+function buildInvoiceHTML(){
+  readFirmaUI();
+  readRechUI();
+
+  const k = getSelectedKunde();
+  const qty = toNum($("l_qty").value);
+  const price = toNum($("l_price").value);
+  const net = qty * price;
+
+  // Only ONE date display (no triple dates)
+  const dRech = formatDateDEFromISO(rech.date);
+  const dVon  = formatDateDEFromISO(rech.von);
+  const dBis  = formatDateDEFromISO(rech.bis);
+  const dDue  = formatDateDEFromISO(rech.due);
+
+  const firmaEmailLink = firma.email ? `<a class="link" href="mailto:${esc(firma.email)}">${esc(firma.email)}</a>` : "";
+  const kundeEmailLink = (k && k.email) ? `<a class="link" href="mailto:${esc(k.email)}">${esc(k.email)}</a>` : "";
+
+  // Build blocks
+  const firmaAddrHtml = esc(firma.addr).replace(/\n/g,"<br>");
+  const kundeAddrHtml = esc((k?.addr)||"").replace(/\n/g,"<br>");
+
+  const zeitraumLine = (rech.von && rech.bis) ? `<div class="mline"><span class="lbl">Zeitraum:</span> ${esc(dVon)} – ${esc(dBis)}</div>` : "";
+  const dueLine = rech.due ? `<div class="mline"><span class="lbl">Fällig:</span> ${esc(dDue)}</div>` : "";
+  const statusLine = rech.status ? `<div class="mline"><span class="lbl">Status:</span> ${esc(rech.status)}</div>` : "";
+
+  return `<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<title>Rechnung ${esc(rech.no)}</title>
+<style>
+  @page{ size:A4; margin:12mm; }
+  body{ font-family: Arial, Helvetica, sans-serif; color:#000; }
+  .wrap{ padding:0; }
+  .top{ display:flex; justify-content:space-between; align-items:flex-start; gap:18px; }
+  .h1{ font-size:26px; font-weight:800; margin:0; }
+  .muted{ color:#444; font-size:12px; }
+  .meta{ text-align:right; font-size:12px; line-height:1.35; }
+  .mline{ margin:2px 0; }
+  .lbl{ color:#444; font-weight:700; }
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+  .box{ border:1px solid #bbb; padding:10px; min-height:72px; }
+  .box b{ font-size:12px; }
+  .table{ width:100%; border-collapse:collapse; margin-top:12px; }
+  .table th,.table td{ border-bottom:1px solid #ddd; padding:8px; font-size:12px; vertical-align:top; }
+  .table th{ text-align:left; background:#f7f7f7; border-top:1px solid #ddd; }
+  .r{ text-align:right; }
+  .sumRow{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+  .sumBox{ border:1px solid #bbb; padding:10px; }
+  .sumBox .line{ display:flex; justify-content:space-between; gap:10px; margin:4px 0; font-size:12px;}
+  .sumBox .big{ font-size:14px; font-weight:800; }
+  .link{ color:#000; text-decoration:underline; }
+  .footNote{ margin-top:10px; font-size:11px; color:#444; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="muted">${esc(dRech)}</div>
+        <h1 class="h1">Rechnung</h1>
+        <div class="muted">Rechnungs-Nr.: <b>${esc(rech.no)}</b></div>
+      </div>
+
+      <div class="meta">
+        <div><b>${esc(firma.company || "")}</b></div>
+        <div>${firmaAddrHtml}</div>
+        ${firma.email ? `<div>E-Mail: ${firmaEmailLink}</div>` : ""}
+        ${firma.tel ? `<div>Tel: ${esc(firma.tel)}</div>` : ""}
+        ${firma.taxid ? `<div>Steuernummer: ${esc(firma.taxid)}</div>` : ""}
+        ${dRech ? `<div>Datum: <b>${esc(dRech)}</b></div>` : ""}
+      </div>
+    </div>
+
+    <div class="meta" style="text-align:left; margin-top:6px;">
+      ${zeitraumLine}
+      ${dueLine}
+      ${statusLine}
+    </div>
+
+    <div class="grid2">
+      <div class="box">
+        <b>Rechnung von</b><br>
+        ${esc(firma.company || "")}<br>
+        ${firmaAddrHtml}
+      </div>
+
+      <div class="box">
+        <b>Rechnung an</b><br>
+        ${esc(k?.name || "")}<br>
+        ${kundeAddrHtml ? kundeAddrHtml + "<br>" : ""}
+        ${k?.email ? `E-Mail: ${kundeEmailLink}` : ""}
+      </div>
+    </div>
+
+    <table class="table">
+      <tr>
+        <th style="width:55%">Leistung</th>
+        <th class="r" style="width:15%">Menge (Std.)</th>
+        <th class="r" style="width:15%">Preis (€/h)</th>
+        <th class="r" style="width:15%">Netto</th>
+      </tr>
+      <tr>
+        <td>${esc(rech.desc || "").replace(/\n/g,"<br>")}</td>
+        <td class="r">${qty.toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+        <td class="r">${eur(price)}</td>
+        <td class="r"><b>${eur(net)}</b></td>
+      </tr>
+    </table>
+
+    <div class="sumRow">
+      <div class="sumBox">
+        <b>Zahlung</b><br><br>
+        IBAN: ${esc(firma.iban || "")}<br>
+        BIC: ${esc(firma.bic || "")}
+        <div class="footNote">${esc(firma.hint || "")}</div>
+      </div>
+
+      <div class="sumBox">
+        <b>Summe</b><br><br>
+        <div class="line"><span>Summe Netto</span><span class="big">${eur(net)}</span></div>
+        <div class="line"><span>Zu zahlen</span><span class="big">${eur(net)}</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function openPDFPrint(){
+  // calculate before printing
+  applyAutoCalc();
+  readFirmaUI();
+  readRechUI();
+  saveAll();
+
+  const html = buildInvoiceHTML();
+  const w = window.open("", "_blank");
+  if(!w){
+    alert("Popup blockiert. Bitte Popups erlauben und nochmal klicken.");
+    return;
+  }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(), 350);
+}
+
+/* =========================
+   Events
+========================= */
+function wireEvents(){
+  // Rechnung fields -> recalc
+  ["auto_on","a_days","a_hpd","a_rate","l_qty","l_price","l_desc","k_select",
+   "i_no","i_date","i_von","i_bis","i_due","i_status"
+  ].forEach(id=>{
+    $(id).addEventListener("input", ()=>{
+      applyAutoCalc();
+      readRechUI();
+      saveAll();
+    });
+    $(id).addEventListener("change", ()=>{
+      applyAutoCalc();
+      readRechUI();
+      saveAll();
+    });
+  });
+
+  // Firma fields -> save on change
+  ["s_company","s_addr","s_email","s_tel","s_taxid","s_iban","s_bic","s_hint"].forEach(id=>{
+    $(id).addEventListener("input", ()=>{
+      readFirmaUI();
+      saveAll();
+      updatePreview();
+    });
+  });
+
+  $("btnSaveKunde").addEventListener("click", ()=>{
+    const name = $("c_name").value.trim();
+    const email = $("c_email").value.trim();
+    const addr = $("c_addr").value.trim();
+
+    if(!name){
+      alert("Bitte Kunde Name eingeben.");
+      return;
+    }
+
+    const id = "k_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
+    kunden.unshift({id, name, email, addr});
+    saveAll();
+    renderKundenList();
+    buildKundenSelect();
+    $("k_select").value = id;
+    rech.kundeId = id;
+    saveAll();
+    updatePreview();
+    $("c_name").value=""; $("c_email").value=""; $("c_addr").value="";
+  });
+
+  $("btnClearKunde").addEventListener("click", ()=>{
+    $("c_name").value=""; $("c_email").value=""; $("c_addr").value="";
+  });
+
+  $("btnSaveFirma").addEventListener("click", ()=>{
+    readFirmaUI(); saveAll(); updatePreview();
+    alert("Firma gespeichert.");
+  });
+
+  $("btnSaveAll").addEventListener("click", ()=>{
+    readFirmaUI(); readRechUI(); saveAll(); renderKundenList(); updatePreview();
+    alert("Gespeichert.");
+  });
+
+  $("btnResetAll").addEventListener("click", ()=>{
+    if(!confirm("Wirklich alles löschen (localStorage)?")) return;
+    resetAllStorage();
+    location.reload();
+  });
+
+  $("btnPDF").addEventListener("click", openPDFPrint);
+  $("btnPDF2").addEventListener("click", openPDFPrint);
+
+  $("btnReset").addEventListener("click", ()=>{
+    // reset only current Rechnung fields (keep customers + firma)
+    rech = Object.assign(rech, {
+      no:"MS-2026-0001",
+      date: nowISODate(),
+      von:"", bis:"", due:"",
+      status:"Entwurf",
+      kundeId:"",
+      autoOn:true,
+      days:0, hpd:0, rate:0,
+      desc:"Sicherheitsdienstleistung – Objektbewachung",
+      qty:0, price:0
+    });
+    fillRechUI();
+    applyAutoCalc();
+    saveAll();
+  });
+}
+
+/* =========================
+   Init
+========================= */
+(function init(){
+  loadAll();
+
+  // Fill UI
+  fillFirmaUI();
+  fillRechUI();
+
+  // Kunden tab UI
+  renderKundenList();
+  buildKundenSelect();
+
+  refreshPills();
+  applyAutoCalc();
+  updatePreview();
+
+  wireEvents();
+})();
+</script>
+
+</body>
+</html>
