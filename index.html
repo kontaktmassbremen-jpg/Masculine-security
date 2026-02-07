@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Masculine Security – Rechnung Generator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Masculine Security – Rechnung</title>
 
 <style>
 :root{
@@ -26,16 +26,13 @@ body{
   font-family:var(--font);
   color:var(--text);
   background:
-    radial-gradient(900px 500px at 20% -10%, rgba(78,168,255,.25), transparent 60%),
+    radial-gradient(900px 520px at 20% -10%, rgba(78,168,255,.25), transparent 60%),
     radial-gradient(900px 600px at 90% 0%, rgba(43,212,189,.18), transparent 55%),
     linear-gradient(180deg, #0b1220, #070b12);
 }
 a{color:inherit;text-decoration:underline;text-underline-offset:3px}
-.wrap{max-width:1100px;margin:0 auto;padding:28px}
-.topbar{
-  display:flex;gap:14px;align-items:center;justify-content:space-between;
-  margin-bottom:18px;
-}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:14px}
 .brand{display:flex;gap:12px;align-items:center}
 .badge{
   width:44px;height:44px;border-radius:14px;
@@ -46,27 +43,23 @@ a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 h1{margin:0;font-size:20px}
 .sub{margin:0;color:var(--muted);font-size:12px}
 
-.grid{display:grid;grid-template-columns:1fr;gap:16px}
-@media (min-width: 980px){
-  .grid{grid-template-columns: 1.05fr .95fr}
-}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width: 980px){ .grid{grid-template-columns:1.06fr .94fr} }
+
 .card{
   background:linear-gradient(180deg, var(--panel), var(--panel2));
   border:1px solid var(--line);
   border-radius:var(--r);
   box-shadow:var(--shadow);
-  padding:16px;
+  padding:14px;
 }
-.card h2{
-  margin:0 0 12px 0;
-  font-size:14px;
-  letter-spacing:.2px;
-}
-hr.sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+.card h2{margin:0 0 10px 0;font-size:14px;letter-spacing:.2px}
+hr.sep{border:0;border-top:1px solid var(--line);margin:12px 0}
+
 .row{display:flex;gap:12px;flex-wrap:wrap}
 .col{flex:1;min-width:220px}
 label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 0}
-input,textarea{
+input,textarea,select{
   width:100%;
   padding:10px 12px;
   border-radius:12px;
@@ -76,7 +69,7 @@ input,textarea{
   outline:none;
 }
 textarea{min-height:92px;resize:vertical}
-input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3px rgba(78,168,255,.15)}
+input:focus,textarea:focus,select:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3px rgba(78,168,255,.15)}
 
 .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .btn{
@@ -86,7 +79,7 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
   padding:10px 14px;
   border-radius:14px;
   cursor:pointer;
-  font-weight:700;
+  font-weight:800;
 }
 .btn.primary{
   background:linear-gradient(135deg, rgba(78,168,255,.95), rgba(43,212,189,.75));
@@ -96,16 +89,23 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
 
 .sum{
   display:grid;gap:8px;
-  padding:12px;
-  border-radius:16px;
+  padding:12px;border-radius:16px;
   border:1px dashed rgba(255,255,255,.25);
   background:rgba(255,255,255,.06);
 }
 .sumRow{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
 .sumRow b{color:var(--text);font-size:14px}
-.note{font-size:12px;color:var(--muted);margin-top:8px}
 
-/* ✅ REMOVE any page bottom text area (no footer). */
+.inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.07);
+  font-size:12px;color:var(--muted)
+}
+.pill input{width:auto;padding:0;border:0}
+.small{font-size:12px;color:var(--muted)}
 </style>
 </head>
 
@@ -116,17 +116,20 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
       <div class="badge">MS</div>
       <div>
         <h1>Masculine Security – Rechnung</h1>
-        <p class="sub">Rechnung erstellen • Auto-Berechnung • PDF/Print</p>
+        <p class="sub">90% Auto • 10% Writing • Speichern • Kunde speichern • PDF/Print</p>
       </div>
     </div>
 
     <div class="actions">
-      <button class="btn" type="button" onclick="fillDemo()">Demo</button>
+      <button class="btn" type="button" onclick="loadDraft()">Draft laden</button>
+      <button class="btn" type="button" onclick="saveDraft()">Speichern</button>
       <button class="btn primary" type="button" onclick="printInvoice()">PDF / Drucken</button>
     </div>
   </div>
 
   <div class="grid">
+
+    <!-- LEFT -->
     <div class="card">
       <h2>Firma</h2>
       <div class="row">
@@ -135,16 +138,18 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
           <input id="s_company" placeholder="Masculine Security">
         </div>
         <div class="col">
-          <label>E-Mail (clickable im PDF)</label>
+          <label>E-Mail (oben im PDF, clickable)</label>
           <input id="s_email" placeholder="kontakt.mass.bremen@hotmail.com">
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <label>Adresse</label>
           <textarea id="s_addr" placeholder="Werschenregerstraße 6&#10;28237 Bremen"></textarea>
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <label>Steuernummer</label>
@@ -159,6 +164,7 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
           <input id="s_bic" placeholder="...">
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <label>Hinweis (z.B. § 19 UStG)</label>
@@ -171,6 +177,17 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
       <h2>Kunde</h2>
       <div class="row">
         <div class="col">
+          <label>Kunde auswählen (gespeichert)</label>
+          <select id="c_select"></select>
+        </div>
+        <div class="col">
+          <label>&nbsp;</label>
+          <button class="btn" type="button" onclick="deleteSelectedCustomer()">Kunde löschen</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
           <label>Name</label>
           <input id="c_name" placeholder="Kundenname">
         </div>
@@ -179,10 +196,17 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
           <textarea id="c_addr" placeholder="Straße 1&#10;PLZ Ort"></textarea>
         </div>
       </div>
+
+      <div class="inline">
+        <button class="btn" type="button" onclick="saveCustomer()">Kunde speichern</button>
+        <span class="small">Kunde wuxuu ku keydsanayaa browser-ka (localStorage).</span>
+      </div>
     </div>
 
+    <!-- RIGHT -->
     <div class="card">
       <h2>Rechnung</h2>
+
       <div class="row">
         <div class="col">
           <label>Rechnungsnummer</label>
@@ -193,6 +217,7 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
           <input id="i_date" type="date">
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <label>Von</label>
@@ -203,6 +228,7 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
           <input id="i_bis" type="date">
         </div>
       </div>
+
       <div class="row">
         <div class="col">
           <label>Fällig am</label>
@@ -212,43 +238,74 @@ input:focus,textarea:focus{border-color:rgba(78,168,255,.65);box-shadow:0 0 0 3p
 
       <hr class="sep">
 
-      <h2>Position 1</h2>
+      <div class="inline">
+        <span class="pill">
+          <input id="auto_on" type="checkbox" checked>
+          <label for="auto_on" style="margin:0;color:inherit">Auto-Berechnung (90%)</label>
+        </span>
+        <span class="small">Auto: Tage × Std/Tag = Stunden, Stunden × €/h = Netto</span>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label>Tage</label>
+          <input id="a_days" type="number" step="0.01" placeholder="14">
+        </div>
+        <div class="col">
+          <label>Std/Tag</label>
+          <input id="a_hpd" type="number" step="0.01" placeholder="12">
+        </div>
+        <div class="col">
+          <label>€/h</label>
+          <input id="a_rate" type="number" step="0.01" placeholder="22.00">
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <h2>Position 1 (10% Writing)</h2>
       <div class="row">
         <div class="col">
           <label>Leistungsbeschreibung</label>
           <input id="l_desc" placeholder="Sicherheitsdienstleistung – Objektbewachung">
         </div>
       </div>
+
       <div class="row">
         <div class="col">
-          <label>Menge</label>
-          <input id="l_qty" type="number" step="0.01" placeholder="120">
+          <label>Stunden (auto)</label>
+          <input id="l_qty" type="number" step="0.01" placeholder="z.B. 168">
         </div>
         <div class="col">
-          <label>Preis (€)</label>
+          <label>Preis €/h (auto)</label>
           <input id="l_price" type="number" step="0.01" placeholder="22.00">
         </div>
       </div>
 
       <div class="sum" style="margin-top:14px">
-        <div class="sumRow"><span>Netto</span><span id="ui_netto">0,00 €</span></div>
+        <div class="sumRow"><span>Summe Netto</span><span id="ui_netto">0,00 €</span></div>
         <div class="sumRow"><b>Zu zahlen</b><b id="ui_pay">0,00 €</b></div>
       </div>
-
-      <div class="note">Auto: Netto = Menge × Preis. PDF wuxuu qaadanayaa isla xisaabtaas.</div>
     </div>
+
   </div>
 </div>
 
 <script>
-/* ---------- helpers ---------- */
+/* ===================== Storage Keys ===================== */
+const KEY_SETTINGS="ms_settings_v1";
+const KEY_CUSTOMERS="ms_customers_v1";
+const KEY_DRAFT="ms_invoice_draft_v1";
+const KEY_NO="ms_invoice_no_v1";
+
+/* ===================== Helpers ===================== */
 function esc(s){
   return String(s||"").replace(/[&<>"']/g,m=>(
     {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
   ));
 }
 function eur(n){
-  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2})+" €";
+  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
 }
 function num(v){
   const s=String(v||"").trim().replace(/\s/g,"").replace(",",".");
@@ -260,45 +317,210 @@ function formatDateDE(d){
   const x=new Date(d);
   return String(x.getDate()).padStart(2,"0")+"."+String(x.getMonth()+1).padStart(2,"0")+"."+x.getFullYear();
 }
+function todayISO(){
+  const d=new Date();
+  return d.toISOString().slice(0,10);
+}
+function addDaysISO(iso, days){
+  const d=new Date(iso);
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
 
-/* ---------- auto calc ---------- */
+/* ===================== Auto Calc (90%) ===================== */
+function applyAuto(){
+  if(!auto_on.checked) return;
+  const days=num(a_days.value);
+  const hpd=num(a_hpd.value);
+  const rate=num(a_rate.value);
+  const hours=days*hpd;
+
+  // Auto write to line
+  l_qty.value = hours ? hours.toFixed(2) : "";
+  l_price.value = rate ? rate.toFixed(2) : "";
+
+  updateTotals();
+}
 function updateTotals(){
   const net=num(l_qty.value)*num(l_price.value);
   ui_netto.textContent=eur(net);
   ui_pay.textContent=eur(net);
 }
 ["input","change","keyup"].forEach(evt=>{
-  l_qty.addEventListener(evt, updateTotals);
-  l_price.addEventListener(evt, updateTotals);
+  [a_days,a_hpd,a_rate,auto_on,l_qty,l_price].forEach(el=>el.addEventListener(evt, ()=>{
+    if(el===l_qty || el===l_price){ updateTotals(); }
+    else { applyAuto(); }
+  }));
 });
 updateTotals();
 
-/* ---------- demo fill ---------- */
-function fillDemo(){
-  s_company.value="Masculine Security";
-  s_email.value="kontakt.mass.bremen@hotmail.com";
-  s_addr.value="Werschenregerstraße 6\n28237 Bremen";
-  s_taxid.value="4456567g5555";
-  s_iban.value="DE98 1001 1001 2333 0146 96";
-  s_bic.value="NTSBDEB1XXX";
-  s_hint.value="Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.";
-  c_name.value="provvvv";
-  c_addr.value="Werschenreger Straße 6\n28237 Bremen";
-  i_no.value="MS-2026-0001";
-  const today=new Date();
-  i_date.value=today.toISOString().slice(0,10);
-  l_desc.value="Sicherheitsdienstleistung – Objektbewachung";
-  l_qty.value="120";
-  l_price.value="22";
-  updateTotals();
-}
-
-/* ---------- print (professional paper) ---------- */
-function printInvoice(){
-  const settings={
-    company:s_company.value, addr:s_addr.value, email:s_email.value,
+/* ===================== Settings Save/Load ===================== */
+function getSettings(){
+  return {
+    company:s_company.value, email:s_email.value, addr:s_addr.value,
     taxid:s_taxid.value, iban:s_iban.value, bic:s_bic.value, hint:s_hint.value
   };
+}
+function setSettings(x){
+  s_company.value=x.company||"";
+  s_email.value=x.email||"";
+  s_addr.value=x.addr||"";
+  s_taxid.value=x.taxid||"";
+  s_iban.value=x.iban||"";
+  s_bic.value=x.bic||"";
+  s_hint.value=x.hint||"";
+}
+function saveSettings(){
+  localStorage.setItem(KEY_SETTINGS, JSON.stringify(getSettings()));
+}
+function loadSettings(){
+  const raw=localStorage.getItem(KEY_SETTINGS);
+  if(!raw) return;
+  try{ setSettings(JSON.parse(raw)); }catch{}
+}
+
+/* ===================== Customers Save/Load ===================== */
+function readCustomers(){
+  try{ return JSON.parse(localStorage.getItem(KEY_CUSTOMERS)||"[]"); }catch{ return []; }
+}
+function writeCustomers(list){
+  localStorage.setItem(KEY_CUSTOMERS, JSON.stringify(list||[]));
+}
+function refreshCustomerSelect(){
+  const list=readCustomers();
+  c_select.innerHTML="";
+  const opt0=document.createElement("option");
+  opt0.value="";
+  opt0.textContent="— auswählen —";
+  c_select.appendChild(opt0);
+
+  list.forEach((c,idx)=>{
+    const o=document.createElement("option");
+    o.value=String(idx);
+    o.textContent=(c.name||"Kunde")+" ("+(c.addr||"").split("\n")[0]+")";
+    c_select.appendChild(o);
+  });
+}
+function saveCustomer(){
+  const name=c_name.value.trim();
+  const addr=c_addr.value.trim();
+  if(!name && !addr) return;
+
+  const list=readCustomers();
+  // if same name exists -> update
+  const i=list.findIndex(x=>(x.name||"").toLowerCase()===name.toLowerCase());
+  if(i>=0) list[i]={name,addr};
+  else list.push({name,addr});
+  writeCustomers(list);
+  refreshCustomerSelect();
+}
+function loadCustomerByIndex(i){
+  const list=readCustomers();
+  const c=list[i];
+  if(!c) return;
+  c_name.value=c.name||"";
+  c_addr.value=c.addr||"";
+}
+function deleteSelectedCustomer(){
+  const idx=parseInt(c_select.value,10);
+  if(!isFinite(idx)) return;
+  const list=readCustomers();
+  if(!list[idx]) return;
+  list.splice(idx,1);
+  writeCustomers(list);
+  refreshCustomerSelect();
+  c_select.value="";
+}
+c_select.addEventListener("change", ()=>{
+  const idx=parseInt(c_select.value,10);
+  if(isFinite(idx)) loadCustomerByIndex(idx);
+});
+
+/* ===================== Invoice Number Auto ===================== */
+function nextInvoiceNo(){
+  let n=parseInt(localStorage.getItem(KEY_NO)||"1",10);
+  if(!isFinite(n) || n<1) n=1;
+  const yyyy=new Date().getFullYear();
+  const no=`MS-${yyyy}-${String(n).padStart(4,"0")}`;
+  localStorage.setItem(KEY_NO, String(n+1));
+  return no;
+}
+
+/* ===================== Draft Save/Load ===================== */
+function getDraft(){
+  return {
+    settings:getSettings(),
+    customer:{name:c_name.value, addr:c_addr.value},
+    invoice:{no:i_no.value, date:i_date.value, von:i_von.value, bis:i_bis.value, due:i_due.value},
+    auto:{on:auto_on.checked, days:a_days.value, hpd:a_hpd.value, rate:a_rate.value},
+    line:{desc:l_desc.value, qty:l_qty.value, price:l_price.value}
+  };
+}
+function setDraft(d){
+  if(d.settings) setSettings(d.settings);
+  if(d.customer){ c_name.value=d.customer.name||""; c_addr.value=d.customer.addr||""; }
+  if(d.invoice){
+    i_no.value=d.invoice.no||"";
+    i_date.value=d.invoice.date||"";
+    i_von.value=d.invoice.von||"";
+    i_bis.value=d.invoice.bis||"";
+    i_due.value=d.invoice.due||"";
+  }
+  if(d.auto){
+    auto_on.checked=!!d.auto.on;
+    a_days.value=d.auto.days||"";
+    a_hpd.value=d.auto.hpd||"";
+    a_rate.value=d.auto.rate||"";
+  }
+  if(d.line){
+    l_desc.value=d.line.desc||"";
+    l_qty.value=d.line.qty||"";
+    l_price.value=d.line.price||"";
+  }
+  applyAuto();
+  updateTotals();
+}
+function saveDraft(){
+  // save settings separately too
+  saveSettings();
+  localStorage.setItem(KEY_DRAFT, JSON.stringify(getDraft()));
+}
+function loadDraft(){
+  loadSettings();
+  const raw=localStorage.getItem(KEY_DRAFT);
+  if(!raw) return;
+  try{ setDraft(JSON.parse(raw)); }catch{}
+}
+
+/* ===================== Print (NO popup: iframe) ===================== */
+function printViaIframe(html){
+  const iframe=document.createElement("iframe");
+  iframe.style.position="fixed";
+  iframe.style.right="0";
+  iframe.style.bottom="0";
+  iframe.style.width="0";
+  iframe.style.height="0";
+  iframe.style.border="0";
+  // srcdoc works on modern browsers and GitHub Pages
+  iframe.srcdoc=html;
+
+  iframe.onload=()=>{
+    try{
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }catch(e){}
+    // cleanup
+    setTimeout(()=>iframe.remove(), 1200);
+  };
+
+  document.body.appendChild(iframe);
+}
+
+function printInvoice(){
+  // ensure we store latest
+  saveDraft();
+
+  const settings=getSettings();
   const customer={name:c_name.value, addr:c_addr.value};
   const invoice={no:i_no.value, date:i_date.value, von:i_von.value, bis:i_bis.value, due:i_due.value};
   const line={desc:l_desc.value, qty:num(l_qty.value), price:num(l_price.value)};
@@ -367,7 +589,7 @@ th{background:#f2f2f2;text-align:left}
   <tr>
     <th style="width:40px">#</th>
     <th>Leistung</th>
-    <th class="r" style="width:120px">Menge</th>
+    <th class="r" style="width:120px">Stunden</th>
     <th class="r" style="width:120px">Preis</th>
     <th class="r" style="width:140px">Netto</th>
   </tr>
@@ -397,12 +619,30 @@ th{background:#f2f2f2;text-align:left}
 </body>
 </html>`;
 
-  const w=window.open("");
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  setTimeout(()=>w.print(),450);
+  printViaIframe(html);
 }
+
+/* ===================== First Run Defaults ===================== */
+function init(){
+  // load saved settings/customers/draft
+  loadSettings();
+  refreshCustomerSelect();
+  loadDraft();
+
+  // if invoice no empty -> auto generate
+  if(!i_no.value) i_no.value=nextInvoiceNo();
+
+  // default dates if empty
+  if(!i_date.value) i_date.value=todayISO();
+  if(!i_due.value) i_due.value=addDaysISO(i_date.value, 14);
+
+  // default description
+  if(!l_desc.value) l_desc.value="Sicherheitsdienstleistung – Objektbewachung";
+
+  applyAuto();
+  updateTotals();
+}
+init();
 </script>
 </body>
 </html>
