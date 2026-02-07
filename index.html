@@ -27,7 +27,7 @@ h1{text-align:center}
 <h3>Firma</h3>
 <input id="s_company" placeholder="Firma"><br><br>
 <textarea id="s_addr" placeholder="Adresse"></textarea><br><br>
-<input id="s_email" placeholder="Email (nur oben im PDF)"><br><br>
+<input id="s_email" placeholder="Email"><br><br>
 <input id="s_taxid" placeholder="Steuernummer"><br><br>
 <input id="s_iban" placeholder="IBAN"><br><br>
 <input id="s_bic" placeholder="BIC"><br><br>
@@ -71,6 +71,7 @@ h1{text-align:center}
 </div>
 
 <script>
+/* ================= HELPERS ================= */
 function esc(s){
  return String(s||"").replace(/[&<>"']/g,m=>(
   {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]
@@ -89,6 +90,7 @@ function eur(n){
  return Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";
 }
 
+/* ================= PRINT ================= */
 function printInvoice(){
 
 const qty=Number(l_qty.value||0);
@@ -111,12 +113,12 @@ table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{border-bottom:1px solid #ddd;padding:6px;font-size:12px}
 .r{text-align:right}
 .line{border-top:1px solid #999;margin:14px 0}
-h2{margin-top:10px}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="row">
 <div>
 <b>${esc(s_company.value)}</b><br>
@@ -137,6 +139,7 @@ ${i_due.value?`Fällig: ${formatDateDE(i_due.value)}`:""}
 
 <h2>Rechnung</h2>
 
+<!-- ADDRESSES -->
 <div class="row">
 <div class="col">
 <b>Rechnung von</b><br>
@@ -153,6 +156,7 @@ ${esc(c_addr.value).replace(/\\n/g,"<br>")}
 
 <div class="line"></div>
 
+<!-- POSITIONS -->
 <table>
 <tr>
 <th>Leistung</th>
@@ -171,11 +175,13 @@ ${esc(c_addr.value).replace(/\\n/g,"<br>")}
 
 <div class="line"></div>
 
+<!-- TOTALS -->
 <div class="row">
 <div class="col">
 <b>Zahlung</b><br>
 IBAN: ${esc(s_iban.value)}<br>
 BIC: ${esc(s_bic.value)}<br>
+${s_email.value?`E-Mail: ${esc(s_email.value)}<br>`:""}
 ${esc(s_hint.value||"")}
 </div>
 
