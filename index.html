@@ -1,113 +1,590 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Masculine Security — Mini Office</title>
 
-<title>Masculine Security — Office</title>
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1220"/>
 
-<link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a2f;
+      --card:#10203a;
+      --line:#1a2a4b;
+      --text:#e7eeff;
+      --muted:#93a4c6;
+      --accent:#3aa6ff;
+      --good:#2bd4bd;
+      --warn:#ffce54;
+      --bad:#ff4d6d;
+      --r:18px;
+      --r2:12px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
 
-<meta name="theme-color" content="#0b1220" />
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 600px at 20% -10%, rgba(58,166,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(43,212,189,.16), transparent 55%),
+        var(--bg);
+    }
 
-<style>
-:root{
-  --bg:#0b1220;
-  --panel:#0f1a2f;
-  --card:#10203a;
-  --text:#e7eeff;
-  --accent:#3aa6ff;
-  --r:16px;
-  font-family: system-ui, Arial;
-}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-}
-header{
-  padding:20px;
-  background:var(--panel);
-  font-size:22px;
-  font-weight:700;
-}
-main{
-  padding:20px;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--r);
-  padding:20px;
-  margin-bottom:20px;
-}
-button{
-  background:var(--accent);
-  border:none;
-  padding:12px 20px;
-  border-radius:10px;
-  font-weight:600;
-  cursor:pointer;
-}
-small{opacity:.6}
-</style>
+    a{color:inherit}
+    a.link{color:var(--accent); text-decoration:none}
+    a.link:hover{text-decoration:underline}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:18px}
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--r);
+      padding:14px 16px;
+      box-shadow:var(--shadow);
+      position:sticky; top:12px; z-index:5;
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background:linear-gradient(135deg, rgba(58,166,255,.35), rgba(43,212,189,.25));
+      border:1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+      box-shadow:0 10px 25px rgba(0,0,0,.25);
+      flex:0 0 auto;
+    }
+    .logo span{font-weight:800; letter-spacing:.5px}
+    .title{display:flex; flex-direction:column; line-height:1.1}
+    .title strong{font-size:16px}
+    .title small{color:var(--muted); font-size:12px}
+
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:12px;
+      user-select:none;
+    }
+    .dot{width:8px; height:8px; border-radius:50%}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.12);
+      background:rgba(58,166,255,.12);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{background:rgba(58,166,255,.18); border-color:rgba(58,166,255,.35)}
+    .btn:active{transform: translateY(1px)}
+    .btn.secondary{background:rgba(255,255,255,.04)}
+    .btn.secondary:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.18)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.08);
+    }
+    .card .hd h2{margin:0; font-size:15px}
+    .card .hd p{margin:4px 0 0; color:var(--muted); font-size:12px}
+    .card .bd{padding:16px}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 560px){ .row{grid-template-columns:1fr} }
+
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input, select, textarea{
+      width:100%;
+      background:rgba(11,18,32,.55);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:12px;
+      outline:none;
+      font-size:14px;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(58,166,255,.45);
+      box-shadow:0 0 0 3px rgba(58,166,255,.12);
+    }
+    textarea{min-height:90px; resize:vertical}
+
+    .help{font-size:12px; color:var(--muted); margin-top:8px}
+
+    .invoice-preview{
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.12);
+      border-radius:16px;
+      padding:14px;
+    }
+    .inv-top{
+      display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      border-bottom:1px dashed rgba(255,255,255,.15);
+      padding-bottom:12px;
+      margin-bottom:12px;
+    }
+    .inv-top .left strong{display:block; font-size:18px; letter-spacing:.4px}
+    .inv-top .left small{display:block; color:var(--muted); margin-top:4px}
+    .inv-top .right{
+      text-align:right;
+      min-width:240px;
+    }
+    .inv-top .right .kv{display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--muted)}
+    .inv-top .right .kv b{color:var(--text); font-family:var(--mono); font-size:12px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:var(--muted);
+      background:rgba(255,255,255,.04);
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    tbody td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:13px;
+    }
+    tbody tr:last-child td{border-bottom:none}
+    td.num{text-align:right; font-variant-numeric: tabular-nums}
+    .totals{
+      display:flex; justify-content:flex-end; margin-top:10px;
+    }
+    .totals .box{
+      min-width:280px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .totals .line{
+      display:flex; justify-content:space-between; gap:12px;
+      padding:6px 0;
+      border-bottom:1px dashed rgba(255,255,255,.12);
+      font-size:13px;
+      color:var(--muted);
+    }
+    .totals .line:last-child{border-bottom:none; color:var(--text); font-weight:800}
+
+    .footnote{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.10);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
+    .mono{font-family:var(--mono)}
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
 
-<header>Masculine Security — Mini Office</header>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span>MS</span></div>
+        <div class="title">
+          <strong>Masculine Security — Mini Office</strong>
+          <small>Auto-Update + Invoice Format (Netlify / GitHub)</small>
+        </div>
+      </div>
 
-<main>
+      <div class="actions">
+        <span class="pill"><span class="dot good"></span>Deploy: Auto</span>
+        <span class="pill"><span class="dot warn"></span>Cache: Controlled</span>
+        <span class="badge">Version: <span id="ver" class="mono">…</span></span>
+        <button class="btn secondary" id="btnReload" type="button">Reload</button>
+      </div>
+    </div>
 
-<div class="card">
-<h2>Invoice Generator</h2>
-<p>Dieses System aktualisiert sich automatisch nach GitHub Push.</p>
-<button onclick="location.reload()">Reload manually</button>
-<p><small id="ver">loading version…</small></p>
-</div>
+    <div class="grid">
 
-</main>
+      <!-- LEFT: INVOICE FORMAT / PREVIEW -->
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2>Rechnung — Vorschau (Text-Format fix)</h2>
+            <p>Saameyn: headings, spacing, table, totals, footnote — si “professional” u muuqato.</p>
+          </div>
+          <button class="btn" id="btnPrint" type="button">Print / Save PDF</button>
+        </div>
 
-<!-- ================= AUTO UPDATE SYSTEM ================= -->
+        <div class="bd">
+          <div class="invoice-preview" id="printArea">
 
-<script>
-(async () => {
+            <div class="inv-top">
+              <div class="left">
+                <strong>Rechnung</strong>
+                <small class="mono" id="invMeta">Rechnungs-Nr: MS-2026-0001 · Datum: 01.02.2026</small>
+              </div>
 
-  /* ---------- SERVICE WORKER REGISTER ---------- */
-  if ("serviceWorker" in navigator) {
-    const reg = await navigator.serviceWorker.register("./service-worker.js");
+              <div class="right">
+                <div style="font-weight:800">Masculine Security</div>
+                <div style="color:var(--muted); font-size:12px; margin-top:2px;">
+                  Werschenregerstraße 6 · 28237 Bremen
+                </div>
+                <div class="kv" style="margin-top:6px;"><span>E-Mail</span><b><a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a></b></div>
+                <div class="kv"><span>IBAN</span><b>DE98 1001 1001 2333 0146 96</b></div>
+                <div class="kv"><span>BIC</span><b>NTSBDEB1XXX</b></div>
+              </div>
+            </div>
 
-    reg.addEventListener("updatefound", () => {
-      const nw = reg.installing;
-      if (!nw) return;
+            <div class="row" style="margin-bottom:12px;">
+              <div>
+                <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Rechnung von</div>
+                <div style="border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px 12px; background:rgba(255,255,255,.02);">
+                  <div style="font-weight:800">Masculine Security</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:2px;">Werschenregerstraße 6 · 28237 Bremen</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail: <a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a></div>
+                </div>
+              </div>
 
-      nw.addEventListener("statechange", () => {
-        if (nw.state === "installed" && navigator.serviceWorker.controller) {
-          console.log("New version detected → reload");
-          location.reload();
-        }
-      });
+              <div>
+                <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Rechnung an</div>
+                <div style="border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px 12px; background:rgba(255,255,255,.02);">
+                  <div style="font-weight:800" id="toName">Mustafa Mursal</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:2px;" id="toAddr">Werschenregerstraße 6 · 28237 Bremen</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail: <a class="link" id="toMailLink" href="mailto:mursal.abdi000@gmail.com">mursal.abdi000@gmail.com</a></div>
+                </div>
+              </div>
+            </div>
+
+            <table aria-label="Rechnungspositionen">
+              <thead>
+                <tr>
+                  <th style="width:46%">Leistung</th>
+                  <th class="num" style="width:18%">Menge (Std.)</th>
+                  <th class="num" style="width:18%">Preis (€/h)</th>
+                  <th class="num" style="width:18%">Netto (€)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="posDesc">Sicherheitsdienstleistung — Objektbewachung</td>
+                  <td class="num" id="posQty">120,00</td>
+                  <td class="num" id="posRate">22,00</td>
+                  <td class="num" id="posNet">2.640,00</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="totals">
+              <div class="box">
+                <div class="line"><span>Summe Netto</span><span class="mono" id="sumNet">2.640,00 €</span></div>
+                <div class="line"><span>Umsatzsteuer</span><span class="mono">0,00 €</span></div>
+                <div class="line"><span>Zu zahlen</span><span class="mono" id="sumPay">2.640,00 €</span></div>
+              </div>
+            </div>
+
+            <div class="footnote" id="footnote">
+              Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).<br/>
+              Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.
+            </div>
+
+          </div>
+
+          <div class="help">
+            Tip: Haddii aad rabto auto-update buuxa, kaliya <span class="mono">version.txt</span> beddel (v1 → v2) ama ku dar GitHub Action auto-bump.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: QUICK EDIT (TEXT FORMAT CONTROL) -->
+      <aside class="card">
+        <div class="hd">
+          <div>
+            <h2>Quick Edit (Text & Values)</h2>
+            <p>Halkan ku sax magaca, email, qty, rate — preview-gu wuu cusboonaanayaa.</p>
+          </div>
+        </div>
+
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Rechnungs-Nr</label>
+              <input id="fNr" value="MS-2026-0001" />
+            </div>
+            <div>
+              <label>Datum</label>
+              <input id="fDate" type="date" value="2026-02-01" />
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div>
+            <label>Kunde Name</label>
+            <input id="fToName" value="Mustafa Mursal" />
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div>
+            <label>Kunde Adresse</label>
+            <input id="fToAddr" value="Werschenregerstraße 6 · 28237 Bremen" />
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div>
+            <label>Kunde E-Mail</label>
+            <input id="fToMail" value="mursal.abdi000@gmail.com" />
+            <div class="help">E-mail link waa clickable (mailto:).</div>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div>
+            <label>Leistung (Beschreibung)</label>
+            <input id="fDesc" value="Sicherheitsdienstleistung — Objektbewachung" />
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="row">
+            <div>
+              <label>Menge (Std.)</label>
+              <input id="fQty" type="number" step="0.01" value="120" />
+            </div>
+            <div>
+              <label>Preis (€/h)</label>
+              <input id="fRate" type="number" step="0.01" value="22" />
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div>
+            <label>Hinweis (Footer)</label>
+            <textarea id="fNote">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).
+Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.</textarea>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <button class="btn" id="btnApply" type="button">Apply to Preview</button>
+          <button class="btn secondary" id="btnReset" type="button" style="margin-left:8px;">Reset</button>
+
+          <div class="help" style="margin-top:12px;">
+            Auto-Update: haddii aad aragto old version, kaliya sug 25s ama click “Reload”.
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ================= AUTO UPDATE + LOGIC ================= -->
+  <script>
+  (function(){
+    const $ = (id)=>document.getElementById(id);
+
+    // -------- helpers
+    const fmtDE = (n) => {
+      const num = Number(n || 0);
+      return num.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+    const euro = (n) => fmtDE(n) + " €";
+    const safeMailto = (email) => {
+      const e = (email || "").trim();
+      return e ? "mailto:" + e : "mailto:";
+    };
+
+    // -------- UI actions
+    $("btnReload").addEventListener("click", ()=>location.reload());
+
+    $("btnPrint").addEventListener("click", ()=>{
+      // Print only the invoice preview area (simple print)
+      const html = document.documentElement.innerHTML;
+      const printArea = $("printArea").outerHTML;
+
+      const printHtml = `
+      <html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <title>Rechnung</title>
+        <style>
+          body{font-family: Arial, system-ui; margin:18px; color:#111}
+          .invoice-preview{border:1px solid #ddd; border-radius:12px; padding:14px}
+          table{width:100%; border-collapse:collapse; margin-top:10px}
+          th,td{border-bottom:1px solid #eee; padding:8px; font-size:12px}
+          th{background:#fafafa; text-align:left; color:#444}
+          td.num{text-align:right; font-variant-numeric: tabular-nums}
+          .totals{display:flex; justify-content:flex-end; margin-top:10px}
+          .totals .box{min-width:280px; border:1px solid #eee; border-radius:10px; padding:10px}
+          .totals .line{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #eee; font-size:12px; color:#444}
+          .totals .line:last-child{border-bottom:none; font-weight:800; color:#111}
+          a{color:#0b65ff; text-decoration:none}
+        </style>
+      </head>
+      <body>
+        ${printArea}
+        <script>window.onload = () => window.print();<\/script>
+      </body>
+      </html>`;
+
+      const w = window.open("", "_blank");
+      w.document.open();
+      w.document.write(printHtml);
+      w.document.close();
+
+      // restore not needed; new window prints
     });
-  }
 
-  /* ---------- VERSION CHECK ---------- */
-  async function getVersion(){
-    const r = await fetch("./version.txt", { cache:"no-store" });
-    return r.text();
-  }
+    function applyPreview(){
+      const nr = $("fNr").value.trim() || "MS-2026-0001";
+      const d  = $("fDate").value ? new Date($("fDate").value) : new Date();
+      const dStr = d.toLocaleDateString("de-DE");
 
-  let v = await getVersion();
-  document.getElementById("ver").innerText = "Version: " + v;
+      const toName = $("fToName").value.trim() || "Kunde";
+      const toAddr = $("fToAddr").value.trim() || "";
+      const toMail = $("fToMail").value.trim() || "";
 
-  setInterval(async () => {
-    const nv = await getVersion();
-    if (nv !== v){
-      console.log("Version changed → reload");
-      location.reload();
+      const desc = $("fDesc").value.trim() || "";
+      const qty = Number($("fQty").value || 0);
+      const rate = Number($("fRate").value || 0);
+      const net = qty * rate;
+
+      $("invMeta").textContent = `Rechnungs-Nr: ${nr} · Datum: ${dStr}`;
+      $("toName").textContent = toName;
+      $("toAddr").textContent = toAddr;
+
+      $("toMailLink").textContent = toMail || "—";
+      $("toMailLink").setAttribute("href", safeMailto(toMail));
+
+      $("posDesc").textContent = desc;
+      $("posQty").textContent = fmtDE(qty);
+      $("posRate").textContent = fmtDE(rate);
+      $("posNet").textContent = fmtDE(net);
+
+      $("sumNet").textContent = euro(net);
+      $("sumPay").textContent = euro(net);
+
+      const note = $("fNote").value || "";
+      $("footnote").innerHTML = (note || "").replaceAll("\n","<br/>");
     }
-  }, 25000); // every 25s
 
-})();
-</script>
+    $("btnApply").addEventListener("click", applyPreview);
 
+    $("btnReset").addEventListener("click", ()=>{
+      $("fNr").value="MS-2026-0001";
+      $("fDate").value="2026-02-01";
+      $("fToName").value="Mustafa Mursal";
+      $("fToAddr").value="Werschenregerstraße 6 · 28237 Bremen";
+      $("fToMail").value="mursal.abdi000@gmail.com";
+      $("fDesc").value="Sicherheitsdienstleistung — Objektbewachung";
+      $("fQty").value="120";
+      $("fRate").value="22";
+      $("fNote").value=`Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).
+Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.`;
+      applyPreview();
+    });
+
+    // apply initial
+    applyPreview();
+
+    // -------- AUTO UPDATE (service worker + version.txt)
+    async function getVersion(){
+      const r = await fetch("./version.txt", { cache:"no-store" });
+      return (await r.text()).trim();
+    }
+
+    (async () => {
+      // service worker register (does not break if missing)
+      try{
+        if ("serviceWorker" in navigator) {
+          const reg = await navigator.serviceWorker.register("./service-worker.js");
+
+          reg.addEventListener("updatefound", () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener("statechange", () => {
+              if (nw.state === "installed" && navigator.serviceWorker.controller) {
+                // New SW installed → reload to get latest assets
+                location.reload();
+              }
+            });
+          });
+        }
+      }catch(e){}
+
+      // version checker
+      try{
+        let v = await getVersion();
+        $("ver").textContent = v || "unknown";
+
+        setInterval(async () => {
+          const nv = await getVersion();
+          if (nv && nv !== v) location.reload();
+        }, 25000); // 25s
+      }catch(e){
+        $("ver").textContent = "no version.txt";
+      }
+    })();
+
+  })();
+  </script>
 </body>
 </html>
