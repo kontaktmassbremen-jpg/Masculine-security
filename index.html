@@ -1,17 +1,21 @@
+========================
+FILE 1: index.html
+========================
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Masculine Security — Rechnung</title>
+  <meta name="theme-color" content="#0b1220"/>
+  <link rel="manifest" href="manifest.json"/>
 
   <style>
     :root{
-      --bg:#081426;
+      --bg:#071225;
       --panel:#0b1a33;
       --panel2:#0c2242;
       --card:#0f2a4f;
-      --card2:#0d2445;
       --line:#16345e;
       --text:#e7f0ff;
       --muted:#9bb1d5;
@@ -40,7 +44,6 @@
     a.link{color:var(--accent); text-decoration:none}
     a.link:hover{text-decoration:underline}
 
-    /* Layout */
     .app{
       display:grid;
       grid-template-columns: 260px 1fr;
@@ -49,7 +52,7 @@
       height:100%;
     }
     @media (max-width: 980px){
-      .app{grid-template-columns: 1fr; height:auto}
+      .app{grid-template-columns:1fr; height:auto}
     }
 
     /* Sidebar */
@@ -59,12 +62,10 @@
       border-radius:var(--r);
       box-shadow:var(--shadow);
       overflow:hidden;
-      min-height: 600px;
+      min-height: 640px;
     }
     .sb-top{
-      display:flex;
-      gap:10px;
-      align-items:center;
+      display:flex; gap:10px; align-items:center;
       padding:14px 14px 10px;
       border-bottom:1px solid rgba(255,255,255,.06);
       background:rgba(0,0,0,.12);
@@ -95,7 +96,7 @@
       padding:12px 12px;
       border-radius:14px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       margin-bottom:10px;
       text-align:left;
       transition: background .15s ease, border-color .15s ease;
@@ -109,6 +110,7 @@
       background:rgba(0,0,0,.14);
       padding:4px 9px;
       border-radius:999px;
+      font-family:var(--mono);
     }
 
     /* Main */
@@ -118,7 +120,7 @@
       border-radius:var(--r);
       box-shadow:var(--shadow);
       overflow:hidden;
-      min-height: 600px;
+      min-height: 640px;
     }
     .topbar{
       display:flex;
@@ -169,19 +171,14 @@
     .dot.good{background:var(--good)}
     .dot.warn{background:var(--warn)}
     .mono{font-family:var(--mono)}
+    .content{padding:14px}
 
-    /* Content grid */
-    .content{
-      padding:14px;
-    }
     .grid{
       display:grid;
       grid-template-columns: 1.1fr .9fr;
       gap:14px;
     }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -198,7 +195,6 @@
     .card .hd small{display:block;color:var(--muted); margin-top:4px; font-size:12px}
     .card .bd{padding:14px}
 
-    /* Form */
     .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 620px){ .row{grid-template-columns:1fr} }
     label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
@@ -239,17 +235,9 @@
     }
     .kv:last-child{border-bottom:none}
     .kv b{color:var(--text)}
-    .big{
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
+    .big{font-size:18px;font-weight:900;letter-spacing:.2px}
 
-    /* Tables for Kunden/Firma */
-    .list{
-      display:grid;
-      gap:10px;
-    }
+    .list{display:grid; gap:10px}
     .item{
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.03);
@@ -327,7 +315,7 @@
             <div class="card">
               <div class="hd">
                 <strong>Rechnung erstellen / bearbeiten</strong>
-                <small>Datum-Format im PDF: <span class="mono">DD.MM.YYYY</span> (z.B. 07.02.2026) • E-Mail oben &amp; bei Kunde ist klickbar.</small>
+                <small>Datum-Format im PDF: <span class="mono">DD.MM.YYYY</span> • E-Mail oben &amp; bei Kunde ist klickbar.</small>
               </div>
               <div class="bd">
 
@@ -338,8 +326,8 @@
                   </div>
                   <div>
                     <label>Rechnungsdatum</label>
-                    <input id="invDate" type="date" value="2026-02-08">
-                    <div class="hint">PDF Format: <span class="mono" id="pdfDateHint">08.02.2026</span></div>
+                    <input id="invDate" type="date" value="2026-02-01">
+                    <div class="hint">PDF Format: <span class="mono" id="pdfDateHint">01.02.2026</span></div>
                   </div>
                 </div>
 
@@ -385,14 +373,14 @@
                   </div>
                   <div>
                     <label>Kunde E-Mail (für PDF)</label>
-                    <input id="customerEmail" value="kunde@email.de">
+                    <input id="customerEmail" value="mursal.abdi000@gmail.com">
                   </div>
                 </div>
 
                 <div class="sep"></div>
 
                 <div>
-                  <label>Leistungsbeschreibung (100% writing)</label>
+                  <label>Leistungsbeschreibung</label>
                   <input id="serviceDesc" value="Sicherheitsdienstleistung — Objektbewachung">
                 </div>
 
@@ -419,11 +407,11 @@
                     <div class="row" style="grid-template-columns:1fr 1fr; gap:10px">
                       <div>
                         <label style="margin-top:0">Stunden</label>
-                        <input id="hours" type="number" step="0.01" min="0" value="0">
+                        <input id="hours" type="number" step="0.01" min="0" value="120">
                       </div>
                       <div>
                         <label style="margin-top:0">€/h</label>
-                        <input id="rate" type="number" step="0.01" min="0" value="0">
+                        <input id="rate" type="number" step="0.01" min="0" value="22">
                       </div>
                     </div>
                     <div class="hint">Netto = Stunden × €/h</div>
@@ -436,19 +424,19 @@
             <div class="card">
               <div class="hd">
                 <strong>Vorschau (live)</strong>
-                <small>Diese Vorschau ist nur für App — PDF wird über “Open PDF (Print)” erzeugt.</small>
+                <small>PDF wird über “Open PDF (Print)” erzeugt (wie dein Screenshot).</small>
               </div>
               <div class="bd">
                 <div class="preview">
                   <div class="kv"><span>Rechnungs-Nr:</span><b class="mono" id="pNo">MS-2026-0001</b></div>
-                  <div class="kv"><span>Datum:</span><b id="pDate">08.02.2026</b></div>
+                  <div class="kv"><span>Datum:</span><b id="pDate">01.02.2026</b></div>
                   <div class="kv"><span>Zeitraum:</span><b id="pPeriod">—</b></div>
                   <div class="kv"><span>Status:</span><b id="pStatus">Entwurf</b></div>
 
                   <div style="height:10px"></div>
 
                   <div class="kv"><span>Kunde:</span><b id="pCustomer">—</b></div>
-                  <div class="kv"><span>Kunde E-Mail:</span><b><a class="link" id="pCustomerMail" href="mailto:kunde@email.de">kunde@email.de</a></b></div>
+                  <div class="kv"><span>Kunde E-Mail:</span><b><a class="link" id="pCustomerMail" href="mailto:mursal.abdi000@gmail.com">mursal.abdi000@gmail.com</a></b></div>
 
                   <div style="height:10px"></div>
 
@@ -457,9 +445,9 @@
 
                   <div style="height:10px"></div>
 
-                  <div class="kv"><span>Stunden:</span><b class="mono" id="pHours">0,00</b></div>
-                  <div class="kv"><span>€/h:</span><b class="mono" id="pRate">0,00</b></div>
-                  <div class="kv"><span>Netto:</span><b class="mono" id="pNet">0,00 €</b></div>
+                  <div class="kv"><span>Stunden:</span><b class="mono" id="pHours">120,00</b></div>
+                  <div class="kv"><span>€/h:</span><b class="mono" id="pRate">22,00</b></div>
+                  <div class="kv"><span>Netto:</span><b class="mono" id="pNet">2.640,00 €</b></div>
 
                   <div style="height:10px"></div>
                   <div class="hint">
@@ -478,7 +466,7 @@
             <div class="card">
               <div class="hd">
                 <strong>Kunden speichern</strong>
-                <small>Wird lokal (Browser) gespeichert. Danach in Rechnung auswählbar.</small>
+                <small>Wird lokal gespeichert. Danach in Rechnung auswählbar.</small>
               </div>
               <div class="bd">
                 <div class="row">
@@ -521,7 +509,7 @@
             <div class="card">
               <div class="hd">
                 <strong>Firma (Absender)</strong>
-                <small>Wird für PDF/Print verwendet. Lokal gespeichert.</small>
+                <small>Für PDF/Print verwendet. Lokal gespeichert.</small>
               </div>
               <div class="bd">
                 <div>
@@ -557,7 +545,7 @@
                 </div>
                 <div class="sep"></div>
                 <button class="btn good" id="btnSaveFirma" type="button">Firma speichern</button>
-                <div class="hint">PDF/Print: E-Mail clickable + §19 UStG Hinweis</div>
+                <div class="hint">§19 UStG Hinweis + E-Mail clickable (PDF/Print)</div>
               </div>
             </div>
 
@@ -586,469 +574,72 @@
   </div>
 
 <script>
-(function(){
+(() => {
   const $ = (id)=>document.getElementById(id);
 
-  // ---------- Storage keys
-  const K_CUSTOMERS = "ms_customers_v1";
-  const K_FIRMA = "ms_firma_v1";
-  const K_INVOICE = "ms_invoice_v1";
+  // Storage keys
+  const K_CUSTOMERS = "ms_customers_v2";
+  const K_FIRMA     = "ms_firma_v2";
+  const K_INVOICE   = "ms_invoice_v2";
 
-  // ---------- Helpers
+  // helpers
+  const pad2 = (x)=>String(x).padStart(2,"0");
   const fmtDE = (n)=>Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2});
   const euro = (n)=>fmtDE(n) + " €";
-  const pad2 = (x)=>String(x).padStart(2,"0");
   const toDEDate = (iso)=>{
     if(!iso) return "—";
     const d = new Date(iso);
     if(Number.isNaN(d.getTime())) return "—";
     return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;
   };
+  const escapeHtml = (s)=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  const escapeAttr = (s)=>String(s??"").replaceAll('"',"&quot;");
 
-  // ---------- State
+  // state
   let customers = [];
   let firma = null;
   let invoice = null;
 
-  // ---------- Default firma
   function defaultFirma(){
     return {
       name: "Masculine Security",
       addr: "Werschenregerstraße 6 · 28237 Bremen",
-      email: "kontakt.mass.bremen@hotmail.com",
-      tax: "",
-      iban: "DE98 1001 1001 2333 0146 96",
-      bic: "NTSBDEB1XXX"
+      email:"kontakt.mass.bremen@hotmail.com",
+      tax:"",
+      iban:"DE98 1001 1001 2333 0146 96",
+      bic:"NTSBDEB1XXX"
+    };
+  }
+  function defaultInvoice(){
+    return {
+      no:"MS-2026-0001",
+      date:$("invDate").value || "",
+      from:"",
+      to:"",
+      due:"",
+      status:"Entwurf",
+      customerId:"",
+      customerEmail:$("customerEmail").value || "",
+      serviceDesc:$("serviceDesc").value || "",
+      days:0,
+      hoursPerDay:0,
+      hours:Number($("hours").value||0),
+      rate:Number($("rate").value||0),
     };
   }
 
-  // ---------- Load/Save
   function loadAll(){
     try{ customers = JSON.parse(localStorage.getItem(K_CUSTOMERS) || "[]"); }catch(e){ customers=[]; }
     try{ firma = JSON.parse(localStorage.getItem(K_FIRMA) || "null"); }catch(e){ firma=null; }
     try{ invoice = JSON.parse(localStorage.getItem(K_INVOICE) || "null"); }catch(e){ invoice=null; }
-
     if(!firma) firma = defaultFirma();
-    if(!invoice){
-      invoice = {
-        no: "MS-2026-0001",
-        date: $("invDate").value || "",
-        from: "",
-        to: "",
-        due: "",
-        status: "Entwurf",
-        customerId: "",
-        customerEmail: "kunde@email.de",
-        serviceDesc: "Sicherheitsdienstleistung — Objektbewachung",
-        days: 0,
-        hoursPerDay: 0,
-        hours: 0,
-        rate: 0
-      };
-    }
+    if(!invoice) invoice = defaultInvoice();
   }
-
   function saveCustomers(){ localStorage.setItem(K_CUSTOMERS, JSON.stringify(customers)); }
   function saveFirma(){ localStorage.setItem(K_FIRMA, JSON.stringify(firma)); }
   function saveInvoice(){ localStorage.setItem(K_INVOICE, JSON.stringify(invoice)); }
 
-  // ---------- UI Navigation
-  function setActivePage(page){
-    // buttons
-    $("navRechnung").classList.toggle("active", page==="rechnung");
-    $("navKunden").classList.toggle("active", page==="kunden");
-    $("navFirma").classList.toggle("active", page==="firma");
-
-    // pages
-    $("pageRechnung").classList.toggle("hidden", page!=="rechnung");
-    $("pageKunden").classList.toggle("hidden", page!=="kunden");
-    $("pageFirma").classList.toggle("hidden", page!=="firma");
-
-    // titles
-    if(page==="rechnung"){
-      $("pageTitle").textContent="Rechnung";
-      $("pageSub").textContent="Automatisch: Tage × Std/Tag = Stunden • Stunden × €/h = Netto";
-    }
-    if(page==="kunden"){
-      $("pageTitle").textContent="Kunden";
-      $("pageSub").textContent="Kunden lokal speichern und in Rechnung auswählen";
-    }
-    if(page==="firma"){
-      $("pageTitle").textContent="Firma";
-      $("pageSub").textContent="Absenderdaten lokal speichern (PDF/Print nutzt diese)";
-    }
-  }
-
-  // ---------- Counts
-  function refreshCounts(){
-    $("countKunden").textContent = String(customers.length);
-    $("countRechnungen").textContent = "1";
-    $("kundenHint").textContent = `${customers.length} Kunden`;
-  }
-
-  // ---------- Customers UI
-  function renderCustomers(){
-    const box = $("kundenList");
-    box.innerHTML = "";
-    if(customers.length===0){
-      box.innerHTML = `<div class="hint">Noch keine Kunden gespeichert.</div>`;
-      return;
-    }
-    customers.forEach((c, idx)=>{
-      const div = document.createElement("div");
-      div.className="item";
-      div.innerHTML = `
-        <strong>${escapeHtml(c.name || "—")}</strong>
-        <small>${escapeHtml(c.addr || "")}</small>
-        <small><a class="link" href="mailto:${escapeAttr(c.email||"")}">${escapeHtml(c.email||"")}</a></small>
-        <div class="actions">
-          <button class="btn small primary" data-use="${c.id}">In Rechnung nutzen</button>
-          <button class="btn small danger" data-del="${c.id}">Löschen</button>
-        </div>
-      `;
-      box.appendChild(div);
-    });
-
-    // actions
-    box.querySelectorAll("[data-use]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = btn.getAttribute("data-use");
-        invoice.customerId = id;
-        const c = customers.find(x=>x.id===id);
-        if(c && c.email) invoice.customerEmail = c.email;
-        saveInvoice();
-        hydrateInvoiceToInputs();
-        refreshCustomerSelect();
-        updatePreview();
-        setActivePage("rechnung");
-      });
-    });
-    box.querySelectorAll("[data-del]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = btn.getAttribute("data-del");
-        customers = customers.filter(x=>x.id!==id);
-        if(invoice.customerId===id) invoice.customerId="";
-        saveCustomers();
-        saveInvoice();
-        refreshCounts();
-        renderCustomers();
-        refreshCustomerSelect();
-        updatePreview();
-      });
-    });
-  }
-
-  function refreshCustomerSelect(){
-    const sel = $("customerSelect");
-    const current = invoice.customerId || "";
-    sel.innerHTML = `<option value="">— bitte wählen —</option>`;
-    customers.forEach(c=>{
-      const opt = document.createElement("option");
-      opt.value = c.id;
-      opt.textContent = c.name || "(ohne Name)";
-      sel.appendChild(opt);
-    });
-    sel.value = current;
-  }
-
-  // ---------- Firma UI
-  function hydrateFirmaToInputs(){
-    $("fName").value = firma.name || "";
-    $("fAddr").value = firma.addr || "";
-    $("fEmail").value = firma.email || "";
-    $("fTax").value = firma.tax || "";
-    $("fIban").value = firma.iban || "";
-    $("fBic").value = firma.bic || "";
-    renderFirmaPreview();
-  }
-
-  function renderFirmaPreview(){
-    $("pfName").textContent = firma.name || "—";
-    $("pfAddr").textContent = firma.addr || "—";
-    $("pfIban").textContent = firma.iban || "—";
-    $("pfBic").textContent = firma.bic || "—";
-    $("pfTax").textContent = firma.tax ? firma.tax : "—";
-    const mail = $("pfEmail");
-    mail.textContent = firma.email || "—";
-    mail.href = firma.email ? "mailto:"+firma.email : "#";
-  }
-
-  // ---------- Invoice UI
-  function hydrateInvoiceToInputs(){
-    $("invNo").value = invoice.no || "";
-    $("invDate").value = invoice.date || "";
-    $("periodFrom").value = invoice.from || "";
-    $("periodTo").value = invoice.to || "";
-    $("dueDate").value = invoice.due || "";
-    $("status").value = invoice.status || "Entwurf";
-    $("serviceDesc").value = invoice.serviceDesc || "";
-    $("days").value = invoice.days || 0;
-    $("hoursPerDay").value = invoice.hoursPerDay || 0;
-    $("hours").value = invoice.hours || 0;
-    $("rate").value = invoice.rate || 0;
-    $("customerEmail").value = invoice.customerEmail || "kunde@email.de";
-
-    $("pdfDateHint").textContent = toDEDate($("invDate").value);
-  }
-
-  function readInputsToInvoice(){
-    invoice.no = $("invNo").value.trim();
-    invoice.date = $("invDate").value || "";
-    invoice.from = $("periodFrom").value || "";
-    invoice.to = $("periodTo").value || "";
-    invoice.due = $("dueDate").value || "";
-    invoice.status = $("status").value || "Entwurf";
-    invoice.serviceDesc = $("serviceDesc").value.trim();
-    invoice.days = Number($("days").value || 0);
-    invoice.hoursPerDay = Number($("hoursPerDay").value || 0);
-    invoice.hours = Number($("hours").value || 0);
-    invoice.rate = Number($("rate").value || 0);
-    invoice.customerEmail = $("customerEmail").value.trim();
-
-    $("pdfDateHint").textContent = toDEDate(invoice.date);
-  }
-
-  function calcHours(){
-    const days = Number(invoice.days||0);
-    const hpd  = Number(invoice.hoursPerDay||0);
-    if(days > 0 && hpd > 0){
-      return days * hpd;
-    }
-    return Number(invoice.hours||0);
-  }
-
-  function getSelectedCustomer(){
-    const id = invoice.customerId || "";
-    if(!id) return null;
-    return customers.find(c=>c.id===id) || null;
-  }
-
-  function updatePreview(){
-    readInputsToInvoice();
-
-    const c = getSelectedCustomer();
-    const hours = calcHours();
-    const net = hours * Number(invoice.rate||0);
-
-    // preview text
-    $("pNo").textContent = invoice.no || "—";
-    $("pDate").textContent = toDEDate(invoice.date);
-    $("pStatus").textContent = invoice.status || "—";
-    const period = (invoice.from && invoice.to) ? `${toDEDate(invoice.from)} – ${toDEDate(invoice.to)}` : "—";
-    $("pPeriod").textContent = period;
-
-    const cname = c ? (c.name || "—") : "—";
-    $("pCustomer").textContent = cname;
-
-    const mail = $("pCustomerMail");
-    mail.textContent = invoice.customerEmail || "—";
-    mail.href = invoice.customerEmail ? "mailto:"+invoice.customerEmail : "#";
-
-    $("pService").textContent = invoice.serviceDesc || "—";
-    $("pHours").textContent = fmtDE(hours);
-    $("pRate").textContent = fmtDE(invoice.rate);
-    $("pNet").textContent = euro(net);
-  }
-
-  // ---------- Buttons
-  $("btnSave").addEventListener("click", ()=>{
-    readInputsToInvoice();
-    saveInvoice();
-    // also save firma + customers already saved separately
-    toast("Gespeichert ✅");
-  });
-
-  $("btnExport").addEventListener("click", ()=>{
-    readInputsToInvoice();
-    const payload = {
-      meta:{app:"MasculineSecurity", version: $("ver").textContent || ""},
-      exportedAt: new Date().toISOString(),
-      firma, customers, invoice
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `ms-backup-${Date.now()}.json`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-  });
-
-  $("btnImport").addEventListener("click", ()=> $("fileImport").click());
-  $("fileImport").addEventListener("change", async (e)=>{
-    const file = e.target.files && e.target.files[0];
-    if(!file) return;
-    try{
-      const txt = await file.text();
-      const data = JSON.parse(txt);
-
-      if(data.firma) firma = data.firma;
-      if(Array.isArray(data.customers)) customers = data.customers;
-      if(data.invoice) invoice = data.invoice;
-
-      saveFirma(); saveCustomers(); saveInvoice();
-      refreshCounts();
-      refreshCustomerSelect();
-      hydrateFirmaToInputs();
-      hydrateInvoiceToInputs();
-      renderCustomers();
-      updatePreview();
-      toast("Import ok ✅");
-    }catch(err){
-      toast("Import error ❌");
-    }finally{
-      e.target.value = "";
-    }
-  });
-
-  // Open PDF (Print) — tries pdf.html first (if you already have it)
-  $("btnOpenPdf").addEventListener("click", ()=>{
-    readInputsToInvoice();
-    const c = getSelectedCustomer();
-    const hours = calcHours();
-    const net = hours * Number(invoice.rate||0);
-
-    // If you have a dedicated pdf.html (old PDF format), we keep it:
-    // It will receive params via query string.
-    const pdfUrl = `pdf.html?no=${enc(invoice.no)}&date=${enc(invoice.date)}&from=${enc(invoice.from)}&to=${enc(invoice.to)}&due=${enc(invoice.due)}&status=${enc(invoice.status)}&cname=${enc(c?c.name:"")}&caddr=${enc(c?c.addr:"")}&cmail=${enc(invoice.customerEmail)}&desc=${enc(invoice.serviceDesc)}&hours=${enc(hours)}&rate=${enc(invoice.rate)}&net=${enc(net)}`;
-    // Try to open pdf.html; if it 404s in your project, fallback to print template.
-    openPdfWithFallback(pdfUrl, {c, hours, net});
-  });
-
-  // Cache Fix (best possible in browser)
-  $("btnCacheFix").addEventListener("click", async ()=>{
-    try{
-      // unregister SW
-      if("serviceWorker" in navigator){
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(r=>r.unregister()));
-      }
-      // clear caches
-      if("caches" in window){
-        const keys = await caches.keys();
-        await Promise.all(keys.map(k=>caches.delete(k)));
-      }
-      // bump version query to force reload
-      const u = new URL(location.href);
-      u.searchParams.set("v", String(Date.now()));
-      location.replace(u.toString());
-    }catch(e){
-      location.reload();
-    }
-  });
-
-  // ---------- Nav handlers
-  $("navRechnung").addEventListener("click", ()=>setActivePage("rechnung"));
-  $("navKunden").addEventListener("click", ()=>setActivePage("kunden"));
-  $("navFirma").addEventListener("click", ()=>setActivePage("firma"));
-
-  // ---------- Rechnung listeners (live)
-  [
-    "invNo","invDate","periodFrom","periodTo","dueDate","status","customerEmail",
-    "serviceDesc","days","hoursPerDay","hours","rate"
-  ].forEach(id=>{
-    $(id).addEventListener("input", ()=>{ updatePreview(); });
-    $(id).addEventListener("change", ()=>{ updatePreview(); });
-  });
-
-  $("customerSelect").addEventListener("change", ()=>{
-    invoice.customerId = $("customerSelect").value || "";
-    const c = getSelectedCustomer();
-    if(c && c.email) $("customerEmail").value = c.email;
-    updatePreview();
-    saveInvoice();
-  });
-
-  // ---------- Kunden handlers
-  $("btnAddCustomer").addEventListener("click", ()=>{
-    const name = $("cName").value.trim();
-    const email = $("cEmail").value.trim();
-    const addr = $("cAddr").value.trim();
-    if(!name){
-      toast("Name fehlt ❗");
-      return;
-    }
-    const id = "c_" + Math.random().toString(36).slice(2,10);
-    customers.unshift({id, name, email, addr});
-    saveCustomers();
-    refreshCounts();
-    renderCustomers();
-    refreshCustomerSelect();
-    $("cName").value=""; $("cEmail").value=""; $("cAddr").value="";
-    toast("Kunde gespeichert ✅");
-  });
-
-  $("btnClearCustomers").addEventListener("click", ()=>{
-    customers = [];
-    invoice.customerId = "";
-    saveCustomers();
-    saveInvoice();
-    refreshCounts();
-    renderCustomers();
-    refreshCustomerSelect();
-    updatePreview();
-    toast("Kunden gelöscht ✅");
-  });
-
-  // ---------- Firma handlers
-  $("btnSaveFirma").addEventListener("click", ()=>{
-    firma = {
-      name: $("fName").value.trim(),
-      addr: $("fAddr").value.trim(),
-      email: $("fEmail").value.trim(),
-      tax: $("fTax").value.trim(),
-      iban: $("fIban").value.trim(),
-      bic: $("fBic").value.trim()
-    };
-    saveFirma();
-    renderFirmaPreview();
-    toast("Firma gespeichert ✅");
-  });
-
-  // ---------- Version badge (from version.txt) + auto reload on change
-  async function getVersion(){
-    const r = await fetch("./version.txt?ts=" + Date.now(), {cache:"no-store"});
-    return (await r.text()).trim();
-  }
-  async function initVersion(){
-    try{
-      const v = await getVersion();
-      $("ver").textContent = v || "v?";
-      // poll for changes
-      let last = v || "";
-      setInterval(async ()=>{
-        try{
-          const nv = await getVersion();
-          if(nv && last && nv !== last) location.reload();
-          last = nv || last;
-        }catch(e){}
-      }, 20000);
-    }catch(e){
-      $("ver").textContent = "no version";
-    }
-  }
-
-  // ---------- Init
-  loadAll();
-  refreshCounts();
-  hydrateFirmaToInputs();
-  hydrateInvoiceToInputs();
-  refreshCustomerSelect();
-  renderCustomers();
-  updatePreview();
-  initVersion();
-  setActivePage("rechnung");
-
-  // ---------- Utilities
-  function escapeHtml(s){
-    return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-  }
-  function escapeAttr(s){
-    return String(s||"").replaceAll('"',"&quot;");
-  }
-  function enc(s){ return encodeURIComponent(String(s??"")); }
-
   function toast(msg){
-    // lightweight toast
     let t = document.getElementById("toast");
     if(!t){
       t = document.createElement("div");
@@ -1074,80 +665,266 @@
     window.__t_toast = setTimeout(()=>{ t.style.opacity="0"; }, 1600);
   }
 
-  async function openPdfWithFallback(pdfUrl, meta){
-    // Try pdf.html in a new tab; if it exists it will open fine.
-    // If it doesn't exist, fallback to internal print template.
-    // We can't reliably detect 404 cross-window, so we provide a fallback button.
-    const w = window.open(pdfUrl, "_blank");
-    if(!w){
-      // popup blocked
-      fallbackPrint(meta);
-      return;
+  // Navigation
+  function setActivePage(page){
+    $("navRechnung").classList.toggle("active", page==="rechnung");
+    $("navKunden").classList.toggle("active", page==="kunden");
+    $("navFirma").classList.toggle("active", page==="firma");
+
+    $("pageRechnung").classList.toggle("hidden", page!=="rechnung");
+    $("pageKunden").classList.toggle("hidden", page!=="kunden");
+    $("pageFirma").classList.toggle("hidden", page!=="firma");
+
+    if(page==="rechnung"){
+      $("pageTitle").textContent="Rechnung";
+      $("pageSub").textContent="Automatisch: Tage × Std/Tag = Stunden • Stunden × €/h = Netto";
     }
-    // Also provide: if user sees blank, they can use Print fallback quickly:
-    setTimeout(()=>{
-      try{
-        // If user still wants fallback, show toast with instruction
-        toast("Wenn PDF leer ist: Cache Fix oder nochmal Open PDF");
-      }catch(e){}
-    }, 700);
+    if(page==="kunden"){
+      $("pageTitle").textContent="Kunden";
+      $("pageSub").textContent="Kunden lokal speichern und in Rechnung auswählen";
+    }
+    if(page==="firma"){
+      $("pageTitle").textContent="Firma";
+      $("pageSub").textContent="Absenderdaten lokal speichern (PDF/Print nutzt diese)";
+    }
   }
 
-  function fallbackPrint({c, hours, net}){
-    // Print template (keeps layout consistent; does not touch your external PDF template)
+  function refreshCounts(){
+    $("countKunden").textContent = String(customers.length);
+    $("countRechnungen").textContent = "1";
+    $("kundenHint").textContent = `${customers.length} Kunden`;
+  }
+
+  function getSelectedCustomer(){
+    const id = invoice.customerId || "";
+    if(!id) return null;
+    return customers.find(c=>c.id===id) || null;
+  }
+
+  function refreshCustomerSelect(){
+    const sel = $("customerSelect");
+    const current = invoice.customerId || "";
+    sel.innerHTML = `<option value="">— bitte wählen —</option>`;
+    customers.forEach(c=>{
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name || "(ohne Name)";
+      sel.appendChild(opt);
+    });
+    sel.value = current;
+  }
+
+  function renderCustomers(){
+    const box = $("kundenList");
+    box.innerHTML = "";
+    if(customers.length===0){
+      box.innerHTML = `<div class="hint">Noch keine Kunden gespeichert.</div>`;
+      return;
+    }
+    customers.forEach(c=>{
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <strong>${escapeHtml(c.name || "—")}</strong>
+        <small>${escapeHtml(c.addr || "")}</small>
+        <small><a class="link" href="mailto:${escapeAttr(c.email||"")}">${escapeHtml(c.email||"")}</a></small>
+        <div class="actions">
+          <button class="btn small primary" data-use="${c.id}">In Rechnung nutzen</button>
+          <button class="btn small danger" data-del="${c.id}">Löschen</button>
+        </div>
+      `;
+      box.appendChild(div);
+    });
+
+    box.querySelectorAll("[data-use]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.getAttribute("data-use");
+        invoice.customerId = id;
+        const c = customers.find(x=>x.id===id);
+        if(c?.email) invoice.customerEmail = c.email;
+        saveInvoice();
+        hydrateInvoiceToInputs();
+        refreshCustomerSelect();
+        updatePreview();
+        setActivePage("rechnung");
+      });
+    });
+    box.querySelectorAll("[data-del]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.getAttribute("data-del");
+        customers = customers.filter(x=>x.id!==id);
+        if(invoice.customerId===id) invoice.customerId="";
+        saveCustomers(); saveInvoice();
+        refreshCounts();
+        renderCustomers();
+        refreshCustomerSelect();
+        updatePreview();
+      });
+    });
+  }
+
+  // Firma
+  function hydrateFirmaToInputs(){
+    $("fName").value  = firma.name || "";
+    $("fAddr").value  = firma.addr || "";
+    $("fEmail").value = firma.email || "";
+    $("fTax").value   = firma.tax || "";
+    $("fIban").value  = firma.iban || "";
+    $("fBic").value   = firma.bic || "";
+    renderFirmaPreview();
+  }
+  function renderFirmaPreview(){
+    $("pfName").textContent = firma.name || "—";
+    $("pfAddr").textContent = firma.addr || "—";
+    $("pfIban").textContent = firma.iban || "—";
+    $("pfBic").textContent = firma.bic || "—";
+    $("pfTax").textContent = firma.tax ? firma.tax : "—";
+    const mail = $("pfEmail");
+    mail.textContent = firma.email || "—";
+    mail.href = firma.email ? "mailto:"+firma.email : "#";
+  }
+
+  // Invoice
+  function hydrateInvoiceToInputs(){
+    $("invNo").value        = invoice.no || "";
+    $("invDate").value      = invoice.date || "";
+    $("periodFrom").value   = invoice.from || "";
+    $("periodTo").value     = invoice.to || "";
+    $("dueDate").value      = invoice.due || "";
+    $("status").value       = invoice.status || "Entwurf";
+    $("serviceDesc").value  = invoice.serviceDesc || "";
+    $("days").value         = invoice.days || 0;
+    $("hoursPerDay").value  = invoice.hoursPerDay || 0;
+    $("hours").value        = invoice.hours || 0;
+    $("rate").value         = invoice.rate || 0;
+    $("customerEmail").value= invoice.customerEmail || "";
+
+    $("pdfDateHint").textContent = toDEDate($("invDate").value);
+  }
+
+  function readInputsToInvoice(){
+    invoice.no           = $("invNo").value.trim();
+    invoice.date         = $("invDate").value || "";
+    invoice.from         = $("periodFrom").value || "";
+    invoice.to           = $("periodTo").value || "";
+    invoice.due          = $("dueDate").value || "";
+    invoice.status       = $("status").value || "Entwurf";
+    invoice.customerId   = $("customerSelect").value || invoice.customerId || "";
+    invoice.customerEmail= $("customerEmail").value.trim();
+    invoice.serviceDesc  = $("serviceDesc").value.trim();
+    invoice.days         = Number($("days").value || 0);
+    invoice.hoursPerDay  = Number($("hoursPerDay").value || 0);
+    invoice.hours        = Number($("hours").value || 0);
+    invoice.rate         = Number($("rate").value || 0);
+
+    $("pdfDateHint").textContent = toDEDate(invoice.date);
+  }
+
+  function calcHours(){
+    const days = Number(invoice.days||0);
+    const hpd  = Number(invoice.hoursPerDay||0);
+    if(days > 0 && hpd > 0) return days*hpd;
+    return Number(invoice.hours||0);
+  }
+
+  function updatePreview(){
+    readInputsToInvoice();
+    const c = getSelectedCustomer();
+    const hours = calcHours();
+    const net = hours * Number(invoice.rate||0);
+    const period = (invoice.from && invoice.to) ? `${toDEDate(invoice.from)} – ${toDEDate(invoice.to)}` : "—";
+
+    $("pNo").textContent = invoice.no || "—";
+    $("pDate").textContent = toDEDate(invoice.date);
+    $("pStatus").textContent = invoice.status || "—";
+    $("pPeriod").textContent = period;
+
+    $("pCustomer").textContent = c?.name ? c.name : "—";
+    const mail = $("pCustomerMail");
+    mail.textContent = invoice.customerEmail || "—";
+    mail.href = invoice.customerEmail ? "mailto:"+invoice.customerEmail : "#";
+
+    $("pService").textContent = invoice.serviceDesc || "—";
+    $("pHours").textContent = fmtDE(hours);
+    $("pRate").textContent  = fmtDE(invoice.rate);
+    $("pNet").textContent   = euro(net);
+  }
+
+  // PDF/Print (format like your screenshot)
+  function openPdfPrint(){
+    readInputsToInvoice();
+    const c = getSelectedCustomer();
+    const hours = calcHours();
+    const net = hours * Number(invoice.rate||0);
+
+    const periodText = (invoice.from && invoice.to) ? `${toDEDate(invoice.from)} – ${toDEDate(invoice.to)}` : "";
     const f = firma || defaultFirma();
-    const cname = c ? (c.name||"") : "";
-    const caddr = c ? (c.addr||"") : "";
-    const cmail = invoice.customerEmail || "";
 
     const html = `
-<!doctype html><html><head><meta charset="utf-8"/>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Rechnung ${escapeHtml(invoice.no||"")}</title>
 <style>
-  body{font-family: Arial, system-ui; margin:18px; color:#111}
-  .top{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
-  h1{margin:0 0 8px; font-size:26px}
-  .box{border:1px solid #ddd; border-radius:12px; padding:12px; margin:10px 0}
-  .muted{color:#555; font-size:12px}
-  table{width:100%; border-collapse:collapse; margin-top:10px}
-  th,td{border-bottom:1px solid #eee; padding:8px; font-size:12px}
-  th{background:#fafafa; text-align:left; color:#444}
-  td.num{text-align:right; font-variant-numeric: tabular-nums}
-  .right{text-align:right}
-  a{color:#0b65ff; text-decoration:none}
-</style></head><body>
+  @page{ size:A4; margin:16mm; }
+  body{ font-family: Arial, system-ui; margin:0; color:#111; }
+  a{ color:#0b65ff; text-decoration:none; }
+  .top{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1{ margin:0; font-size:26px; }
+  .meta{ font-size:12px; color:#444; margin-top:6px; }
+  .company{ font-size:12px; color:#222; line-height:1.35; }
+  .company b{ font-size:16px; }
+  .kv{ margin-top:4px; display:flex; gap:6px; flex-wrap:wrap; align-items:baseline; }
+  .kv span{ font-weight:700; min-width:48px; }
+  .kv code{ font-family: ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.2px; }
+  .boxwrap{ display:flex; gap:14px; flex-wrap:wrap; margin:12px 0 10px; }
+  .box{ flex:1 1 320px; border:1px solid #e6e6e6; border-radius:10px; padding:10px 12px; }
+  .label{ font-size:12px; color:#666; margin-bottom:6px; }
+  .name{ font-weight:800; margin-bottom:2px; }
+  .addr,.mail{ font-size:12px; color:#222; margin-top:4px; }
+  table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+  th,td{ border-bottom:1px solid #eee; padding:8px 8px; vertical-align:top; }
+  th{ background:#fafafa; text-align:left; color:#444; font-weight:800; }
+  td.num, th.num{ text-align:right; font-variant-numeric: tabular-nums; }
+  .totals{ display:flex; justify-content:flex-end; margin-top:10px; }
+  .panel{ min-width:280px; border:1px solid #eee; border-radius:10px; padding:10px 12px; }
+  .trow{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px dashed #eee; font-size:12px; color:#444; }
+  .trow:last-child{ border-bottom:none; font-weight:900; color:#111; font-size:13px; }
+  .note{ margin-top:12px; font-size:11px; color:#444; line-height:1.35; }
+</style>
+</head>
+<body>
 
 <div class="top">
   <div>
     <h1>Rechnung</h1>
-    <div class="muted">Rechnungs-Nr: <b>${escapeHtml(invoice.no||"")}</b></div>
-    <div class="muted">Datum: <b>${escapeHtml(toDEDate(invoice.date))}</b></div>
-    <div class="muted">Zeitraum: <b>${escapeHtml((invoice.from&&invoice.to)?(toDEDate(invoice.from)+" – "+toDEDate(invoice.to)):"—")}</b></div>
+    <div class="meta">Rechnungs-Nr: <b>${escapeHtml(invoice.no||"")}</b> · Datum: <b>${escapeHtml(toDEDate(invoice.date))}</b>${periodText?` · Zeitraum: <b>${escapeHtml(periodText)}</b>`:""}</div>
   </div>
-  <div class="right">
+
+  <div class="company">
     <b>${escapeHtml(f.name||"")}</b><br/>
-    <span class="muted">${escapeHtml(f.addr||"")}</span><br/>
-    <span class="muted">E-Mail: <a href="mailto:${escapeAttr(f.email||"")}">${escapeHtml(f.email||"")}</a></span><br/>
-    <span class="muted">IBAN: ${escapeHtml(f.iban||"")}</span><br/>
-    <span class="muted">BIC: ${escapeHtml(f.bic||"")}</span>
+    ${escapeHtml(f.addr||"")}<br/>
+    <div class="kv"><span>E-Mail:</span> <a href="mailto:${escapeAttr(f.email||"")}">${escapeHtml(f.email||"")}</a></div>
+    <div class="kv"><span>IBAN:</span> <code>${escapeHtml(f.iban||"")}</code></div>
+    <div class="kv"><span>BIC:</span> <code>${escapeHtml(f.bic||"")}</code></div>
   </div>
 </div>
 
-<div class="box">
-  <div style="display:flex; gap:12px; flex-wrap:wrap">
-    <div style="flex:1 1 280px">
-      <div class="muted">Rechnung von</div>
-      <b>${escapeHtml(f.name||"")}</b><br/>
-      <span class="muted">${escapeHtml(f.addr||"")}</span><br/>
-      <span class="muted">E-Mail: <a href="mailto:${escapeAttr(f.email||"")}">${escapeHtml(f.email||"")}</a></span>
-    </div>
-    <div style="flex:1 1 280px">
-      <div class="muted">Rechnung an</div>
-      <b>${escapeHtml(cname||"—")}</b><br/>
-      <span class="muted">${escapeHtml(caddr||"")}</span><br/>
-      <span class="muted">E-Mail: <a href="mailto:${escapeAttr(cmail||"")}">${escapeHtml(cmail||"")}</a></span>
-    </div>
+<div class="boxwrap">
+  <div class="box">
+    <div class="label">Rechnung von</div>
+    <div class="name">${escapeHtml(f.name||"")}</div>
+    <div class="addr">${escapeHtml(f.addr||"")}</div>
+    <div class="mail">E-Mail: <a href="mailto:${escapeAttr(f.email||"")}">${escapeHtml(f.email||"")}</a></div>
+  </div>
+
+  <div class="box">
+    <div class="label">Rechnung an</div>
+    <div class="name">${escapeHtml(c?.name || "—")}</div>
+    <div class="addr">${escapeHtml(c?.addr || "")}</div>
+    <div class="mail">E-Mail: <a href="mailto:${escapeAttr(invoice.customerEmail||"")}">${escapeHtml(invoice.customerEmail||"")}</a></div>
   </div>
 </div>
 
@@ -1155,9 +932,9 @@
   <thead>
     <tr>
       <th>Leistung</th>
-      <th class="num">Stunden</th>
-      <th class="num">€/h</th>
-      <th class="num">Netto</th>
+      <th class="num">Menge (Std.)</th>
+      <th class="num">Preis (€/h)</th>
+      <th class="num">Netto (€)</th>
     </tr>
   </thead>
   <tbody>
@@ -1165,25 +942,321 @@
       <td>${escapeHtml(invoice.serviceDesc||"")}</td>
       <td class="num">${escapeHtml(fmtDE(hours))}</td>
       <td class="num">${escapeHtml(fmtDE(invoice.rate))}</td>
-      <td class="num">${escapeHtml(euro(net))}</td>
+      <td class="num">${escapeHtml(fmtDE(net))}</td>
     </tr>
   </tbody>
 </table>
 
-<div class="box right">
-  <div><b>Zu zahlen (Netto): ${escapeHtml(euro(net))}</b></div>
-  <div class="muted" style="margin-top:6px">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
+<div class="totals">
+  <div class="panel">
+    <div class="trow"><span>Summe Netto</span><span>${escapeHtml(fmtDE(net))} €</span></div>
+    <div class="trow"><span>Umsatzsteuer</span><span>0,00 €</span></div>
+    <div class="trow"><span>Zu zahlen</span><span>${escapeHtml(fmtDE(net))} €</span></div>
+  </div>
+</div>
+
+<div class="note">
+  Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).<br/>
+  Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.
 </div>
 
 <script>window.onload=()=>window.print();<\/script>
-</body></html>`;
+</body>
+</html>`;
 
     const w = window.open("", "_blank");
     if(!w){ alert("Popup blockiert. Bitte erlauben."); return; }
     w.document.open(); w.document.write(html); w.document.close();
   }
 
+  // Buttons
+  $("btnSave").addEventListener("click", ()=>{ updatePreview(); saveInvoice(); toast("Gespeichert ✅"); });
+
+  $("btnExport").addEventListener("click", ()=>{
+    updatePreview();
+    const payload = {
+      meta:{app:"MasculineSecurity", version: $("ver").textContent || ""},
+      exportedAt: new Date().toISOString(),
+      firma, customers, invoice
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `ms-backup-${Date.now()}.json`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  });
+
+  $("btnImport").addEventListener("click", ()=> $("fileImport").click());
+  $("fileImport").addEventListener("change", async (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    try{
+      const txt = await file.text();
+      const data = JSON.parse(txt);
+      if(data.firma) firma = data.firma;
+      if(Array.isArray(data.customers)) customers = data.customers;
+      if(data.invoice) invoice = data.invoice;
+
+      saveFirma(); saveCustomers(); saveInvoice();
+      refreshCounts();
+      hydrateFirmaToInputs();
+      hydrateInvoiceToInputs();
+      refreshCustomerSelect();
+      renderCustomers();
+      updatePreview();
+      toast("Import ok ✅");
+    }catch(err){
+      toast("Import error ❌");
+    }finally{
+      e.target.value="";
+    }
+  });
+
+  $("btnOpenPdf").addEventListener("click", openPdfPrint);
+
+  $("btnCacheFix").addEventListener("click", async ()=>{
+    try{
+      if("serviceWorker" in navigator){
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r=>r.unregister()));
+      }
+      if("caches" in window){
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k=>caches.delete(k)));
+      }
+      const u = new URL(location.href);
+      u.searchParams.set("v", String(Date.now()));
+      location.replace(u.toString());
+    }catch(e){
+      location.reload();
+    }
+  });
+
+  // Nav
+  $("navRechnung").addEventListener("click", ()=>setActivePage("rechnung"));
+  $("navKunden").addEventListener("click", ()=>setActivePage("kunden"));
+  $("navFirma").addEventListener("click", ()=>setActivePage("firma"));
+
+  // Live update
+  [
+    "invNo","invDate","periodFrom","periodTo","dueDate","status","customerEmail",
+    "serviceDesc","days","hoursPerDay","hours","rate"
+  ].forEach(id=>{
+    $(id).addEventListener("input", updatePreview);
+    $(id).addEventListener("change", updatePreview);
+  });
+
+  $("customerSelect").addEventListener("change", ()=>{
+    invoice.customerId = $("customerSelect").value || "";
+    const c = getSelectedCustomer();
+    if(c?.email) $("customerEmail").value = c.email;
+    updatePreview();
+    saveInvoice();
+  });
+
+  // Kunden
+  $("btnAddCustomer").addEventListener("click", ()=>{
+    const name = $("cName").value.trim();
+    const email = $("cEmail").value.trim();
+    const addr = $("cAddr").value.trim();
+    if(!name){ toast("Name fehlt ❗"); return; }
+    const id = "c_" + Math.random().toString(36).slice(2,10);
+    customers.unshift({id, name, email, addr});
+    saveCustomers();
+    refreshCounts();
+    renderCustomers();
+    refreshCustomerSelect();
+    $("cName").value=""; $("cEmail").value=""; $("cAddr").value="";
+    toast("Kunde gespeichert ✅");
+  });
+
+  $("btnClearCustomers").addEventListener("click", ()=>{
+    customers = [];
+    invoice.customerId = "";
+    saveCustomers(); saveInvoice();
+    refreshCounts();
+    renderCustomers();
+    refreshCustomerSelect();
+    updatePreview();
+    toast("Kunden gelöscht ✅");
+  });
+
+  // Firma save
+  $("btnSaveFirma").addEventListener("click", ()=>{
+    firma = {
+      name: $("fName").value.trim(),
+      addr: $("fAddr").value.trim(),
+      email: $("fEmail").value.trim(),
+      tax: $("fTax").value.trim(),
+      iban: $("fIban").value.trim(),
+      bic: $("fBic").value.trim()
+    };
+    saveFirma();
+    renderFirmaPreview();
+    toast("Firma gespeichert ✅");
+  });
+
+  // Version + auto reload when version.txt changes
+  async function getVersion(){
+    const r = await fetch("./version.txt?ts=" + Date.now(), {cache:"no-store"});
+    return (await r.text()).trim();
+  }
+  async function initVersion(){
+    try{
+      const v = await getVersion();
+      $("ver").textContent = v || "v?";
+      let last = v || "";
+      setInterval(async ()=>{
+        try{
+          const nv = await getVersion();
+          if(nv && last && nv !== last) location.reload();
+          last = nv || last;
+        }catch(e){}
+      }, 20000);
+    }catch(e){
+      $("ver").textContent = "no version";
+    }
+  }
+
+  // SW register (helps offline, but we control cache safely)
+  async function initSW(){
+    try{
+      if("serviceWorker" in navigator){
+        const reg = await navigator.serviceWorker.register("./service-worker.js?ts=" + Date.now());
+        try{ await reg.update(); }catch(e){}
+        navigator.serviceWorker.addEventListener("controllerchange", ()=>location.reload());
+      }
+    }catch(e){}
+  }
+
+  // Init
+  loadAll();
+  refreshCounts();
+  hydrateFirmaToInputs();
+  hydrateInvoiceToInputs();
+  refreshCustomerSelect();
+  renderCustomers();
+  updatePreview();
+  initVersion();
+  initSW();
+  setActivePage("rechnung");
 })();
 </script>
 </body>
 </html>
+
+========================
+FILE 2: service-worker.js
+========================
+/*
+  SAFE CACHE (fix GitHub/Netlify old version):
+  - index.html: network-first (always newest)
+  - assets: cache-first
+  - auto delete old caches
+*/
+const CACHE_VERSION = "ms-cache-v10";
+const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
+
+const STATIC_ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./version.txt",
+  "./service-worker.js"
+];
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys.map(k => (k.startsWith("ms-cache-") && !k.startsWith(CACHE_VERSION)) ? caches.delete(k) : null)
+    );
+    await self.clients.claim();
+  })());
+});
+
+async function networkFirst(request){
+  try{
+    const fresh = await fetch(request, { cache: "no-store" });
+    const cache = await caches.open(RUNTIME_CACHE);
+    cache.put(request, fresh.clone());
+    return fresh;
+  }catch(e){
+    const cached = await caches.match(request);
+    return cached || new Response("Offline", { status: 503 });
+  }
+}
+async function cacheFirst(request){
+  const cached = await caches.match(request);
+  if(cached) return cached;
+  const fresh = await fetch(request);
+  const cache = await caches.open(RUNTIME_CACHE);
+  cache.put(request, fresh.clone());
+  return fresh;
+}
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  const url = new URL(req.url);
+
+  if(url.origin !== location.origin) return;
+
+  // HTML => always latest
+  if(req.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")){
+    event.respondWith(networkFirst(req));
+    return;
+  }
+
+  // others
+  event.respondWith(cacheFirst(req));
+});
+
+========================
+FILE 3: manifest.json
+========================
+{
+  "name": "Masculine Security Rechnung",
+  "short_name": "MS Rechnung",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#071225",
+  "theme_color": "#0b1220",
+  "icons": []
+}
+
+========================
+FILE 4: version.txt
+========================
+v10
+
+========================
+FILE 5 (optional but recommended): netlify.toml
+========================
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
+    Pragma = "no-cache"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
+    Pragma = "no-cache"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
