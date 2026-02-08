@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Office</title>
+  <title>Masculine Security — Rechnung</title>
 
   <style>
     :root{
       --bg:#081021;
       --panel:#0c1830;
       --card:#0f2342;
-      --card2:#0d1f3b;
       --line:#1b355f;
       --text:#eaf1ff;
       --muted:#9bb0d3;
@@ -18,8 +17,8 @@
       --accent2:#2bd4bd;
       --danger:#ff4d6d;
 
-      --r:16px;
-      --r2:12px;
+      --r:18px;
+      --r2:14px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
 
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -41,6 +40,8 @@
       min-height:100vh;
       gap:16px;
       padding:16px;
+      max-width: 1400px;
+      margin:0 auto;
     }
 
     /* Sidebar */
@@ -53,7 +54,7 @@
       overflow:hidden;
     }
     .brand{
-      padding:16px 16px 12px 16px;
+      padding:16px;
       border-bottom:1px solid rgba(155,176,211,.10);
       display:flex;
       gap:12px;
@@ -64,20 +65,11 @@
       display:grid;place-items:center;
       background:linear-gradient(135deg, rgba(58,166,255,.22), rgba(43,212,189,.18));
       border:1px solid rgba(155,176,211,.15);
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.5px;
     }
-    .brand h1{
-      margin:0;
-      font-size:14px;
-      line-height:1.2;
-      font-weight:800;
-    }
-    .brand .sub{
-      margin-top:2px;
-      font-size:12px;
-      color:var(--muted);
-    }
+    .brand h1{margin:0;font-size:14px;line-height:1.2;font-weight:900}
+    .brand .sub{margin-top:2px;font-size:12px;color:var(--muted)}
 
     .nav{
       padding:10px;
@@ -98,7 +90,7 @@
       align-items:center;
       justify-content:space-between;
       transition:.15s ease;
-      font-weight:700;
+      font-weight:800;
     }
     .nav button:hover{
       background:rgba(58,166,255,.10);
@@ -121,7 +113,7 @@
       background:rgba(155,176,211,.12);
       border:1px solid rgba(155,176,211,.18);
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
     }
 
     /* Main */
@@ -141,22 +133,17 @@
       align-items:center;
       justify-content:space-between;
       gap:10px;
+      flex-wrap:wrap;
     }
     .titlewrap{
       display:flex;
       flex-direction:column;
       gap:4px;
       padding-left:6px;
+      min-width: 240px;
     }
-    .titlewrap .t{
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .titlewrap .m{
-      font-size:12px;
-      color:var(--muted);
-    }
+    .titlewrap .t{font-size:14px;font-weight:900;letter-spacing:.2px}
+    .titlewrap .m{font-size:12px;color:var(--muted)}
     .actions{
       display:flex;
       gap:10px;
@@ -170,11 +157,12 @@
       padding:10px 12px;
       border-radius:14px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       transition:.15s ease;
       display:inline-flex;
       align-items:center;
       gap:8px;
+      user-select:none;
     }
     .btn:hover{transform:translateY(-1px); border-color:rgba(58,166,255,.25); background:rgba(16,32,58,.70)}
     .btn.primary{
@@ -193,7 +181,6 @@
       color:#1a070b;
     }
 
-    /* Content card */
     .content{
       background:linear-gradient(180deg, rgba(12,24,48,.72), rgba(8,16,33,.72));
       border:1px solid rgba(155,176,211,.12);
@@ -207,6 +194,7 @@
       display:grid;
       grid-template-columns: 1.1fr .9fr;
       gap:14px;
+      align-items:start;
     }
     @media (max-width: 1100px){
       .layout{flex-direction:column}
@@ -233,24 +221,19 @@
       color:var(--muted);
     }
 
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .row3{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:10px;
-    }
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
     .row1{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (max-width: 700px){
+      .row,.row3{grid-template-columns:1fr}
+    }
 
     label{
       font-size:12px;
       color:var(--muted);
       display:block;
       margin:0 0 6px 2px;
-      font-weight:700;
+      font-weight:800;
     }
     input, textarea, select{
       width:100%;
@@ -261,7 +244,7 @@
       color:var(--text);
       outline:none;
       transition:.15s ease;
-      font-weight:700;
+      font-weight:800;
     }
     textarea{min-height:92px; resize:vertical}
     input:focus, textarea:focus, select:focus{
@@ -270,10 +253,12 @@
     }
     .small{font-size:12px;color:var(--muted); margin-top:6px}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
     .pill{
-      display:inline-flex;
+      display:flex;
       align-items:center;
-      gap:8px;
+      justify-content:space-between;
+      gap:10px;
       padding:10px 12px;
       border-radius:16px;
       border:1px solid rgba(155,176,211,.16);
@@ -302,11 +287,7 @@
       min-height:360px;
     }
 
-    .klist{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+    .klist{display:flex;flex-direction:column;gap:10px}
     .kitem{
       border:1px solid rgba(155,176,211,.12);
       background:rgba(6,12,24,.35);
@@ -317,16 +298,14 @@
       gap:10px;
       align-items:flex-start;
     }
-    .kmeta{
-      display:flex; flex-direction:column; gap:3px;
-    }
+    .kmeta{display:flex; flex-direction:column; gap:3px}
     .kmeta .kn{font-weight:900}
     .kmeta .ka{font-size:12px; color:var(--muted); white-space:pre-line}
     .kmeta .ke a{color:var(--text); text-decoration:underline}
     .kbtns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
     .kbtns .btn{padding:8px 10px; border-radius:12px; font-weight:900}
 
-    /* No footer at all (0) */
+    /* No footer on screen (as requested footer=0) */
   </style>
 </head>
 <body>
@@ -358,7 +337,7 @@
     <div class="topbar">
       <div class="titlewrap">
         <div class="t" id="top_title">Rechnung</div>
-        <div class="m" id="top_meta">Automatic: Tage × Std/Tag = Stunden • Stunden × €/h = Netto</div>
+        <div class="m" id="top_meta">Auto: Tage × Std/Tag = Stunden • Stunden × €/h = Netto</div>
       </div>
 
       <div class="actions">
@@ -376,7 +355,7 @@
       <div id="page_rechnung" class="grid">
         <div class="card">
           <h2>Rechnung erstellen / bearbeiten</h2>
-          <p class="hint">Datum-Format im PDF: <b>DD.MM.YYYY</b> (z.B. 07.02.2026) • E-Mail oben & bei Kunde ist klickbar.</p>
+          <p class="hint">PDF Datum-Format: <b>DD.MM.YYYY</b> (z.B. 07.02.2026) • E-Mail (Firma & Kunde) klickbar.</p>
 
           <div class="row">
             <div>
@@ -430,13 +409,13 @@
 
           <div class="row1">
             <div>
-              <label>Leistungsbeschreibung (10% writing)</label>
+              <label>Leistungsbeschreibung</label>
               <input id="inv_desc" placeholder="Sicherheitsdienstleistung – Objektbewachung">
             </div>
           </div>
 
           <div class="card" style="margin-top:12px;background:linear-gradient(180deg, rgba(10,24,48,.65), rgba(8,18,36,.65));">
-            <h2 style="margin-bottom:6px">Automatisch (90%)</h2>
+            <h2 style="margin-bottom:6px">Automatisch</h2>
             <p class="hint" style="margin-top:0">Trage <b>Tage</b>, <b>Std/Tag</b> und <b>€/h</b> ein. Stunden & Netto werden automatisch berechnet.</p>
 
             <div class="row3">
@@ -478,7 +457,7 @@
 
         <div class="preview">
           <div class="previewHead">
-            <div class="pTitle">Vorschau (Auto)</div>
+            <div class="pTitle">Vorschau</div>
             <div class="small" id="preview_sum">0,00 €</div>
           </div>
           <div class="previewBody" id="preview_body">
@@ -492,7 +471,7 @@
         <div class="grid">
           <div class="card">
             <h2>Kunden speichern</h2>
-            <p class="hint">Du kannst Kunden speichern und später auswählen (wichtig für Rechnungen in 1 Jahr).</p>
+            <p class="hint">Kunden werden gespeichert (für Rechnungen später / nächstes Jahr).</p>
 
             <div class="row1">
               <div>
@@ -530,7 +509,7 @@
         <div class="grid">
           <div class="card">
             <h2>Firma (Speichern)</h2>
-            <p class="hint">Diese Daten werden für PDF genutzt. E-Mail wird im PDF klickbar.</p>
+            <p class="hint">Firmadaten werden im PDF genutzt. Steuernummer optional. E-Mail klickbar.</p>
 
             <div class="row1">
               <div>
@@ -544,12 +523,12 @@
 
               <div class="row">
                 <div>
-                  <label>E-Mail (oben im PDF)</label>
+                  <label>E-Mail</label>
                   <input id="f_email" placeholder="kontakt.mass.bremen@hotmail.com">
                 </div>
                 <div>
                   <label>Steuernummer (optional)</label>
-                  <input id="f_tax" placeholder="Steuernummer">
+                  <input id="f_tax" placeholder="z.B. 12/345/67890">
                 </div>
               </div>
 
@@ -577,15 +556,15 @@
           </div>
 
           <div class="card">
-            <h2>Backup Tipp</h2>
+            <h2>Backup</h2>
             <p class="hint">
-              GitHub Pages / Browser Cache kann alte Version zeigen. Nutze <b>Cache Fix</b> oben
-              oder öffne Seite im Inkognito. Außerdem: Export JSON speichern als Backup.
+              Für sichere Aufbewahrung: Export JSON speichern (USB/Drive).
+              Falls Browser-Daten gelöscht werden, kannst du Import JSON nutzen.
             </p>
             <div class="pill">
               <div style="display:flex;flex-direction:column;gap:4px">
-                <div class="small">Auto-Save</div>
-                <div style="font-weight:900">localStorage (dauerhaft im Browser)</div>
+                <div class="small">Speicher</div>
+                <div style="font-weight:900">localStorage (im Browser)</div>
               </div>
             </div>
           </div>
@@ -598,31 +577,28 @@
 
 <script>
 /* =========================================================
-   IMPORTANT: Disable old Service Worker (cache problems)
+   Cache Fix (Service Worker unregister)
    ========================================================= */
 async function disableServiceWorker() {
   try {
     if (!('serviceWorker' in navigator)) return;
     const regs = await navigator.serviceWorker.getRegistrations();
     for (const r of regs) await r.unregister();
-    // Clear CacheStorage (optional)
     if (window.caches) {
       const keys = await caches.keys();
       for (const k of keys) await caches.delete(k);
     }
   } catch (e) {}
 }
-
-/* Button "Cache Fix" */
 async function clearAppCache(){
   await disableServiceWorker();
-  alert("Cache Fix gemacht ✅\n\n1) Seite neu laden (STRG+F5)\n2) Wenn GitHub Pages noch alt: Inkognito öffnen.");
+  alert("Cache Fix ✅\n\n1) STRG+F5\n2) Oder Inkognito öffnen\n3) Bei Netlify: reload");
 }
 
 /* =========================================================
    Storage
    ========================================================= */
-const LS_KEY = "ms_office_v1";
+const LS_KEY = "ms_rechnung_v2";
 const defaultState = {
   firma: {
     company: "Masculine Security",
@@ -664,7 +640,6 @@ function todayISO(){
 function pad2(n){ return String(n).padStart(2,"0"); }
 function formatDateDE(value){
   if(!value) return "";
-  // accept ISO yyyy-mm-dd
   if(typeof value==="string" && /^\d{4}-\d{2}-\d{2}$/.test(value)){
     const [y,m,d]=value.split("-").map(Number);
     return `${pad2(d)}.${pad2(m)}.${y}`;
@@ -699,7 +674,6 @@ function loadState(){
     const raw = localStorage.getItem(LS_KEY);
     if(!raw) return structuredClone(defaultState);
     const obj = JSON.parse(raw);
-    // merge with defaults (simple)
     return {
       ...structuredClone(defaultState),
       ...obj,
@@ -736,7 +710,7 @@ function go(page){
 
   document.getElementById("top_title").textContent = page==="rechnung" ? "Rechnung" : (page==="kunden" ? "Kunden" : "Firma");
   document.getElementById("top_meta").textContent  = page==="rechnung"
-    ? "Automatic: Tage × Std/Tag = Stunden • Stunden × €/h = Netto"
+    ? "Auto: Tage × Std/Tag = Stunden • Stunden × €/h = Netto"
     : (page==="kunden"
       ? "Kunden speichern, auswählen, später wiederverwenden"
       : "Firmadaten für PDF und Rechnung");
@@ -745,7 +719,7 @@ function go(page){
 }
 
 /* =========================================================
-   UI -> State
+   UI <-> State
    ========================================================= */
 function pullUIToState(){
   // Firma
@@ -773,16 +747,12 @@ function pullUIToState(){
   state.invoice.auto.hpd  = Number(document.getElementById("auto_hours_per_day").value||0);
   state.invoice.auto.rate = Number(document.getElementById("auto_rate").value||0);
 
-  // If customer selected, sync email if empty or if customer has email
+  // If customer selected, sync email
   const sel = state.kunden.find(k=>k.id===state.invoice.customerId);
-  if(sel){
-    if(!state.invoice.customerEmail) state.invoice.customerEmail = sel.email || "";
+  if(sel && !state.invoice.customerEmail){
+    state.invoice.customerEmail = sel.email || "";
   }
 }
-
-/* =========================================================
-   State -> UI
-   ========================================================= */
 function pushStateToUI(){
   // Firma
   document.getElementById("f_company").value = state.firma.company || "";
@@ -806,12 +776,10 @@ function pushStateToUI(){
   document.getElementById("auto_hours_per_day").value = state.invoice.auto.hpd || "";
   document.getElementById("auto_rate").value = state.invoice.auto.rate || "";
 
-  // Kunden select
   renderCustomerSelect();
   document.getElementById("inv_customer_id").value = state.invoice.customerId || "";
   document.getElementById("inv_customer_email").value = state.invoice.customerEmail || "";
 
-  // Date preview
   document.getElementById("inv_date_de").textContent = formatDateDE(state.invoice.date) || "—";
 }
 
@@ -833,9 +801,7 @@ function addOrUpdateCustomer(){
 
   if(editingCustomerId){
     const i = state.kunden.findIndex(k=>k.id===editingCustomerId);
-    if(i>=0){
-      state.kunden[i] = { ...state.kunden[i], name, addr, email };
-    }
+    if(i>=0) state.kunden[i] = { ...state.kunden[i], name, addr, email };
   }else{
     state.kunden.unshift({ id: uid(), name, addr, email, createdAt: new Date().toISOString() });
   }
@@ -955,26 +921,26 @@ function renderPreview(){
       <div><b>Datum:</b> ${esc(formatDateDE(state.invoice.date)||"—")}</div>
       <div><b>Zeitraum:</b> ${esc(period)}</div>
       <div><b>Status:</b> ${esc(state.invoice.status||"")}</div>
-      <div class="line" style="border-top:1px solid rgba(155,176,211,.18); margin:10px 0"></div>
+      <div style="border-top:1px solid rgba(155,176,211,.18); margin:10px 0"></div>
       <div><b>Kunde:</b> ${esc(custName)}</div>
       <div><b>Kunde E-Mail:</b> ${esc(state.invoice.customerEmail||"—")}</div>
-      <div class="line" style="border-top:1px solid rgba(155,176,211,.18); margin:10px 0"></div>
+      <div style="border-top:1px solid rgba(155,176,211,.18); margin:10px 0"></div>
       <div><b>Leistung:</b> ${esc(state.invoice.desc||"")}</div>
       <div><b>Stunden:</b> ${numDE(hours)} • <b>€/h:</b> ${eur(rate)} • <b>Netto:</b> ${eur(net)}</div>
-      <div class="small">Hinweis: Diese Vorschau ist nur für App — PDF wird über “Open PDF (Print)” erzeugt.</div>
     </div>
   `;
 }
 
 /* =========================================================
-   PDF Export (clickable emails)
-   - No footer (0)
-   - No "Mini Office"
-   - Date appears once (not 3 times)
+   PDF Export
+   - FIXED TOP RIGHT (compact spacing)
+   - Email clickable (Firma & Kunde)
+   - No footer
+   - Date appears once
    ========================================================= */
 function openPDF(){
   pullUIToState();
-  saveState(); // keep it safe
+  saveState();
   const {hours, net, rate} = calcAuto();
 
   const f = state.firma;
@@ -995,20 +961,38 @@ function openPDF(){
 <style>
   @page{margin:12mm}
   body{font-family:Arial,Helvetica,sans-serif;color:#111}
-  /* no footer at all */
   a{color:#111;text-decoration:underline}
   .wrap{padding:0}
-  .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+
+  .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
   .h1{font-size:32px;font-weight:900;margin:0 0 6px 0}
-  .meta{font-size:12px;line-height:1.45}
-  .right{font-size:12px;line-height:1.45;text-align:right}
+
+  .meta{font-size:12px;line-height:1.35}
+  .meta div{margin:0 0 2px 0}
+
+  /* ✅ FIX: TOP RIGHT COMPACT (your request) */
+  .invoice-top-right{
+    text-align:right;
+    font-size:13px;
+    line-height:1.35;
+    max-width:300px;
+  }
+  .invoice-top-right strong{
+    display:block;
+    font-size:15px;
+    margin-bottom:2px;
+  }
+  .invoice-top-right .rline{margin:0; padding:0}
+
   .boxrow{display:flex;gap:12px;margin-top:14px}
   .box{flex:1;border:1px solid #bbb;padding:10px;min-height:70px}
   .box b{display:block;margin-bottom:6px}
+
   table{width:100%;border-collapse:collapse;margin-top:14px}
   th,td{border-bottom:1px solid #ddd;padding:8px;font-size:12px}
   th{font-weight:800;text-align:left}
   .r{text-align:right}
+
   .sumrow{display:flex;gap:12px;margin-top:14px}
   .sumrow .box{min-height:auto}
   .big{font-size:18px;font-weight:900}
@@ -1029,13 +1013,13 @@ function openPDF(){
       </div>
     </div>
 
-    <div class="right">
-      <div><b>${esc(f.company||"")}</b></div>
-      <div class="muted">${esc((f.addr||"").split("\n")[0]||"")}</div>
-      <div class="muted">${esc((f.addr||"").split("\n")[1]||"")}</div>
-      ${f.email?`<div>E-Mail: ${emailLink(f.email)}</div>`:""}
-      ${f.tax?`<div>Steuernummer: ${esc(f.tax)}</div>`:""}
-      ${invoiceDate?`<div><b>Datum:</b> ${esc(invoiceDate)}</div>`:""}
+    <!-- ✅ FIXED TOP RIGHT BLOCK -->
+    <div class="invoice-top-right">
+      <strong>${esc(f.company||"")}</strong>
+      ${f.addr ? f.addr.split("\\n").map(line=>`<div class="rline">${esc(line)}</div>`).join("") : ""}
+      ${f.email?`<div class="rline">E-Mail: ${emailLink(f.email)}</div>`:""}
+      ${f.tax?`<div class="rline">Steuernummer: ${esc(f.tax)}</div>`:""}
+      ${invoiceDate?`<div class="rline"><b>Datum:</b> ${esc(invoiceDate)}</div>`:""}
     </div>
   </div>
 
@@ -1091,7 +1075,6 @@ function openPDF(){
 
 </div>
 <script>
-  // Auto print
   setTimeout(()=>window.print(), 250);
 <\/script>
 </body>
@@ -1104,7 +1087,7 @@ function openPDF(){
 }
 
 /* =========================================================
-   Export/Import JSON (backup for 1 year later)
+   Export/Import JSON
    ========================================================= */
 function exportJSON(){
   pullUIToState();
@@ -1112,7 +1095,7 @@ function exportJSON(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `ms-office-backup-${todayISO()}.json`;
+  a.download = `ms-rechnung-backup-${todayISO()}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1128,7 +1111,6 @@ function importJSON(){
     const text = await file.text();
     try{
       const obj = JSON.parse(text);
-      // minimal validation
       state = {
         ...structuredClone(defaultState),
         ...obj,
@@ -1147,7 +1129,7 @@ function importJSON(){
 }
 
 /* =========================================================
-   Render / Badges
+   Badges + Render
    ========================================================= */
 function refreshBadges(){
   document.getElementById("badge_kunden").textContent = String(state.kunden.length);
@@ -1162,28 +1144,30 @@ function renderAll(){
 }
 
 /* =========================================================
-   Events (auto save + calc)
+   Events (auto-save)
    ========================================================= */
 function wireAutoSave(){
   const ids = [
-    // firma
     "f_company","f_addr","f_email","f_tax","f_iban","f_bic","f_hint",
-    // invoice
     "inv_no","inv_date","inv_von","inv_bis","inv_due","inv_status","inv_customer_id","inv_customer_email","inv_desc",
     "auto_days","auto_hours_per_day","auto_rate"
   ];
+
   ids.forEach(id=>{
     const el=document.getElementById(id);
     if(!el) return;
+
     el.addEventListener("input", ()=>{
       pullUIToState();
       saveState();
       renderPreview();
-      if(id==="inv_date") document.getElementById("inv_date_de").textContent = formatDateDE(state.invoice.date) || "—";
+      if(id==="inv_date"){
+        document.getElementById("inv_date_de").textContent = formatDateDE(state.invoice.date) || "—";
+      }
     });
+
     el.addEventListener("change", ()=>{
       pullUIToState();
-      // If customer changed, auto fill email from customer
       if(id==="inv_customer_id"){
         const sel = state.kunden.find(k=>k.id===state.invoice.customerId);
         if(sel){
@@ -1216,18 +1200,12 @@ function fillDemo(){
    Init
    ========================================================= */
 (async function init(){
-  // Fix cache (if service worker exists from older versions)
   await disableServiceWorker();
-
-  // Initial render
   renderAll();
   wireAutoSave();
-
-  // Default page
   go("rechnung");
 })();
 </script>
 
 </body>
 </html>
-```0
