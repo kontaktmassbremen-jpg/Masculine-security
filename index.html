@@ -1,6 +1,3 @@
-========================
-FILE 1: index.html
-========================
 <!doctype html>
 <html lang="de">
 <head>
@@ -8,7 +5,6 @@ FILE 1: index.html
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Masculine Security — Rechnung</title>
   <meta name="theme-color" content="#0b1220"/>
-  <link rel="manifest" href="manifest.json"/>
 
   <style>
     :root{
@@ -24,7 +20,6 @@ FILE 1: index.html
       --warn:#ffce54;
       --bad:#ff4d6d;
       --r:16px;
-      --r2:12px;
       --shadow:0 18px 50px rgba(0,0,0,.35);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -55,7 +50,6 @@ FILE 1: index.html
       .app{grid-template-columns:1fr; height:auto}
     }
 
-    /* Sidebar */
     .sidebar{
       background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.08);
@@ -113,7 +107,6 @@ FILE 1: index.html
       font-family:var(--mono);
     }
 
-    /* Main */
     .main{
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.08);
@@ -217,7 +210,6 @@ FILE 1: index.html
     .hint{font-size:12px;color:var(--muted); margin-top:8px}
     .sep{height:10px}
 
-    /* Preview */
     .preview{
       border:1px solid rgba(255,255,255,.08);
       border-radius:14px;
@@ -255,7 +247,6 @@ FILE 1: index.html
 <body>
   <div class="app">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sb-top">
         <div class="sb-logo">MS</div>
@@ -281,10 +272,8 @@ FILE 1: index.html
       </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
 
-      <!-- TOPBAR -->
       <div class="topbar">
         <div class="top-left">
           <strong id="pageTitle">Rechnung</strong>
@@ -294,7 +283,7 @@ FILE 1: index.html
         <div class="btns">
           <span class="pill"><span class="dot good"></span>Deploy: Auto</span>
           <span class="pill"><span class="dot warn"></span>Cache: Controlled</span>
-          <span class="pill">Version: <b class="mono" id="ver">…</b></span>
+          <span class="pill">Version: <b class="mono" id="ver">v4</b></span>
 
           <button class="btn primary" id="btnExport" type="button">Export JSON</button>
           <button class="btn" id="btnImport" type="button">Import JSON</button>
@@ -306,10 +295,9 @@ FILE 1: index.html
         </div>
       </div>
 
-      <!-- CONTENT -->
       <div class="content">
 
-        <!-- PAGE: RECHNUNG -->
+        <!-- RECHNUNG -->
         <section id="pageRechnung">
           <div class="grid">
             <div class="card">
@@ -460,7 +448,7 @@ FILE 1: index.html
           </div>
         </section>
 
-        <!-- PAGE: KUNDEN -->
+        <!-- KUNDEN -->
         <section id="pageKunden" class="hidden">
           <div class="grid" style="grid-template-columns: .95fr 1.05fr;">
             <div class="card">
@@ -503,7 +491,7 @@ FILE 1: index.html
           </div>
         </section>
 
-        <!-- PAGE: FIRMA -->
+        <!-- FIRMA -->
         <section id="pageFirma" class="hidden">
           <div class="grid" style="grid-template-columns: .95fr 1.05fr;">
             <div class="card">
@@ -577,12 +565,10 @@ FILE 1: index.html
 (() => {
   const $ = (id)=>document.getElementById(id);
 
-  // Storage keys
-  const K_CUSTOMERS = "ms_customers_v2";
-  const K_FIRMA     = "ms_firma_v2";
-  const K_INVOICE   = "ms_invoice_v2";
+  const K_CUSTOMERS = "ms_customers_v4";
+  const K_FIRMA     = "ms_firma_v4";
+  const K_INVOICE   = "ms_invoice_v4";
 
-  // helpers
   const pad2 = (x)=>String(x).padStart(2,"0");
   const fmtDE = (n)=>Number(n||0).toLocaleString("de-DE",{minimumFractionDigits:2, maximumFractionDigits:2});
   const euro = (n)=>fmtDE(n) + " €";
@@ -595,7 +581,6 @@ FILE 1: index.html
   const escapeHtml = (s)=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
   const escapeAttr = (s)=>String(s??"").replaceAll('"',"&quot;");
 
-  // state
   let customers = [];
   let firma = null;
   let invoice = null;
@@ -665,7 +650,6 @@ FILE 1: index.html
     window.__t_toast = setTimeout(()=>{ t.style.opacity="0"; }, 1600);
   }
 
-  // Navigation
   function setActivePage(page){
     $("navRechnung").classList.toggle("active", page==="rechnung");
     $("navKunden").classList.toggle("active", page==="kunden");
@@ -763,7 +747,6 @@ FILE 1: index.html
     });
   }
 
-  // Firma
   function hydrateFirmaToInputs(){
     $("fName").value  = firma.name || "";
     $("fAddr").value  = firma.addr || "";
@@ -773,6 +756,7 @@ FILE 1: index.html
     $("fBic").value   = firma.bic || "";
     renderFirmaPreview();
   }
+
   function renderFirmaPreview(){
     $("pfName").textContent = firma.name || "—";
     $("pfAddr").textContent = firma.addr || "—";
@@ -784,7 +768,6 @@ FILE 1: index.html
     mail.href = firma.email ? "mailto:"+firma.email : "#";
   }
 
-  // Invoice
   function hydrateInvoiceToInputs(){
     $("invNo").value        = invoice.no || "";
     $("invDate").value      = invoice.date || "";
@@ -798,7 +781,6 @@ FILE 1: index.html
     $("hours").value        = invoice.hours || 0;
     $("rate").value         = invoice.rate || 0;
     $("customerEmail").value= invoice.customerEmail || "";
-
     $("pdfDateHint").textContent = toDEDate($("invDate").value);
   }
 
@@ -816,7 +798,6 @@ FILE 1: index.html
     invoice.hoursPerDay  = Number($("hoursPerDay").value || 0);
     invoice.hours        = Number($("hours").value || 0);
     invoice.rate         = Number($("rate").value || 0);
-
     $("pdfDateHint").textContent = toDEDate(invoice.date);
   }
 
@@ -850,7 +831,6 @@ FILE 1: index.html
     $("pNet").textContent   = euro(net);
   }
 
-  // PDF/Print (format like your screenshot)
   function openPdfPrint(){
     readInputsToInvoice();
     const c = getSelectedCustomer();
@@ -969,7 +949,6 @@ FILE 1: index.html
     w.document.open(); w.document.write(html); w.document.close();
   }
 
-  // Buttons
   $("btnSave").addEventListener("click", ()=>{ updatePreview(); saveInvoice(); toast("Gespeichert ✅"); });
 
   $("btnExport").addEventListener("click", ()=>{
@@ -1033,12 +1012,10 @@ FILE 1: index.html
     }
   });
 
-  // Nav
   $("navRechnung").addEventListener("click", ()=>setActivePage("rechnung"));
   $("navKunden").addEventListener("click", ()=>setActivePage("kunden"));
   $("navFirma").addEventListener("click", ()=>setActivePage("firma"));
 
-  // Live update
   [
     "invNo","invDate","periodFrom","periodTo","dueDate","status","customerEmail",
     "serviceDesc","days","hoursPerDay","hours","rate"
@@ -1055,7 +1032,6 @@ FILE 1: index.html
     saveInvoice();
   });
 
-  // Kunden
   $("btnAddCustomer").addEventListener("click", ()=>{
     const name = $("cName").value.trim();
     const email = $("cEmail").value.trim();
@@ -1082,7 +1058,6 @@ FILE 1: index.html
     toast("Kunden gelöscht ✅");
   });
 
-  // Firma save
   $("btnSaveFirma").addEventListener("click", ()=>{
     firma = {
       name: $("fName").value.trim(),
@@ -1097,40 +1072,6 @@ FILE 1: index.html
     toast("Firma gespeichert ✅");
   });
 
-  // Version + auto reload when version.txt changes
-  async function getVersion(){
-    const r = await fetch("./version.txt?ts=" + Date.now(), {cache:"no-store"});
-    return (await r.text()).trim();
-  }
-  async function initVersion(){
-    try{
-      const v = await getVersion();
-      $("ver").textContent = v || "v?";
-      let last = v || "";
-      setInterval(async ()=>{
-        try{
-          const nv = await getVersion();
-          if(nv && last && nv !== last) location.reload();
-          last = nv || last;
-        }catch(e){}
-      }, 20000);
-    }catch(e){
-      $("ver").textContent = "no version";
-    }
-  }
-
-  // SW register (helps offline, but we control cache safely)
-  async function initSW(){
-    try{
-      if("serviceWorker" in navigator){
-        const reg = await navigator.serviceWorker.register("./service-worker.js?ts=" + Date.now());
-        try{ await reg.update(); }catch(e){}
-        navigator.serviceWorker.addEventListener("controllerchange", ()=>location.reload());
-      }
-    }catch(e){}
-  }
-
-  // Init
   loadAll();
   refreshCounts();
   hydrateFirmaToInputs();
@@ -1138,125 +1079,8 @@ FILE 1: index.html
   refreshCustomerSelect();
   renderCustomers();
   updatePreview();
-  initVersion();
-  initSW();
   setActivePage("rechnung");
 })();
 </script>
 </body>
 </html>
-
-========================
-FILE 2: service-worker.js
-========================
-/*
-  SAFE CACHE (fix GitHub/Netlify old version):
-  - index.html: network-first (always newest)
-  - assets: cache-first
-  - auto delete old caches
-*/
-const CACHE_VERSION = "ms-cache-v10";
-const STATIC_CACHE = `${CACHE_VERSION}-static`;
-const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
-
-const STATIC_ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./version.txt",
-  "./service-worker.js"
-];
-
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(
-      keys.map(k => (k.startsWith("ms-cache-") && !k.startsWith(CACHE_VERSION)) ? caches.delete(k) : null)
-    );
-    await self.clients.claim();
-  })());
-});
-
-async function networkFirst(request){
-  try{
-    const fresh = await fetch(request, { cache: "no-store" });
-    const cache = await caches.open(RUNTIME_CACHE);
-    cache.put(request, fresh.clone());
-    return fresh;
-  }catch(e){
-    const cached = await caches.match(request);
-    return cached || new Response("Offline", { status: 503 });
-  }
-}
-async function cacheFirst(request){
-  const cached = await caches.match(request);
-  if(cached) return cached;
-  const fresh = await fetch(request);
-  const cache = await caches.open(RUNTIME_CACHE);
-  cache.put(request, fresh.clone());
-  return fresh;
-}
-
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  if(url.origin !== location.origin) return;
-
-  // HTML => always latest
-  if(req.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")){
-    event.respondWith(networkFirst(req));
-    return;
-  }
-
-  // others
-  event.respondWith(cacheFirst(req));
-});
-
-========================
-FILE 3: manifest.json
-========================
-{
-  "name": "Masculine Security Rechnung",
-  "short_name": "MS Rechnung",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#071225",
-  "theme_color": "#0b1220",
-  "icons": []
-}
-
-========================
-FILE 4: version.txt
-========================
-v10
-
-========================
-FILE 5 (optional but recommended): netlify.toml
-========================
-[build]
-  publish = "."
-
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
-    Pragma = "no-cache"
-
-[[headers]]
-  for = "/"
-  [headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
-    Pragma = "no-cache"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
