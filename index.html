@@ -3,48 +3,32 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Mini Office</title>
+  <title>Masculine Security — Rechnung</title>
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b1220"/>
 
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:#0f1a2f;
-      --card:#10203a;
-      --line:#1a2a4b;
-      --text:#e7eeff;
-      --muted:#93a4c6;
-      --accent:#3aa6ff;
-      --good:#2bd4bd;
-      --warn:#ffce54;
-      --bad:#ff4d6d;
-      --r:18px;
-      --r2:12px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
+      --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd;
+      --r:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
-      margin:0;
-      font-family:var(--font);
-      color:var(--text);
+      margin:0; font-family:var(--font); color:var(--text);
       background:
         radial-gradient(1100px 600px at 20% -10%, rgba(58,166,255,.25), transparent 60%),
         radial-gradient(900px 500px at 90% 10%, rgba(43,212,189,.16), transparent 55%),
         var(--bg);
     }
-
+    .wrap{max-width:1100px; margin:0 auto; padding:18px}
     a{color:inherit}
     a.link{color:var(--accent); text-decoration:none}
     a.link:hover{text-decoration:underline}
 
-    .wrap{max-width:1100px; margin:0 auto; padding:18px}
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -82,8 +66,6 @@
     }
     .dot{width:8px; height:8px; border-radius:50%}
     .dot.good{background:var(--good)}
-    .dot.warn{background:var(--warn)}
-    .dot.bad{background:var(--bad)}
 
     .btn{
       appearance:none; border:1px solid rgba(255,255,255,.12);
@@ -99,6 +81,18 @@
     .btn:active{transform: translateY(1px)}
     .btn.secondary{background:rgba(255,255,255,.04)}
     .btn.secondary:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.18)}
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
+    .mono{font-family:var(--mono)}
 
     .grid{
       display:grid;
@@ -131,7 +125,7 @@
     @media (max-width: 560px){ .row{grid-template-columns:1fr} }
 
     label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
-    input, select, textarea{
+    input, textarea{
       width:100%;
       background:rgba(11,18,32,.55);
       border:1px solid rgba(255,255,255,.10);
@@ -141,13 +135,11 @@
       outline:none;
       font-size:14px;
     }
-    input:focus, select:focus, textarea:focus{
+    input:focus, textarea:focus{
       border-color:rgba(58,166,255,.45);
       box-shadow:0 0 0 3px rgba(58,166,255,.12);
     }
     textarea{min-height:90px; resize:vertical}
-
-    .help{font-size:12px; color:var(--muted); margin-top:8px}
 
     .invoice-preview{
       border:1px solid rgba(255,255,255,.08);
@@ -163,10 +155,7 @@
     }
     .inv-top .left strong{display:block; font-size:18px; letter-spacing:.4px}
     .inv-top .left small{display:block; color:var(--muted); margin-top:4px}
-    .inv-top .right{
-      text-align:right;
-      min-width:240px;
-    }
+    .inv-top .right{ text-align:right; min-width:240px; }
     .inv-top .right .kv{display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--muted)}
     .inv-top .right .kv b{color:var(--text); font-family:var(--mono); font-size:12px}
 
@@ -193,9 +182,8 @@
     }
     tbody tr:last-child td{border-bottom:none}
     td.num{text-align:right; font-variant-numeric: tabular-nums}
-    .totals{
-      display:flex; justify-content:flex-end; margin-top:10px;
-    }
+
+    .totals{display:flex; justify-content:flex-end; margin-top:10px;}
     .totals .box{
       min-width:280px;
       border:1px solid rgba(255,255,255,.08);
@@ -222,37 +210,23 @@
       font-size:12px;
       line-height:1.35;
     }
-
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
-      font-size:12px;
-      color:var(--muted);
-      user-select:none;
-    }
-    .mono{font-family:var(--mono)}
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- TOP BAR -->
     <div class="topbar">
       <div class="brand">
         <div class="logo" aria-hidden="true"><span>MS</span></div>
         <div class="title">
-          <strong>Masculine Security — Mini Office</strong>
-          <small>Auto-Update + Invoice Format (Netlify / GitHub)</small>
+          <strong>Masculine Security — Rechnung</strong>
+          <small>Preview + PDF + Auto-Update</small>
         </div>
       </div>
 
       <div class="actions">
         <span class="pill"><span class="dot good"></span>Deploy: Auto</span>
-        <span class="pill"><span class="dot warn"></span>Cache: Controlled</span>
         <span class="badge">Version: <span id="ver" class="mono">…</span></span>
         <button class="btn secondary" id="btnReload" type="button">Reload</button>
       </div>
@@ -260,12 +234,12 @@
 
     <div class="grid">
 
-      <!-- LEFT: INVOICE FORMAT / PREVIEW -->
+      <!-- LEFT: PREVIEW -->
       <section class="card">
         <div class="hd">
           <div>
-            <h2>Rechnung — Vorschau (Text-Format fix)</h2>
-            <p>Saameyn: headings, spacing, table, totals, footnote — si “professional” u muuqato.</p>
+            <h2>Rechnung — Vorschau</h2>
+            <p>Kunde (Name/Adresse/E-Mail) wuu muuqanayaa realtime.</p>
           </div>
           <button class="btn" id="btnPrint" type="button">Print / Save PDF</button>
         </div>
@@ -284,7 +258,10 @@
                 <div style="color:var(--muted); font-size:12px; margin-top:2px;">
                   Werschenregerstraße 6 · 28237 Bremen
                 </div>
-                <div class="kv" style="margin-top:6px;"><span>E-Mail</span><b><a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a></b></div>
+                <div class="kv" style="margin-top:6px;">
+                  <span>E-Mail</span>
+                  <b><a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a></b>
+                </div>
                 <div class="kv"><span>IBAN</span><b>DE98 1001 1001 2333 0146 96</b></div>
                 <div class="kv"><span>BIC</span><b>NTSBDEB1XXX</b></div>
               </div>
@@ -296,16 +273,20 @@
                 <div style="border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px 12px; background:rgba(255,255,255,.02);">
                   <div style="font-weight:800">Masculine Security</div>
                   <div style="color:var(--muted); font-size:12px; margin-top:2px;">Werschenregerstraße 6 · 28237 Bremen</div>
-                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail: <a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a></div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail:
+                    <a class="link" href="mailto:kontakt.mass.bremen@hotmail.com">kontakt.mass.bremen@hotmail.com</a>
+                  </div>
                 </div>
               </div>
 
               <div>
                 <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Rechnung an</div>
                 <div style="border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px 12px; background:rgba(255,255,255,.02);">
-                  <div style="font-weight:800" id="toName">Mustafa Mursal</div>
-                  <div style="color:var(--muted); font-size:12px; margin-top:2px;" id="toAddr">Werschenregerstraße 6 · 28237 Bremen</div>
-                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail: <a class="link" id="toMailLink" href="mailto:mursal.abdi000@gmail.com">mursal.abdi000@gmail.com</a></div>
+                  <div style="font-weight:800" id="toName">—</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:2px;" id="toAddr">—</div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:6px;">E-Mail:
+                    <a class="link" id="toMailLink" href="#">—</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -322,18 +303,18 @@
               <tbody>
                 <tr>
                   <td id="posDesc">Sicherheitsdienstleistung — Objektbewachung</td>
-                  <td class="num" id="posQty">120,00</td>
-                  <td class="num" id="posRate">22,00</td>
-                  <td class="num" id="posNet">2.640,00</td>
+                  <td class="num" id="posQty">0,00</td>
+                  <td class="num" id="posRate">0,00</td>
+                  <td class="num" id="posNet">0,00</td>
                 </tr>
               </tbody>
             </table>
 
             <div class="totals">
               <div class="box">
-                <div class="line"><span>Summe Netto</span><span class="mono" id="sumNet">2.640,00 €</span></div>
+                <div class="line"><span>Summe Netto</span><span class="mono" id="sumNet">0,00 €</span></div>
                 <div class="line"><span>Umsatzsteuer</span><span class="mono">0,00 €</span></div>
-                <div class="line"><span>Zu zahlen</span><span class="mono" id="sumPay">2.640,00 €</span></div>
+                <div class="line"><span>Zu zahlen</span><span class="mono" id="sumPay">0,00 €</span></div>
               </div>
             </div>
 
@@ -343,19 +324,15 @@
             </div>
 
           </div>
-
-          <div class="help">
-            Tip: Haddii aad rabto auto-update buuxa, kaliya <span class="mono">version.txt</span> beddel (v1 → v2) ama ku dar GitHub Action auto-bump.
-          </div>
         </div>
       </section>
 
-      <!-- RIGHT: QUICK EDIT (TEXT FORMAT CONTROL) -->
+      <!-- RIGHT: INPUTS -->
       <aside class="card">
         <div class="hd">
           <div>
-            <h2>Quick Edit (Text & Values)</h2>
-            <p>Halkan ku sax magaca, email, qty, rate — preview-gu wuu cusboonaanayaa.</p>
+            <h2>Quick Edit</h2>
+            <p>Marka aad wax qorto, preview-ga si toos ah ayuu u update-gareeyaa.</p>
           </div>
         </div>
 
@@ -390,7 +367,6 @@
           <div>
             <label>Kunde E-Mail</label>
             <input id="fToMail" value="mursal.abdi000@gmail.com" />
-            <div class="help">E-mail link waa clickable (mailto:).</div>
           </div>
 
           <div style="height:14px"></div>
@@ -420,101 +396,45 @@
             <textarea id="fNote">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).
 Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.</textarea>
           </div>
-
-          <div style="height:14px"></div>
-
-          <button class="btn" id="btnApply" type="button">Apply to Preview</button>
-          <button class="btn secondary" id="btnReset" type="button" style="margin-left:8px;">Reset</button>
-
-          <div class="help" style="margin-top:12px;">
-            Auto-Update: haddii aad aragto old version, kaliya sug 25s ama click “Reload”.
-          </div>
         </div>
       </aside>
 
     </div>
   </div>
 
-  <!-- ================= AUTO UPDATE + LOGIC ================= -->
   <script>
   (function(){
     const $ = (id)=>document.getElementById(id);
 
-    // -------- helpers
-    const fmtDE = (n) => {
-      const num = Number(n || 0);
-      return num.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
+    const fmtDE = (n) => Number(n||0).toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2});
     const euro = (n) => fmtDE(n) + " €";
-    const safeMailto = (email) => {
-      const e = (email || "").trim();
-      return e ? "mailto:" + e : "mailto:";
-    };
-
-    // -------- UI actions
-    $("btnReload").addEventListener("click", ()=>location.reload());
-
-    $("btnPrint").addEventListener("click", ()=>{
-      // Print only the invoice preview area (simple print)
-      const html = document.documentElement.innerHTML;
-      const printArea = $("printArea").outerHTML;
-
-      const printHtml = `
-      <html>
-      <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
-        <title>Rechnung</title>
-        <style>
-          body{font-family: Arial, system-ui; margin:18px; color:#111}
-          .invoice-preview{border:1px solid #ddd; border-radius:12px; padding:14px}
-          table{width:100%; border-collapse:collapse; margin-top:10px}
-          th,td{border-bottom:1px solid #eee; padding:8px; font-size:12px}
-          th{background:#fafafa; text-align:left; color:#444}
-          td.num{text-align:right; font-variant-numeric: tabular-nums}
-          .totals{display:flex; justify-content:flex-end; margin-top:10px}
-          .totals .box{min-width:280px; border:1px solid #eee; border-radius:10px; padding:10px}
-          .totals .line{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #eee; font-size:12px; color:#444}
-          .totals .line:last-child{border-bottom:none; font-weight:800; color:#111}
-          a{color:#0b65ff; text-decoration:none}
-        </style>
-      </head>
-      <body>
-        ${printArea}
-        <script>window.onload = () => window.print();<\/script>
-      </body>
-      </html>`;
-
-      const w = window.open("", "_blank");
-      w.document.open();
-      w.document.write(printHtml);
-      w.document.close();
-
-      // restore not needed; new window prints
-    });
 
     function applyPreview(){
+      // meta
       const nr = $("fNr").value.trim() || "MS-2026-0001";
-      const d  = $("fDate").value ? new Date($("fDate").value) : new Date();
-      const dStr = d.toLocaleDateString("de-DE");
-
-      const toName = $("fToName").value.trim() || "Kunde";
-      const toAddr = $("fToAddr").value.trim() || "";
-      const toMail = $("fToMail").value.trim() || "";
-
-      const desc = $("fDesc").value.trim() || "";
-      const qty = Number($("fQty").value || 0);
-      const rate = Number($("fRate").value || 0);
-      const net = qty * rate;
-
+      const d  = $("fDate").value;
+      const dStr = d ? new Date(d).toLocaleDateString("de-DE") : "";
       $("invMeta").textContent = `Rechnungs-Nr: ${nr} · Datum: ${dStr}`;
-      $("toName").textContent = toName;
-      $("toAddr").textContent = toAddr;
 
-      $("toMailLink").textContent = toMail || "—";
-      $("toMailLink").setAttribute("href", safeMailto(toMail));
+      // kunde
+      const toName = $("fToName").value.trim();
+      const toAddr = $("fToAddr").value.trim();
+      const toMail = $("fToMail").value.trim();
 
-      $("posDesc").textContent = desc;
+      $("toName").textContent = toName || "—";
+      $("toAddr").textContent = toAddr || "—";
+
+      const ml = $("toMailLink");
+      ml.textContent = toMail || "—";
+      ml.setAttribute("href", toMail ? "mailto:" + toMail : "#");
+
+      // position
+      const desc = $("fDesc").value.trim();
+      const qty  = Number($("fQty").value || 0);
+      const rate = Number($("fRate").value || 0);
+      const net  = qty * rate;
+
+      $("posDesc").textContent = desc || "—";
       $("posQty").textContent = fmtDE(qty);
       $("posRate").textContent = fmtDE(rate);
       $("posNet").textContent = fmtDE(net);
@@ -522,68 +442,71 @@ Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.</textarea>
       $("sumNet").textContent = euro(net);
       $("sumPay").textContent = euro(net);
 
+      // footer
       const note = $("fNote").value || "";
-      $("footnote").innerHTML = (note || "").replaceAll("\n","<br/>");
+      $("footnote").innerHTML = note.replaceAll("\n","<br/>");
     }
 
-    $("btnApply").addEventListener("click", applyPreview);
-
-    $("btnReset").addEventListener("click", ()=>{
-      $("fNr").value="MS-2026-0001";
-      $("fDate").value="2026-02-01";
-      $("fToName").value="Mustafa Mursal";
-      $("fToAddr").value="Werschenregerstraße 6 · 28237 Bremen";
-      $("fToMail").value="mursal.abdi000@gmail.com";
-      $("fDesc").value="Sicherheitsdienstleistung — Objektbewachung";
-      $("fQty").value="120";
-      $("fRate").value="22";
-      $("fNote").value=`Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).
-Bitte überweisen Sie den Betrag unter Angabe der Rechnungsnummer.`;
-      applyPreview();
+    // realtime update
+    ["fNr","fDate","fToName","fToAddr","fToMail","fDesc","fQty","fRate","fNote"].forEach(id=>{
+      $(id).addEventListener("input", applyPreview);
+      $(id).addEventListener("change", applyPreview);
     });
 
-    // apply initial
+    // reload
+    $("btnReload").addEventListener("click", ()=>location.reload());
+
+    // print
+    $("btnPrint").addEventListener("click", ()=>{
+      const printArea = $("printArea").outerHTML;
+      const printHtml = `
+      <html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+      <title>Rechnung</title>
+      <style>
+        body{font-family: Arial, system-ui; margin:18px; color:#111}
+        .invoice-preview{border:1px solid #ddd; border-radius:12px; padding:14px}
+        table{width:100%; border-collapse:collapse; margin-top:10px}
+        th,td{border-bottom:1px solid #eee; padding:8px; font-size:12px}
+        th{background:#fafafa; text-align:left; color:#444}
+        td.num{text-align:right; font-variant-numeric: tabular-nums}
+        .totals{display:flex; justify-content:flex-end; margin-top:10px}
+        .totals .box{min-width:280px; border:1px solid #eee; border-radius:10px; padding:10px}
+        .totals .line{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #eee; font-size:12px; color:#444}
+        .totals .line:last-child{border-bottom:none; font-weight:800; color:#111}
+        a{color:#0b65ff; text-decoration:none}
+      </style></head><body>
+        ${printArea}
+        <script>window.onload=()=>window.print();<\/script>
+      </body></html>`;
+      const w = window.open("", "_blank");
+      w.document.open(); w.document.write(printHtml); w.document.close();
+    });
+
+    // initial
     applyPreview();
 
-    // -------- AUTO UPDATE (service worker + version.txt)
+    // version + auto update
     async function getVersion(){
-      const r = await fetch("./version.txt", { cache:"no-store" });
+      const r = await fetch("./version.txt?ts=" + Date.now(), { cache:"no-store" });
       return (await r.text()).trim();
     }
 
-    (async () => {
-      // service worker register (does not break if missing)
+    (async ()=>{
       try{
-        if ("serviceWorker" in navigator) {
-          const reg = await navigator.serviceWorker.register("./service-worker.js");
-
-          reg.addEventListener("updatefound", () => {
-            const nw = reg.installing;
-            if (!nw) return;
-            nw.addEventListener("statechange", () => {
-              if (nw.state === "installed" && navigator.serviceWorker.controller) {
-                // New SW installed → reload to get latest assets
-                location.reload();
-              }
-            });
-          });
-        }
-      }catch(e){}
-
-      // version checker
-      try{
-        let v = await getVersion();
+        // show version
+        const v = await getVersion();
         $("ver").textContent = v || "unknown";
 
-        setInterval(async () => {
-          const nv = await getVersion();
-          if (nv && nv !== v) location.reload();
-        }, 25000); // 25s
+        // SW register (optional)
+        if ("serviceWorker" in navigator) {
+          const reg = await navigator.serviceWorker.register("./service-worker.js?ts=" + Date.now());
+          try{ await reg.update(); }catch(e){}
+          navigator.serviceWorker.addEventListener("controllerchange", ()=>location.reload());
+        }
       }catch(e){
-        $("ver").textContent = "no version.txt";
+        $("ver").textContent = "no version";
       }
     })();
-
   })();
   </script>
 </body>
