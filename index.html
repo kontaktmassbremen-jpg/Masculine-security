@@ -1,173 +1,874 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<title>Masculine Security – Dienstplan</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Masculine Security — Dienstplan & Dokumentation</title>
+  <meta name="theme-color" content="#0b1220" />
+  <style>
+    :root{
+      --bg:#071225; --panel:#0b1a33; --panel2:#0c2242; --card:#0f2a4f; --line:#16345e;
+      --text:#e7f0ff; --muted:#9bb1d5; --accent:#3aa6ff; --good:#21d19f; --warn:#ffce54; --bad:#ff4d6d;
+      --r:18px; --r2:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 25% -15%, rgba(58,166,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 90% 5%, rgba(33,209,159,.14), transparent 55%),
+        linear-gradient(180deg, #061022 0%, #071225 100%);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
+    .top{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      padding:14px 16px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08); border-radius:var(--r); box-shadow:var(--shadow);
+      position:sticky; top:0; backdrop-filter: blur(10px); z-index:20;
+    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:260px}
+    .logoBox{
+      width:54px; height:54px; border-radius:14px; overflow:hidden;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .logoBox img{width:100%; height:100%; object-fit:cover; display:block}
+    .logoFallback{
+      width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+      font-weight:900; letter-spacing:.4px; color:rgba(255,255,255,.75);
+      background:linear-gradient(180deg, rgba(58,166,255,.18), rgba(15,42,79,.35));
+    }
+    h1{margin:0; font-size:16px; letter-spacing:.4px}
+    .sub{margin-top:2px; font-size:12px; color:var(--muted)}
+    .tabs{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .tab{
+      border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04);
+      color:var(--text); padding:9px 12px; border-radius:999px; cursor:pointer;
+      font-size:13px; user-select:none;
+    }
+    .tab.active{background:rgba(58,166,255,.18); border-color:rgba(58,166,255,.35)}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04);
+      color:var(--text); padding:9px 12px; border-radius:12px; cursor:pointer;
+      font-size:13px;
+    }
+    .btn.primary{background:rgba(58,166,255,.22); border-color:rgba(58,166,255,.40)}
+    .btn.good{background:rgba(33,209,159,.18); border-color:rgba(33,209,159,.35)}
+    .btn.bad{background:rgba(255,77,109,.16); border-color:rgba(255,77,109,.30)}
+    .btn:disabled{opacity:.5; cursor:not-allowed}
+    .grid{display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px}
+    @media (max-width: 940px){ .grid{grid-template-columns:1fr} .brand{min-width:unset} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px; font-size:14px; letter-spacing:.3px}
+    .muted{color:var(--muted); font-size:12px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 560px){ .row{grid-template-columns:1fr} }
+    label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
+    input, select, textarea{
+      width:100%; padding:10px 11px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(10,25,50,.55);
+      color:var(--text); outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{
+      display:flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04); font-size:12px;
+    }
+    .chip input{width:auto; margin:0}
+    .split{
+      display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;
+    }
+    @media (max-width: 760px){ .split{grid-template-columns:1fr} }
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+    table{width:100%; border-collapse:separate; border-spacing:0}
+    th, td{padding:10px 10px; text-align:left; font-size:13px}
+    th{
+      color:var(--muted);
+      background:rgba(255,255,255,.04);
+      border-top:1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    th:first-child{border-top-left-radius:12px}
+    th:last-child{border-top-right-radius:12px}
+    tr td{
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .tinybtn{
+      padding:7px 10px; border-radius:10px; font-size:12px; cursor:pointer;
+      border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--text);
+    }
+    .tinybtn.bad{background:rgba(255,77,109,.14); border-color:rgba(255,77,109,.28)}
+    .tinybtn.good{background:rgba(33,209,159,.14); border-color:rgba(33,209,159,.28)}
+    .notice{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px; border-radius:12px;
+      border:1px dashed rgba(255,255,255,.14);
+      background:rgba(255,255,255,.03);
+      font-size:12px; color:var(--muted);
+    }
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas; font-size:11px; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.18); color:rgba(255,255,255,.82)}
+    .statusline{font-size:12px; color:var(--muted)}
+    .statusline b{color:var(--text)}
+    .hidden{display:none !important}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-body{font-family:Arial;background:#0b1220;color:white;padding:20px}
-.card{background:#10203a;padding:20px;border-radius:15px;margin-bottom:20px}
-input,select,textarea{width:100%;padding:10px;margin:5px 0}
-button{padding:10px;margin-top:10px}
-.logo{width:70px;height:70px;background:#fff;border-radius:10px;overflow:hidden;margin-bottom:10px}
-.logo img{width:100%}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ccc;padding:8px;text-align:left}
-.tab{padding:10px;background:#1a2a4b;margin-right:5px;cursor:pointer;display:inline-block;border-radius:5px}
-.active{background:#3aa6ff}
-</style>
+    /* PRINT */
+    @media print{
+      body{background:#fff; color:#000}
+      .top, .btn, .tab, .actions, .notice{display:none !important}
+      .wrap{max-width:none; padding:0}
+      .card{box-shadow:none; border:1px solid #ddd; background:#fff}
+      input, select, textarea{border:1px solid #ccc; background:#fff; color:#000}
+      th{background:#f4f4f4; color:#222}
+      .muted{color:#444}
+      .logoBox{border:1px solid #ddd; background:#fff}
+    }
+  </style>
 </head>
-
 <body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logoBox" aria-label="Logo">
+        <img id="logoImg" src="logo.png" alt="Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').classList.remove('hidden');" />
+        <div id="logoFallback" class="logoFallback hidden">MS</div>
+      </div>
+      <div>
+        <h1>Masculine Security — Dienstplan</h1>
+        <!-- WICHTIG: Firma-Daten werden NICHT in den Dienstplan (Mitarbeiter-Message) eingefügt -->
+        <div class="sub">Interne Planung & Dokumentation • Auto-Speichern aktiv</div>
+        <div class="statusline">Auto-Update: <b id="autoStatus">AN</b> • Zuletzt gespeichert: <span id="lastSaved">—</span></div>
+      </div>
+    </div>
 
-<div class="logo">
-<img src="logo.png?v=2">
+    <div class="tabs">
+      <div class="tab active" id="tabPlan">Wochenplan</div>
+      <div class="tab" id="tabDocs">Dokumentation</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="btnPrint">Drucken</button>
+      <button class="btn" id="btnPDF">PDF (Druckdialog)</button>
+      <button class="btn" id="btnAutoSheet">Auto-Print Sheet</button>
+      <button class="btn bad" id="btnResetAll">Reset (Alles)</button>
+    </div>
+  </div>
+
+  <!-- PLAN VIEW -->
+  <div id="viewPlan" class="grid">
+    <div class="card">
+      <h2>Wöchentlicher Mitarbeiter-Dienstplan</h2>
+      <div class="muted">Erstelle einen Wochenplan, speichere ihn und sende ihn per WhatsApp. (Firmadaten werden im Mitarbeiter-Text NICHT angezeigt.)</div>
+      <div class="divider"></div>
+
+      <div class="row">
+        <div>
+          <label>Mitarbeiter-Name</label>
+          <input id="empName" placeholder="z.B. Mustafa" />
+        </div>
+        <div>
+          <label>WhatsApp-Nummer (optional)</label>
+          <input id="empPhone" placeholder="z.B. +4915778697052" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <label>Arbeitstage</label>
+      <div class="chips" id="dayChips">
+        <label class="chip"><input type="checkbox" value="Mo"> Mo</label>
+        <label class="chip"><input type="checkbox" value="Di"> Di</label>
+        <label class="chip"><input type="checkbox" value="Mi"> Mi</label>
+        <label class="chip"><input type="checkbox" value="Do"> Do</label>
+        <label class="chip"><input type="checkbox" value="Fr"> Fr</label>
+        <label class="chip"><input type="checkbox" value="Sa"> Sa</label>
+        <label class="chip"><input type="checkbox" value="So"> So</label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="split">
+        <div>
+          <label>Objekt / Einsatzort</label>
+          <input id="objekt" placeholder="z.B. Hotel / Baustelle / Lager" />
+        </div>
+        <div>
+          <label>Schicht</label>
+          <select id="shift">
+            <option value="Tag">Tag</option>
+            <option value="Nacht">Nacht</option>
+          </select>
+        </div>
+        <div>
+          <label>Uhrzeit (optional)</label>
+          <input id="time" placeholder="z.B. 18:00–06:00" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <div>
+          <label>Woche / Zeitraum (optional)</label>
+          <input id="weekRange" placeholder="z.B. 17.02–23.02" />
+        </div>
+        <div>
+          <label>Ort (optional)</label>
+          <input id="location" placeholder="z.B. Bremen" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <label>Notizen (optional)</label>
+      <textarea id="notes" placeholder="z.B. Key / Rundgang / Besonderheiten"></textarea>
+
+      <div class="divider"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn good" id="btnSavePlan">Wochenplan speichern</button>
+        <button class="btn" id="btnClearForm">Formular leeren</button>
+      </div>
+
+      <div style="margin-top:10px" class="notice">
+        <div style="min-width:18px">✅</div>
+        <div>
+          <div><b>Direkt WhatsApp:</b> Nutze rechts „WhatsApp senden“. Wenn du eine Nummer angibst, öffnet es direkt den Chat.</div>
+          <div style="margin-top:6px"><span class="kbd">Strg</span> + <span class="kbd">F5</span> wenn Logo/Änderungen nicht sofort sichtbar sind.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Gespeicherte Wochenpläne</h2>
+      <div class="muted">Hier siehst du alle gespeicherten Pläne. Du kannst sie drucken, als Text kopieren oder löschen.</div>
+      <div class="divider"></div>
+
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Tage</th>
+              <th>Objekt</th>
+              <th>Schicht</th>
+              <th style="width:210px">Aktion</th>
+            </tr>
+          </thead>
+          <tbody id="plansTbody">
+            <tr><td colspan="5" class="muted">Noch keine Wochenpläne gespeichert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>Vorschau (Text an Mitarbeiter)</h2>
+      <div class="muted">Dieser Text wird in WhatsApp geöffnet. <b>Ohne Firmadaten</b> (keine Adresse/Telefon/E-Mail).</div>
+      <div class="divider"></div>
+
+      <label>Vorschau</label>
+      <textarea id="preview" readonly></textarea>
+
+      <div class="divider"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn primary" id="btnSendWA">WhatsApp senden</button>
+        <button class="btn" id="btnCopyText">Text kopieren</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Kurze Hilfe</h2>
+      <div class="muted">
+        <ul style="margin:0; padding-left:18px">
+          <li><b>WhatsApp Nummer:</b> am besten im Format <span class="kbd">+49...</span></li>
+          <li><b>Kein Nummer?</b> Button öffnet WhatsApp-Share (du wählst Kontakt selbst)</li>
+          <li><b>PDF:</b> Klicke „PDF (Druckdialog)“ → dann als PDF speichern</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCS VIEW -->
+  <div id="viewDocs" class="grid hidden">
+    <div class="card">
+      <h2>Dokumentation — Anwesend / Abwesend</h2>
+      <div class="muted">Trage Anwesenheit ein (z.B. für Schicht-Übergabe, Nachweis, interne Kontrolle). Lokal gespeichert.</div>
+      <div class="divider"></div>
+
+      <div class="split">
+        <div>
+          <label>Datum</label>
+          <input id="docDate" type="date" />
+        </div>
+        <div>
+          <label>Objekt / Einsatzort</label>
+          <input id="docObjekt" placeholder="z.B. Hotel / Baustelle" />
+        </div>
+        <div>
+          <label>Schicht</label>
+          <select id="docShift">
+            <option value="Tag">Tag</option>
+            <option value="Nacht">Nacht</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <div>
+          <label>Anwesend (je Zeile ein Name)</label>
+          <textarea id="docPresent" placeholder="z.B. Mustafa&#10;Ali"></textarea>
+        </div>
+        <div>
+          <label>Abwesend (je Zeile ein Name)</label>
+          <textarea id="docAbsent" placeholder="z.B. Mohamed (krank)"></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <label>Bemerkungen (optional)</label>
+      <textarea id="docNotes" placeholder="z.B. Gründe, Übergabe, Besonderheiten"></textarea>
+
+      <div class="divider"></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn good" id="btnSaveDoc">Dokumentation speichern</button>
+        <button class="btn" id="btnClearDoc">Formular leeren</button>
+      </div>
+
+      <div style="margin-top:10px" class="notice">
+        <div style="min-width:18px">📌</div>
+        <div>
+          <b>Hinweis:</b> Diese Daten sind intern. Wenn du sie druckst, nutze „Drucken“ oder „Auto-Print Sheet“.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Gespeicherte Dokumentationen</h2>
+      <div class="muted">Du kannst Einträge drucken oder löschen.</div>
+      <div class="divider"></div>
+
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Objekt</th>
+              <th>Schicht</th>
+              <th>Anwesend</th>
+              <th>Abwesend</th>
+              <th style="width:160px">Aktion</th>
+            </tr>
+          </thead>
+          <tbody id="docsTbody">
+            <tr><td colspan="6" class="muted">Noch keine Dokumentationen gespeichert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Export</h2>
+      <div class="muted">CSV-Export kannst du später ergänzen. Aktuell: Copy & Print.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
+        <button class="btn" id="btnCopyDocs">Dokumentationen als Text kopieren</button>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-<div>
-<span class="tab active" onclick="show('plan',this)">Wochenplan</span>
-<span class="tab" onclick="show('doc',this)">Dokumentation</span>
-</div>
-
-<div id="plan" class="card">
-
-<h3>Wöchentlicher Mitarbeiter-Dienstplan</h3>
-
-<label>Name</label>
-<input id="name">
-
-<label>Arbeitstage</label>
-<input id="days" placeholder="Mo, Di, Mi, Do">
-
-<label>Objekt</label>
-<input id="objekt">
-
-<label>Schicht</label>
-<select id="shift">
-<option>Tag</option>
-<option>Nacht</option>
-</select>
-
-<button onclick="addStaff()">Speichern</button>
-
-<table id="planTable">
-<thead>
-<tr><th>Name</th><th>Tage</th><th>Objekt</th><th>Schicht</th></tr>
-</thead>
-<tbody></tbody>
-</table>
-
-</div>
-
-<div id="doc" class="card" style="display:none">
-
-<h3>Anwesenheits-Dokumentation</h3>
-
-<label>Datum</label>
-<input id="dDate" type="date">
-
-<label>Anwesend</label>
-<textarea id="present" placeholder="Mustafa&#10;Ali"></textarea>
-
-<label>Abwesend</label>
-<textarea id="absent" placeholder="Ahmed - Krank"></textarea>
-
-<button onclick="saveDoc()">Speichern</button>
-
-<table id="docTable">
-<thead>
-<tr><th>Datum</th><th>Anwesend</th><th>Abwesend</th></tr>
-</thead>
-<tbody></tbody>
-</table>
-
-</div>
-
-<br>
-<button onclick="printSheet()">Drucken</button>
-<button onclick="pdf()">PDF Export</button>
 
 <script>
+(() => {
+  // ====== STORAGE KEYS ======
+  const K_PLANS = "ms_weekly_plans_v1";
+  const K_DOCS  = "ms_docs_v1";
 
-function show(id,el){
-document.getElementById("plan").style.display="none"
-document.getElementById("doc").style.display="none"
-document.getElementById(id).style.display="block"
+  // ====== HELPERS ======
+  const $ = (id) => document.getElementById(id);
+  const nowStr = () => new Date().toLocaleString("de-DE");
+  const saveJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+  const loadJSON = (k, fallback) => {
+    try { return JSON.parse(localStorage.getItem(k) || "") ?? fallback; } catch { return fallback; }
+  };
+  const normalizePhone = (s) => (s || "").trim().replace(/\s+/g, "");
+  const safe = (s) => (s ?? "").toString().trim();
 
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-el.classList.add('active')
-}
+  // ====== STATE ======
+  let plans = loadJSON(K_PLANS, []);
+  let docs  = loadJSON(K_DOCS, []);
+  let activePlanId = null;
 
-function addStaff(){
-let data={
-name:document.getElementById("name").value,
-days:document.getElementById("days").value,
-objekt:document.getElementById("objekt").value,
-shift:document.getElementById("shift").value
-}
-let list=JSON.parse(localStorage.getItem("staff")||"[]")
-list.push(data)
-localStorage.setItem("staff",JSON.stringify(list))
-renderPlan()
-}
+  function setLastSaved() { $("lastSaved").textContent = nowStr(); }
 
-function renderPlan(){
-let list=JSON.parse(localStorage.getItem("staff")||"[]")
-let tbody=document.querySelector("#planTable tbody")
-tbody.innerHTML=""
-list.forEach(x=>{
-tbody.innerHTML+=`
-<tr>
-<td>${x.name}</td>
-<td>${x.days}</td>
-<td>${x.objekt}</td>
-<td>${x.shift}</td>
-</tr>`
-})
-}
+  // ====== TABS ======
+  function setTab(which){
+    const planOn = which === "plan";
+    $("tabPlan").classList.toggle("active", planOn);
+    $("tabDocs").classList.toggle("active", !planOn);
+    $("viewPlan").classList.toggle("hidden", !planOn);
+    $("viewDocs").classList.toggle("hidden", planOn);
+  }
+  $("tabPlan").addEventListener("click", () => setTab("plan"));
+  $("tabDocs").addEventListener("click", () => setTab("docs"));
 
-function saveDoc(){
-let data={
-date:document.getElementById("dDate").value,
-present:document.getElementById("present").value,
-absent:document.getElementById("absent").value
-}
-let list=JSON.parse(localStorage.getItem("docs")||"[]")
-list.push(data)
-localStorage.setItem("docs",JSON.stringify(list))
-renderDoc()
-}
+  // ====== DEFAULT DATES ======
+  const todayISO = new Date().toISOString().slice(0,10);
+  $("docDate").value = todayISO;
 
-function renderDoc(){
-let list=JSON.parse(localStorage.getItem("docs")||"[]")
-let tbody=document.querySelector("#docTable tbody")
-tbody.innerHTML=""
-list.forEach(x=>{
-tbody.innerHTML+=`
-<tr>
-<td>${x.date}</td>
-<td>${x.present}</td>
-<td>${x.absent}</td>
-</tr>`
-})
-}
+  // ====== BUILD MESSAGE (NO COMPANY DATA!) ======
+  function selectedDays(){
+    const boxes = [...document.querySelectorAll("#dayChips input[type=checkbox]")];
+    return boxes.filter(b => b.checked).map(b => b.value);
+  }
 
-renderPlan()
-renderDoc()
+  function buildMessageFromForm(){
+    const name = safe($("empName").value);
+    const days = selectedDays();
+    const objekt = safe($("objekt").value);
+    const shift  = safe($("shift").value);
+    const time   = safe($("time").value);
+    const week   = safe($("weekRange").value);
+    const loc    = safe($("location").value);
+    const notes  = safe($("notes").value);
 
-function printSheet(){window.print()}
+    // German day names map:
+    const dayFull = {Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"};
 
-function pdf(){
-const {jsPDF}=window.jspdf
-let doc=new jsPDF()
-doc.text("Masculine Security Dienstplan",10,10)
-doc.save("dienstplan.pdf")
-}
+    let lines = [];
+    lines.push("Dienstplan");
+    if (name) lines.push(`Mitarbeiter: ${name}`);
+    if (week) lines.push(`Woche: ${week}`);
+    if (loc)  lines.push(`Ort: ${loc}`);
+    lines.push("");
 
+    if (days.length){
+      for (const d of days){
+        let row = `${dayFull[d] || d}: `;
+        row += objekt ? `${objekt}` : "Objekt";
+        row += ` — ${shift || "Schicht"}`;
+        if (time) row += ` (${time})`;
+        lines.push(row);
+      }
+    } else {
+      lines.push("Tage: (bitte auswählen)");
+    }
+
+    if (notes){
+      lines.push("");
+      lines.push("Hinweise:");
+      lines.push(notes);
+    }
+
+    return lines.join("\n");
+  }
+
+  function buildMessageFromPlan(p){
+    const dayFull = {Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"};
+    let lines = [];
+    lines.push("Dienstplan");
+    if (p.name) lines.push(`Mitarbeiter: ${p.name}`);
+    if (p.week) lines.push(`Woche: ${p.week}`);
+    if (p.location) lines.push(`Ort: ${p.location}`);
+    lines.push("");
+
+    if (p.days?.length){
+      for (const d of p.days){
+        let row = `${dayFull[d] || d}: `;
+        row += p.objekt ? `${p.objekt}` : "Objekt";
+        row += ` — ${p.shift || "Schicht"}`;
+        if (p.time) row += ` (${p.time})`;
+        lines.push(row);
+      }
+    } else {
+      lines.push("Tage: (keine)");
+    }
+
+    if (p.notes){
+      lines.push("");
+      lines.push("Hinweise:");
+      lines.push(p.notes);
+    }
+    return lines.join("\n");
+  }
+
+  function updatePreview(){
+    const msg = (activePlanId ? buildMessageFromPlan(plans.find(x => x.id === activePlanId) || {}) : buildMessageFromForm());
+    $("preview").value = msg;
+  }
+
+  // ====== AUTOSAVE / AUTO UPDATE ======
+  const autoInputs = ["empName","empPhone","objekt","shift","time","weekRange","location","notes"];
+  for (const id of autoInputs){
+    $(id).addEventListener("input", () => { updatePreview(); setLastSaved(); });
+    $(id).addEventListener("change", () => { updatePreview(); setLastSaved(); });
+  }
+  [...document.querySelectorAll("#dayChips input[type=checkbox]")].forEach(cb => {
+    cb.addEventListener("change", () => { updatePreview(); setLastSaved(); });
+  });
+
+  // ====== SAVE / LIST PLANS ======
+  function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+
+  function renderPlans(){
+    const tb = $("plansTbody");
+    tb.innerHTML = "";
+    if (!plans.length){
+      tb.innerHTML = `<tr><td colspan="5" class="muted">Noch keine Wochenpläne gespeichert.</td></tr>`;
+      return;
+    }
+    for (const p of plans){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(p.name || "—")}</td>
+        <td>${escapeHtml((p.days || []).join(", ") || "—")}</td>
+        <td>${escapeHtml(p.objekt || "—")}</td>
+        <td>${escapeHtml(p.shift || "—")}</td>
+        <td style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="tinybtn good" data-act="use" data-id="${p.id}">Auswählen</button>
+          <button class="tinybtn" data-act="copy" data-id="${p.id}">Text kopieren</button>
+          <button class="tinybtn" data-act="wa" data-id="${p.id}">WhatsApp</button>
+          <button class="tinybtn bad" data-act="del" data-id="${p.id}">Löschen</button>
+        </td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  function savePlans(){
+    saveJSON(K_PLANS, plans);
+    setLastSaved();
+  }
+
+  $("btnSavePlan").addEventListener("click", () => {
+    const name = safe($("empName").value);
+    const days = selectedDays();
+    const objekt = safe($("objekt").value);
+    const shift  = safe($("shift").value);
+    const time   = safe($("time").value);
+    const week   = safe($("weekRange").value);
+    const loc    = safe($("location").value);
+    const notes  = safe($("notes").value);
+    const phone  = normalizePhone($("empPhone").value);
+
+    if (!name){
+      alert("Bitte Mitarbeiter-Name eingeben.");
+      return;
+    }
+    if (!days.length){
+      alert("Bitte mindestens einen Arbeitstag auswählen.");
+      return;
+    }
+    const p = { id: uid(), name, phone, days, objekt, shift, time, week, location: loc, notes, createdAt: Date.now() };
+    plans.unshift(p);
+    activePlanId = p.id;
+    savePlans();
+    renderPlans();
+    updatePreview();
+  });
+
+  $("plansTbody").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const id = btn.getAttribute("data-id");
+    const act = btn.getAttribute("data-act");
+    const p = plans.find(x => x.id === id);
+    if (!p) return;
+
+    if (act === "use"){
+      activePlanId = id;
+      // load into form (optional)
+      $("empName").value = p.name || "";
+      $("empPhone").value = p.phone || "";
+      $("objekt").value = p.objekt || "";
+      $("shift").value = p.shift || "Tag";
+      $("time").value = p.time || "";
+      $("weekRange").value = p.week || "";
+      $("location").value = p.location || "";
+      $("notes").value = p.notes || "";
+      // days
+      const boxes = [...document.querySelectorAll("#dayChips input[type=checkbox]")];
+      boxes.forEach(b => b.checked = (p.days || []).includes(b.value));
+      updatePreview();
+      return;
+    }
+
+    if (act === "del"){
+      if (!confirm("Diesen Wochenplan löschen?")) return;
+      plans = plans.filter(x => x.id !== id);
+      if (activePlanId === id) activePlanId = null;
+      savePlans();
+      renderPlans();
+      updatePreview();
+      return;
+    }
+
+    const msg = buildMessageFromPlan(p);
+
+    if (act === "copy"){
+      copyToClipboard(msg);
+      alert("Text kopiert.");
+      return;
+    }
+
+    if (act === "wa"){
+      sendWhatsApp(msg, p.phone || "");
+      return;
+    }
+  });
+
+  $("btnClearForm").addEventListener("click", () => {
+    activePlanId = null;
+    $("empName").value = "";
+    $("empPhone").value = "";
+    $("objekt").value = "";
+    $("shift").value = "Tag";
+    $("time").value = "";
+    $("weekRange").value = "";
+    $("location").value = "";
+    $("notes").value = "";
+    [...document.querySelectorAll("#dayChips input[type=checkbox]")].forEach(b => b.checked = false);
+    updatePreview();
+  });
+
+  // ====== WHATSAPP SEND ======
+  function sendWhatsApp(text, phone){
+    const enc = encodeURIComponent(text);
+    const p = normalizePhone(phone);
+
+    // If phone provided: use wa.me to open direct chat
+    // If not: use share link (lets user choose contact)
+    let url = "";
+    if (p){
+      // remove leading + for wa.me
+      const waNumber = p.replace(/^\+/, "");
+      url = `https://wa.me/${waNumber}?text=${enc}`;
+    } else {
+      url = `https://wa.me/?text=${enc}`;
+    }
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  $("btnSendWA").addEventListener("click", () => {
+    const msg = $("preview").value || buildMessageFromForm();
+    const phone = normalizePhone($("empPhone").value);
+    sendWhatsApp(msg, phone);
+  });
+
+  $("btnCopyText").addEventListener("click", () => {
+    const msg = $("preview").value || buildMessageFromForm();
+    copyToClipboard(msg);
+    alert("Text kopiert.");
+  });
+
+  function copyToClipboard(t){
+    navigator.clipboard?.writeText(t).catch(() => {
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy");
+      document.body.removeChild(ta);
+    });
+  }
+
+  // ====== DOCS ======
+  function saveDocs(){ saveJSON(K_DOCS, docs); setLastSaved(); }
+
+  $("btnSaveDoc").addEventListener("click", () => {
+    const date = safe($("docDate").value);
+    const objekt = safe($("docObjekt").value);
+    const shift = safe($("docShift").value);
+    const present = safe($("docPresent").value);
+    const absent  = safe($("docAbsent").value);
+    const notes   = safe($("docNotes").value);
+
+    if (!date){ alert("Bitte Datum auswählen."); return; }
+
+    const entry = { id: uid(), date, objekt, shift, present, absent, notes, createdAt: Date.now() };
+    docs.unshift(entry);
+    saveDocs();
+    renderDocs();
+    $("docPresent").value = "";
+    $("docAbsent").value = "";
+    $("docNotes").value = "";
+  });
+
+  $("btnClearDoc").addEventListener("click", () => {
+    $("docObjekt").value = "";
+    $("docShift").value = "Tag";
+    $("docPresent").value = "";
+    $("docAbsent").value = "";
+    $("docNotes").value = "";
+    $("docDate").value = todayISO;
+  });
+
+  function renderDocs(){
+    const tb = $("docsTbody");
+    tb.innerHTML = "";
+    if (!docs.length){
+      tb.innerHTML = `<tr><td colspan="6" class="muted">Noch keine Dokumentationen gespeichert.</td></tr>`;
+      return;
+    }
+    for (const d of docs){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(d.date)}</td>
+        <td>${escapeHtml(d.objekt || "—")}</td>
+        <td>${escapeHtml(d.shift || "—")}</td>
+        <td>${escapeHtml(oneLine(d.present) || "—")}</td>
+        <td>${escapeHtml(oneLine(d.absent) || "—")}</td>
+        <td style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="tinybtn" data-act="print" data-id="${d.id}">Drucken</button>
+          <button class="tinybtn bad" data-act="del" data-id="${d.id}">Löschen</button>
+        </td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  $("docsTbody").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const id = btn.getAttribute("data-id");
+    const act = btn.getAttribute("data-act");
+    const d = docs.find(x => x.id === id);
+    if (!d) return;
+
+    if (act === "del"){
+      if (!confirm("Diesen Dokumentations-Eintrag löschen?")) return;
+      docs = docs.filter(x => x.id !== id);
+      saveDocs();
+      renderDocs();
+      return;
+    }
+    if (act === "print"){
+      const text = docToText(d);
+      openPrintWindow("Dokumentation", text);
+      return;
+    }
+  });
+
+  $("btnCopyDocs").addEventListener("click", () => {
+    const text = docs.map(docToText).join("\n\n----------------\n\n");
+    copyToClipboard(text || "—");
+    alert("Dokumentationen als Text kopiert.");
+  });
+
+  function docToText(d){
+    let lines = [];
+    lines.push("Dokumentation");
+    lines.push(`Datum: ${d.date}`);
+    if (d.objekt) lines.push(`Objekt: ${d.objekt}`);
+    if (d.shift)  lines.push(`Schicht: ${d.shift}`);
+    lines.push("");
+    if (d.present){ lines.push("Anwesend:"); lines.push(d.present); lines.push(""); }
+    if (d.absent){  lines.push("Abwesend:"); lines.push(d.absent); lines.push(""); }
+    if (d.notes){   lines.push("Bemerkungen:"); lines.push(d.notes); }
+    return lines.join("\n").trim();
+  }
+
+  function oneLine(s){
+    return (s || "").trim().split("\n").map(x => x.trim()).filter(Boolean).join(", ");
+  }
+
+  // ====== PRINT / PDF / AUTO SHEET ======
+  $("btnPrint").addEventListener("click", () => window.print());
+  $("btnPDF").addEventListener("click", () => window.print());
+
+  $("btnAutoSheet").addEventListener("click", () => {
+    // Printable "sheet" for active plan (or current form)
+    const msg = $("preview").value || buildMessageFromForm();
+    openPrintWindow("Dienstplan (Sheet)", msg, true);
+  });
+
+  function openPrintWindow(title, text, autoPrint=false){
+    const w = window.open("", "_blank", "noopener,noreferrer");
+    if (!w){ alert("Popup blockiert. Bitte Popups erlauben und erneut versuchen."); return; }
+    const esc = (s) => (s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    w.document.open();
+    w.document.write(`
+      <!doctype html>
+      <html><head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>${esc(title)}</title>
+        <style>
+          body{font-family:Arial, sans-serif; margin:24px; color:#111}
+          .box{border:1px solid #ddd; padding:16px; border-radius:12px}
+          pre{white-space:pre-wrap; font-size:14px; line-height:1.35; margin:0}
+          .top{display:flex; gap:10px; align-items:center; margin-bottom:12px}
+          img{width:48px; height:48px; object-fit:cover; border-radius:10px; border:1px solid #eee}
+          .t{font-weight:700}
+          @media print{ .noprint{display:none} }
+        </style>
+      </head>
+      <body>
+        <div class="top">
+          <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+          <div>
+            <div class="t">${esc(title)}</div>
+            <div style="font-size:12px;color:#555">Erstellt: ${esc(new Date().toLocaleString("de-DE"))}</div>
+          </div>
+        </div>
+        <div class="box"><pre>${esc(text)}</pre></div>
+        <div class="noprint" style="margin-top:12px; font-size:12px; color:#555">
+          Tipp: Im Druckdialog kannst du „Als PDF speichern“ wählen.
+        </div>
+        <script>
+          ${autoPrint ? "window.onload = () => { window.print(); };" : ""}
+        <\/script>
+      </body></html>
+    `);
+    w.document.close();
+  }
+
+  // ====== RESET ALL ======
+  $("btnResetAll").addEventListener("click", () => {
+    if (!confirm("Wirklich ALLES löschen (Wochenpläne + Dokumentation)?")) return;
+    localStorage.removeItem(K_PLANS);
+    localStorage.removeItem(K_DOCS);
+    plans = [];
+    docs = [];
+    activePlanId = null;
+    renderPlans();
+    renderDocs();
+    updatePreview();
+    setLastSaved();
+  });
+
+  // ====== UTIL: HTML ESCAPE ======
+  function escapeHtml(s){
+    return (s ?? "").toString().replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  // ====== INIT ======
+  renderPlans();
+  renderDocs();
+  updatePreview();
+  setLastSaved();
+})();
 </script>
-
 </body>
 </html>
