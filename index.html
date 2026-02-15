@@ -3,434 +3,1079 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Masculine Security — Dienstplan</title>
-  <meta name="theme-color" content="#0b1220" />
+  <title>Masculine Security — Dienstplan & Dokumentation</title>
+  <meta name="theme-color" content="#0b2d57" />
   <style>
     :root{
-      --bg:#071225; --panel:#0b1a33; --panel2:#0c2242; --card:#0f2a4f; --line:#16345e;
-      --text:#e7f0ff; --muted:#9bb1d5; --accent:#3aa6ff; --good:#21d19f; --warn:#ffce54; --bad:#ff4d6d;
-      --r:18px; --r2:12px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      --shadow: 0 16px 40px rgba(0,0,0,.35);
+      --bg:#071225;
+      --panel:#0b1a33;
+      --panel2:#0c2242;
+      --card:#0f2a4f;
+      --line:#16345e;
+      --text:#e7f0ff;
+      --muted:#9bb1d5;
+      --accent:#3aa6ff;
+      --good:#21d19f;
+      --warn:#ffce54;
+      --bad:#ff4d6d;
+      --r:16px;
+      --r2:12px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family:var(--font); color:var(--text);
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
       background:
-        radial-gradient(1100px 650px at 25% -15%, rgba(58,166,255,.22), transparent 60%),
-        radial-gradient(900px 600px at 90% 5%, rgba(33,209,159,.14), transparent 55%),
-        linear-gradient(180deg, #061022 0%, #071225 100%);
-      min-height:100vh;
+        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.25), transparent 55%),
+        radial-gradient(900px 600px at 110% 0%, rgba(33,209,159,.16), transparent 50%),
+        radial-gradient(900px 600px at 10% 110%, rgba(255,206,84,.10), transparent 55%),
+        var(--bg);
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
-    .top{
-      display:flex; gap:14px; align-items:center; justify-content:space-between;
-      padding:14px 16px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08); border-radius:var(--r); box-shadow:var(--shadow);
-      position:sticky; top:0; backdrop-filter: blur(10px); z-index:20;
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1200px; margin:20px auto; padding:0 14px 60px}
+    .topbar{
+      display:flex; gap:14px; align-items:stretch; justify-content:space-between;
+      background:linear-gradient(180deg, rgba(12,34,66,.95), rgba(11,26,51,.95));
+      border:1px solid rgba(22,52,94,.8);
+      border-radius:24px;
+      padding:14px 14px;
+      box-shadow:var(--shadow);
+      position:sticky; top:10px; z-index:10;
+      backdrop-filter: blur(10px);
     }
-    .brand{display:flex; align-items:center; gap:12px;}
-    .logoBox{
-      width:54px; height:54px; border-radius:14px; overflow:hidden;
-      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10);
-      display:flex; align-items:center; justify-content:center;
+    .brand{
+      display:flex; gap:12px; align-items:center; min-width:280px;
     }
-    .logoBox img{width:100%; height:100%; object-fit:cover; display:block}
-    .logoFallback{
-      width:100%; height:100%; display:flex; align-items:center; justify-content:center;
-      font-weight:900; letter-spacing:.4px; color:rgba(255,255,255,.75);
-      background:linear-gradient(180deg, rgba(58,166,255,.18), rgba(15,42,79,.35));
+    .logo{
+      width:54px; height:54px; border-radius:14px;
+      background:rgba(255,255,255,.08);
+      display:grid; place-items:center;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
     }
-    h1{margin:0; font-size:16px; letter-spacing:.4px}
-    .sub{margin-top:2px; font-size:12px; color:var(--muted)}
-    .statusline{font-size:12px; color:var(--muted)}
-    .statusline b{color:var(--text)}
-    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
-    .btn{
-      border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04);
-      color:var(--text); padding:9px 12px; border-radius:12px; cursor:pointer;
-      font-size:13px;
+    .logo img{width:100%; height:100%; object-fit:cover; display:block}
+    .brand h1{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+      line-height:1.15;
+      font-weight:800;
     }
-    .btn.primary{background:rgba(58,166,255,.22); border-color:rgba(58,166,255,.40)}
-    .btn.good{background:rgba(33,209,159,.18); border-color:rgba(33,209,159,.35)}
-    .btn.bad{background:rgba(255,77,109,.16); border-color:rgba(255,77,109,.30)}
-    .grid{display:grid; grid-template-columns:1.15fr .85fr; gap:14px; margin-top:14px}
-    @media (max-width: 940px){ .grid{grid-template-columns:1fr} }
+    .brand .sub{
+      margin-top:4px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .pillrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .pill{
+      border:1px solid rgba(22,52,94,.9);
+      background:rgba(15,42,79,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      transition:.15s transform ease, .15s opacity ease, .15s background ease;
+    }
+    .pill:hover{transform:translateY(-1px); background:rgba(15,42,79,.75)}
+    .pill.primary{
+      background:linear-gradient(180deg, rgba(58,166,255,.25), rgba(58,166,255,.10));
+      border-color:rgba(58,166,255,.45);
+    }
+    .pill.good{
+      background:linear-gradient(180deg, rgba(33,209,159,.22), rgba(33,209,159,.10));
+      border-color:rgba(33,209,159,.45);
+    }
+    .pill.warn{
+      background:linear-gradient(180deg, rgba(255,206,84,.18), rgba(255,206,84,.08));
+      border-color:rgba(255,206,84,.35);
+    }
+    .pill.bad{
+      background:linear-gradient(180deg, rgba(255,77,109,.18), rgba(255,77,109,.08));
+      border-color:rgba(255,77,109,.35);
+    }
+
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:unset}
+      .topbar{flex-direction:column; align-items:stretch}
+      .pillrow{justify-content:flex-start}
+    }
+
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:var(--r);
+      background:linear-gradient(180deg, rgba(12,34,66,.75), rgba(11,26,51,.75));
+      border:1px solid rgba(22,52,94,.85);
+      border-radius:22px;
       box-shadow:var(--shadow);
       padding:14px;
     }
-    .card h2{margin:0 0 10px; font-size:14px; letter-spacing:.3px}
-    .muted{color:var(--muted); font-size:12px}
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-    @media (max-width: 560px){ .row{grid-template-columns:1fr} }
-    label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
+    .card h2{
+      margin:0 0 10px 0;
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .muted{color:var(--muted); font-size:12px; line-height:1.4}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .field{
+      flex:1 1 220px;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .field label{font-size:12px; color:var(--muted); font-weight:700}
     input, select, textarea{
-      width:100%; padding:10px 11px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(10,25,50,.55);
-      color:var(--text); outline:none;
+      width:100%;
+      background:rgba(7,18,37,.7);
+      border:1px solid rgba(22,52,94,.95);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      outline:none;
+      font-size:13px;
     }
-    textarea{min-height:110px; resize:vertical}
-    .chips{display:flex; flex-wrap:wrap; gap:8px}
-    .chip{
-      display:flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04); font-size:12px;
+    textarea{min-height:92px; resize:vertical}
+    input::placeholder, textarea::placeholder{color:rgba(155,177,213,.65)}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .btn{
+      border:1px solid rgba(22,52,94,.95);
+      background:rgba(15,42,79,.65);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
     }
-    .chip input{width:auto; margin:0}
-    .split{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
-    @media (max-width: 760px){ .split{grid-template-columns:1fr} }
-    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
-    .notice{
-      display:flex; gap:10px; align-items:flex-start;
-      padding:10px 12px; border-radius:12px;
-      border:1px dashed rgba(255,255,255,.14);
-      background:rgba(255,255,255,.03);
-      font-size:12px; color:var(--muted);
-    }
-    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas; font-size:11px; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.18); color:rgba(255,255,255,.82)}
-    .hidden{display:none !important}
+    .btn:hover{background:rgba(15,42,79,.85)}
+    .btn.primary{border-color:rgba(58,166,255,.5); background:rgba(58,166,255,.18)}
+    .btn.good{border-color:rgba(33,209,159,.5); background:rgba(33,209,159,.16)}
+    .btn.bad{border-color:rgba(255,77,109,.45); background:rgba(255,77,109,.14)}
+    .btn.warn{border-color:rgba(255,206,84,.45); background:rgba(255,206,84,.12)}
 
-    /* PRINT */
-    @media print{
-      body{background:#fff; color:#000}
-      .top, .actions, .notice.no-print{display:none !important}
-      .wrap{max-width:none; padding:0}
-      .card{box-shadow:none; border:1px solid #d7e7ff; background:#fff}
-      input, select, textarea{border:1px solid #c9dcff; background:#fff; color:#000}
-      .muted{color:#333}
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      border:1px solid rgba(22,52,94,.85);
+      background:rgba(7,18,37,.35);
     }
+    th, td{
+      padding:10px 10px;
+      font-size:12px;
+      border-bottom:1px solid rgba(22,52,94,.6);
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      color:var(--muted);
+      background:rgba(15,42,79,.45);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    tr:last-child td{border-bottom:none}
+    .tag{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:11px;
+      border:1px solid rgba(22,52,94,.85);
+      background:rgba(15,42,79,.65);
+    }
+    .tag.good{border-color:rgba(33,209,159,.45); background:rgba(33,209,159,.14)}
+    .tag.warn{border-color:rgba(255,206,84,.45); background:rgba(255,206,84,.12)}
+    .tag.bad{border-color:rgba(255,77,109,.45); background:rgba(255,77,109,.12)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+    .mini{
+      padding:7px 10px; border-radius:12px; font-size:11px; font-weight:900;
+      border:1px solid rgba(22,52,94,.85); background:rgba(15,42,79,.55); cursor:pointer;
+    }
+    .mini:hover{background:rgba(15,42,79,.8)}
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:rgba(12,34,66,.92); border:1px solid rgba(22,52,94,.9);
+      color:var(--text); padding:10px 12px; border-radius:14px; box-shadow:var(--shadow);
+      font-weight:800; font-size:12px; display:none; z-index:9999;
+      max-width:min(560px, 92vw);
+    }
+    .tabs{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .tab{
+      border:1px solid rgba(22,52,94,.85);
+      background:rgba(15,42,79,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .tab.active{
+      border-color:rgba(58,166,255,.45);
+      background:rgba(58,166,255,.18);
+    }
+    .panel{display:none}
+    .panel.active{display:block}
+
+    /* PRINT / PDF */
+    @media print{
+      body{background:#fff !important; color:#000 !important}
+      .topbar, .tabs, .no-print{display:none !important}
+      .wrap{max-width:100%; margin:0; padding:0}
+      .card{box-shadow:none; border:1px solid #d7d7d7; background:#fff; border-radius:10px}
+      table{border:1px solid #d7d7d7; background:#fff}
+      th{background:#eef6ff; color:#0b2d57}
+      .print-header{
+        display:flex !important;
+        justify-content:space-between;
+        align-items:center;
+        gap:14px;
+        border-bottom:2px solid #0b2d57;
+        padding-bottom:10px;
+        margin-bottom:12px;
+      }
+      .print-header .left{display:flex; gap:10px; align-items:center}
+      .print-header img{width:56px; height:56px; object-fit:cover; border-radius:12px}
+      .print-title{font-size:16px; font-weight:900; color:#0b2d57}
+      .print-sub{font-size:11px; color:#234}
+      .print-meta{font-size:11px; color:#234; text-align:right}
+    }
+    .print-header{display:none}
   </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="brand">
-      <div class="logoBox">
-        <img id="logoImg" src="logo.png" alt="Logo"
-             onerror="this.style.display='none'; document.getElementById('logoFallback').classList.remove('hidden');" />
-        <div id="logoFallback" class="logoFallback hidden">MS</div>
-      </div>
-      <div>
-        <h1>Masculine Security — Dienstplan</h1>
-        <div class="sub">WhatsApp Text + PDF Export (mit Firmenkopf)</div>
-        <div class="statusline">Zuletzt aktualisiert: <span id="lastSaved">—</span></div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn" id="btnWhatsText">WhatsApp (Text)</button>
-      <button class="btn primary" id="btnPdfCompany">PDF (Blau)</button>
-      <button class="btn" id="btnWhatsPdfHelp">WhatsApp PDF (Steps)</button>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h2>Wochenplan erstellen</h2>
-      <div class="muted">PDF enthält Logo + Firmadaten + Mitarbeiter-Nummer.</div>
-      <div class="divider"></div>
-
-      <div class="row">
-        <div>
-          <label>Mitarbeiter-Name</label>
-          <input id="empName" placeholder="z.B. Mustafa" />
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" title="logo.png">
+          <img id="logoImg" src="logo.png" alt="Masculine Security Logo" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='grid';" />
+          <div id="logoFallback" style="display:none; place-items:center; width:100%; height:100%; color:rgba(255,255,255,.85); font-weight:900; font-size:12px; background:rgba(58,166,255,.10)">
+            LOGO
+          </div>
         </div>
         <div>
-          <label>Mitarbeiter-Nummer</label>
-          <input id="empNo" placeholder="z.B. MS-001" />
+          <h1 id="companyName">MASCULINE SECURITY — Dienstplan</h1>
+          <div class="sub">
+            <span id="companyAddress">Werschenregerstraße 6 · 28237 Bremen</span> ·
+            Tel: <span id="companyPhone">015778697052</span> ·
+            <span id="companyEmail">Kontakt.mass.bremen@hotmail.com</span>
+            <div class="muted" id="autosaveInfo" style="margin-top:4px;">Auto-Speichern aktiv.</div>
+          </div>
         </div>
       </div>
 
-      <div class="row" style="margin-top:10px">
-        <div>
-          <label>WhatsApp-Nummer (optional)</label>
-          <input id="empPhone" placeholder="z.B. +4915778697052" />
-        </div>
-        <div>
-          <label>Woche / Zeitraum (optional)</label>
-          <input id="weekRange" placeholder="z.B. 17.02–23.02" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <label>Arbeitstage</label>
-      <div class="chips" id="dayChips">
-        <label class="chip"><input type="checkbox" value="Mo"> Mo</label>
-        <label class="chip"><input type="checkbox" value="Di"> Di</label>
-        <label class="chip"><input type="checkbox" value="Mi"> Mi</label>
-        <label class="chip"><input type="checkbox" value="Do"> Do</label>
-        <label class="chip"><input type="checkbox" value="Fr"> Fr</label>
-        <label class="chip"><input type="checkbox" value="Sa"> Sa</label>
-        <label class="chip"><input type="checkbox" value="So"> So</label>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="split">
-        <div>
-          <label>Objekt / Einsatzort</label>
-          <input id="objekt" placeholder="z.B. Hotel / Baustelle / Lager" />
-        </div>
-        <div>
-          <label>Schicht</label>
-          <select id="shift">
-            <option value="Tag">Tag</option>
-            <option value="Nacht">Nacht</option>
-          </select>
-        </div>
-        <div>
-          <label>Uhrzeit (optional)</label>
-          <input id="time" placeholder="z.B. 18:00–06:00" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <div>
-          <label>Ort (optional)</label>
-          <input id="location" placeholder="z.B. Bremen" />
-        </div>
-        <div>
-          <label>Notizen (optional)</label>
-          <input id="notesLine" placeholder="z.B. Rundgang / Schlüssel" />
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <label>Details (optional)</label>
-      <textarea id="notes" placeholder="z.B. Besonderheiten / Anweisung / Übergabe"></textarea>
-
-      <div class="divider"></div>
-
-      <div class="notice no-print">
-        <div style="min-width:18px">📌</div>
-        <div>
-          <div><b>PDF → WhatsApp:</b> Klick <b>PDF (Blau)</b> → Druckdialog: <b>Als PDF speichern</b> → WhatsApp → Datei senden.</div>
-          <div style="margin-top:6px"><span class="kbd">Strg</span> + <span class="kbd">F5</span> wenn Logo nicht aktualisiert.</div>
-        </div>
+      <div class="pillrow no-print">
+        <button class="pill primary" id="tabDienstplan">Wochenplan</button>
+        <button class="pill" id="tabDok">Dokumentation</button>
+        <button class="pill warn" id="btnPrint">Drucken</button>
+        <button class="pill primary" id="btnPDF">PDF</button>
+        <button class="pill good" id="btnAutoPrint">Auto-Print Sheet</button>
+        <button class="pill" id="btnExportCSV">Export CSV</button>
+        <button class="pill" id="btnWhatsApp">WhatsApp (PDF teilen)</button>
+        <button class="pill bad" id="btnReset">Reset</button>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Vorschau</h2>
-      <div class="muted">WhatsApp-Text + PDF-Text getrennt.</div>
-      <div class="divider"></div>
-
-      <label>WhatsApp Text</label>
-      <textarea id="previewText" readonly></textarea>
-
-      <div class="divider"></div>
-
-      <label>PDF Text (mit Firmenkopf)</label>
-      <textarea id="previewPdf" readonly></textarea>
+    <div class="tabs no-print">
+      <button class="tab active" data-panel="pDienstplan">Dienstplan</button>
+      <button class="tab" data-panel="pDok">Dokumentation</button>
     </div>
-  </div>
-</div>
 
-<script>
-(() => {
-  // === COMPANY DATA (EDIT HERE) ===
-  const COMPANY = {
-    name: "Masculine Security",
-    address: "Werschenregerstraße 6, 28237 Bremen",
-    phone: "015778697052",
-    email: "Kontakt.mass.bremen@hotmail.com"
-  };
+    <!-- PRINT HEADER (only appears on print/PDF) -->
+    <div class="print-header">
+      <div class="left">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none';" />
+        <div>
+          <div class="print-title">Masculine Security — Dienstplan</div>
+          <div class="print-sub" id="printCompanyLine">Werschenregerstraße 6, 28237 Bremen · Tel: 015778697052 · Kontakt.mass.bremen@hotmail.com</div>
+        </div>
+      </div>
+      <div class="print-meta">
+        <div><strong>Erstellt am:</strong> <span id="printCreatedAt"></span></div>
+        <div><strong>Dokument:</strong> Wochenplan & Dokumentation</div>
+      </div>
+    </div>
 
-  const $ = (id) => document.getElementById(id);
-  const nowStr = () => new Date().toLocaleString("de-DE");
-  const normalizePhone = (s) => (s || "").trim().replace(/\s+/g, "");
-  const safe = (s) => (s ?? "").toString().trim();
+    <div class="grid panel active" id="pDienstplan">
+      <div class="card">
+        <h2>Wöchentlicher Mitarbeiter-Dienstplan</h2>
+        <div class="muted">
+          Beispiel: Mitarbeiter „Mustafa“ arbeitet <strong>Mo, Di, Mi, Do</strong> am Objekt <strong>Baustelle Bremen</strong> in Schicht <strong>Nacht</strong>.
+          Du kannst daraus einen Text erzeugen (WhatsApp/Email) und als PDF drucken.
+        </div>
 
-  function selectedDays(){
-    const boxes = [...document.querySelectorAll("#dayChips input[type=checkbox]")];
-    return boxes.filter(b => b.checked).map(b => b.value);
-  }
+        <div style="height:10px"></div>
 
-  const dayFull = {Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"};
-
-  function buildPlanLines(){
-    const name = safe($("empName").value);
-    const empNo = safe($("empNo").value);
-    const days = selectedDays();
-    const objekt = safe($("objekt").value);
-    const shift  = safe($("shift").value);
-    const time   = safe($("time").value);
-    const week   = safe($("weekRange").value);
-    const loc    = safe($("location").value);
-    const notes1 = safe($("notesLine").value);
-    const notes  = safe($("notes").value);
-
-    let lines = [];
-    lines.push("Dienstplan");
-    if (name)  lines.push(`Mitarbeiter: ${name}`);
-    if (empNo) lines.push(`Mitarbeiter-Nr.: ${empNo}`);
-    if (week)  lines.push(`Woche: ${week}`);
-    if (loc)   lines.push(`Ort: ${loc}`);
-    lines.push("");
-
-    if (days.length){
-      for (const d of days){
-        let row = `${dayFull[d] || d}: `;
-        row += objekt ? `${objekt}` : "Objekt";
-        row += ` — ${shift || "Schicht"}`;
-        if (time) row += ` (${time})`;
-        lines.push(row);
-      }
-    } else {
-      lines.push("Tage: (bitte auswählen)");
-    }
-
-    const allNotes = [notes1, notes].filter(Boolean).join("\n");
-    if (allNotes){
-      lines.push("");
-      lines.push("Hinweise:");
-      lines.push(allNotes);
-    }
-    return lines;
-  }
-
-  function buildWhatsAppText(){
-    // includes employee number too
-    return buildPlanLines().join("\n");
-  }
-
-  function buildPdfText(){
-    const lines = [];
-    lines.push(COMPANY.name);
-    lines.push(COMPANY.address);
-    lines.push(`Tel: ${COMPANY.phone} • E-Mail: ${COMPANY.email}`);
-    lines.push("");
-    lines.push("----------------------------------------");
-    lines.push("");
-    lines.push(...buildPlanLines());
-    return lines.join("\n");
-  }
-
-  function updatePreview(){
-    $("previewText").value = buildWhatsAppText();
-    $("previewPdf").value  = buildPdfText();
-    $("lastSaved").textContent = nowStr();
-  }
-
-  ["empName","empNo","empPhone","objekt","shift","time","weekRange","location","notesLine","notes"].forEach(id=>{
-    $(id).addEventListener("input", updatePreview);
-    $(id).addEventListener("change", updatePreview);
-  });
-  [...document.querySelectorAll("#dayChips input[type=checkbox]")].forEach(cb=>{
-    cb.addEventListener("change", updatePreview);
-  });
-
-  function sendWhatsAppText(text, phone){
-    const enc = encodeURIComponent(text);
-    const p = normalizePhone(phone);
-    const url = p ? `https://wa.me/${p.replace(/^\+/, "")}?text=${enc}` : `https://wa.me/?text=${enc}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
-  $("btnWhatsText").addEventListener("click", () => {
-    const msg = buildWhatsAppText();
-    const phone = normalizePhone($("empPhone").value);
-    sendWhatsAppText(msg, phone);
-  });
-
-  $("btnPdfCompany").addEventListener("click", () => {
-    const pdfText = buildPdfText();
-    openPrintWindow("Dienstplan (PDF)", pdfText, true);
-  });
-
-  $("btnWhatsPdfHelp").addEventListener("click", () => {
-    alert(
-`WhatsApp PDF senden:
-1) Klick: "PDF (Blau)"
-2) Druckdialog → Ziel: "Als PDF speichern" → Speichern
-3) WhatsApp öffnen → Datei senden (PDF auswählen)
-
-Hinweis: Website kann PDF nicht automatisch direkt senden.`
-    );
-  });
-
-  function openPrintWindow(title, text, autoPrint=false){
-    const w = window.open("", "_blank", "noopener,noreferrer");
-    if (!w){ alert("Popup blockiert. Bitte Popups erlauben und erneut versuchen."); return; }
-
-    const esc = (s) => (s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-    w.document.open();
-    w.document.write(`
-      <!doctype html>
-      <html><head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>${esc(title)}</title>
-        <style>
-          :root{
-            --blue:#2b7cff;
-            --blue2:#eaf3ff;
-            --border:#b9d6ff;
-            --text:#0b1526;
-            --muted:#2c3a55;
-          }
-          body{font-family:Arial, sans-serif; margin:0; color:var(--text); background:#fff}
-          .header{
-            background: linear-gradient(180deg, var(--blue2), #ffffff);
-            border-bottom: 2px solid var(--border);
-            padding: 18px 22px;
-            display:flex; gap:14px; align-items:center;
-          }
-          .logo{
-            width:66px; height:66px; border-radius:14px; overflow:hidden;
-            border:1px solid var(--border); background:#fff;
-            display:flex; align-items:center; justify-content:center;
-          }
-          .logo img{width:100%; height:100%; object-fit:cover; display:block}
-          .h1{font-weight:900; font-size:18px; color:#0b1b35; margin:0}
-          .meta{font-size:12px; color:var(--muted); margin-top:3px}
-          .content{padding:18px 22px}
-          .box{
-            border:1px solid var(--border);
-            border-left:6px solid var(--blue);
-            border-radius:14px;
-            padding:16px;
-            background:#fff;
-          }
-          pre{white-space:pre-wrap; font-size:14px; line-height:1.35; margin:0}
-          .tip{margin-top:12px; font-size:12px; color:#556}
-          @media print{ .tip{display:none} }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <div class="logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
-          <div>
-            <div class="h1">${esc(COMPANY.name)}</div>
-            <div class="meta">${esc(COMPANY.address)}</div>
-            <div class="meta">Tel: ${esc(COMPANY.phone)} • E-Mail: ${esc(COMPANY.email)}</div>
-            <div class="meta">Erstellt: ${esc(new Date().toLocaleString("de-DE"))}</div>
+        <div class="row">
+          <div class="field">
+            <label>Monat (z.B. März 2026)</label>
+            <input id="metaMonth" placeholder="Februar 2026" />
+          </div>
+          <div class="field">
+            <label>Standort</label>
+            <input id="metaLocation" placeholder="Bremen & Umgebung" />
+          </div>
+          <div class="field">
+            <label>Objekt (Standard)</label>
+            <input id="metaObjekt" placeholder="Baustelle / Hotel / Lager" />
+          </div>
+          <div class="field">
+            <label>Logo-Datei (muss im Repo liegen)</label>
+            <input id="metaLogo" value="logo.png" />
           </div>
         </div>
 
-        <div class="content">
-          <div class="box"><pre>${esc(text)}</pre></div>
-          <div class="tip">Im Druckdialog: Ziel → "Als PDF speichern"</div>
+        <div style="height:10px"></div>
+
+        <div class="row">
+          <div class="field">
+            <label>Mitarbeiter-Nr.</label>
+            <input id="empNr" placeholder="z.B. 001" />
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input id="empName" placeholder="Mustafa" />
+          </div>
+          <div class="field">
+            <label>Arbeitstage</label>
+            <input id="empDays" placeholder="Mo, Di, Mi, Do" />
+          </div>
+          <div class="field">
+            <label>Schicht</label>
+            <select id="empShift">
+              <option value="Tag">Tag</option>
+              <option value="Nacht">Nacht</option>
+            </select>
+          </div>
+          <div class="field" style="flex:1 1 260px">
+            <label>Objekt / Einsatzort</label>
+            <input id="empObjekt" placeholder="Baustelle Bremen" />
+          </div>
         </div>
 
-        <script>
-          ${autoPrint ? "window.onload = () => { window.focus(); window.print(); };" : ""}
-        <\/script>
-      </body></html>
-    `);
-    w.document.close();
-  }
+        <div class="btnrow no-print">
+          <button class="btn good" id="btnSaveWeekly">Speichern</button>
+          <button class="btn" id="btnClearWeekly">Felder leeren</button>
+          <button class="btn primary" id="btnGenerateMsg">Nachricht erzeugen</button>
+        </div>
 
-  updatePreview();
-})();
-</script>
+        <div style="height:12px"></div>
+
+        <div class="card" style="padding:12px; border-radius:18px; background:rgba(7,18,37,.35)">
+          <h2 style="margin:0 0 8px 0; font-size:14px">Nachricht-Vorschau (zum Senden)</h2>
+          <div class="muted">Du kannst den Text kopieren und per WhatsApp/Email senden.</div>
+          <div style="height:8px"></div>
+          <textarea id="msgPreview" placeholder="Hier erscheint die Nachricht..." class="no-print"></textarea>
+          <div class="btnrow no-print">
+            <button class="btn" id="btnCopyMsg">Text kopieren</button>
+            <button class="btn primary" id="btnOpenWhatsAppText">WhatsApp Text öffnen</button>
+          </div>
+        </div>
+
+        <div style="height:14px"></div>
+
+        <h2>Gespeicherte Wochenpläne</h2>
+        <div class="muted">Diese Liste wird lokal im Browser gespeichert (Auto-Save).</div>
+        <div style="height:10px"></div>
+        <div class="no-print" id="weeklyEmpty" style="display:none" class="muted">Noch keine Wochenpläne gespeichert.</div>
+        <div style="overflow:auto">
+          <table id="weeklyTable">
+            <thead>
+              <tr>
+                <th>Mitarb.-Nr.</th>
+                <th>Name</th>
+                <th>Tage</th>
+                <th>Schicht</th>
+                <th>Objekt</th>
+                <th>Monat</th>
+                <th>Standort</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="weeklyTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Schnell-PDF / Druck</h2>
+        <div class="muted">
+          <strong>PDF</strong> = Öffnet Print-Dialog → wähle „Als PDF speichern“.<br>
+          <strong>Auto-Print Sheet</strong> = druckt direkt die Tabellenansicht (Blau).
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="row">
+          <div class="field">
+            <label>Kontakt-Email (klickbar im PDF-Text)</label>
+            <input id="metaEmail" value="Kontakt.mass.bremen@hotmail.com" />
+          </div>
+          <div class="field">
+            <label>Telefon</label>
+            <input id="metaPhone" value="015778697052" />
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="btnrow no-print">
+          <button class="btn warn" id="btnPrint2">Drucken</button>
+          <button class="btn primary" id="btnPDF2">PDF</button>
+          <button class="btn good" id="btnAutoPrint2">Auto-Print Sheet</button>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card" style="padding:12px; border-radius:18px; background:rgba(7,18,37,.35)">
+          <h2 style="margin:0 0 8px 0; font-size:14px">Warum war es bei dir „blank“?</h2>
+          <div class="muted">
+            Meistens: alter Cache/Service-Worker oder ein JS-Fehler. Dieses HTML ist „ein File“ und hat Error-Schutz,
+            damit die Seite nicht weiß bleibt.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid panel" id="pDok">
+      <div class="card">
+        <h2>Dokumentation — Anwesend / Abwesend</h2>
+        <div class="muted">
+          Hier dokumentierst du Mitarbeiter, die <strong>anwesend</strong> oder <strong>abwesend</strong> sind (z.B. Nachweis für Objekt).
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="row">
+          <div class="field">
+            <label>Datum</label>
+            <input id="docDate" type="date" />
+          </div>
+          <div class="field">
+            <label>Objekt</label>
+            <input id="docObjekt" placeholder="z.B. Hotel XYZ / Baustelle Bremen" />
+          </div>
+          <div class="field">
+            <label>Mitarbeiter-Nr.</label>
+            <input id="docNr" placeholder="z.B. 001" />
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input id="docName" placeholder="Mitarbeiter Name" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Anwesend (Liste)</label>
+            <textarea id="docPresent" placeholder="z.B. Mustafa (001)&#10;Ali (002)"></textarea>
+          </div>
+          <div class="field">
+            <label>Abwesend (Liste + Grund)</label>
+            <textarea id="docAbsent" placeholder="z.B. Ahmed (003) — krank&#10;Hassan (004) — Urlaub"></textarea>
+          </div>
+        </div>
+
+        <div class="btnrow no-print">
+          <button class="btn good" id="btnSaveDoc">Speichern</button>
+          <button class="btn" id="btnClearDoc">Felder leeren</button>
+        </div>
+
+        <div style="height:14px"></div>
+
+        <h2>Gespeicherte Dokumentationen</h2>
+        <div class="muted">Wird automatisch gespeichert (lokal).</div>
+        <div style="height:10px"></div>
+
+        <div style="overflow:auto">
+          <table id="docTable">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Objekt</th>
+                <th>Anwesend</th>
+                <th>Abwesend</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="docTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>PDF / Export</h2>
+        <div class="muted">
+          Dokumentation kann ebenfalls im PDF erscheinen (Druck → „Als PDF speichern“).
+        </div>
+        <div style="height:12px"></div>
+
+        <div class="btnrow no-print">
+          <button class="btn warn" id="btnPrintDoc">Drucken</button>
+          <button class="btn primary" id="btnPDFDoc">PDF</button>
+          <button class="btn" id="btnExportDocCSV">Export CSV</button>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card" style="padding:12px; border-radius:18px; background:rgba(7,18,37,.35)">
+          <h2 style="margin:0 0 8px 0; font-size:14px">WhatsApp (PDF)</h2>
+          <div class="muted">
+            Browser wuxuu kuu ogolaan karaa “Share” haddii uu taageero. Haddii kale:
+            <br>1) PDF → Save as PDF
+            <br>2) WhatsApp → Attach → Document → dooro PDF → Send
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      // ---------- SAFE HELPERS ----------
+      const $ = (id)=> document.getElementById(id);
+      const nowStr = ()=> new Date().toLocaleString("de-DE");
+      const uid = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
+
+      function toast(msg){
+        const t = $("toast");
+        t.textContent = msg;
+        t.style.display = "block";
+        clearTimeout(toast._tm);
+        toast._tm = setTimeout(()=> t.style.display="none", 2600);
+      }
+
+      function safeJsonParse(v, fallback){
+        try{ return JSON.parse(v); } catch(e){ return fallback; }
+      }
+
+      function normalizeDays(days){
+        // allow user: Mon, dienstag... -> German short
+        const map = new Map([
+          ["montag","Mo"],["mon","Mo"],["mo","Mo"],
+          ["dienstag","Di"],["tue","Di"],["di","Di"],
+          ["mittwoch","Mi"],["wed","Mi"],["mi","Mi"],
+          ["donnerstag","Do"],["thu","Do"],["do","Do"],
+          ["freitag","Fr"],["fri","Fr"],["fr","Fr"],
+          ["samstag","Sa"],["sat","Sa"],["sa","Sa"],
+          ["sonntag","So"],["sun","So"],["so","So"],
+        ]);
+        const parts = String(days||"").split(/[,/]/).map(s=>s.trim()).filter(Boolean);
+        const out = [];
+        for(const p of parts){
+          const key = p.toLowerCase();
+          out.push(map.get(key) || p);
+        }
+        return out.join(", ");
+      }
+
+      // ---------- STORAGE KEYS ----------
+      const K_META = "MS_META_V3";
+      const K_WEEKLY = "MS_WEEKLY_V3";
+      const K_DOCS = "MS_DOCS_V3";
+      const APP_VERSION = "v3.1.0"; // bump to force reload notice
+
+      // ---------- DEFAULT META ----------
+      const defaultMeta = {
+        companyName: "MASCULINE SECURITY — Dienstplan",
+        address: "Werschenregerstraße 6 · 28237 Bremen",
+        phone: "015778697052",
+        email: "Kontakt.mass.bremen@hotmail.com",
+        month: "",
+        location: "Bremen & Umgebung",
+        objekt: "",
+        logo: "logo.png",
+        updatedAt: null
+      };
+
+      // ---------- LOAD META ----------
+      let meta = Object.assign({}, defaultMeta, safeJsonParse(localStorage.getItem(K_META), {}));
+
+      function applyMeta(){
+        $("companyName").textContent = meta.companyName || defaultMeta.companyName;
+        $("companyAddress").textContent = meta.address || defaultMeta.address;
+        $("companyPhone").textContent = meta.phone || defaultMeta.phone;
+        $("companyEmail").textContent = meta.email || defaultMeta.email;
+
+        $("metaMonth").value = meta.month || "";
+        $("metaLocation").value = meta.location || "";
+        $("metaObjekt").value = meta.objekt || "";
+        $("metaLogo").value = meta.logo || "logo.png";
+        $("metaEmail").value = meta.email || defaultMeta.email;
+        $("metaPhone").value = meta.phone || defaultMeta.phone;
+
+        // logo path
+        const logoPath = (meta.logo || "logo.png").trim() || "logo.png";
+        $("logoImg").src = logoPath + (logoPath.includes("?") ? "" : "?v=" + encodeURIComponent(APP_VERSION));
+        // print header
+        $("printCompanyLine").textContent =
+          (meta.address || defaultMeta.address).replace(" · ", ", ") + " · Tel: " + (meta.phone||defaultMeta.phone) + " · " + (meta.email||defaultMeta.email);
+      }
+
+      function saveMeta(){
+        meta.companyName = $("companyName").textContent.trim() || defaultMeta.companyName;
+        meta.address = $("companyAddress").textContent.trim() || defaultMeta.address;
+        meta.phone = $("metaPhone").value.trim() || defaultMeta.phone;
+        meta.email = $("metaEmail").value.trim() || defaultMeta.email;
+        meta.month = $("metaMonth").value.trim();
+        meta.location = $("metaLocation").value.trim();
+        meta.objekt = $("metaObjekt").value.trim();
+        meta.logo = ($("metaLogo").value.trim() || "logo.png");
+        meta.updatedAt = new Date().toISOString();
+        localStorage.setItem(K_META, JSON.stringify(meta));
+        $("autosaveInfo").textContent = "Auto-Update: " + nowStr();
+      }
+
+      // ---------- WEEKLY PLANS ----------
+      let weekly = safeJsonParse(localStorage.getItem(K_WEEKLY), []);
+      if(!Array.isArray(weekly)) weekly = [];
+
+      function renderWeekly(){
+        const tb = $("weeklyTbody");
+        tb.innerHTML = "";
+        $("weeklyEmpty").style.display = weekly.length ? "none" : "block";
+
+        for(const row of weekly){
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="tag">${escapeHtml(row.nr||"")}</span></td>
+            <td><strong>${escapeHtml(row.name||"")}</strong></td>
+            <td>${escapeHtml(row.days||"")}</td>
+            <td><span class="tag ${row.shift==="Nacht"?"warn":"good"}">${escapeHtml(row.shift||"")}</span></td>
+            <td>${escapeHtml(row.objekt||"")}</td>
+            <td>${escapeHtml(row.month||"")}</td>
+            <td>${escapeHtml(row.location||"")}</td>
+            <td>
+              <div class="actions no-print">
+                <button class="mini" data-act="use" data-id="${row.id}">Nutzen</button>
+                <button class="mini" data-act="msg" data-id="${row.id}">Text</button>
+                <button class="mini" data-act="del" data-id="${row.id}">Löschen</button>
+              </div>
+            </td>
+          `;
+          tb.appendChild(tr);
+        }
+      }
+
+      function saveWeekly(){
+        localStorage.setItem(K_WEEKLY, JSON.stringify(weekly));
+        $("autosaveInfo").textContent = "Auto-Update: " + nowStr();
+      }
+
+      function getWeeklyForm(){
+        const nr = $("empNr").value.trim();
+        const name = $("empName").value.trim();
+        const days = normalizeDays($("empDays").value.trim());
+        const shift = $("empShift").value;
+        const objekt = ($("empObjekt").value.trim() || meta.objekt || "");
+        const month = meta.month || $("metaMonth").value.trim();
+        const location = meta.location || $("metaLocation").value.trim();
+        return { nr, name, days, shift, objekt, month, location };
+      }
+
+      function clearWeeklyForm(){
+        $("empNr").value = "";
+        $("empName").value = "";
+        $("empDays").value = "";
+        $("empShift").value = "Tag";
+        $("empObjekt").value = "";
+      }
+
+      function generateMessage(w){
+        const lines = [];
+        lines.push("📌 MASCULINE SECURITY — DIENSTPLAN");
+        lines.push("");
+        lines.push("Mitarbeiter: " + (w.name || "-") + (w.nr ? " (Nr. " + w.nr + ")" : ""));
+        lines.push("Arbeitstage: " + (w.days || "-"));
+        lines.push("Schicht: " + (w.shift || "-"));
+        lines.push("Objekt: " + (w.objekt || "-"));
+        if(w.location) lines.push("Standort: " + w.location);
+        if(w.month) lines.push("Monat: " + w.month);
+        lines.push("");
+        lines.push("Kontakt:");
+        lines.push("Tel: " + (meta.phone || defaultMeta.phone));
+        lines.push("Email: " + (meta.email || defaultMeta.email));
+        lines.push("");
+        lines.push("Bitte pünktlich erscheinen. Danke.");
+        return lines.join("\n");
+      }
+
+      // ---------- DOCUMENTATION ----------
+      let docs = safeJsonParse(localStorage.getItem(K_DOCS), []);
+      if(!Array.isArray(docs)) docs = [];
+
+      function saveDocs(){
+        localStorage.setItem(K_DOCS, JSON.stringify(docs));
+        $("autosaveInfo").textContent = "Auto-Update: " + nowStr();
+      }
+
+      function renderDocs(){
+        const tb = $("docTbody");
+        tb.innerHTML = "";
+        for(const d of docs){
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(d.date||"")}</td>
+            <td>${escapeHtml(d.objekt||"")}</td>
+            <td>${nl2br(escapeHtml(d.present||""))}</td>
+            <td>${nl2br(escapeHtml(d.absent||""))}</td>
+            <td>
+              <div class="actions no-print">
+                <button class="mini" data-act="useDoc" data-id="${d.id}">Nutzen</button>
+                <button class="mini" data-act="delDoc" data-id="${d.id}">Löschen</button>
+              </div>
+            </td>
+          `;
+          tb.appendChild(tr);
+        }
+      }
+
+      function clearDocForm(){
+        $("docDate").value = "";
+        $("docObjekt").value = "";
+        $("docNr").value = "";
+        $("docName").value = "";
+        $("docPresent").value = "";
+        $("docAbsent").value = "";
+      }
+
+      // ---------- EXPORT CSV ----------
+      function downloadText(filename, text){
+        const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=> URL.revokeObjectURL(a.href), 1000);
+      }
+
+      function exportWeeklyCSV(){
+        const headers = ["MitarbeiterNr","Name","Tage","Schicht","Objekt","Monat","Standort"];
+        const rows = weekly.map(w=>[
+          w.nr||"", w.name||"", w.days||"", w.shift||"", w.objekt||"", w.month||"", w.location||""
+        ]);
+        const csv = [headers, ...rows]
+          .map(r=> r.map(v=> `"${String(v).replaceAll('"','""')}"`).join(";"))
+          .join("\n");
+        downloadText("dienstplan_wochenplan.csv", csv);
+      }
+
+      function exportDocsCSV(){
+        const headers = ["Datum","Objekt","Anwesend","Abwesend"];
+        const rows = docs.map(d=>[d.date||"", d.objekt||"", d.present||"", d.absent||""]);
+        const csv = [headers, ...rows]
+          .map(r=> r.map(v=> `"${String(v).replaceAll('"','""')}"`).join(";"))
+          .join("\n");
+        downloadText("dokumentation.csv", csv);
+      }
+
+      // ---------- PRINT / PDF ----------
+      function doPrint(){
+        $("printCreatedAt").textContent = new Date().toLocaleString("de-DE");
+        // ensure meta saved
+        saveMeta();
+        // small delay so print header updates
+        setTimeout(()=> window.print(), 60);
+      }
+
+      // "Auto-Print Sheet" = print immediately the tables (same print)
+      function autoPrintSheet(){
+        // Ensure message area doesn't block printing
+        doPrint();
+      }
+
+      // ---------- WHATSAPP SHARE ----------
+      async function sharePDFHint(){
+        // Browsers cannot directly "send PDF to WhatsApp" without user save/share.
+        // We try navigator.share with text, and also open wa.me for text.
+        const msg = $("msgPreview").value.trim() || "Masculine Security — Dienstplan";
+        try{
+          if(navigator.share){
+            await navigator.share({ title:"Dienstplan", text: msg });
+            toast("Teilen geöffnet (WhatsApp auswählen, wenn verfügbar).");
+            return;
+          }
+        }catch(e){}
+        // fallback open WhatsApp web text
+        const url = "https://wa.me/?text=" + encodeURIComponent(msg);
+        window.open(url, "_blank", "noopener,noreferrer");
+        toast("WhatsApp Text geöffnet. PDF bitte über Drucken → Als PDF speichern senden.");
+      }
+
+      // ---------- HTML ESCAPE ----------
+      function escapeHtml(s){
+        return String(s ?? "")
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#39;");
+      }
+      function nl2br(s){ return s.replaceAll("\n","<br>"); }
+
+      // ---------- TABS ----------
+      function setPanel(panelId){
+        for(const p of document.querySelectorAll(".panel")) p.classList.remove("active");
+        $(panelId).classList.add("active");
+        for(const t of document.querySelectorAll(".tab")) t.classList.toggle("active", t.dataset.panel === panelId);
+      }
+
+      // ---------- INIT ----------
+      function init(){
+        // default date
+        const today = new Date();
+        $("docDate").value = today.toISOString().slice(0,10);
+
+        // apply meta
+        applyMeta();
+
+        // render lists
+        renderWeekly();
+        renderDocs();
+
+        // autosave meta on input
+        const metaInputs = ["metaMonth","metaLocation","metaObjekt","metaLogo","metaEmail","metaPhone"];
+        metaInputs.forEach(id=>{
+          $(id).addEventListener("input", ()=>{
+            // update live
+            meta.month = $("metaMonth").value.trim();
+            meta.location = $("metaLocation").value.trim();
+            meta.objekt = $("metaObjekt").value.trim();
+            meta.logo = $("metaLogo").value.trim() || "logo.png";
+            meta.email = $("metaEmail").value.trim();
+            meta.phone = $("metaPhone").value.trim();
+            localStorage.setItem(K_META, JSON.stringify(Object.assign(meta,{updatedAt:new Date().toISOString()})));
+            applyMeta();
+            $("autosaveInfo").textContent = "Auto-Update: " + nowStr();
+          });
+        });
+
+        // tabs (top)
+        document.querySelectorAll(".tab").forEach(btn=>{
+          btn.addEventListener("click", ()=> setPanel(btn.dataset.panel));
+        });
+        $("tabDienstplan").addEventListener("click", ()=> setPanel("pDienstplan"));
+        $("tabDok").addEventListener("click", ()=> setPanel("pDok"));
+
+        // weekly save
+        $("btnSaveWeekly").addEventListener("click", ()=>{
+          saveMeta();
+          const w = getWeeklyForm();
+          if(!w.name){ toast("Bitte Name eingeben."); return; }
+          if(!w.days){ toast("Bitte Arbeitstage eingeben (z.B. Mo, Di, Mi)."); return; }
+          const item = { id: uid(), ...w };
+          weekly.unshift(item);
+          saveWeekly();
+          renderWeekly();
+          $("msgPreview").value = generateMessage(item);
+          toast("Wochenplan gespeichert.");
+        });
+
+        $("btnClearWeekly").addEventListener("click", ()=>{
+          clearWeeklyForm();
+          toast("Felder geleert.");
+        });
+
+        $("btnGenerateMsg").addEventListener("click", ()=>{
+          saveMeta();
+          const w = getWeeklyForm();
+          if(!w.name){ toast("Bitte Name eingeben."); return; }
+          if(!w.days){ toast("Bitte Arbeitstage eingeben."); return; }
+          $("msgPreview").value = generateMessage(w);
+          toast("Nachricht erzeugt.");
+        });
+
+        $("btnCopyMsg").addEventListener("click", async ()=>{
+          const txt = $("msgPreview").value;
+          if(!txt.trim()){ toast("Kein Text."); return; }
+          try{
+            await navigator.clipboard.writeText(txt);
+            toast("Kopiert.");
+          }catch(e){
+            $("msgPreview").focus();
+            $("msgPreview").select();
+            toast("Markiert — bitte STRG+C.");
+          }
+        });
+
+        $("btnOpenWhatsAppText").addEventListener("click", ()=>{
+          const txt = $("msgPreview").value.trim();
+          if(!txt){ toast("Erst Nachricht erzeugen."); return; }
+          window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
+        });
+
+        // weekly table actions
+        $("weeklyTable").addEventListener("click", (e)=>{
+          const btn = e.target.closest("button");
+          if(!btn) return;
+          const id = btn.getAttribute("data-id");
+          const act = btn.getAttribute("data-act");
+          const w = weekly.find(x=>x.id===id);
+          if(!w) return;
+
+          if(act==="use"){
+            $("empNr").value = w.nr || "";
+            $("empName").value = w.name || "";
+            $("empDays").value = w.days || "";
+            $("empShift").value = w.shift || "Tag";
+            $("empObjekt").value = w.objekt || "";
+            $("msgPreview").value = generateMessage(w);
+            toast("In Formular geladen.");
+          }
+          if(act==="msg"){
+            $("msgPreview").value = generateMessage(w);
+            toast("Text erstellt.");
+          }
+          if(act==="del"){
+            if(!confirm("Diesen Wochenplan löschen?")) return;
+            weekly = weekly.filter(x=>x.id!==id);
+            saveWeekly();
+            renderWeekly();
+            toast("Gelöscht.");
+          }
+        });
+
+        // docs save
+        $("btnSaveDoc").addEventListener("click", ()=>{
+          saveMeta();
+          const date = $("docDate").value;
+          const objekt = $("docObjekt").value.trim();
+          const nr = $("docNr").value.trim();
+          const name = $("docName").value.trim();
+
+          let present = $("docPresent").value.trim();
+          let absent = $("docAbsent").value.trim();
+
+          // quick helper: if user filled nr/name but not lists, auto put into present
+          if((nr || name) && !present && !absent){
+            present = [name ? (name + (nr? " ("+nr+")":"")) : (nr? ("Nr. "+nr):"")].filter(Boolean).join("");
+          }
+
+          if(!date){ toast("Bitte Datum wählen."); return; }
+          if(!objekt){ toast("Bitte Objekt eingeben."); return; }
+          if(!present && !absent){ toast("Bitte Anwesend oder Abwesend ausfüllen."); return; }
+
+          const d = { id: uid(), date, objekt, present, absent };
+          docs.unshift(d);
+          saveDocs();
+          renderDocs();
+          toast("Dokumentation gespeichert.");
+        });
+
+        $("btnClearDoc").addEventListener("click", ()=>{
+          clearDocForm();
+          toast("Felder geleert.");
+        });
+
+        // docs table actions
+        $("docTable").addEventListener("click", (e)=>{
+          const btn = e.target.closest("button");
+          if(!btn) return;
+          const id = btn.getAttribute("data-id");
+          const act = btn.getAttribute("data-act");
+          const d = docs.find(x=>x.id===id);
+          if(!d) return;
+
+          if(act==="useDoc"){
+            $("docDate").value = d.date || "";
+            $("docObjekt").value = d.objekt || "";
+            $("docPresent").value = d.present || "";
+            $("docAbsent").value = d.absent || "";
+            toast("In Formular geladen.");
+          }
+          if(act==="delDoc"){
+            if(!confirm("Diese Dokumentation löschen?")) return;
+            docs = docs.filter(x=>x.id!==id);
+            saveDocs();
+            renderDocs();
+            toast("Gelöscht.");
+          }
+        });
+
+        // export
+        $("btnExportCSV").addEventListener("click", ()=>{ exportWeeklyCSV(); toast("CSV exportiert."); });
+        $("btnExportDocCSV").addEventListener("click", ()=>{ exportDocsCSV(); toast("CSV exportiert."); });
+
+        // print/pdf
+        $("btnPrint").addEventListener("click", doPrint);
+        $("btnPDF").addEventListener("click", doPrint);
+        $("btnPrint2").addEventListener("click", doPrint);
+        $("btnPDF2").addEventListener("click", doPrint);
+        $("btnPrintDoc").addEventListener("click", doPrint);
+        $("btnPDFDoc").addEventListener("click", doPrint);
+
+        $("btnAutoPrint").addEventListener("click", autoPrintSheet);
+        $("btnAutoPrint2").addEventListener("click", autoPrintSheet);
+
+        // WhatsApp share
+        $("btnWhatsApp").addEventListener("click", sharePDFHint);
+
+        // reset
+        $("btnReset").addEventListener("click", ()=>{
+          if(!confirm("Alles löschen? (Dienstplan + Dokumentation + Meta)")) return;
+          localStorage.removeItem(K_META);
+          localStorage.removeItem(K_WEEKLY);
+          localStorage.removeItem(K_DOCS);
+          toast("Reset gemacht. Seite lädt neu…");
+          setTimeout(()=> location.reload(), 700);
+        });
+
+        // keep meta consistent with top header phone/email
+        // (we keep header fixed; phone/email are from meta inputs)
+        // show app version
+        const last = meta.updatedAt ? new Date(meta.updatedAt).toLocaleString("de-DE") : "—";
+        $("autosaveInfo").textContent = "Auto-Update aktiv · Letztes Speichern: " + last + " · " + APP_VERSION;
+
+        // show hint if logo missing
+        setTimeout(()=>{
+          const img = $("logoImg");
+          if(img && img.style.display==="none"){
+            toast("Logo nicht gefunden. Datei muss exakt 'logo.png' heißen (im Repo Root).");
+          }
+        }, 1200);
+      }
+
+      // Hard protection against blank screen: show errors as toast
+      window.addEventListener("error", (e)=>{
+        toast("Fehler: " + (e.message || "Unbekannt"));
+      });
+      window.addEventListener("unhandledrejection", (e)=>{
+        toast("Fehler: " + (e.reason?.message || "Promise error"));
+      });
+
+      // Start
+      try{ init(); }
+      catch(err){
+        document.body.innerHTML =
+          "<div style='padding:20px;font-family:Arial;color:#fff;background:#071225'>" +
+          "<h2>App Fehler</h2><pre style='white-space:pre-wrap;color:#ffce54'>" + (err?.stack || err) + "</pre>" +
+          "<p>Bitte Screenshot senden.</p></div>";
+      }
+    })();
+  </script>
 </body>
 </html>
