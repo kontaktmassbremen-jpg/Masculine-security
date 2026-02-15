@@ -1,785 +1,663 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Masculine Security — Dienstplan</title>
-  <meta name="theme-color" content="#0b1220" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Masculine Security — Dienstplan & Documentation</title>
 
-  <!-- PDF + Excel (internet required) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- PDF (internet required) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <style>
-    :root{
-      --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
-      --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd; --bad:#ff4d6d;
-      --r:18px; --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:var(--font); color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.25), transparent 60%),
-        radial-gradient(900px 600px at 100% 0%, rgba(43,212,189,.18), transparent 55%),
-        var(--bg);
-      min-height:100vh;
-    }
-    .wrap{max-width:1150px; margin:0 auto; padding:18px}
-    a{color:inherit; text-decoration:none}
-    .topbar{
-      display:flex; gap:14px; align-items:center; justify-content:space-between;
-      padding:16px; border:1px solid var(--line); border-radius:var(--r);
-      background: linear-gradient(180deg, rgba(16,32,58,.92), rgba(15,26,47,.92));
-      box-shadow: 0 14px 34px rgba(0,0,0,.35);
-    }
-    .brand{display:flex; gap:12px; align-items:center; min-width:0}
-    .logo{
-      width:58px; height:58px; border-radius:14px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden; flex:0 0 auto;
-      font-weight:900; font-size:11px; color:rgba(231,238,255,.75);
-    }
-    .logo img{width:100%; height:100%; object-fit:cover; display:block}
-    .btxt{min-width:0}
-    .btxt h1{margin:0; font-size:16px; letter-spacing:.6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .btxt p{margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.25}
-    .btxt p a{border-bottom:1px dashed rgba(231,238,255,.35)}
-    .btxt p a:hover{border-bottom-color:rgba(231,238,255,.8)}
-    .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
-
-    .tabs{
-      display:flex; gap:8px; padding:6px;
-      border-radius:999px; border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-    }
-    .tab{
-      cursor:pointer;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid transparent;
-      background: transparent;
-      color: var(--muted);
-      font-weight:900; font-size:12px;
-    }
-    .tab:hover{color:var(--text); background: rgba(255,255,255,.06)}
-    .tab.active{
-      color:var(--text);
-      background: rgba(58,166,255,.20);
-      border-color: rgba(58,166,255,.40);
-    }
-
-    .btn{
-      appearance:none; border:none; cursor:pointer;
-      padding:10px 12px; border-radius:14px;
-      background: rgba(255,255,255,.10);
-      color:var(--text);
-      border:1px solid rgba(255,255,255,.10);
-      font-weight:900; font-size:12px;
-    }
-    .btn:hover{background: rgba(255,255,255,.14)}
-    .btn.primary{background: rgba(58,166,255,.20); border-color: rgba(58,166,255,.40)}
-    .btn.good{background: rgba(43,212,189,.16); border-color: rgba(43,212,189,.35)}
-    .btn.bad{background: rgba(255,77,109,.14); border-color: rgba(255,77,109,.35)}
-    .btn.small{padding:8px 10px; border-radius:12px}
-
-    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .right{justify-content:flex-start} }
-
-    .card{
-      border:1px solid var(--line); border-radius:var(--r);
-      background: rgba(16,32,58,.78);
-      box-shadow: 0 14px 34px rgba(0,0,0,.30);
-      overflow:hidden;
-    }
-    .card .hd{
-      padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .card .hd h2{margin:0; font-size:13px; letter-spacing:.4px}
-    .card .bd{padding:16px}
-
-    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
-    input, select, textarea{
-      width:100%; padding:11px 12px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color:var(--text); outline:none;
-    }
-    textarea{min-height:96px; resize:vertical}
-    input::placeholder, textarea::placeholder{color: rgba(231,238,255,.55)}
-    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    @media (max-width: 650px){ .row{grid-template-columns:1fr} }
-
-    .msg{font-size:12px; margin-top:10px; font-weight:900}
-    .msg.good{color: rgba(43,212,189,.95)}
-    .msg.bad{color: rgba(255,77,109,.95)}
-    .hint{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.35}
-
-    table{width:100%; border-collapse:collapse}
-    th, td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      text-align:left; font-size:13px;
-      vertical-align:top;
-    }
-    th{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.3px}
-    .tableWrap{overflow:auto}
-
-    @media print{
-      .no-print{display:none !important}
-      body{background:#fff !important; color:#0b1220 !important}
-      .wrap{max-width:100%; padding:0}
-    }
-  </style>
+<style>
+  body{font-family:Arial;background:#0b1220;color:#fff;padding:18px;margin:0}
+  .wrap{max-width:1100px;margin:0 auto}
+  .top{display:flex;gap:14px;align-items:center;justify-content:space-between;background:#10203a;border-radius:14px;padding:14px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:60px;height:60px;border-radius:12px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .logo img{width:100%;height:100%;object-fit:cover}
+  .title{margin:0;font-size:16px;font-weight:800}
+  .sub{margin:6px 0 0;color:#93a4c6;font-size:12px;line-height:1.35}
+  .sub a{color:#fff;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.4)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{cursor:pointer;padding:10px 12px;border-radius:999px;background:#1a2a4b;color:#93a4c6;font-weight:800;font-size:12px;border:1px solid rgba(255,255,255,.10)}
+  .tab.active{background:#3aa6ff;color:#061022}
+  .btn{cursor:pointer;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.12);font-weight:800;font-size:12px}
+  .btn:hover{background:rgba(255,255,255,.14)}
+  .btn.good{background:rgba(43,212,189,.16);border-color:rgba(43,212,189,.35)}
+  .btn.bad{background:rgba(255,77,109,.14);border-color:rgba(255,77,109,.35)}
+  .btn.primary{background:rgba(58,166,255,.20);border-color:rgba(58,166,255,.40)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:#10203a;border-radius:14px;padding:14px}
+  label{display:block;color:#93a4c6;font-size:12px;font-weight:800;margin:10px 0 6px}
+  input,select,textarea{width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;outline:none}
+  textarea{min-height:110px;resize:vertical}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{border-bottom:1px solid rgba(255,255,255,.10);padding:10px;text-align:left;vertical-align:top}
+  th{color:#93a4c6;font-size:12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:650px){.row2{grid-template-columns:1fr}}
+  .muted{color:#93a4c6;font-size:12px;line-height:1.35}
+  .msg{margin-top:10px;font-size:12px;font-weight:800}
+  .msg.ok{color:#2bd4bd}
+  .msg.err{color:#ff4d6d}
+  .hide{display:none}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .small{font-size:11px;padding:8px 10px;border-radius:10px}
+  .rightActions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  @media print{
+    .no-print{display:none !important}
+    body{background:#fff !important;color:#0b1220 !important}
+    .card,.top{background:#fff !important;border:1px solid #e5e7eb}
+    .sub,.muted,th{color:#334155 !important}
+    a{color:#0b1220 !important}
+  }
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar no-print">
-      <div class="brand">
-        <div class="logo" id="logoBox" title="Logo (logo.png)">
-          <img id="logoImg" src="logo.png" alt="Masculine Security Logo"
-               onerror="this.remove(); document.getElementById('logoBox').textContent='LOGO';" />
-        </div>
-        <div class="btxt">
-          <h1>MASCULINE SECURITY — Dienstplan</h1>
-          <p>
-            Werschenregerstraße 6 · 28237 Bremen · Tel: 015778697052 ·
-            <a href="mailto:Kontakt.mass.bremen@hotmail.com">Kontakt.mass.bremen@hotmail.com</a>
-          </p>
-        </div>
+<div class="wrap">
+
+  <div class="top no-print">
+    <div class="brand">
+      <div class="logo" id="logoBox">
+        <img src="logo.png" alt="Logo" onerror="this.remove();document.getElementById('logoBox').textContent='LOGO';" />
       </div>
-
-      <div class="right">
-        <div class="tabs" role="tablist" aria-label="Pages">
-          <button class="tab active" id="tabDienstplan" type="button">Dienstplan</button>
-          <button class="tab" id="tabDocumentation" type="button">Documentation</button>
-        </div>
-
-        <button class="btn primary" id="btnPrint" type="button">Print</button>
-        <button class="btn" id="btnPDF" type="button">Export PDF</button>
-        <button class="btn" id="btnExcel" type="button">Export Excel</button>
-        <button class="btn" id="btnAutoPrint" type="button">Auto Print Sheet</button>
-        <button class="btn bad" id="btnReset" type="button">Reset</button>
+      <div>
+        <p class="title">MASCULINE SECURITY — Dienstplan</p>
+        <p class="sub">
+          Werschenregerstraße 6 · 28237 Bremen · Tel: 015778697052 ·
+          <a href="mailto:Kontakt.mass.bremen@hotmail.com">Kontakt.mass.bremen@hotmail.com</a>
+        </p>
+        <p class="muted" id="statusLine">Auto-update: ON · Last saved: —</p>
       </div>
     </div>
 
-    <!-- DIENSTPLAN PAGE -->
-    <div id="pageDienstplan">
-      <div class="grid">
-        <div class="card no-print">
-          <div class="hd"><h2>Settings</h2></div>
-          <div class="bd">
-            <div class="row">
-              <div>
-                <label>Monat (z.B. März 2026)</label>
-                <input id="metaMonth" placeholder="März 2026" />
-              </div>
-              <div>
-                <label>Objekt (z.B. Baustelle / Hotel / Lager)</label>
-                <input id="metaObjekt" placeholder="Baustelle Bremen" />
-              </div>
-            </div>
-            <div class="row" style="margin-top:12px">
-              <div>
-                <label>Standort</label>
-                <input id="metaLocation" placeholder="Bremen & Umgebung" />
-              </div>
-              <div>
-                <label>Logo</label>
-                <input value="logo.png (same folder as index.html)" disabled />
-              </div>
-            </div>
-            <div class="hint">
-              ✅ Logo si uu u muuqdo: repo root ku upload <b>logo.png</b> (lowercase) isla meesha index.html yaal.
-            </div>
-          </div>
-        </div>
-
-        <div class="card no-print">
-          <div class="hd"><h2>Add Dienstplan Entry</h2></div>
-          <div class="bd">
-            <div class="row">
-              <div>
-                <label>Date</label>
-                <input id="fDate" type="date" />
-              </div>
-              <div>
-                <label>Name</label>
-                <input id="fName" placeholder="Mustafa" />
-              </div>
-            </div>
-            <div class="row" style="margin-top:12px">
-              <div>
-                <label>Shift</label>
-                <select id="fShift">
-                  <option value="">—</option>
-                  <option>Tag</option>
-                  <option>Nacht</option>
-                  <option>Früh</option>
-                  <option>Spät</option>
-                </select>
-              </div>
-              <div>
-                <label>Time (z.B. 18:00-06:00)</label>
-                <input id="fTime" placeholder="18:00-06:00" />
-              </div>
-            </div>
-            <div class="row" style="margin-top:12px">
-              <div>
-                <label>Objekt (optional)</label>
-                <input id="fObjekt" placeholder="Baustelle / Hotel ..." />
-              </div>
-              <div>
-                <label>Notes (optional)</label>
-                <input id="fNotes" placeholder="Key / Rundgang / Besonderheiten" />
-              </div>
-            </div>
-
-            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap">
-              <button class="btn good" id="btnAddEntry" type="button">Add</button>
-              <button class="btn" id="btnClearEntries" type="button">Clear Entries</button>
-              <button class="btn" id="btnExportCSV" type="button">Export CSV</button>
-            </div>
-
-            <div id="msgDienstplan" class="msg"></div>
-          </div>
-        </div>
+    <div class="rightActions">
+      <div class="tabs" role="tablist">
+        <div class="tab active" id="tabPlan">Weekly Plan</div>
+        <div class="tab" id="tabDoc">Documentation</div>
       </div>
-
-      <div class="card" style="margin-top:14px">
-        <div class="hd no-print"><h2>Dienstplan Entries</h2></div>
-        <div class="bd" style="padding:0">
-          <div class="tableWrap">
-            <table id="tblEntries">
-              <thead>
-                <tr>
-                  <th style="min-width:110px">Date</th>
-                  <th style="min-width:140px">Name</th>
-                  <th style="min-width:90px">Shift</th>
-                  <th style="min-width:120px">Time</th>
-                  <th style="min-width:170px">Objekt</th>
-                  <th style="min-width:220px">Notes</th>
-                  <th style="min-width:110px">Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DOCUMENTATION PAGE -->
-    <div id="pageDocumentation" style="display:none">
-      <div class="grid">
-        <div class="card no-print">
-          <div class="hd"><h2>Documentation — Anwesend / Abwesend</h2></div>
-          <div class="bd">
-            <div class="row">
-              <div>
-                <label>Date</label>
-                <input id="dDate" type="date" />
-              </div>
-              <div>
-                <label>Objekt (optional)</label>
-                <input id="dObjekt" placeholder="Baustelle / Hotel ..." />
-              </div>
-            </div>
-
-            <div class="row" style="margin-top:12px">
-              <div>
-                <label>Anwesend (Present) — hal magac line kasta</label>
-                <textarea id="dPresent" placeholder="Mustafa&#10;Ali&#10;Ahmed"></textarea>
-              </div>
-              <div>
-                <label>Abwesend (Absent) — + sabab (optional)</label>
-                <textarea id="dAbsent" placeholder="Mohamed - Krank&#10;Hassan - Urlaub"></textarea>
-              </div>
-            </div>
-
-            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap">
-              <button class="btn good" id="btnSaveDoc" type="button">Save Documentation</button>
-              <button class="btn" id="btnClearDoc" type="button">Clear</button>
-            </div>
-
-            <div id="msgDoc" class="msg"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="hd no-print"><h2>Documentation Logs</h2></div>
-          <div class="bd" style="padding:0">
-            <div class="tableWrap">
-              <table id="tblDocs">
-                <thead>
-                  <tr>
-                    <th style="min-width:110px">Date</th>
-                    <th style="min-width:170px">Objekt</th>
-                    <th style="min-width:240px">Present</th>
-                    <th style="min-width:240px">Absent</th>
-                    <th style="min-width:110px">Action</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hint no-print" style="margin-top:14px">
-        Auto Print Sheet: wuxuu daabacayaa tab-ka aad hadda ku jirto (Dienstplan ama Documentation).
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    // Storage keys
-    const K_META = "ms_meta_v3";
-    const K_ENTRIES = "ms_entries_v3";
-    const K_DOCS = "ms_docs_v3";
-
-    const $ = (id) => document.getElementById(id);
-
-    function safeParse(s, fallback){
-      try { return JSON.parse(s) ?? fallback; } catch { return fallback; }
-    }
-    function uid(){ return (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random()); }
-    function nowDE(){ return new Date().toLocaleDateString("de-DE"); }
-    function esc(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-    }
-    function normalizeLines(text){
-      return (text || "").split(/\r?\n/).map(s => s.trim()).filter(Boolean).join(" | ");
-    }
-    function setMsg(el, text, ok=true){
-      el.textContent = text || "";
-      el.className = "msg " + (ok ? "good" : "bad");
-    }
-
-    function loadMeta(){
-      return safeParse(localStorage.getItem(K_META), { month:"", objekt:"", location:"Bremen & Umgebung" });
-    }
-    function saveMeta(m){ localStorage.setItem(K_META, JSON.stringify(m)); }
-    function loadEntries(){ return safeParse(localStorage.getItem(K_ENTRIES), []); }
-    function saveEntries(rows){ localStorage.setItem(K_ENTRIES, JSON.stringify(rows)); }
-    function loadDocs(){ return safeParse(localStorage.getItem(K_DOCS), []); }
-    function saveDocs(rows){ localStorage.setItem(K_DOCS, JSON.stringify(rows)); }
-
-    // Tabs
-    function setActiveTab(which){
-      const isDienst = which === "dienst";
-      $("pageDienstplan").style.display = isDienst ? "" : "none";
-      $("pageDocumentation").style.display = isDienst ? "none" : "";
-      $("tabDienstplan").classList.toggle("active", isDienst);
-      $("tabDocumentation").classList.toggle("active", !isDienst);
-    }
-
-    // Render tables
-    function render(){
-      const meta = loadMeta();
-      $("metaMonth").value = meta.month || "";
-      $("metaObjekt").value = meta.objekt || "";
-      $("metaLocation").value = meta.location || "";
-
-      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const tb = $("tblEntries").querySelector("tbody");
-      tb.innerHTML = "";
-      if(!entries.length){
-        tb.innerHTML = `<tr><td colspan="7" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No entries yet.</td></tr>`;
-      } else {
-        for(const r of entries){
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${esc(r.date)}</td>
-            <td>${esc(r.name)}</td>
-            <td>${esc(r.shift||"")}</td>
-            <td>${esc(r.time)}</td>
-            <td>${esc(r.objekt||"")}</td>
-            <td>${esc(r.notes||"")}</td>
-            <td><button class="btn small bad" type="button" data-del="${r.id}">Delete</button></td>
-          `;
-          tb.appendChild(tr);
-        }
-      }
-      tb.querySelectorAll("[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-del");
-          saveEntries(loadEntries().filter(x=>x.id !== id));
-          render();
-        });
-      });
-
-      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const dtb = $("tblDocs").querySelector("tbody");
-      dtb.innerHTML = "";
-      if(!docs.length){
-        dtb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No documentation yet.</td></tr>`;
-      } else {
-        for(const d of docs){
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${esc(d.date)}</td>
-            <td>${esc(d.objekt||"")}</td>
-            <td>${esc(d.present||"")}</td>
-            <td>${esc(d.absent||"")}</td>
-            <td><button class="btn small bad" type="button" data-deldoc="${d.id}">Delete</button></td>
-          `;
-          dtb.appendChild(tr);
-        }
-      }
-      dtb.querySelectorAll("[data-deldoc]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.getAttribute("data-deldoc");
-          saveDocs(loadDocs().filter(x=>x.id !== id));
-          render();
-        });
-      });
-    }
-
-    // CSV export
-    function exportCSV(){
-      const meta = loadMeta();
-      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-
-      const q = (v)=>{
-        const s = String(v ?? "");
-        if (/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
-        return s;
-      };
-
-      const lines = [];
-      lines.push("MASCULINE SECURITY");
-      lines.push(`Monat,${q(meta.month)}`);
-      lines.push(`Objekt,${q(meta.objekt)}`);
-      lines.push(`Standort,${q(meta.location)}`);
-      lines.push(`Stand,${q(nowDE())}`);
-      lines.push("");
-      lines.push("DIENSTPLAN");
-      lines.push(["Date","Name","Shift","Time","Objekt","Notes"].join(","));
-      for(const e of entries){
-        lines.push([e.date,e.name,e.shift,e.time,e.objekt,e.notes].map(q).join(","));
-      }
-      if(!entries.length) lines.push(",,,,,");
-      lines.push("");
-      lines.push("DOCUMENTATION");
-      lines.push(["Date","Objekt","Present","Absent"].join(","));
-      for(const d of docs){
-        lines.push([d.date,d.objekt,d.present,d.absent].map(q).join(","));
-      }
-      if(!docs.length) lines.push(",,,");
-      const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
-    // Excel export
-    function exportExcel(){
-      if(!window.XLSX){
-        alert("Excel export: library ma load-gareyn. Hubi internet-ka (CDN).");
-        return;
-      }
-      const meta = loadMeta();
-      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-
-      const wb = XLSX.utils.book_new();
-
-      const metaAoA = [
-        ["Company","MASCULINE SECURITY"],
-        ["Address","Werschenregerstraße 6 · 28237 Bremen"],
-        ["Phone","015778697052"],
-        ["Email","Kontakt.mass.bremen@hotmail.com"],
-        ["Monat", meta.month || ""],
-        ["Objekt", meta.objekt || ""],
-        ["Standort", meta.location || ""],
-        ["Stand", nowDE()],
-      ];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(metaAoA), "Meta");
-
-      const entryAoA = [["Date","Name","Shift","Time","Objekt","Notes"]]
-        .concat(entries.map(e=>[e.date||"", e.name||"", e.shift||"", e.time||"", e.objekt||"", e.notes||""]));
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(entryAoA), "Dienstplan");
-
-      const docAoA = [["Date","Objekt","Present","Absent"]]
-        .concat(docs.map(d=>[d.date||"", d.objekt||"", d.present||"", d.absent||""]));
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(docAoA), "Documentation");
-
-      XLSX.writeFile(wb, `dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.xlsx`);
-    }
-
-    // PDF export
-    function exportPDF(){
-      if(!window.jspdf || !window.jspdf.jsPDF){
-        alert("PDF export: library ma load-gareyn. Hubi internet-ka (CDN).");
-        return;
-      }
-      const meta = loadMeta();
-      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF("p","mm","a4");
-
-      pdf.setFont("helvetica","bold"); pdf.setFontSize(14);
-      pdf.text("MASCULINE SECURITY — Dienstplan", 14, 16);
-
-      pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
-      pdf.text("Werschenregerstraße 6 · 28237 Bremen", 14, 22);
-      pdf.text("015778697052 · Kontakt.mass.bremen@hotmail.com", 14, 27);
-
-      pdf.setFont("helvetica","bold"); pdf.text("Monat:", 14, 35);
-      pdf.setFont("helvetica","normal"); pdf.text(meta.month || "-", 32, 35);
-
-      pdf.setFont("helvetica","bold"); pdf.text("Objekt:", 14, 40);
-      pdf.setFont("helvetica","normal"); pdf.text(meta.objekt || "-", 32, 40);
-
-      pdf.setFont("helvetica","bold"); pdf.text("Standort:", 14, 45);
-      pdf.setFont("helvetica","normal"); pdf.text(meta.location || "-", 32, 45);
-
-      pdf.setFont("helvetica","bold"); pdf.text("Stand:", 14, 50);
-      pdf.setFont("helvetica","normal"); pdf.text(nowDE(), 32, 50);
-
-      pdf.setFont("helvetica","bold"); pdf.text("Dienstplan", 14, 60);
-
-      const entryRows = entries.map(e=>[e.date||"", e.name||"", e.shift||"", e.time||"", e.objekt||"", e.notes||""]);
-      pdf.autoTable({
-        startY: 64,
-        head: [["Date","Name","Shift","Time","Objekt","Notes"]],
-        body: entryRows.length ? entryRows : [["","","","","",""]],
-        styles: { fontSize: 9, cellPadding: 2 },
-        headStyles: { fillColor: [235,239,245], textColor: 20 },
-      });
-
-      let y = pdf.lastAutoTable.finalY + 10;
-      pdf.setFont("helvetica","bold"); pdf.text("Documentation — Anwesend / Abwesend", 14, y);
-      y += 4;
-
-      const docRows = docs.map(d=>[d.date||"", d.objekt||"", d.present||"", d.absent||""]);
-      pdf.autoTable({
-        startY: y+2,
-        head: [["Date","Objekt","Present","Absent"]],
-        body: docRows.length ? docRows : [["","","",""]],
-        styles: { fontSize: 9, cellPadding: 2 },
-        headStyles: { fillColor: [235,239,245], textColor: 20 },
-      });
-
-      y = pdf.lastAutoTable.finalY + 14;
-      pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
-      pdf.text("Unterschrift Objektleiter / Kunde", 14, y);
-      pdf.line(14, y+10, 90, y+10);
-      pdf.text("Unterschrift Masculine Security", 114, y);
-      pdf.line(114, y+10, 196, y+10);
-
-      pdf.save(`dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.pdf`);
-    }
-
-    // Auto Print Sheet (prints current tab)
-    function autoPrintSheet(){
-      const meta = loadMeta();
-      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-      const isDienst = $("tabDienstplan").classList.contains("active");
-
-      const rowsEntries = entries.map(e=>`
-        <tr>
-          <td>${esc(e.date)}</td><td>${esc(e.name)}</td><td>${esc(e.shift||"")}</td>
-          <td>${esc(e.time)}</td><td>${esc(e.objekt||"")}</td><td>${esc(e.notes||"")}</td>
-        </tr>`).join("");
-
-      const rowsDocs = docs.map(d=>`
-        <tr>
-          <td>${esc(d.date)}</td><td>${esc(d.objekt||"")}</td><td>${esc(d.present||"")}</td><td>${esc(d.absent||"")}</td>
-        </tr>`).join("");
-
-      const html = `<!doctype html>
-<html><head><meta charset="utf-8"><title>Print Sheet</title>
-<style>
-  body{font-family:Arial, sans-serif; margin:22px; color:#0b1220}
-  .hdr{display:flex; justify-content:space-between; gap:16px; align-items:flex-start}
-  .title{font-weight:900; letter-spacing:.6px}
-  .sub{color:#334155; font-size:12px; margin-top:4px; line-height:1.35}
-  .meta{font-size:12px; color:#334155; text-align:right}
-  .meta div{margin:2px 0}
-  h2{margin:18px 0 8px; font-size:13px}
-  table{width:100%; border-collapse:collapse; font-size:12px}
-  th,td{border:1px solid #e5e7eb; padding:8px; vertical-align:top}
-  th{background:#f1f5f9; text-align:left}
-  .sign{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:22px}
-  .line{border-bottom:1px solid #0b1220; height:22px}
-  .lbl{font-size:11px; color:#475569; margin-bottom:8px}
-</style></head>
-<body>
-  <div class="hdr">
-    <div>
-      <div class="title">MASCULINE SECURITY</div>
-      <div class="sub">Werschenregerstraße 6 · 28237 Bremen<br>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
-    </div>
-    <div class="meta">
-      <div><b>Monat:</b> ${esc(meta.month||"-")}</div>
-      <div><b>Objekt:</b> ${esc(meta.objekt||"-")}</div>
-      <div><b>Standort:</b> ${esc(meta.location||"-")}</div>
-      <div><b>Stand:</b> ${esc(nowDE())}</div>
+      <button class="btn primary" id="btnPrint" type="button">Print</button>
+      <button class="btn" id="btnPDF" type="button">PDF</button>
+      <button class="btn" id="btnAutoPrint" type="button">Auto Print Sheet</button>
+      <button class="btn bad" id="btnReset" type="button">Reset All</button>
     </div>
   </div>
 
-  ${
-    isDienst
-      ? `<h2>Dienstplan</h2>
-         <table><thead><tr><th>Date</th><th>Name</th><th>Shift</th><th>Time</th><th>Objekt</th><th>Notes</th></tr></thead>
-         <tbody>${rowsEntries || `<tr><td colspan="6" style="color:#475569">No entries.</td></tr>`}</tbody></table>`
-      : `<h2>Documentation — Anwesend / Abwesend</h2>
-         <table><thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
-         <tbody>${rowsDocs || `<tr><td colspan="4" style="color:#475569">No documentation.</td></tr>`}</tbody></table>`
+  <!-- WEEKLY PLAN -->
+  <div id="pagePlan">
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin:0 0 8px">Weekly Staff Dienstplan</h3>
+        <div class="muted">Auto update = marka aad wax qorto, si toos ah ayuu u save-gareynayaa oo table-ka wuu update-gareynayaa. “Add” button looma baahna.</div>
+
+        <div class="row2">
+          <div>
+            <label>Staff Name</label>
+            <input id="pName" placeholder="Mustafa" />
+          </div>
+          <div>
+            <label>Working Days</label>
+            <input id="pDays" placeholder="Mon, Di, Mi, Do" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Objekt</label>
+            <input id="pObjekt" placeholder="Baustelle / Hotel / Lager" />
+          </div>
+          <div>
+            <label>Shift</label>
+            <select id="pShift">
+              <option>Tag</option>
+              <option>Nacht</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn good" id="btnAddPlan" type="button">Save Row</button>
+          <button class="btn" id="btnNewPlan" type="button">New Row</button>
+          <button class="btn bad" id="btnClearPlan" type="button">Clear Weekly Plans</button>
+        </div>
+
+        <div class="msg" id="msgPlan"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px">Message Preview (send to employee)</h3>
+        <div class="muted">Tani waa text-ka aad WhatsApp/Email ugu diri karto shaqaalaha.</div>
+        <label>Preview</label>
+        <textarea id="planPreview" placeholder="Preview auto..." ></textarea>
+
+        <div class="actions">
+          <button class="btn" id="btnCopy" type="button">Copy Text</button>
+        </div>
+
+        <div class="muted" style="margin-top:10px">
+          ✅ Tusaale: “Mustafa — Mon, Di, Mi, Do — Baustelle — Nacht”
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3 style="margin:0 0 8px">Saved Weekly Plans</h3>
+      <table id="planTable">
+        <thead>
+          <tr>
+            <th>Name</th><th>Days</th><th>Objekt</th><th>Shift</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DOCUMENTATION -->
+  <div id="pageDoc" class="hide">
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin:0 0 8px">Documentation (Present / Absent)</h3>
+        <div class="muted">Auto update = marka aad wax qorto, si toos ah ayuu u save-gareynayaa.</div>
+
+        <div class="row2">
+          <div>
+            <label>Date</label>
+            <input id="dDate" type="date" />
+          </div>
+          <div>
+            <label>Objekt (optional)</label>
+            <input id="dObjekt" placeholder="Baustelle / Hotel ..." />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Present (Anwesend) — hal magac line kasta</label>
+            <textarea id="dPresent" placeholder="Mustafa&#10;Ali"></textarea>
+          </div>
+          <div>
+            <label>Absent (Abwesend) — + sabab (optional)</label>
+            <textarea id="dAbsent" placeholder="Ahmed - Krank"></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn good" id="btnSaveDoc" type="button">Save Log</button>
+          <button class="btn" id="btnNewDoc" type="button">New Log</button>
+          <button class="btn bad" id="btnClearDoc" type="button">Clear Documentation</button>
+        </div>
+
+        <div class="msg" id="msgDoc"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px">Tips</h3>
+        <div class="muted">
+          - Present/Absent waxaad u isticmaashaa audit-proof (caddayn).<br/>
+          - PDF wuxuu ku dari doonaa Weekly Plans + Documentation.<br/>
+          - Logo haddii uusan muuqan: repo root ku upload <b>logo.png</b> (lowercase) isla meesha index.html yaal.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3 style="margin:0 0 8px">Saved Documentation Logs</h3>
+      <table id="docTable">
+        <thead>
+          <tr>
+            <th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // -------------------- STORAGE --------------------
+  const K_PLAN = "ms_weekly_plans_v2";
+  const K_DOC  = "ms_docs_v2";
+
+  const $ = (id) => document.getElementById(id);
+  const now = () => new Date();
+  const fmt = (d) => d.toLocaleString("de-DE");
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  const uid = () => (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random());
+
+  function load(key, fallback){ try{ return JSON.parse(localStorage.getItem(key) || "") ?? fallback; } catch { return fallback; } }
+  function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); setStatusSaved(); }
+  function setMsg(el, text, ok=true){ el.textContent = text || ""; el.className = "msg " + (ok ? "ok" : "err"); }
+  function setStatusSaved(){ $("statusLine").textContent = "Auto-update: ON · Last saved: " + fmt(now()); }
+
+  // -------------------- TABS (CLICKABLE) --------------------
+  function showPage(which){
+    const plan = $("pagePlan"), doc = $("pageDoc");
+    const t1 = $("tabPlan"), t2 = $("tabDoc");
+    if(which === "plan"){
+      plan.classList.remove("hide"); doc.classList.add("hide");
+      t1.classList.add("active"); t2.classList.remove("active");
+    } else {
+      doc.classList.remove("hide"); plan.classList.add("hide");
+      t2.classList.add("active"); t1.classList.remove("active");
+    }
   }
 
-  <div class="sign">
-    <div><div class="lbl">Unterschrift Objektleiter / Kunde</div><div class="line"></div></div>
-    <div><div class="lbl">Unterschrift Masculine Security</div><div class="line"></div></div>
-  </div>
+  // -------------------- WEEKLY PLAN (AUTO UPDATE) --------------------
+  let currentPlanId = null;
 
-  <script>window.onload=()=>window.print();<\/script>
-</body></html>`;
+  function getPlanForm(){
+    return {
+      id: currentPlanId || uid(),
+      name: $("pName").value.trim(),
+      days: $("pDays").value.trim(),
+      objekt: $("pObjekt").value.trim(),
+      shift: $("pShift").value,
+      updatedAt: now().toISOString()
+    };
+  }
 
-      const w = window.open("", "_blank");
-      if(!w){ alert("Popup blocked. Allow popups then try again."); return; }
-      w.document.open();
-      w.document.write(html);
-      w.document.close();
+  function validatePlan(p){
+    if(!p.name) return "Name waa qasab.";
+    if(!p.days) return "Days waa qasab (Mon, Di, Mi...).";
+    if(!p.objekt) return "Objekt waa qasab.";
+    if(!p.shift) return "Shift waa qasab.";
+    return "";
+  }
+
+  function upsertPlan(p){
+    const err = validatePlan(p);
+    if(err){ setMsg($("msgPlan"), "❌ " + err, false); return false; }
+
+    const list = load(K_PLAN, []);
+    const idx = list.findIndex(x => x.id === p.id);
+    if(idx >= 0) list[idx] = p; else list.unshift(p);
+    save(K_PLAN, list);
+    setMsg($("msgPlan"), "✅ Saved (auto update).", true);
+    renderPlans();
+    updatePreview();
+    return true;
+  }
+
+  function fillPlanForm(p){
+    currentPlanId = p.id;
+    $("pName").value = p.name || "";
+    $("pDays").value = p.days || "";
+    $("pObjekt").value = p.objekt || "";
+    $("pShift").value = p.shift || "Tag";
+    updatePreview();
+  }
+
+  function newPlanRow(){
+    currentPlanId = null;
+    $("pName").value = "";
+    $("pDays").value = "";
+    $("pObjekt").value = "";
+    $("pShift").value = "Tag";
+    $("planPreview").value = "";
+    setMsg($("msgPlan"), "", true);
+  }
+
+  function renderPlans(){
+    const list = load(K_PLAN, []);
+    const tb = $("planTable").querySelector("tbody");
+    tb.innerHTML = "";
+
+    if(!list.length){
+      tb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65);font-size:12px;padding:12px">No weekly plans yet.</td></tr>`;
+      return;
     }
 
-    // Boot
-    window.addEventListener("DOMContentLoaded", () => {
-      // Default dates
-      const today = new Date().toISOString().slice(0,10);
-      $("fDate").value = today;
-      $("dDate").value = today;
-
-      // Defaults
-      const meta = loadMeta();
-      if(!meta.location) meta.location = "Bremen & Umgebung";
-      saveMeta(meta);
-
-      // Tabs clickable
-      $("tabDienstplan").addEventListener("click", ()=> setActiveTab("dienst"));
-      $("tabDocumentation").addEventListener("click", ()=> setActiveTab("doc"));
-
-      // Meta live save
-      ["metaMonth","metaObjekt","metaLocation"].forEach(id=>{
-        $(id).addEventListener("input", ()=>{
-          saveMeta({
-            month: $("metaMonth").value.trim(),
-            objekt: $("metaObjekt").value.trim(),
-            location: $("metaLocation").value.trim()
-          });
-        });
-      });
-
-      // Add entry
-      $("btnAddEntry").addEventListener("click", ()=>{
-        const msgEl = $("msgDienstplan");
-        setMsg(msgEl, "", true);
-
-        const date = $("fDate").value;
-        const name = $("fName").value.trim();
-        const shift = $("fShift").value.trim();
-        const time = $("fTime").value.trim();
-        const objekt = ($("fObjekt").value.trim() || loadMeta().objekt || "").trim();
-        const notes = $("fNotes").value.trim();
-
-        if(!date || !name || !time){
-          setMsg(msgEl, "Fadlan buuxi: Date, Name, Time (ugu yaraan).", false);
-          return;
-        }
-
-        const rows = loadEntries();
-        rows.push({ id: uid(), date, name, shift, time, objekt, notes });
-        saveEntries(rows);
-
-        $("fName").value = "";
-        $("fShift").value = "";
-        $("fTime").value = "";
-        $("fObjekt").value = "";
-        $("fNotes").value = "";
-
-        setMsg(msgEl, "✅ Entry saved.", true);
-        render();
-      });
-
-      $("btnClearEntries").addEventListener("click", ()=>{
-        if(confirm("Clear all Dienstplan entries?")){
-          saveEntries([]);
-          render();
-        }
-      });
-
-      // Documentation save
-      $("btnSaveDoc").addEventListener("click", ()=>{
-        const msgEl = $("msgDoc");
-        setMsg(msgEl, "", true);
-
-        const date = $("dDate").value;
-        const objekt = ($("dObjekt").value.trim() || loadMeta().objekt || "").trim();
-        const present = normalizeLines($("dPresent").value);
-        const absent = normalizeLines($("dAbsent").value);
-
-        if(!date){
-          setMsg(msgEl, "Date waa qasab (documentation).", false);
-          return;
-        }
-        if(!present && !absent){
-          setMsg(msgEl, "Fadlan qor ugu yaraan: Present ama Absent.", false);
-          return;
-        }
-
-        const docs = loadDocs();
-        docs.push({ id: uid(), date, objekt, present, absent });
-        saveDocs(docs);
-
-        $("dPresent").value = "";
-        $("dAbsent").value = "";
-        $("dObjekt").value = "";
-
-        setMsg(msgEl, "✅ Documentation saved.", true);
-        render();
-      });
-
-      $("btnClearDoc").addEventListener("click", ()=>{
-        $("dPresent").value = "";
-        $("dAbsent").value = "";
-        $("dObjekt").value = "";
-        setMsg($("msgDoc"), "", true);
-      });
-
-      // Top actions
-      $("btnPrint").addEventListener("click", ()=> window.print());
-      $("btnPDF").addEventListener("click", exportPDF);
-      $("btnExcel").addEventListener("click", exportExcel);
-      $("btnAutoPrint").addEventListener("click", autoPrintSheet);
-      $("btnExportCSV").addEventListener("click", exportCSV);
-
-      $("btnReset").addEventListener("click", ()=>{
-        if(confirm("Reset ALL data (meta + dienstplan + documentation)?")){
-          localStorage.removeItem(K_META);
-          localStorage.removeItem(K_ENTRIES);
-          localStorage.removeItem(K_DOCS);
-          location.reload();
-        }
-      });
-
-      render();
+    list.forEach(p=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(p.name)}</td>
+        <td>${esc(p.days)}</td>
+        <td>${esc(p.objekt)}</td>
+        <td>${esc(p.shift)}</td>
+        <td>
+          <button class="btn small" data-load="${p.id}" type="button">Edit</button>
+          <button class="btn small bad" data-del="${p.id}" type="button">Delete</button>
+        </td>
+      `;
+      tb.appendChild(tr);
     });
-  </script>
+
+    tb.querySelectorAll("[data-load]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = b.getAttribute("data-load");
+        const p = load(K_PLAN, []).find(x=>x.id===id);
+        if(p) fillPlanForm(p);
+      });
+    });
+
+    tb.querySelectorAll("[data-del]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = b.getAttribute("data-del");
+        const list = load(K_PLAN, []).filter(x=>x.id!==id);
+        save(K_PLAN, list);
+        if(currentPlanId === id) newPlanRow();
+        renderPlans();
+      });
+    });
+  }
+
+  function updatePreview(){
+    const p = getPlanForm();
+    const line = `${p.name || "—"} — ${p.days || "—"} — ${p.objekt || "—"} — ${p.shift || "—"}`;
+    $("planPreview").value = line;
+  }
+
+  // Auto-save debounce (plan)
+  let planTimer = null;
+  function scheduleAutoSavePlan(){
+    clearTimeout(planTimer);
+    planTimer = setTimeout(()=>{
+      const p = getPlanForm();
+      // auto-save only if form has something typed
+      if(p.name || p.days || p.objekt){
+        const err = validatePlan(p);
+        if(!err) upsertPlan(p); // only auto-save if valid (no errors)
+      }
+    }, 500);
+  }
+
+  // -------------------- DOCUMENTATION (AUTO UPDATE) --------------------
+  let currentDocId = null;
+
+  function normalizeLines(text){
+    return (text || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean).join(" | ");
+  }
+
+  function getDocForm(){
+    return {
+      id: currentDocId || uid(),
+      date: $("dDate").value,
+      objekt: $("dObjekt").value.trim(),
+      present: normalizeLines($("dPresent").value),
+      absent: normalizeLines($("dAbsent").value),
+      updatedAt: now().toISOString()
+    };
+  }
+
+  function validateDoc(d){
+    if(!d.date) return "Date waa qasab.";
+    if(!d.present && !d.absent) return "Ku qor ugu yaraan Present ama Absent.";
+    return "";
+  }
+
+  function upsertDoc(d){
+    const err = validateDoc(d);
+    if(err){ setMsg($("msgDoc"), "❌ " + err, false); return false; }
+
+    const list = load(K_DOC, []);
+    const idx = list.findIndex(x => x.id === d.id);
+    if(idx >= 0) list[idx] = d; else list.unshift(d);
+    save(K_DOC, list);
+    setMsg($("msgDoc"), "✅ Saved (auto update).", true);
+    renderDocs();
+    return true;
+  }
+
+  function fillDocForm(d){
+    currentDocId = d.id;
+    $("dDate").value = d.date || "";
+    $("dObjekt").value = d.objekt || "";
+    $("dPresent").value = (d.present || "").split(" | ").join("\n");
+    $("dAbsent").value = (d.absent || "").split(" | ").join("\n");
+  }
+
+  function newDocRow(){
+    currentDocId = null;
+    $("dDate").value = new Date().toISOString().slice(0,10);
+    $("dObjekt").value = "";
+    $("dPresent").value = "";
+    $("dAbsent").value = "";
+    setMsg($("msgDoc"), "", true);
+  }
+
+  function renderDocs(){
+    const list = load(K_DOC, []);
+    const tb = $("docTable").querySelector("tbody");
+    tb.innerHTML = "";
+
+    if(!list.length){
+      tb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65);font-size:12px;padding:12px">No documentation yet.</td></tr>`;
+      return;
+    }
+
+    list.forEach(d=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(d.date)}</td>
+        <td>${esc(d.objekt || "")}</td>
+        <td>${esc(d.present || "")}</td>
+        <td>${esc(d.absent || "")}</td>
+        <td>
+          <button class="btn small" data-load="${d.id}" type="button">Edit</button>
+          <button class="btn small bad" data-del="${d.id}" type="button">Delete</button>
+        </td>
+      `;
+      tb.appendChild(tr);
+    });
+
+    tb.querySelectorAll("[data-load]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = b.getAttribute("data-load");
+        const d = load(K_DOC, []).find(x=>x.id===id);
+        if(d) fillDocForm(d);
+      });
+    });
+
+    tb.querySelectorAll("[data-del]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const id = b.getAttribute("data-del");
+        const list = load(K_DOC, []).filter(x=>x.id!==id);
+        save(K_DOC, list);
+        if(currentDocId === id) newDocRow();
+        renderDocs();
+      });
+    });
+  }
+
+  // Auto-save debounce (doc)
+  let docTimer = null;
+  function scheduleAutoSaveDoc(){
+    clearTimeout(docTimer);
+    docTimer = setTimeout(()=>{
+      const d = getDocForm();
+      if(d.date || d.present || d.absent || d.objekt){
+        const err = validateDoc(d);
+        if(!err) upsertDoc(d);
+      }
+    }, 600);
+  }
+
+  // -------------------- PRINT / AUTO PRINT / PDF --------------------
+  function autoPrintSheet(){
+    // Print current tab in a clean new window
+    const activePlan = !$("pagePlan").classList.contains("hide");
+    const plans = load(K_PLAN, []);
+    const docs  = load(K_DOC, []);
+
+    const planRows = plans.map(p=>`
+      <tr><td>${esc(p.name)}</td><td>${esc(p.days)}</td><td>${esc(p.objekt)}</td><td>${esc(p.shift)}</td></tr>
+    `).join("");
+
+    const docRows = docs.map(d=>`
+      <tr><td>${esc(d.date)}</td><td>${esc(d.objekt||"")}</td><td>${esc(d.present||"")}</td><td>${esc(d.absent||"")}</td></tr>
+    `).join("");
+
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Print</title>
+<style>
+body{font-family:Arial;margin:22px;color:#0b1220}
+h1{margin:0;font-size:16px}
+.small{color:#334155;font-size:12px;margin:6px 0 0;line-height:1.35}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px}
+th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+</style></head><body>
+<h1>MASCULINE SECURITY</h1>
+<div class="small">Werschenregerstraße 6 · 28237 Bremen<br/>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
+${activePlan ? `
+  <h2 style="margin:18px 0 8px;font-size:13px">Weekly Plans</h2>
+  <table><thead><tr><th>Name</th><th>Days</th><th>Objekt</th><th>Shift</th></tr></thead>
+  <tbody>${planRows || `<tr><td colspan="4">No data</td></tr>`}</tbody></table>
+` : `
+  <h2 style="margin:18px 0 8px;font-size:13px">Documentation</h2>
+  <table><thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
+  <tbody>${docRows || `<tr><td colspan="4">No data</td></tr>`}</tbody></table>
+`}
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`;
+
+    const w = window.open("", "_blank");
+    if(!w){ alert("Popup blocked. Allow popups then try again."); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
+  function exportPDF(){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert("PDF library ma load-gareyn. Hubi internet-ka.");
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p","mm","a4");
+
+    const plans = load(K_PLAN, []);
+    const docs  = load(K_DOC, []);
+
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(14);
+    pdf.text("MASCULINE SECURITY — Report", 14, 16);
+
+    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
+    pdf.text("Werschenregerstraße 6 · 28237 Bremen", 14, 22);
+    pdf.text("015778697052 · Kontakt.mass.bremen@hotmail.com", 14, 27);
+    pdf.text("Generated: " + fmt(now()), 14, 32);
+
+    pdf.setFont("helvetica","bold"); pdf.text("Weekly Plans", 14, 42);
+    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
+
+    let y = 48;
+    if(!plans.length){
+      pdf.text("- No weekly plans.", 14, y); y += 8;
+    } else {
+      plans.slice(0, 30).forEach(p=>{
+        const line = `${p.name} | ${p.days} | ${p.objekt} | ${p.shift}`;
+        pdf.text(line, 14, y);
+        y += 6;
+        if(y > 270){ pdf.addPage(); y = 20; }
+      });
+    }
+
+    y += 6;
+    pdf.setFont("helvetica","bold"); pdf.text("Documentation", 14, y);
+    y += 6;
+    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
+
+    if(!docs.length){
+      pdf.text("- No documentation logs.", 14, y);
+    } else {
+      docs.slice(0, 25).forEach(d=>{
+        const line1 = `${d.date} | ${d.objekt || "-"}`
+        const line2 = `Present: ${d.present || "-"}`
+        const line3 = `Absent: ${d.absent || "-"}`
+        pdf.text(line1, 14, y); y += 6;
+        pdf.text(line2, 14, y); y += 6;
+        pdf.text(line3, 14, y); y += 8;
+        if(y > 270){ pdf.addPage(); y = 20; }
+      });
+    }
+
+    pdf.save("masculine_security_report.pdf");
+  }
+
+  // -------------------- EVENTS --------------------
+  window.addEventListener("DOMContentLoaded", ()=>{
+    // default date
+    $("dDate").value = new Date().toISOString().slice(0,10);
+    setStatusSaved();
+
+    // tabs
+    $("tabPlan").addEventListener("click", ()=>showPage("plan"));
+    $("tabDoc").addEventListener("click", ()=>showPage("doc"));
+
+    // buttons
+    $("btnPrint").addEventListener("click", ()=>window.print());
+    $("btnAutoPrint").addEventListener("click", autoPrintSheet);
+    $("btnPDF").addEventListener("click", exportPDF);
+    $("btnReset").addEventListener("click", ()=>{
+      if(confirm("Reset ALL data? (Weekly Plans + Documentation)")){
+        localStorage.removeItem(K_PLAN);
+        localStorage.removeItem(K_DOC);
+        location.reload();
+      }
+    });
+
+    // plan buttons
+    $("btnAddPlan").addEventListener("click", ()=>{
+      const p = getPlanForm();
+      if(upsertPlan(p)) currentPlanId = p.id;
+    });
+    $("btnNewPlan").addEventListener("click", newPlanRow);
+    $("btnClearPlan").addEventListener("click", ()=>{
+      if(confirm("Clear all weekly plans?")){
+        save(K_PLAN, []);
+        newPlanRow();
+        renderPlans();
+      }
+    });
+
+    // doc buttons
+    $("btnSaveDoc").addEventListener("click", ()=>{
+      const d = getDocForm();
+      if(upsertDoc(d)) currentDocId = d.id;
+    });
+    $("btnNewDoc").addEventListener("click", newDocRow);
+    $("btnClearDoc").addEventListener("click", ()=>{
+      if(confirm("Clear all documentation logs?")){
+        save(K_DOC, []);
+        newDocRow();
+        renderDocs();
+      }
+    });
+
+    // copy
+    $("btnCopy").addEventListener("click", async ()=>{
+      const text = $("planPreview").value.trim();
+      if(!text){ alert("Nothing to copy."); return; }
+      try{ await navigator.clipboard.writeText(text); alert("Copied ✅"); }
+      catch{ alert("Copy failed. Select text and copy manually."); }
+    });
+
+    // AUTO UPDATE listeners (Plan)
+    ["pName","pDays","pObjekt","pShift"].forEach(id=>{
+      $(id).addEventListener("input", ()=>{
+        updatePreview();
+        scheduleAutoSavePlan();
+      });
+      $(id).addEventListener("change", ()=>{
+        updatePreview();
+        scheduleAutoSavePlan();
+      });
+    });
+
+    // AUTO UPDATE listeners (Doc)
+    ["dDate","dObjekt","dPresent","dAbsent"].forEach(id=>{
+      $(id).addEventListener("input", scheduleAutoSaveDoc);
+      $(id).addEventListener("change", scheduleAutoSaveDoc);
+    });
+
+    // initial render
+    renderPlans();
+    renderDocs();
+    updatePreview();
+  });
+</script>
+
 </body>
 </html>
