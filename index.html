@@ -1,662 +1,172 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Masculine Security — Dienstplan & Documentation</title>
+<meta charset="utf-8">
+<title>Masculine Security – Dienstplan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- PDF (internet required) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-  body{font-family:Arial;background:#0b1220;color:#fff;padding:18px;margin:0}
-  .wrap{max-width:1100px;margin:0 auto}
-  .top{display:flex;gap:14px;align-items:center;justify-content:space-between;background:#10203a;border-radius:14px;padding:14px}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:60px;height:60px;border-radius:12px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center}
-  .logo img{width:100%;height:100%;object-fit:cover}
-  .title{margin:0;font-size:16px;font-weight:800}
-  .sub{margin:6px 0 0;color:#93a4c6;font-size:12px;line-height:1.35}
-  .sub a{color:#fff;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.4)}
-  .tabs{display:flex;gap:8px;flex-wrap:wrap}
-  .tab{cursor:pointer;padding:10px 12px;border-radius:999px;background:#1a2a4b;color:#93a4c6;font-weight:800;font-size:12px;border:1px solid rgba(255,255,255,.10)}
-  .tab.active{background:#3aa6ff;color:#061022}
-  .btn{cursor:pointer;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.12);font-weight:800;font-size:12px}
-  .btn:hover{background:rgba(255,255,255,.14)}
-  .btn.good{background:rgba(43,212,189,.16);border-color:rgba(43,212,189,.35)}
-  .btn.bad{background:rgba(255,77,109,.14);border-color:rgba(255,77,109,.35)}
-  .btn.primary{background:rgba(58,166,255,.20);border-color:rgba(58,166,255,.40)}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-  @media(max-width:900px){.grid{grid-template-columns:1fr}}
-  .card{background:#10203a;border-radius:14px;padding:14px}
-  label{display:block;color:#93a4c6;font-size:12px;font-weight:800;margin:10px 0 6px}
-  input,select,textarea{width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;outline:none}
-  textarea{min-height:110px;resize:vertical}
-  table{width:100%;border-collapse:collapse;margin-top:10px}
-  th,td{border-bottom:1px solid rgba(255,255,255,.10);padding:10px;text-align:left;vertical-align:top}
-  th{color:#93a4c6;font-size:12px}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:650px){.row2{grid-template-columns:1fr}}
-  .muted{color:#93a4c6;font-size:12px;line-height:1.35}
-  .msg{margin-top:10px;font-size:12px;font-weight:800}
-  .msg.ok{color:#2bd4bd}
-  .msg.err{color:#ff4d6d}
-  .hide{display:none}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-  .small{font-size:11px;padding:8px 10px;border-radius:10px}
-  .rightActions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  @media print{
-    .no-print{display:none !important}
-    body{background:#fff !important;color:#0b1220 !important}
-    .card,.top{background:#fff !important;border:1px solid #e5e7eb}
-    .sub,.muted,th{color:#334155 !important}
-    a{color:#0b1220 !important}
-  }
+body{font-family:Arial;background:#0b1220;color:white;padding:20px}
+.card{background:#10203a;padding:20px;border-radius:15px;margin-bottom:20px}
+input,select,textarea{width:100%;padding:10px;margin:5px 0}
+button{padding:10px;margin-top:10px}
+.logo{width:70px;height:70px;background:#fff;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.logo img{width:100%}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+.tab{padding:10px;background:#1a2a4b;margin-right:5px;cursor:pointer;display:inline-block;border-radius:5px}
+.active{background:#3aa6ff}
 </style>
 </head>
 
 <body>
-<div class="wrap">
 
-  <div class="top no-print">
-    <div class="brand">
-      <div class="logo" id="logoBox">
-        <img src="logo.png" alt="Logo" onerror="this.remove();document.getElementById('logoBox').textContent='LOGO';" />
-      </div>
-      <div>
-        <p class="title">MASCULINE SECURITY — Dienstplan</p>
-        <p class="sub">
-          Werschenregerstraße 6 · 28237 Bremen · Tel: 015778697052 ·
-          <a href="mailto:Kontakt.mass.bremen@hotmail.com">Kontakt.mass.bremen@hotmail.com</a>
-        </p>
-        <p class="muted" id="statusLine">Auto-update: ON · Last saved: —</p>
-      </div>
-    </div>
+<div class="logo">
+<img src="logo.png?v=2">
+</div>
 
-    <div class="rightActions">
-      <div class="tabs" role="tablist">
-        <div class="tab active" id="tabPlan">Weekly Plan</div>
-        <div class="tab" id="tabDoc">Documentation</div>
-      </div>
-      <button class="btn primary" id="btnPrint" type="button">Print</button>
-      <button class="btn" id="btnPDF" type="button">PDF</button>
-      <button class="btn" id="btnAutoPrint" type="button">Auto Print Sheet</button>
-      <button class="btn bad" id="btnReset" type="button">Reset All</button>
-    </div>
-  </div>
+<div>
+<span class="tab active" onclick="show('plan',this)">Wochenplan</span>
+<span class="tab" onclick="show('doc',this)">Dokumentation</span>
+</div>
 
-  <!-- WEEKLY PLAN -->
-  <div id="pagePlan">
-    <div class="grid">
-      <div class="card">
-        <h3 style="margin:0 0 8px">Weekly Staff Dienstplan</h3>
-        <div class="muted">Auto update = marka aad wax qorto, si toos ah ayuu u save-gareynayaa oo table-ka wuu update-gareynayaa. “Add” button looma baahna.</div>
+<div id="plan" class="card">
 
-        <div class="row2">
-          <div>
-            <label>Staff Name</label>
-            <input id="pName" placeholder="Mustafa" />
-          </div>
-          <div>
-            <label>Working Days</label>
-            <input id="pDays" placeholder="Mon, Di, Mi, Do" />
-          </div>
-        </div>
+<h3>Wöchentlicher Mitarbeiter-Dienstplan</h3>
 
-        <div class="row2">
-          <div>
-            <label>Objekt</label>
-            <input id="pObjekt" placeholder="Baustelle / Hotel / Lager" />
-          </div>
-          <div>
-            <label>Shift</label>
-            <select id="pShift">
-              <option>Tag</option>
-              <option>Nacht</option>
-            </select>
-          </div>
-        </div>
+<label>Name</label>
+<input id="name">
 
-        <div class="actions">
-          <button class="btn good" id="btnAddPlan" type="button">Save Row</button>
-          <button class="btn" id="btnNewPlan" type="button">New Row</button>
-          <button class="btn bad" id="btnClearPlan" type="button">Clear Weekly Plans</button>
-        </div>
+<label>Arbeitstage</label>
+<input id="days" placeholder="Mo, Di, Mi, Do">
 
-        <div class="msg" id="msgPlan"></div>
-      </div>
+<label>Objekt</label>
+<input id="objekt">
 
-      <div class="card">
-        <h3 style="margin:0 0 8px">Message Preview (send to employee)</h3>
-        <div class="muted">Tani waa text-ka aad WhatsApp/Email ugu diri karto shaqaalaha.</div>
-        <label>Preview</label>
-        <textarea id="planPreview" placeholder="Preview auto..." ></textarea>
+<label>Schicht</label>
+<select id="shift">
+<option>Tag</option>
+<option>Nacht</option>
+</select>
 
-        <div class="actions">
-          <button class="btn" id="btnCopy" type="button">Copy Text</button>
-        </div>
+<button onclick="addStaff()">Speichern</button>
 
-        <div class="muted" style="margin-top:10px">
-          ✅ Tusaale: “Mustafa — Mon, Di, Mi, Do — Baustelle — Nacht”
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h3 style="margin:0 0 8px">Saved Weekly Plans</h3>
-      <table id="planTable">
-        <thead>
-          <tr>
-            <th>Name</th><th>Days</th><th>Objekt</th><th>Shift</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- DOCUMENTATION -->
-  <div id="pageDoc" class="hide">
-    <div class="grid">
-      <div class="card">
-        <h3 style="margin:0 0 8px">Documentation (Present / Absent)</h3>
-        <div class="muted">Auto update = marka aad wax qorto, si toos ah ayuu u save-gareynayaa.</div>
-
-        <div class="row2">
-          <div>
-            <label>Date</label>
-            <input id="dDate" type="date" />
-          </div>
-          <div>
-            <label>Objekt (optional)</label>
-            <input id="dObjekt" placeholder="Baustelle / Hotel ..." />
-          </div>
-        </div>
-
-        <div class="row2">
-          <div>
-            <label>Present (Anwesend) — hal magac line kasta</label>
-            <textarea id="dPresent" placeholder="Mustafa&#10;Ali"></textarea>
-          </div>
-          <div>
-            <label>Absent (Abwesend) — + sabab (optional)</label>
-            <textarea id="dAbsent" placeholder="Ahmed - Krank"></textarea>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn good" id="btnSaveDoc" type="button">Save Log</button>
-          <button class="btn" id="btnNewDoc" type="button">New Log</button>
-          <button class="btn bad" id="btnClearDoc" type="button">Clear Documentation</button>
-        </div>
-
-        <div class="msg" id="msgDoc"></div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin:0 0 8px">Tips</h3>
-        <div class="muted">
-          - Present/Absent waxaad u isticmaashaa audit-proof (caddayn).<br/>
-          - PDF wuxuu ku dari doonaa Weekly Plans + Documentation.<br/>
-          - Logo haddii uusan muuqan: repo root ku upload <b>logo.png</b> (lowercase) isla meesha index.html yaal.
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <h3 style="margin:0 0 8px">Saved Documentation Logs</h3>
-      <table id="docTable">
-        <thead>
-          <tr>
-            <th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+<table id="planTable">
+<thead>
+<tr><th>Name</th><th>Tage</th><th>Objekt</th><th>Schicht</th></tr>
+</thead>
+<tbody></tbody>
+</table>
 
 </div>
 
+<div id="doc" class="card" style="display:none">
+
+<h3>Anwesenheits-Dokumentation</h3>
+
+<label>Datum</label>
+<input id="dDate" type="date">
+
+<label>Anwesend</label>
+<textarea id="present" placeholder="Mustafa&#10;Ali"></textarea>
+
+<label>Abwesend</label>
+<textarea id="absent" placeholder="Ahmed - Krank"></textarea>
+
+<button onclick="saveDoc()">Speichern</button>
+
+<table id="docTable">
+<thead>
+<tr><th>Datum</th><th>Anwesend</th><th>Abwesend</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+<br>
+<button onclick="printSheet()">Drucken</button>
+<button onclick="pdf()">PDF Export</button>
+
 <script>
-  // -------------------- STORAGE --------------------
-  const K_PLAN = "ms_weekly_plans_v2";
-  const K_DOC  = "ms_docs_v2";
 
-  const $ = (id) => document.getElementById(id);
-  const now = () => new Date();
-  const fmt = (d) => d.toLocaleString("de-DE");
-  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-  const uid = () => (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random());
+function show(id,el){
+document.getElementById("plan").style.display="none"
+document.getElementById("doc").style.display="none"
+document.getElementById(id).style.display="block"
 
-  function load(key, fallback){ try{ return JSON.parse(localStorage.getItem(key) || "") ?? fallback; } catch { return fallback; } }
-  function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); setStatusSaved(); }
-  function setMsg(el, text, ok=true){ el.textContent = text || ""; el.className = "msg " + (ok ? "ok" : "err"); }
-  function setStatusSaved(){ $("statusLine").textContent = "Auto-update: ON · Last saved: " + fmt(now()); }
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+el.classList.add('active')
+}
 
-  // -------------------- TABS (CLICKABLE) --------------------
-  function showPage(which){
-    const plan = $("pagePlan"), doc = $("pageDoc");
-    const t1 = $("tabPlan"), t2 = $("tabDoc");
-    if(which === "plan"){
-      plan.classList.remove("hide"); doc.classList.add("hide");
-      t1.classList.add("active"); t2.classList.remove("active");
-    } else {
-      doc.classList.remove("hide"); plan.classList.add("hide");
-      t2.classList.add("active"); t1.classList.remove("active");
-    }
-  }
+function addStaff(){
+let data={
+name:document.getElementById("name").value,
+days:document.getElementById("days").value,
+objekt:document.getElementById("objekt").value,
+shift:document.getElementById("shift").value
+}
+let list=JSON.parse(localStorage.getItem("staff")||"[]")
+list.push(data)
+localStorage.setItem("staff",JSON.stringify(list))
+renderPlan()
+}
 
-  // -------------------- WEEKLY PLAN (AUTO UPDATE) --------------------
-  let currentPlanId = null;
+function renderPlan(){
+let list=JSON.parse(localStorage.getItem("staff")||"[]")
+let tbody=document.querySelector("#planTable tbody")
+tbody.innerHTML=""
+list.forEach(x=>{
+tbody.innerHTML+=`
+<tr>
+<td>${x.name}</td>
+<td>${x.days}</td>
+<td>${x.objekt}</td>
+<td>${x.shift}</td>
+</tr>`
+})
+}
 
-  function getPlanForm(){
-    return {
-      id: currentPlanId || uid(),
-      name: $("pName").value.trim(),
-      days: $("pDays").value.trim(),
-      objekt: $("pObjekt").value.trim(),
-      shift: $("pShift").value,
-      updatedAt: now().toISOString()
-    };
-  }
+function saveDoc(){
+let data={
+date:document.getElementById("dDate").value,
+present:document.getElementById("present").value,
+absent:document.getElementById("absent").value
+}
+let list=JSON.parse(localStorage.getItem("docs")||"[]")
+list.push(data)
+localStorage.setItem("docs",JSON.stringify(list))
+renderDoc()
+}
 
-  function validatePlan(p){
-    if(!p.name) return "Name waa qasab.";
-    if(!p.days) return "Days waa qasab (Mon, Di, Mi...).";
-    if(!p.objekt) return "Objekt waa qasab.";
-    if(!p.shift) return "Shift waa qasab.";
-    return "";
-  }
+function renderDoc(){
+let list=JSON.parse(localStorage.getItem("docs")||"[]")
+let tbody=document.querySelector("#docTable tbody")
+tbody.innerHTML=""
+list.forEach(x=>{
+tbody.innerHTML+=`
+<tr>
+<td>${x.date}</td>
+<td>${x.present}</td>
+<td>${x.absent}</td>
+</tr>`
+})
+}
 
-  function upsertPlan(p){
-    const err = validatePlan(p);
-    if(err){ setMsg($("msgPlan"), "❌ " + err, false); return false; }
+renderPlan()
+renderDoc()
 
-    const list = load(K_PLAN, []);
-    const idx = list.findIndex(x => x.id === p.id);
-    if(idx >= 0) list[idx] = p; else list.unshift(p);
-    save(K_PLAN, list);
-    setMsg($("msgPlan"), "✅ Saved (auto update).", true);
-    renderPlans();
-    updatePreview();
-    return true;
-  }
+function printSheet(){window.print()}
 
-  function fillPlanForm(p){
-    currentPlanId = p.id;
-    $("pName").value = p.name || "";
-    $("pDays").value = p.days || "";
-    $("pObjekt").value = p.objekt || "";
-    $("pShift").value = p.shift || "Tag";
-    updatePreview();
-  }
+function pdf(){
+const {jsPDF}=window.jspdf
+let doc=new jsPDF()
+doc.text("Masculine Security Dienstplan",10,10)
+doc.save("dienstplan.pdf")
+}
 
-  function newPlanRow(){
-    currentPlanId = null;
-    $("pName").value = "";
-    $("pDays").value = "";
-    $("pObjekt").value = "";
-    $("pShift").value = "Tag";
-    $("planPreview").value = "";
-    setMsg($("msgPlan"), "", true);
-  }
-
-  function renderPlans(){
-    const list = load(K_PLAN, []);
-    const tb = $("planTable").querySelector("tbody");
-    tb.innerHTML = "";
-
-    if(!list.length){
-      tb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65);font-size:12px;padding:12px">No weekly plans yet.</td></tr>`;
-      return;
-    }
-
-    list.forEach(p=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${esc(p.name)}</td>
-        <td>${esc(p.days)}</td>
-        <td>${esc(p.objekt)}</td>
-        <td>${esc(p.shift)}</td>
-        <td>
-          <button class="btn small" data-load="${p.id}" type="button">Edit</button>
-          <button class="btn small bad" data-del="${p.id}" type="button">Delete</button>
-        </td>
-      `;
-      tb.appendChild(tr);
-    });
-
-    tb.querySelectorAll("[data-load]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = b.getAttribute("data-load");
-        const p = load(K_PLAN, []).find(x=>x.id===id);
-        if(p) fillPlanForm(p);
-      });
-    });
-
-    tb.querySelectorAll("[data-del]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = b.getAttribute("data-del");
-        const list = load(K_PLAN, []).filter(x=>x.id!==id);
-        save(K_PLAN, list);
-        if(currentPlanId === id) newPlanRow();
-        renderPlans();
-      });
-    });
-  }
-
-  function updatePreview(){
-    const p = getPlanForm();
-    const line = `${p.name || "—"} — ${p.days || "—"} — ${p.objekt || "—"} — ${p.shift || "—"}`;
-    $("planPreview").value = line;
-  }
-
-  // Auto-save debounce (plan)
-  let planTimer = null;
-  function scheduleAutoSavePlan(){
-    clearTimeout(planTimer);
-    planTimer = setTimeout(()=>{
-      const p = getPlanForm();
-      // auto-save only if form has something typed
-      if(p.name || p.days || p.objekt){
-        const err = validatePlan(p);
-        if(!err) upsertPlan(p); // only auto-save if valid (no errors)
-      }
-    }, 500);
-  }
-
-  // -------------------- DOCUMENTATION (AUTO UPDATE) --------------------
-  let currentDocId = null;
-
-  function normalizeLines(text){
-    return (text || "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean).join(" | ");
-  }
-
-  function getDocForm(){
-    return {
-      id: currentDocId || uid(),
-      date: $("dDate").value,
-      objekt: $("dObjekt").value.trim(),
-      present: normalizeLines($("dPresent").value),
-      absent: normalizeLines($("dAbsent").value),
-      updatedAt: now().toISOString()
-    };
-  }
-
-  function validateDoc(d){
-    if(!d.date) return "Date waa qasab.";
-    if(!d.present && !d.absent) return "Ku qor ugu yaraan Present ama Absent.";
-    return "";
-  }
-
-  function upsertDoc(d){
-    const err = validateDoc(d);
-    if(err){ setMsg($("msgDoc"), "❌ " + err, false); return false; }
-
-    const list = load(K_DOC, []);
-    const idx = list.findIndex(x => x.id === d.id);
-    if(idx >= 0) list[idx] = d; else list.unshift(d);
-    save(K_DOC, list);
-    setMsg($("msgDoc"), "✅ Saved (auto update).", true);
-    renderDocs();
-    return true;
-  }
-
-  function fillDocForm(d){
-    currentDocId = d.id;
-    $("dDate").value = d.date || "";
-    $("dObjekt").value = d.objekt || "";
-    $("dPresent").value = (d.present || "").split(" | ").join("\n");
-    $("dAbsent").value = (d.absent || "").split(" | ").join("\n");
-  }
-
-  function newDocRow(){
-    currentDocId = null;
-    $("dDate").value = new Date().toISOString().slice(0,10);
-    $("dObjekt").value = "";
-    $("dPresent").value = "";
-    $("dAbsent").value = "";
-    setMsg($("msgDoc"), "", true);
-  }
-
-  function renderDocs(){
-    const list = load(K_DOC, []);
-    const tb = $("docTable").querySelector("tbody");
-    tb.innerHTML = "";
-
-    if(!list.length){
-      tb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65);font-size:12px;padding:12px">No documentation yet.</td></tr>`;
-      return;
-    }
-
-    list.forEach(d=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${esc(d.date)}</td>
-        <td>${esc(d.objekt || "")}</td>
-        <td>${esc(d.present || "")}</td>
-        <td>${esc(d.absent || "")}</td>
-        <td>
-          <button class="btn small" data-load="${d.id}" type="button">Edit</button>
-          <button class="btn small bad" data-del="${d.id}" type="button">Delete</button>
-        </td>
-      `;
-      tb.appendChild(tr);
-    });
-
-    tb.querySelectorAll("[data-load]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = b.getAttribute("data-load");
-        const d = load(K_DOC, []).find(x=>x.id===id);
-        if(d) fillDocForm(d);
-      });
-    });
-
-    tb.querySelectorAll("[data-del]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        const id = b.getAttribute("data-del");
-        const list = load(K_DOC, []).filter(x=>x.id!==id);
-        save(K_DOC, list);
-        if(currentDocId === id) newDocRow();
-        renderDocs();
-      });
-    });
-  }
-
-  // Auto-save debounce (doc)
-  let docTimer = null;
-  function scheduleAutoSaveDoc(){
-    clearTimeout(docTimer);
-    docTimer = setTimeout(()=>{
-      const d = getDocForm();
-      if(d.date || d.present || d.absent || d.objekt){
-        const err = validateDoc(d);
-        if(!err) upsertDoc(d);
-      }
-    }, 600);
-  }
-
-  // -------------------- PRINT / AUTO PRINT / PDF --------------------
-  function autoPrintSheet(){
-    // Print current tab in a clean new window
-    const activePlan = !$("pagePlan").classList.contains("hide");
-    const plans = load(K_PLAN, []);
-    const docs  = load(K_DOC, []);
-
-    const planRows = plans.map(p=>`
-      <tr><td>${esc(p.name)}</td><td>${esc(p.days)}</td><td>${esc(p.objekt)}</td><td>${esc(p.shift)}</td></tr>
-    `).join("");
-
-    const docRows = docs.map(d=>`
-      <tr><td>${esc(d.date)}</td><td>${esc(d.objekt||"")}</td><td>${esc(d.present||"")}</td><td>${esc(d.absent||"")}</td></tr>
-    `).join("");
-
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Print</title>
-<style>
-body{font-family:Arial;margin:22px;color:#0b1220}
-h1{margin:0;font-size:16px}
-.small{color:#334155;font-size:12px;margin:6px 0 0;line-height:1.35}
-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px}
-th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;vertical-align:top}
-th{background:#f1f5f9}
-</style></head><body>
-<h1>MASCULINE SECURITY</h1>
-<div class="small">Werschenregerstraße 6 · 28237 Bremen<br/>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
-${activePlan ? `
-  <h2 style="margin:18px 0 8px;font-size:13px">Weekly Plans</h2>
-  <table><thead><tr><th>Name</th><th>Days</th><th>Objekt</th><th>Shift</th></tr></thead>
-  <tbody>${planRows || `<tr><td colspan="4">No data</td></tr>`}</tbody></table>
-` : `
-  <h2 style="margin:18px 0 8px;font-size:13px">Documentation</h2>
-  <table><thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
-  <tbody>${docRows || `<tr><td colspan="4">No data</td></tr>`}</tbody></table>
-`}
-<script>window.onload=()=>window.print();<\/script>
-</body></html>`;
-
-    const w = window.open("", "_blank");
-    if(!w){ alert("Popup blocked. Allow popups then try again."); return; }
-    w.document.open(); w.document.write(html); w.document.close();
-  }
-
-  function exportPDF(){
-    if(!window.jspdf || !window.jspdf.jsPDF){
-      alert("PDF library ma load-gareyn. Hubi internet-ka.");
-      return;
-    }
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p","mm","a4");
-
-    const plans = load(K_PLAN, []);
-    const docs  = load(K_DOC, []);
-
-    pdf.setFont("helvetica","bold"); pdf.setFontSize(14);
-    pdf.text("MASCULINE SECURITY — Report", 14, 16);
-
-    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
-    pdf.text("Werschenregerstraße 6 · 28237 Bremen", 14, 22);
-    pdf.text("015778697052 · Kontakt.mass.bremen@hotmail.com", 14, 27);
-    pdf.text("Generated: " + fmt(now()), 14, 32);
-
-    pdf.setFont("helvetica","bold"); pdf.text("Weekly Plans", 14, 42);
-    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
-
-    let y = 48;
-    if(!plans.length){
-      pdf.text("- No weekly plans.", 14, y); y += 8;
-    } else {
-      plans.slice(0, 30).forEach(p=>{
-        const line = `${p.name} | ${p.days} | ${p.objekt} | ${p.shift}`;
-        pdf.text(line, 14, y);
-        y += 6;
-        if(y > 270){ pdf.addPage(); y = 20; }
-      });
-    }
-
-    y += 6;
-    pdf.setFont("helvetica","bold"); pdf.text("Documentation", 14, y);
-    y += 6;
-    pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
-
-    if(!docs.length){
-      pdf.text("- No documentation logs.", 14, y);
-    } else {
-      docs.slice(0, 25).forEach(d=>{
-        const line1 = `${d.date} | ${d.objekt || "-"}`
-        const line2 = `Present: ${d.present || "-"}`
-        const line3 = `Absent: ${d.absent || "-"}`
-        pdf.text(line1, 14, y); y += 6;
-        pdf.text(line2, 14, y); y += 6;
-        pdf.text(line3, 14, y); y += 8;
-        if(y > 270){ pdf.addPage(); y = 20; }
-      });
-    }
-
-    pdf.save("masculine_security_report.pdf");
-  }
-
-  // -------------------- EVENTS --------------------
-  window.addEventListener("DOMContentLoaded", ()=>{
-    // default date
-    $("dDate").value = new Date().toISOString().slice(0,10);
-    setStatusSaved();
-
-    // tabs
-    $("tabPlan").addEventListener("click", ()=>showPage("plan"));
-    $("tabDoc").addEventListener("click", ()=>showPage("doc"));
-
-    // buttons
-    $("btnPrint").addEventListener("click", ()=>window.print());
-    $("btnAutoPrint").addEventListener("click", autoPrintSheet);
-    $("btnPDF").addEventListener("click", exportPDF);
-    $("btnReset").addEventListener("click", ()=>{
-      if(confirm("Reset ALL data? (Weekly Plans + Documentation)")){
-        localStorage.removeItem(K_PLAN);
-        localStorage.removeItem(K_DOC);
-        location.reload();
-      }
-    });
-
-    // plan buttons
-    $("btnAddPlan").addEventListener("click", ()=>{
-      const p = getPlanForm();
-      if(upsertPlan(p)) currentPlanId = p.id;
-    });
-    $("btnNewPlan").addEventListener("click", newPlanRow);
-    $("btnClearPlan").addEventListener("click", ()=>{
-      if(confirm("Clear all weekly plans?")){
-        save(K_PLAN, []);
-        newPlanRow();
-        renderPlans();
-      }
-    });
-
-    // doc buttons
-    $("btnSaveDoc").addEventListener("click", ()=>{
-      const d = getDocForm();
-      if(upsertDoc(d)) currentDocId = d.id;
-    });
-    $("btnNewDoc").addEventListener("click", newDocRow);
-    $("btnClearDoc").addEventListener("click", ()=>{
-      if(confirm("Clear all documentation logs?")){
-        save(K_DOC, []);
-        newDocRow();
-        renderDocs();
-      }
-    });
-
-    // copy
-    $("btnCopy").addEventListener("click", async ()=>{
-      const text = $("planPreview").value.trim();
-      if(!text){ alert("Nothing to copy."); return; }
-      try{ await navigator.clipboard.writeText(text); alert("Copied ✅"); }
-      catch{ alert("Copy failed. Select text and copy manually."); }
-    });
-
-    // AUTO UPDATE listeners (Plan)
-    ["pName","pDays","pObjekt","pShift"].forEach(id=>{
-      $(id).addEventListener("input", ()=>{
-        updatePreview();
-        scheduleAutoSavePlan();
-      });
-      $(id).addEventListener("change", ()=>{
-        updatePreview();
-        scheduleAutoSavePlan();
-      });
-    });
-
-    // AUTO UPDATE listeners (Doc)
-    ["dDate","dObjekt","dPresent","dAbsent"].forEach(id=>{
-      $(id).addEventListener("input", scheduleAutoSaveDoc);
-      $(id).addEventListener("change", scheduleAutoSaveDoc);
-    });
-
-    // initial render
-    renderPlans();
-    renderDocs();
-    updatePreview();
-  });
 </script>
 
 </body>
