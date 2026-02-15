@@ -1,53 +1,840 @@
-<script>
-function showPage(page){
-  document.getElementById("dienstplanPage").style.display="none"
-  document.getElementById("docPage").style.display="none"
-  document.getElementById(page).style.display="block"
-}
-</script>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Masculine Security — Dienstplan</title>
+  <meta name="theme-color" content="#0b1220" />
 
-<div style="margin-bottom:20px">
-  <button onclick="showPage('dienstplanPage')">Dienstplan</button>
-  <button onclick="showPage('docPage')">Documentation</button>
-</div>
+  <!-- Libraries (PDF + Excel). Require internet to load. -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<div id="dienstplanPage">
-  <!-- existing dienstplan content stays here -->
-</div>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
+      --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd; --bad:#ff4d6d;
+      --r:18px; --r2:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 100% 0%, rgba(43,212,189,.18), transparent 55%),
+        var(--bg);
+    }
+    a{color:inherit}
+    .wrap{max-width:1150px; margin:0 auto; padding:18px}
+    .topbar{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      padding:16px; border:1px solid var(--line); border-radius:var(--r);
+      background: linear-gradient(180deg, rgba(16,32,58,.92), rgba(15,26,47,.92));
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+    .brand{display:flex; gap:12px; align-items:center; min-width:0}
+    .logo{
+      width:58px; height:58px; border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; flex:0 0 auto;
+    }
+    .logo img{width:100%; height:100%; object-fit:cover}
+    .btxt{min-width:0}
+    .btxt h1{margin:0; font-size:16px; letter-spacing:.6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .btxt p{margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.25}
+    .btxt p a{color:var(--text); text-decoration:none; border-bottom:1px dashed rgba(231,238,255,.4)}
+    .btxt p a:hover{border-bottom-color:rgba(231,238,255,.8)}
+    .right{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
 
-<div id="docPage" style="display:none">
+    /* Tabs */
+    .tabs{
+      display:flex; gap:8px; padding:6px;
+      border-radius:999px; border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      user-select:none;
+    }
+    .tab{
+      cursor:pointer;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-weight:800; font-size:12px;
+    }
+    .tab:hover{color:var(--text); background: rgba(255,255,255,.06)}
+    .tab.active{
+      color:var(--text);
+      background: rgba(58,166,255,.18);
+      border-color: rgba(58,166,255,.35);
+    }
 
-<h2>Documentation – Present / Absent</h2>
+    /* Buttons */
+    .btn{
+      appearance:none; border:none; cursor:pointer;
+      padding:10px 12px; border-radius:14px;
+      background: rgba(255,255,255,.10);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      font-weight:800; font-size:12px;
+    }
+    .btn:hover{background: rgba(255,255,255,.14)}
+    .btn.primary{background: rgba(58,166,255,.20); border-color: rgba(58,166,255,.40)}
+    .btn.good{background: rgba(43,212,189,.16); border-color: rgba(43,212,189,.35)}
+    .btn.bad{background: rgba(255,77,109,.14); border-color: rgba(255,77,109,.35)}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .btn.small{padding:8px 10px; border-radius:12px}
 
-<label>Date</label>
-<input type="date" id="dDate">
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .right{justify-content:flex-start} }
 
-<label>Objekt</label>
-<input type="text" id="dObjekt">
+    .card{
+      border:1px solid var(--line); border-radius:var(--r);
+      background: rgba(16,32,58,.78);
+      box-shadow: 0 14px 34px rgba(0,0,0,.30);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .hd h2{margin:0; font-size:13px; letter-spacing:.4px}
+    .card .bd{padding:16px}
 
-<label>Present</label>
-<textarea id="dPresent" placeholder="Mustafa&#10;Ali"></textarea>
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
+    input, select, textarea{
+      width:100%; padding:11px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color:var(--text); outline:none;
+    }
+    textarea{min-height:96px; resize:vertical}
+    input::placeholder, textarea::placeholder{color: rgba(231,238,255,.55)}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 650px){ .row{grid-template-columns:1fr} }
 
-<label>Absent</label>
-<textarea id="dAbsent" placeholder="Ahmed - Krank"></textarea>
+    .hint{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.35}
+    .msg{font-size:12px; margin-top:10px; font-weight:800}
+    .msg.good{color: rgba(43,212,189,.95)}
+    .msg.bad{color: rgba(255,77,109,.95)}
 
-<button onclick="saveDoc()">Save</button>
+    table{width:100%; border-collapse:collapse}
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left; font-size:13px;
+      vertical-align:top;
+    }
+    th{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.3px}
+    .tableWrap{overflow:auto}
 
-<script>
-function saveDoc(){
-  let data = {
-    date: document.getElementById("dDate").value,
-    objekt: document.getElementById("dObjekt").value,
-    present: document.getElementById("dPresent").value,
-    absent: document.getElementById("dAbsent").value
+    /* Print clean */
+    @media print{
+      .no-print{display:none !important}
+      body{background:#fff !important; color:#0b1220 !important}
+      .wrap{max-width:100%; padding:0}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- TOP BAR -->
+    <div class="topbar no-print">
+      <div class="brand">
+        <div class="logo" title="Logo (logo.png)">
+          <img id="logoPreview" src="logo.png" alt="Masculine Security Logo"
+               onerror="this.style.display='none'; this.parentElement.textContent='LOGO';" />
+        </div>
+        <div class="btxt">
+          <h1>MASCULINE SECURITY — Dienstplan</h1>
+          <p>
+            Werschenregerstraße 6 · 28237 Bremen · Tel: 015778697052 ·
+            <a href="mailto:Kontakt.mass.bremen@hotmail.com">Kontakt.mass.bremen@hotmail.com</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="right">
+        <!-- Tabs (Clickable) -->
+        <div class="tabs" role="tablist" aria-label="Pages">
+          <button class="tab active" id="tabDienstplan" type="button">Dienstplan</button>
+          <button class="tab" id="tabDocumentation" type="button">Documentation</button>
+        </div>
+
+        <!-- Actions -->
+        <button class="btn primary" id="btnPrint" type="button">Print</button>
+        <button class="btn" id="btnPDF" type="button">Export PDF</button>
+        <button class="btn" id="btnExcel" type="button">Export Excel</button>
+        <button class="btn" id="btnAutoPrint" type="button">Auto Print Sheet</button>
+        <button class="btn bad" id="btnReset" type="button">Reset</button>
+      </div>
+    </div>
+
+    <!-- PAGES -->
+    <div id="pageDienstplan">
+      <div class="grid">
+        <!-- SETTINGS -->
+        <div class="card no-print">
+          <div class="hd"><h2>Settings</h2></div>
+          <div class="bd">
+            <div class="row">
+              <div>
+                <label>Monat (z.B. März 2026)</label>
+                <input id="metaMonth" placeholder="März 2026" />
+              </div>
+              <div>
+                <label>Objekt (z.B. Baustelle / Hotel / Lager)</label>
+                <input id="metaObjekt" placeholder="Baustelle Bremen" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <div>
+                <label>Standort</label>
+                <input id="metaLocation" placeholder="Bremen & Umgebung" />
+              </div>
+              <div>
+                <label>Logo</label>
+                <input value="logo.png (same folder as index.html)" disabled />
+              </div>
+            </div>
+            <div class="hint">
+              ✅ Logo: GitHub repo-gaaga ku upload <b>logo.png</b> (isla folder-ka index.html). Haddii logo aanu muuqan:
+              magaca ha noqdo <b>logo.png</b> (lowercase) + hard refresh (Ctrl+F5).
+            </div>
+          </div>
+        </div>
+
+        <!-- ADD ENTRY -->
+        <div class="card no-print">
+          <div class="hd"><h2>Add Dienstplan Entry</h2></div>
+          <div class="bd">
+            <div class="row">
+              <div>
+                <label>Date</label>
+                <input id="fDate" type="date" />
+              </div>
+              <div>
+                <label>Name</label>
+                <input id="fName" placeholder="Mustafa" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <div>
+                <label>Shift</label>
+                <select id="fShift">
+                  <option value="">—</option>
+                  <option>Tag</option>
+                  <option>Nacht</option>
+                  <option>Früh</option>
+                  <option>Spät</option>
+                </select>
+              </div>
+              <div>
+                <label>Time (z.B. 18:00-06:00)</label>
+                <input id="fTime" placeholder="18:00-06:00" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <div>
+                <label>Objekt (optional)</label>
+                <input id="fObjekt" placeholder="Baustelle / Hotel ..." />
+              </div>
+              <div>
+                <label>Notes (optional)</label>
+                <input id="fNotes" placeholder="Key / Rundgang / Besonderheiten" />
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap">
+              <button class="btn good" id="btnAddEntry" type="button">Add</button>
+              <button class="btn" id="btnClearEntries" type="button">Clear Entries</button>
+            </div>
+
+            <div id="msgDienstplan" class="msg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      <div class="card" style="margin-top:14px">
+        <div class="hd no-print">
+          <h2>Dienstplan Entries</h2>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="btn small" id="btnExportCSV" type="button">Export CSV</button>
+          </div>
+        </div>
+        <div class="bd" style="padding:0">
+          <div class="tableWrap">
+            <table id="tblEntries">
+              <thead>
+                <tr>
+                  <th style="min-width:110px">Date</th>
+                  <th style="min-width:140px">Name</th>
+                  <th style="min-width:90px">Shift</th>
+                  <th style="min-width:120px">Time</th>
+                  <th style="min-width:170px">Objekt</th>
+                  <th style="min-width:220px">Notes</th>
+                  <th style="min-width:110px">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTATION PAGE -->
+    <div id="pageDocumentation" style="display:none">
+      <div class="grid">
+        <div class="card no-print">
+          <div class="hd"><h2>Documentation — Anwesend / Abwesend</h2></div>
+          <div class="bd">
+            <div class="row">
+              <div>
+                <label>Date</label>
+                <input id="dDate" type="date" />
+              </div>
+              <div>
+                <label>Objekt (optional)</label>
+                <input id="dObjekt" placeholder="Baustelle / Hotel ..." />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px">
+              <div>
+                <label>Anwesend (Present) — hal magac line kasta</label>
+                <textarea id="dPresent" placeholder="Mustafa&#10;Ali&#10;Ahmed"></textarea>
+              </div>
+              <div>
+                <label>Abwesend (Absent) — + sabab (optional)</label>
+                <textarea id="dAbsent" placeholder="Mohamed - Krank&#10;Hassan - Urlaub"></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap">
+              <button class="btn good" id="btnSaveDoc" type="button">Save Documentation</button>
+              <button class="btn" id="btnClearDoc" type="button">Clear</button>
+            </div>
+
+            <div id="msgDoc" class="msg"></div>
+
+            <div class="hint">
+              ✅ Qaybtan waa “Presence/Absence” proof (audit-ready). Export PDF/Excel/Auto Print Sheet waxay ku dari doonaan documentation.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd no-print"><h2>Documentation Logs</h2></div>
+          <div class="bd" style="padding:0">
+            <div class="tableWrap">
+              <table id="tblDocs">
+                <thead>
+                  <tr>
+                    <th style="min-width:110px">Date</th>
+                    <th style="min-width:170px">Objekt</th>
+                    <th style="min-width:240px">Present</th>
+                    <th style="min-width:240px">Absent</th>
+                    <th style="min-width:110px">Action</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint no-print" style="margin-top:14px">
+      Haddii buttons “not clickable” noqdaan: Hubi in aad <b>index.html</b> si buuxda u replace gareysay + refresh hard (Ctrl+F5) ama browser cache nadiifi.
+    </div>
+  </div>
+
+  <script>
+    // ---------- Storage keys ----------
+    const K_META = "ms_meta_v2";
+    const K_ENTRIES = "ms_entries_v2";
+    const K_DOCS = "ms_docs_v2";
+
+    // ---------- Helpers ----------
+    const $ = (id) => document.getElementById(id);
+
+    function safeParse(s, fallback){
+      try { return JSON.parse(s) ?? fallback; } catch { return fallback; }
+    }
+    function uid(){ return (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random()); }
+    function nowDE(){ return new Date().toLocaleDateString("de-DE"); }
+    function esc(s){
+      return String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+    }
+    function normalizeLines(text){
+      return (text || "")
+        .split(/\r?\n/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .join(" | ");
+    }
+
+    function loadMeta(){
+      return safeParse(localStorage.getItem(K_META), { month:"", objekt:"", location:"Bremen & Umgebung" });
+    }
+    function saveMeta(m){ localStorage.setItem(K_META, JSON.stringify(m)); }
+
+    function loadEntries(){ return safeParse(localStorage.getItem(K_ENTRIES), []); }
+    function saveEntries(rows){ localStorage.setItem(K_ENTRIES, JSON.stringify(rows)); }
+
+    function loadDocs(){ return safeParse(localStorage.getItem(K_DOCS), []); }
+    function saveDocs(rows){ localStorage.setItem(K_DOCS, JSON.stringify(rows)); }
+
+    function setMsg(el, text, ok=true){
+      el.textContent = text || "";
+      el.className = "msg " + (ok ? "good" : "bad");
+    }
+
+    // ---------- Tabs ----------
+    function setActiveTab(which){
+      const isDienst = which === "dienst";
+      $("pageDienstplan").style.display = isDienst ? "" : "none";
+      $("pageDocumentation").style.display = isDienst ? "none" : "";
+
+      $("tabDienstplan").classList.toggle("active", isDienst);
+      $("tabDocumentation").classList.toggle("active", !isDienst);
+    }
+
+    // ---------- Render ----------
+    function render(){
+      // Meta inputs
+      const meta = loadMeta();
+      $("metaMonth").value = meta.month || "";
+      $("metaObjekt").value = meta.objekt || "";
+      $("metaLocation").value = meta.location || "";
+
+      // Entries
+      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const tb = $("tblEntries").querySelector("tbody");
+      tb.innerHTML = "";
+      if(!entries.length){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="7" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No entries yet.</td>`;
+        tb.appendChild(tr);
+      } else {
+        for(const r of entries){
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${esc(r.date)}</td>
+            <td>${esc(r.name)}</td>
+            <td>${esc(r.shift || "")}</td>
+            <td>${esc(r.time)}</td>
+            <td>${esc(r.objekt || "")}</td>
+            <td>${esc(r.notes || "")}</td>
+            <td><button class="btn small bad" type="button" data-del="${r.id}">Delete</button></td>
+          `;
+          tb.appendChild(tr);
+        }
+      }
+      tb.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-del");
+          saveEntries(loadEntries().filter(x=>x.id !== id));
+          render();
+        });
+      });
+
+      // Docs
+      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const dtb = $("tblDocs").querySelector("tbody");
+      dtb.innerHTML = "";
+      if(!docs.length){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="5" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No documentation yet.</td>`;
+        dtb.appendChild(tr);
+      } else {
+        for(const d of docs){
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${esc(d.date)}</td>
+            <td>${esc(d.objekt || "")}</td>
+            <td>${esc(d.present || "")}</td>
+            <td>${esc(d.absent || "")}</td>
+            <td><button class="btn small bad" type="button" data-deldoc="${d.id}">Delete</button></td>
+          `;
+          dtb.appendChild(tr);
+        }
+      }
+      dtb.querySelectorAll("[data-deldoc]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const id = btn.getAttribute("data-deldoc");
+          saveDocs(loadDocs().filter(x=>x.id !== id));
+          render();
+        });
+      });
+    }
+
+    // ---------- Export: CSV ----------
+    function exportCSV(){
+      const meta = loadMeta();
+      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+      const q = (v)=>{
+        const s = String(v ?? "");
+        if (/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+        return s;
+      };
+
+      const lines = [];
+      lines.push("MASCULINE SECURITY");
+      lines.push(`Monat,${q(meta.month)}`);
+      lines.push(`Objekt,${q(meta.objekt)}`);
+      lines.push(`Standort,${q(meta.location)}`);
+      lines.push(`Stand,${q(nowDE())}`);
+      lines.push("");
+      lines.push("DIENSTPLAN");
+      lines.push(["Date","Name","Shift","Time","Objekt","Notes"].join(","));
+      for(const e of entries){
+        lines.push([e.date,e.name,e.shift,e.time,e.objekt,e.notes].map(q).join(","));
+      }
+      if(!entries.length) lines.push(",,,,,");
+      lines.push("");
+      lines.push("DOCUMENTATION");
+      lines.push(["Date","Objekt","Present","Absent"].join(","));
+      for(const d of docs){
+        lines.push([d.date,d.objekt,d.present,d.absent].map(q).join(","));
+      }
+      if(!docs.length) lines.push(",,,");
+      const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // ---------- Export: Excel (XLSX) ----------
+    function exportExcel(){
+      if(!window.XLSX){
+        alert("Excel export: library ma load-gareyn. Hubi internet-ka (CDN).");
+        return;
+      }
+      const meta = loadMeta();
+      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+      const wb = XLSX.utils.book_new();
+
+      const metaAoA = [
+        ["Company","MASCULINE SECURITY"],
+        ["Address","Werschenregerstraße 6 · 28237 Bremen"],
+        ["Phone","015778697052"],
+        ["Email","Kontakt.mass.bremen@hotmail.com"],
+        ["Monat", meta.month || ""],
+        ["Objekt", meta.objekt || ""],
+        ["Standort", meta.location || ""],
+        ["Stand", nowDE()],
+      ];
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(metaAoA), "Meta");
+
+      const entryAoA = [["Date","Name","Shift","Time","Objekt","Notes"]]
+        .concat(entries.map(e=>[e.date||"", e.name||"", e.shift||"", e.time||"", e.objekt||"", e.notes||""]));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(entryAoA), "Dienstplan");
+
+      const docAoA = [["Date","Objekt","Present","Absent"]]
+        .concat(docs.map(d=>[d.date||"", d.objekt||"", d.present||"", d.absent||""]));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(docAoA), "Documentation");
+
+      XLSX.writeFile(wb, `dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.xlsx`);
+    }
+
+    // ---------- Export: PDF ----------
+    function exportPDF(){
+      if(!window.jspdf || !window.jspdf.jsPDF){
+        alert("PDF export: library ma load-gareyn. Hubi internet-ka (CDN).");
+        return;
+      }
+      const meta = loadMeta();
+      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p","mm","a4");
+
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(14);
+      pdf.text("MASCULINE SECURITY — Dienstplan", 14, 16);
+
+      pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
+      pdf.text("Werschenregerstraße 6 · 28237 Bremen", 14, 22);
+      pdf.text("015778697052 · Kontakt.mass.bremen@hotmail.com", 14, 27);
+
+      pdf.setFont("helvetica","bold"); pdf.text("Monat:", 14, 35);
+      pdf.setFont("helvetica","normal"); pdf.text(meta.month || "-", 32, 35);
+
+      pdf.setFont("helvetica","bold"); pdf.text("Objekt:", 14, 40);
+      pdf.setFont("helvetica","normal"); pdf.text(meta.objekt || "-", 32, 40);
+
+      pdf.setFont("helvetica","bold"); pdf.text("Standort:", 14, 45);
+      pdf.setFont("helvetica","normal"); pdf.text(meta.location || "-", 32, 45);
+
+      pdf.setFont("helvetica","bold"); pdf.text("Stand:", 14, 50);
+      pdf.setFont("helvetica","normal"); pdf.text(nowDE(), 32, 50);
+
+      pdf.setFont("helvetica","bold"); pdf.text("Dienstplan", 14, 60);
+
+      const entryRows = entries.map(e=>[e.date||"", e.name||"", e.shift||"", e.time||"", e.objekt||"", e.notes||""]);
+      pdf.autoTable({
+        startY: 64,
+        head: [["Date","Name","Shift","Time","Objekt","Notes"]],
+        body: entryRows.length ? entryRows : [["","","","","",""]],
+        styles: { fontSize: 9, cellPadding: 2 },
+        headStyles: { fillColor: [235,239,245], textColor: 20 },
+      });
+
+      let y = pdf.lastAutoTable.finalY + 10;
+      pdf.setFont("helvetica","bold"); pdf.text("Documentation — Anwesend / Abwesend", 14, y);
+      y += 4;
+
+      const docRows = docs.map(d=>[d.date||"", d.objekt||"", d.present||"", d.absent||""]);
+      pdf.autoTable({
+        startY: y+2,
+        head: [["Date","Objekt","Present","Absent"]],
+        body: docRows.length ? docRows : [["","","",""]],
+        styles: { fontSize: 9, cellPadding: 2 },
+        headStyles: { fillColor: [235,239,245], textColor: 20 },
+      });
+
+      y = pdf.lastAutoTable.finalY + 14;
+      pdf.setFont("helvetica","normal"); pdf.setFontSize(10);
+      pdf.text("Unterschrift Objektleiter / Kunde", 14, y);
+      pdf.line(14, y+10, 90, y+10);
+      pdf.text("Unterschrift Masculine Security", 114, y);
+      pdf.line(114, y+10, 196, y+10);
+
+      pdf.save(`dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.pdf`);
+    }
+
+    // ---------- Auto Print Sheet (opens print window and prints) ----------
+    function autoPrintSheet(){
+      const meta = loadMeta();
+      const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+      const activeIsDienst = $("tabDienstplan").classList.contains("active");
+
+      const rowsEntries = entries.map(e=>`
+        <tr>
+          <td>${esc(e.date)}</td><td>${esc(e.name)}</td><td>${esc(e.shift||"")}</td>
+          <td>${esc(e.time)}</td><td>${esc(e.objekt||"")}</td><td>${esc(e.notes||"")}</td>
+        </tr>`).join("");
+
+      const rowsDocs = docs.map(d=>`
+        <tr>
+          <td>${esc(d.date)}</td><td>${esc(d.objekt||"")}</td><td>${esc(d.present||"")}</td><td>${esc(d.absent||"")}</td>
+        </tr>`).join("");
+
+      const sheetHTML = `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Masculine Security — Print Sheet</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:22px; color:#0b1220}
+  .hdr{display:flex; justify-content:space-between; gap:16px; align-items:flex-start}
+  .title{font-weight:900; letter-spacing:.6px}
+  .sub{color:#334155; font-size:12px; margin-top:4px; line-height:1.35}
+  .meta{font-size:12px; color:#334155; text-align:right}
+  .meta div{margin:2px 0}
+  h2{margin:18px 0 8px; font-size:13px}
+  table{width:100%; border-collapse:collapse; font-size:12px}
+  th,td{border:1px solid #e5e7eb; padding:8px; vertical-align:top}
+  th{background:#f1f5f9; text-align:left}
+  .sign{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:22px}
+  .line{border-bottom:1px solid #0b1220; height:22px}
+  .lbl{font-size:11px; color:#475569; margin-bottom:8px}
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div>
+      <div class="title">MASCULINE SECURITY</div>
+      <div class="sub">Werschenregerstraße 6 · 28237 Bremen<br/>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
+    </div>
+    <div class="meta">
+      <div><b>Monat:</b> ${esc(meta.month||"-")}</div>
+      <div><b>Objekt:</b> ${esc(meta.objekt||"-")}</div>
+      <div><b>Standort:</b> ${esc(meta.location||"-")}</div>
+      <div><b>Stand:</b> ${esc(nowDE())}</div>
+    </div>
+  </div>
+
+  ${
+    activeIsDienst
+      ? `
+        <h2>Dienstplan</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Name</th><th>Shift</th><th>Time</th><th>Objekt</th><th>Notes</th></tr></thead>
+          <tbody>${rowsEntries || `<tr><td colspan="6" style="color:#475569">No entries.</td></tr>`}</tbody>
+        </table>
+      `
+      : `
+        <h2>Documentation — Anwesend / Abwesend</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
+          <tbody>${rowsDocs || `<tr><td colspan="4" style="color:#475569">No documentation.</td></tr>`}</tbody>
+        </table>
+      `
   }
 
-  let logs = JSON.parse(localStorage.getItem("docs") || "[]")
-  logs.push(data)
-  localStorage.setItem("docs", JSON.stringify(logs))
+  <div class="sign">
+    <div><div class="lbl">Unterschrift Objektleiter / Kunde</div><div class="line"></div></div>
+    <div><div class="lbl">Unterschrift Masculine Security</div><div class="line"></div></div>
+  </div>
 
-  alert("Documentation Saved")
-}
+<script>
+  window.onload = () => { window.print(); };
 </script>
+</body>
+</html>`;
 
-</div>
+      const w = window.open("", "_blank", "noopener,noreferrer");
+      if(!w){ alert("Popup blocked. Allow popups then try again."); return; }
+      w.document.open();
+      w.document.write(sheetHTML);
+      w.document.close();
+    }
+
+    // ---------- Init ----------
+    window.addEventListener("DOMContentLoaded", () => {
+      // Set default dates
+      const today = new Date().toISOString().slice(0,10);
+      $("fDate").value = today;
+      $("dDate").value = today;
+
+      // Default meta if empty
+      const meta = loadMeta();
+      if(!meta.location) meta.location = "Bremen & Umgebung";
+      saveMeta(meta);
+
+      // Tabs clickable
+      $("tabDienstplan").addEventListener("click", ()=> setActiveTab("dienst"));
+      $("tabDocumentation").addEventListener("click", ()=> setActiveTab("doc"));
+
+      // Meta live save
+      ["metaMonth","metaObjekt","metaLocation"].forEach(id=>{
+        $(id).addEventListener("input", ()=>{
+          saveMeta({
+            month: $("metaMonth").value.trim(),
+            objekt: $("metaObjekt").value.trim(),
+            location: $("metaLocation").value.trim()
+          });
+        });
+      });
+
+      // Add entry
+      $("btnAddEntry").addEventListener("click", ()=>{
+        const msgEl = $("msgDienstplan");
+        setMsg(msgEl, "", true);
+
+        const date = $("fDate").value;
+        const name = $("fName").value.trim();
+        const shift = $("fShift").value.trim();
+        const time = $("fTime").value.trim();
+        const objekt = ($("fObjekt").value.trim() || loadMeta().objekt || "").trim();
+        const notes = $("fNotes").value.trim();
+
+        if(!date || !name || !time){
+          setMsg(msgEl, "Fadlan buuxi: Date, Name, Time (ugu yaraan).", false);
+          return;
+        }
+
+        const rows = loadEntries();
+        rows.push({ id: uid(), date, name, shift, time, objekt, notes });
+        saveEntries(rows);
+
+        $("fName").value = "";
+        $("fShift").value = "";
+        $("fTime").value = "";
+        $("fObjekt").value = "";
+        $("fNotes").value = "";
+
+        setMsg(msgEl, "✅ Entry saved.", true);
+        render();
+      });
+
+      $("btnClearEntries").addEventListener("click", ()=>{
+        if(confirm("Clear all Dienstplan entries?")){
+          saveEntries([]);
+          render();
+        }
+      });
+
+      // Documentation save
+      $("btnSaveDoc").addEventListener("click", ()=>{
+        const msgEl = $("msgDoc");
+        setMsg(msgEl, "", true);
+
+        const date = $("dDate").value;
+        const objekt = ($("dObjekt").value.trim() || loadMeta().objekt || "").trim();
+        const present = normalizeLines($("dPresent").value);
+        const absent = normalizeLines($("dAbsent").value);
+
+        if(!date){
+          setMsg(msgEl, "Date waa qasab (documentation).", false);
+          return;
+        }
+        if(!present && !absent){
+          setMsg(msgEl, "Fadlan qor ugu yaraan: Present ama Absent.", false);
+          return;
+        }
+
+        const docs = loadDocs();
+        docs.push({ id: uid(), date, objekt, present, absent });
+        saveDocs(docs);
+
+        $("dPresent").value = "";
+        $("dAbsent").value = "";
+        $("dObjekt").value = "";
+
+        setMsg(msgEl, "✅ Documentation saved.", true);
+        render();
+      });
+
+      $("btnClearDoc").addEventListener("click", ()=>{
+        $("dPresent").value = "";
+        $("dAbsent").value = "";
+        $("dObjekt").value = "";
+        setMsg($("msgDoc"), "", true);
+      });
+
+      // Top actions
+      $("btnPrint").addEventListener("click", ()=> window.print());
+      $("btnPDF").addEventListener("click", exportPDF);
+      $("btnExcel").addEventListener("click", exportExcel);
+      $("btnAutoPrint").addEventListener("click", autoPrintSheet);
+
+      $("btnExportCSV").addEventListener("click", exportCSV);
+
+      $("btnReset").addEventListener("click", ()=>{
+        if(confirm("Reset ALL data (meta + dienstplan + documentation)?")){
+          localStorage.removeItem(K_META);
+          localStorage.removeItem(K_ENTRIES);
+          localStorage.removeItem(K_DOCS);
+          location.reload();
+        }
+      });
+
+      render();
+    });
+  </script>
+</body>
+</html>
