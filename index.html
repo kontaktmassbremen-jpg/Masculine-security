@@ -6,7 +6,7 @@
   <title>Masculine Security — Dienstplan</title>
   <meta name="theme-color" content="#0b1220" />
 
-  <!-- Libraries (PDF + Excel). Require internet to load. -->
+  <!-- PDF + Excel (internet required) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -15,20 +15,19 @@
     :root{
       --bg:#0b1220; --panel:#0f1a2f; --card:#10203a; --line:#1a2a4b;
       --text:#e7eeff; --muted:#93a4c6; --accent:#3aa6ff; --good:#2bd4bd; --bad:#ff4d6d;
-      --r:18px; --r2:12px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --r:18px; --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0; font-family:var(--font); color:var(--text);
       background:
         radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.25), transparent 60%),
         radial-gradient(900px 600px at 100% 0%, rgba(43,212,189,.18), transparent 55%),
         var(--bg);
+      min-height:100vh;
     }
-    a{color:inherit}
     .wrap{max-width:1150px; margin:0 auto; padding:18px}
+    a{color:inherit; text-decoration:none}
     .topbar{
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       padding:16px; border:1px solid var(--line); border-radius:var(--r);
@@ -42,23 +41,20 @@
       border:1px solid rgba(255,255,255,.10);
       display:flex; align-items:center; justify-content:center;
       overflow:hidden; flex:0 0 auto;
+      font-weight:900; font-size:11px; color:rgba(231,238,255,.75);
     }
-    .logo img{width:100%; height:100%; object-fit:cover}
+    .logo img{width:100%; height:100%; object-fit:cover; display:block}
     .btxt{min-width:0}
     .btxt h1{margin:0; font-size:16px; letter-spacing:.6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .btxt p{margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.25}
-    .btxt p a{color:var(--text); text-decoration:none; border-bottom:1px dashed rgba(231,238,255,.4)}
+    .btxt p a{border-bottom:1px dashed rgba(231,238,255,.35)}
     .btxt p a:hover{border-bottom-color:rgba(231,238,255,.8)}
-    .right{
-      display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;
-    }
+    .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
 
-    /* Tabs */
     .tabs{
       display:flex; gap:8px; padding:6px;
       border-radius:999px; border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.06);
-      user-select:none;
     }
     .tab{
       cursor:pointer;
@@ -67,29 +63,27 @@
       border:1px solid transparent;
       background: transparent;
       color: var(--muted);
-      font-weight:800; font-size:12px;
+      font-weight:900; font-size:12px;
     }
     .tab:hover{color:var(--text); background: rgba(255,255,255,.06)}
     .tab.active{
       color:var(--text);
-      background: rgba(58,166,255,.18);
-      border-color: rgba(58,166,255,.35);
+      background: rgba(58,166,255,.20);
+      border-color: rgba(58,166,255,.40);
     }
 
-    /* Buttons */
     .btn{
       appearance:none; border:none; cursor:pointer;
       padding:10px 12px; border-radius:14px;
       background: rgba(255,255,255,.10);
       color:var(--text);
       border:1px solid rgba(255,255,255,.10);
-      font-weight:800; font-size:12px;
+      font-weight:900; font-size:12px;
     }
     .btn:hover{background: rgba(255,255,255,.14)}
     .btn.primary{background: rgba(58,166,255,.20); border-color: rgba(58,166,255,.40)}
     .btn.good{background: rgba(43,212,189,.16); border-color: rgba(43,212,189,.35)}
     .btn.bad{background: rgba(255,77,109,.14); border-color: rgba(255,77,109,.35)}
-    .btn:disabled{opacity:.55; cursor:not-allowed}
     .btn.small{padding:8px 10px; border-radius:12px}
 
     .grid{display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px}
@@ -120,10 +114,10 @@
     .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 650px){ .row{grid-template-columns:1fr} }
 
-    .hint{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.35}
-    .msg{font-size:12px; margin-top:10px; font-weight:800}
+    .msg{font-size:12px; margin-top:10px; font-weight:900}
     .msg.good{color: rgba(43,212,189,.95)}
     .msg.bad{color: rgba(255,77,109,.95)}
+    .hint{font-size:12px; color:var(--muted); margin-top:10px; line-height:1.35}
 
     table{width:100%; border-collapse:collapse}
     th, td{
@@ -135,7 +129,6 @@
     th{font-size:12px; color:var(--muted); font-weight:900; letter-spacing:.3px}
     .tableWrap{overflow:auto}
 
-    /* Print clean */
     @media print{
       .no-print{display:none !important}
       body{background:#fff !important; color:#0b1220 !important}
@@ -146,12 +139,11 @@
 
 <body>
   <div class="wrap">
-    <!-- TOP BAR -->
     <div class="topbar no-print">
       <div class="brand">
-        <div class="logo" title="Logo (logo.png)">
-          <img id="logoPreview" src="logo.png" alt="Masculine Security Logo"
-               onerror="this.style.display='none'; this.parentElement.textContent='LOGO';" />
+        <div class="logo" id="logoBox" title="Logo (logo.png)">
+          <img id="logoImg" src="logo.png" alt="Masculine Security Logo"
+               onerror="this.remove(); document.getElementById('logoBox').textContent='LOGO';" />
         </div>
         <div class="btxt">
           <h1>MASCULINE SECURITY — Dienstplan</h1>
@@ -163,13 +155,11 @@
       </div>
 
       <div class="right">
-        <!-- Tabs (Clickable) -->
         <div class="tabs" role="tablist" aria-label="Pages">
           <button class="tab active" id="tabDienstplan" type="button">Dienstplan</button>
           <button class="tab" id="tabDocumentation" type="button">Documentation</button>
         </div>
 
-        <!-- Actions -->
         <button class="btn primary" id="btnPrint" type="button">Print</button>
         <button class="btn" id="btnPDF" type="button">Export PDF</button>
         <button class="btn" id="btnExcel" type="button">Export Excel</button>
@@ -178,10 +168,9 @@
       </div>
     </div>
 
-    <!-- PAGES -->
+    <!-- DIENSTPLAN PAGE -->
     <div id="pageDienstplan">
       <div class="grid">
-        <!-- SETTINGS -->
         <div class="card no-print">
           <div class="hd"><h2>Settings</h2></div>
           <div class="bd">
@@ -206,13 +195,11 @@
               </div>
             </div>
             <div class="hint">
-              ✅ Logo: GitHub repo-gaaga ku upload <b>logo.png</b> (isla folder-ka index.html). Haddii logo aanu muuqan:
-              magaca ha noqdo <b>logo.png</b> (lowercase) + hard refresh (Ctrl+F5).
+              ✅ Logo si uu u muuqdo: repo root ku upload <b>logo.png</b> (lowercase) isla meesha index.html yaal.
             </div>
           </div>
         </div>
 
-        <!-- ADD ENTRY -->
         <div class="card no-print">
           <div class="hd"><h2>Add Dienstplan Entry</h2></div>
           <div class="bd">
@@ -256,6 +243,7 @@
             <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap">
               <button class="btn good" id="btnAddEntry" type="button">Add</button>
               <button class="btn" id="btnClearEntries" type="button">Clear Entries</button>
+              <button class="btn" id="btnExportCSV" type="button">Export CSV</button>
             </div>
 
             <div id="msgDienstplan" class="msg"></div>
@@ -263,14 +251,8 @@
         </div>
       </div>
 
-      <!-- LIST -->
       <div class="card" style="margin-top:14px">
-        <div class="hd no-print">
-          <h2>Dienstplan Entries</h2>
-          <div style="display:flex; gap:8px; flex-wrap:wrap">
-            <button class="btn small" id="btnExportCSV" type="button">Export CSV</button>
-          </div>
-        </div>
+        <div class="hd no-print"><h2>Dienstplan Entries</h2></div>
         <div class="bd" style="padding:0">
           <div class="tableWrap">
             <table id="tblEntries">
@@ -326,10 +308,6 @@
             </div>
 
             <div id="msgDoc" class="msg"></div>
-
-            <div class="hint">
-              ✅ Qaybtan waa “Presence/Absence” proof (audit-ready). Export PDF/Excel/Auto Print Sheet waxay ku dari doonaan documentation.
-            </div>
           </div>
         </div>
 
@@ -353,20 +331,20 @@
           </div>
         </div>
       </div>
+
+      <div class="hint no-print" style="margin-top:14px">
+        Auto Print Sheet: wuxuu daabacayaa tab-ka aad hadda ku jirto (Dienstplan ama Documentation).
+      </div>
     </div>
 
-    <div class="hint no-print" style="margin-top:14px">
-      Haddii buttons “not clickable” noqdaan: Hubi in aad <b>index.html</b> si buuxda u replace gareysay + refresh hard (Ctrl+F5) ama browser cache nadiifi.
-    </div>
   </div>
 
   <script>
-    // ---------- Storage keys ----------
-    const K_META = "ms_meta_v2";
-    const K_ENTRIES = "ms_entries_v2";
-    const K_DOCS = "ms_docs_v2";
+    // Storage keys
+    const K_META = "ms_meta_v3";
+    const K_ENTRIES = "ms_entries_v3";
+    const K_DOCS = "ms_docs_v3";
 
-    // ---------- Helpers ----------
     const $ = (id) => document.getElementById(id);
 
     function safeParse(s, fallback){
@@ -378,65 +356,53 @@
       return String(s ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
     }
     function normalizeLines(text){
-      return (text || "")
-        .split(/\r?\n/)
-        .map(s => s.trim())
-        .filter(Boolean)
-        .join(" | ");
+      return (text || "").split(/\r?\n/).map(s => s.trim()).filter(Boolean).join(" | ");
+    }
+    function setMsg(el, text, ok=true){
+      el.textContent = text || "";
+      el.className = "msg " + (ok ? "good" : "bad");
     }
 
     function loadMeta(){
       return safeParse(localStorage.getItem(K_META), { month:"", objekt:"", location:"Bremen & Umgebung" });
     }
     function saveMeta(m){ localStorage.setItem(K_META, JSON.stringify(m)); }
-
     function loadEntries(){ return safeParse(localStorage.getItem(K_ENTRIES), []); }
     function saveEntries(rows){ localStorage.setItem(K_ENTRIES, JSON.stringify(rows)); }
-
     function loadDocs(){ return safeParse(localStorage.getItem(K_DOCS), []); }
     function saveDocs(rows){ localStorage.setItem(K_DOCS, JSON.stringify(rows)); }
 
-    function setMsg(el, text, ok=true){
-      el.textContent = text || "";
-      el.className = "msg " + (ok ? "good" : "bad");
-    }
-
-    // ---------- Tabs ----------
+    // Tabs
     function setActiveTab(which){
       const isDienst = which === "dienst";
       $("pageDienstplan").style.display = isDienst ? "" : "none";
       $("pageDocumentation").style.display = isDienst ? "none" : "";
-
       $("tabDienstplan").classList.toggle("active", isDienst);
       $("tabDocumentation").classList.toggle("active", !isDienst);
     }
 
-    // ---------- Render ----------
+    // Render tables
     function render(){
-      // Meta inputs
       const meta = loadMeta();
       $("metaMonth").value = meta.month || "";
       $("metaObjekt").value = meta.objekt || "";
       $("metaLocation").value = meta.location || "";
 
-      // Entries
       const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
       const tb = $("tblEntries").querySelector("tbody");
       tb.innerHTML = "";
       if(!entries.length){
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No entries yet.</td>`;
-        tb.appendChild(tr);
+        tb.innerHTML = `<tr><td colspan="7" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No entries yet.</td></tr>`;
       } else {
         for(const r of entries){
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${esc(r.date)}</td>
             <td>${esc(r.name)}</td>
-            <td>${esc(r.shift || "")}</td>
+            <td>${esc(r.shift||"")}</td>
             <td>${esc(r.time)}</td>
-            <td>${esc(r.objekt || "")}</td>
-            <td>${esc(r.notes || "")}</td>
+            <td>${esc(r.objekt||"")}</td>
+            <td>${esc(r.notes||"")}</td>
             <td><button class="btn small bad" type="button" data-del="${r.id}">Delete</button></td>
           `;
           tb.appendChild(tr);
@@ -450,22 +416,19 @@
         });
       });
 
-      // Docs
       const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
       const dtb = $("tblDocs").querySelector("tbody");
       dtb.innerHTML = "";
       if(!docs.length){
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="5" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No documentation yet.</td>`;
-        dtb.appendChild(tr);
+        dtb.innerHTML = `<tr><td colspan="5" style="color:rgba(231,238,255,.65); font-size:12px; padding:14px">No documentation yet.</td></tr>`;
       } else {
         for(const d of docs){
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${esc(d.date)}</td>
-            <td>${esc(d.objekt || "")}</td>
-            <td>${esc(d.present || "")}</td>
-            <td>${esc(d.absent || "")}</td>
+            <td>${esc(d.objekt||"")}</td>
+            <td>${esc(d.present||"")}</td>
+            <td>${esc(d.absent||"")}</td>
             <td><button class="btn small bad" type="button" data-deldoc="${d.id}">Delete</button></td>
           `;
           dtb.appendChild(tr);
@@ -480,7 +443,7 @@
       });
     }
 
-    // ---------- Export: CSV ----------
+    // CSV export
     function exportCSV(){
       const meta = loadMeta();
       const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
@@ -521,7 +484,7 @@
       a.remove();
     }
 
-    // ---------- Export: Excel (XLSX) ----------
+    // Excel export
     function exportExcel(){
       if(!window.XLSX){
         alert("Excel export: library ma load-gareyn. Hubi internet-ka (CDN).");
@@ -556,7 +519,7 @@
       XLSX.writeFile(wb, `dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.xlsx`);
     }
 
-    // ---------- Export: PDF ----------
+    // PDF export
     function exportPDF(){
       if(!window.jspdf || !window.jspdf.jsPDF){
         alert("PDF export: library ma load-gareyn. Hubi internet-ka (CDN).");
@@ -622,13 +585,12 @@
       pdf.save(`dienstplan_${(meta.month||"monat").replace(/\s+/g,"_")}.pdf`);
     }
 
-    // ---------- Auto Print Sheet (opens print window and prints) ----------
+    // Auto Print Sheet (prints current tab)
     function autoPrintSheet(){
       const meta = loadMeta();
       const entries = loadEntries().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
       const docs = loadDocs().slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-
-      const activeIsDienst = $("tabDienstplan").classList.contains("active");
+      const isDienst = $("tabDienstplan").classList.contains("active");
 
       const rowsEntries = entries.map(e=>`
         <tr>
@@ -641,12 +603,8 @@
           <td>${esc(d.date)}</td><td>${esc(d.objekt||"")}</td><td>${esc(d.present||"")}</td><td>${esc(d.absent||"")}</td>
         </tr>`).join("");
 
-      const sheetHTML = `
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8" />
-<title>Masculine Security — Print Sheet</title>
+      const html = `<!doctype html>
+<html><head><meta charset="utf-8"><title>Print Sheet</title>
 <style>
   body{font-family:Arial, sans-serif; margin:22px; color:#0b1220}
   .hdr{display:flex; justify-content:space-between; gap:16px; align-items:flex-start}
@@ -661,13 +619,12 @@
   .sign{display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:22px}
   .line{border-bottom:1px solid #0b1220; height:22px}
   .lbl{font-size:11px; color:#475569; margin-bottom:8px}
-</style>
-</head>
+</style></head>
 <body>
   <div class="hdr">
     <div>
       <div class="title">MASCULINE SECURITY</div>
-      <div class="sub">Werschenregerstraße 6 · 28237 Bremen<br/>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
+      <div class="sub">Werschenregerstraße 6 · 28237 Bremen<br>015778697052 · Kontakt.mass.bremen@hotmail.com</div>
     </div>
     <div class="meta">
       <div><b>Monat:</b> ${esc(meta.month||"-")}</div>
@@ -678,21 +635,13 @@
   </div>
 
   ${
-    activeIsDienst
-      ? `
-        <h2>Dienstplan</h2>
-        <table>
-          <thead><tr><th>Date</th><th>Name</th><th>Shift</th><th>Time</th><th>Objekt</th><th>Notes</th></tr></thead>
-          <tbody>${rowsEntries || `<tr><td colspan="6" style="color:#475569">No entries.</td></tr>`}</tbody>
-        </table>
-      `
-      : `
-        <h2>Documentation — Anwesend / Abwesend</h2>
-        <table>
-          <thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
-          <tbody>${rowsDocs || `<tr><td colspan="4" style="color:#475569">No documentation.</td></tr>`}</tbody>
-        </table>
-      `
+    isDienst
+      ? `<h2>Dienstplan</h2>
+         <table><thead><tr><th>Date</th><th>Name</th><th>Shift</th><th>Time</th><th>Objekt</th><th>Notes</th></tr></thead>
+         <tbody>${rowsEntries || `<tr><td colspan="6" style="color:#475569">No entries.</td></tr>`}</tbody></table>`
+      : `<h2>Documentation — Anwesend / Abwesend</h2>
+         <table><thead><tr><th>Date</th><th>Objekt</th><th>Present</th><th>Absent</th></tr></thead>
+         <tbody>${rowsDocs || `<tr><td colspan="4" style="color:#475569">No documentation.</td></tr>`}</tbody></table>`
   }
 
   <div class="sign">
@@ -700,27 +649,24 @@
     <div><div class="lbl">Unterschrift Masculine Security</div><div class="line"></div></div>
   </div>
 
-<script>
-  window.onload = () => { window.print(); };
-</script>
-</body>
-</html>`;
+  <script>window.onload=()=>window.print();<\/script>
+</body></html>`;
 
-      const w = window.open("", "_blank", "noopener,noreferrer");
+      const w = window.open("", "_blank");
       if(!w){ alert("Popup blocked. Allow popups then try again."); return; }
       w.document.open();
-      w.document.write(sheetHTML);
+      w.document.write(html);
       w.document.close();
     }
 
-    // ---------- Init ----------
+    // Boot
     window.addEventListener("DOMContentLoaded", () => {
-      // Set default dates
+      // Default dates
       const today = new Date().toISOString().slice(0,10);
       $("fDate").value = today;
       $("dDate").value = today;
 
-      // Default meta if empty
+      // Defaults
       const meta = loadMeta();
       if(!meta.location) meta.location = "Bremen & Umgebung";
       saveMeta(meta);
@@ -821,7 +767,6 @@
       $("btnPDF").addEventListener("click", exportPDF);
       $("btnExcel").addEventListener("click", exportExcel);
       $("btnAutoPrint").addEventListener("click", autoPrintSheet);
-
       $("btnExportCSV").addEventListener("click", exportCSV);
 
       $("btnReset").addEventListener("click", ()=>{
