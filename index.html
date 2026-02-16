@@ -1,98 +1,524 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Masculine Security — Dienstplan</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Masculine Security — Monatsdienstplan</title>
 
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/>
-<meta http-equiv="Expires" content="0"/>
+  <style>
+    :root{
+      --ink:#111;
+      --muted:#444;
+      --line:#1f1f1f;
+      --bg:#f4f5f7;
+      --paper:#fff;
+      --red:#c40000;
+      --blue:#0b2a5a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg); color:var(--ink);
+    }
+    .wrap{max-width:1100px; margin:18px auto; padding:0 12px;}
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .tool-left, .tool-right{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .input, select{
+      border:1px solid #cfd3d9; background:#fff; color:#111;
+      padding:10px 10px; border-radius:10px; outline:none;
+      min-width:140px;
+    }
+    .btn{
+      border:1px solid #cfd3d9; background:#fff; color:#111;
+      padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:700;
+    }
+    .btn:hover{border-color:#9aa3af}
+    .btn.red{border-color:#f0b3b3; background:#fff5f5; color:#7a0000}
+    .btn.blue{border-color:#b6c7e6; background:#f3f7ff; color:#0b2a5a}
 
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:#071225;
-color:#e7f0ff;
-}
-.wrap{max-width:1100px;margin:24px auto;padding:14px;}
-.top{
-background:#0b1a33;
-padding:16px;
-border-radius:12px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-button{
-padding:10px 12px;
-background:#3aa6ff;
-border:none;
-border-radius:8px;
-color:white;
-cursor:pointer;
-}
-table{width:100%;margin-top:20px;border-collapse:collapse;}
-td,th{padding:10px;border-bottom:1px solid #16345e;}
-</style>
+    /* PAPER */
+    .paper{
+      background:var(--paper);
+      border:1px solid #d7dbe2;
+      border-radius:14px;
+      padding:20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.06);
+    }
+
+    /* Header like Proc*** */
+    .title{
+      text-align:center;
+      font-weight:900;
+      color:var(--red);
+      margin:4px 0 14px;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+    .subrow{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin-bottom:10px;
+    }
+    .kw{
+      font-weight:900;
+      font-size:14px;
+    }
+    .brandbox{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logoBox{
+      width:60px; height:44px;
+      border:2px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; color:var(--blue);
+      border-radius:6px;
+      overflow:hidden;
+    }
+    .logoBox img{width:100%; height:100%; object-fit:contain}
+    .company{
+      font-weight:900;
+      color:var(--blue);
+      font-size:16px;
+      line-height:1.1;
+    }
+    .company small{
+      display:block;
+      color:var(--muted);
+      font-weight:700;
+      font-size:11px;
+      margin-top:3px;
+    }
+
+    /* Table */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:11px;
+    }
+    th, td{
+      border:1.6px solid var(--line);
+      padding:6px 6px;
+      vertical-align:middle;
+      text-align:center;
+      word-wrap:break-word;
+    }
+    th{
+      background:#f1f1f1;
+      font-weight:900;
+    }
+    .emp{
+      text-align:left;
+      font-weight:900;
+      width:170px;
+    }
+    .dayhead{
+      font-weight:900;
+      background:#f7f7f7;
+    }
+    .datehead{
+      font-weight:900;
+      font-size:10px;
+      background:#efefef;
+    }
+    .cell{
+      min-height:34px;
+      font-weight:800;
+      font-size:10.5px;
+    }
+    .cell .site{display:block; font-weight:900}
+    .cell .time{display:block; font-weight:900}
+    .weekend{background:#f9f0f0}
+    .today{outline:3px solid rgba(196,0,0,.25); outline-offset:-3px}
+
+    /* Notice block */
+    .noticeTitle{
+      text-align:center; color:var(--red); font-weight:900;
+      margin:14px 0 6px;
+      font-size:13px;
+    }
+    .notice{
+      text-align:center;
+      font-size:11px;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    /* Footer */
+    .footer{
+      margin-top:14px;
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    }
+    .bigBrand{
+      display:flex; align-items:center; gap:12px;
+      color:var(--blue);
+      font-weight:900;
+      font-size:34px;
+      letter-spacing:.3px;
+    }
+    .bigBrand .mark{
+      width:52px; height:52px; border:3px solid var(--blue); border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px;
+    }
+    .addr{
+      text-align:center;
+      font-size:10px;
+      color:#333;
+      font-weight:700;
+      flex:1;
+    }
+    .page{
+      font-size:10px; color:#333; font-weight:700;
+      white-space:nowrap;
+    }
+
+    /* PRINT */
+    @media print{
+      body{background:#fff}
+      .wrap{max-width:100%; margin:0; padding:0}
+      .toolbar{display:none !important}
+      .paper{border:none; border-radius:0; box-shadow:none; padding:16px}
+    }
+  </style>
 </head>
 
 <body>
-<div class="wrap">
+  <div class="wrap">
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="tool-left">
+        <input class="input" id="companyName" value="Masculine Security" />
+        <input class="input" id="address" value="Werschenregerstraße 6, 28237 Bremen" />
+        <input class="input" id="phone" value="015778697052" />
+        <input class="input" id="email" value="kontakt.mass.bremen@hotmail.com" />
+      </div>
+      <div class="tool-right">
+        <select id="monthSel" class="input"></select>
+        <select id="yearSel" class="input"></select>
+        <button class="btn blue" type="button" onclick="addEmployee()">Add Mitarbeiter</button>
+        <button class="btn" type="button" onclick="fillDemo()">Demo</button>
+        <button class="btn red" type="button" onclick="window.print()">PDF / Drucken</button>
+      </div>
+    </div>
 
-<div class="top">
-<div>
-<b>MASCULINE SECURITY — DIENSTPLAN</b><br>
-<small>Werschenregerstraße 6 · 28237 Bremen · 015778697052</small>
-</div>
-<div>
-<button onclick="resetCache()">Reset</button>
-</div>
-</div>
+    <!-- PAPER -->
+    <div class="paper" id="paper">
+      <div class="title" id="title">Vorläufiger Dienstplan</div>
 
-<table>
-<tr>
-<th>#</th>
-<th>Mitarbeiter</th>
-<th>Datum</th>
-<th>Schicht</th>
-<th>Zeit</th>
-<th>Objekt</th>
-</tr>
+      <div class="subrow">
+        <div class="kw" id="monthLabel">Dienstplan — Monat</div>
 
-<tr><td>15</td><td>Mustafa Mursal Abdi</td><td>22.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
-<tr><td>16</td><td>Mustafa Mursal Abdi</td><td>23.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
-<tr><td>17</td><td>Mustafa Mursal Abdi</td><td>24.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
-<tr><td>18</td><td>Mustafa Mursal Abdi</td><td>27.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
-<tr><td>19</td><td>Mustafa Mursal Abdi</td><td>28.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
-</table>
+        <div class="brandbox">
+          <div class="logoBox" title="Logo">
+            <!-- optional logo.png -->
+            <img src="./logo.png" alt="" onerror="this.remove(); this.parentElement.textContent='MS';">
+          </div>
+          <div class="company" id="companyBox">
+            MASCULINE SECURITY
+            <small id="companySmall">Werschenregerstraße 6, 28237 Bremen · Tel: 015778697052 · E-Mail: kontakt.mass.bremen@hotmail.com</small>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <div id="tableWrap"></div>
 
-<script>
-// DELETE ALL SERVICE WORKERS (AUTO FIX)
-async function resetCache(){
-if('serviceWorker' in navigator){
-const regs = await navigator.serviceWorker.getRegistrations();
-for(let r of regs){await r.unregister();}
-}
-if(window.caches){
-const keys = await caches.keys();
-for(let k of keys){await caches.delete(k);}
-}
-alert("Cache cleared ✔️");
-location.reload(true);
-}
+      <div class="noticeTitle">DRINGEND BEACHTEN:</div>
+      <div class="notice" id="notice">
+        Dienstantritt ist 20 Minuten vor Dienstbeginn!<br/>
+        Verspätungen und Ausfälle des Dienstantritts sind unverzüglich telefonisch zu melden!<br/>
+        Die Dienstzeiten von Sonderbewachungen müssen nach Dienstende schriftlich mitgeteilt werden!<br/><br/>
+        Freiwünsche werden spätestens am Donnerstag schriftlich der Einsatzleitung mitgeteilt!<br/>
+        Je nach Auftragslage werden diese Zugestimmt oder abgelehnt.<br/><br/>
+        Der Stundenzettel wird 2. Tage vor Monatsende bei der Einsatzleitung eingereicht!
+      </div>
 
-// AUTO REMOVE OLD SERVICE WORKERS
-(async ()=>{
-if('serviceWorker' in navigator){
-const regs = await navigator.serviceWorker.getRegistrations();
-for(let r of regs){await r.unregister();}
-}
-})();
-</script>
+      <div class="footer">
+        <div class="bigBrand">
+          <div class="mark" id="mark">MS</div>
+          <div id="bigName">Masculine Security</div>
+        </div>
+        <div class="addr" id="footerAddr">
+          Masculine Security · Werschenregerstraße 6 · 28237 Bremen
+        </div>
+        <div class="page">Seite 1 von 1</div>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    // ====== Monthly Dienstplan (Proc***-style) — Single-file ======
+    const monthSel = document.getElementById("monthSel");
+    const yearSel  = document.getElementById("yearSel");
+    const tableWrap = document.getElementById("tableWrap");
+
+    const companyName = document.getElementById("companyName");
+    const address = document.getElementById("address");
+    const phone = document.getElementById("phone");
+    const email = document.getElementById("email");
+
+    const daysDE = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+    const monthsDE = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+
+    // Employees + shifts stored in memory (can be extended to localStorage if you want)
+    let employees = [
+      { name:"Mustafa Mursal Abdi", shifts:{} }
+    ];
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function formatDate(d){
+      return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;
+    }
+    function isWeekend(d){
+      const x = d.getDay();
+      return x===0 || x===6;
+    }
+    function weekOfYearISO(date){
+      // ISO week number
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    function initSelectors(){
+      // month
+      monthsDE.forEach((m, i)=>{
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = m;
+        monthSel.appendChild(opt);
+      });
+      // year
+      const yNow = new Date().getFullYear();
+      for(let y=yNow-2; y<=yNow+4; y++){
+        const opt = document.createElement("option");
+        opt.value = String(y);
+        opt.textContent = String(y);
+        yearSel.appendChild(opt);
+      }
+      // default: current month/year
+      const now = new Date();
+      monthSel.value = String(now.getMonth());
+      yearSel.value = String(now.getFullYear());
+    }
+
+    function applyHeader(){
+      const cn = (companyName.value || "Masculine Security").trim();
+      const addr = (address.value || "").trim();
+      const ph = (phone.value || "").trim();
+      const em = (email.value || "").trim();
+
+      document.getElementById("companyBox").childNodes[0].textContent = cn.toUpperCase();
+      document.getElementById("companySmall").textContent =
+        `${addr}${ph? " · Tel: "+ph:""}${em? " · E-Mail: "+em:""}`;
+
+      document.getElementById("bigName").textContent = cn;
+      document.getElementById("footerAddr").textContent = `${cn} · ${addr}`;
+      document.getElementById("mark").textContent = cn.split(" ").map(s=>s[0]).slice(0,2).join("").toUpperCase() || "MS";
+    }
+
+    function buildMonthDates(month, year){
+      const first = new Date(year, month, 1);
+      const last  = new Date(year, month+1, 0);
+      const days = [];
+      for(let d=1; d<=last.getDate(); d++){
+        days.push(new Date(year, month, d));
+      }
+      return days;
+    }
+
+    function render(){
+      applyHeader();
+
+      const month = Number(monthSel.value);
+      const year  = Number(yearSel.value);
+      const dates = buildMonthDates(month, year);
+
+      // Label like "Dienstplan KW XX" -> monthly shows range of KW
+      const kwStart = weekOfYearISO(dates[0]);
+      const kwEnd   = weekOfYearISO(dates[dates.length-1]);
+      document.getElementById("monthLabel").textContent =
+        `Dienstplan ${monthsDE[month]} ${year} (KW ${kwStart}–${kwEnd})`;
+
+      // Build table:
+      // Row 1: dates
+      // Row 2: weekday names
+      // Employee rows
+      const tbl = document.createElement("table");
+
+      const thead = document.createElement("thead");
+      const trDate = document.createElement("tr");
+      const trDay  = document.createElement("tr");
+
+      // first left header cell
+      const thEmp1 = document.createElement("th");
+      thEmp1.className = "emp";
+      thEmp1.rowSpan = 2;
+      thEmp1.textContent = "Mitarbeiter";
+      trDate.appendChild(thEmp1);
+
+      dates.forEach(d=>{
+        const th = document.createElement("th");
+        th.className = "datehead" + (isWeekend(d) ? " weekend" : "");
+        th.textContent = formatDate(d);
+        trDate.appendChild(th);
+      });
+
+      dates.forEach(d=>{
+        const th = document.createElement("th");
+        th.className = "dayhead" + (isWeekend(d) ? " weekend" : "");
+        th.textContent = daysDE[d.getDay()];
+        trDay.appendChild(th);
+      });
+
+      thead.appendChild(trDate);
+      thead.appendChild(trDay);
+      tbl.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      employees.forEach((emp, empIndex)=>{
+        const tr = document.createElement("tr");
+
+        const tdEmp = document.createElement("td");
+        tdEmp.className = "emp";
+        tdEmp.innerHTML = `
+          <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+            <span>${escapeHTML(emp.name)}</span>
+            <span>
+              <button class="btn" style="padding:6px 8px;border-radius:8px" type="button" onclick="editEmp(${empIndex})">Edit</button>
+              <button class="btn red" style="padding:6px 8px;border-radius:8px" type="button" onclick="delEmp(${empIndex})">X</button>
+            </span>
+          </div>
+        `;
+        tr.appendChild(tdEmp);
+
+        dates.forEach(d=>{
+          const key = formatDate(d);
+          const v = emp.shifts[key] || "";
+          const td = document.createElement("td");
+          td.className = "cell" + (isWeekend(d) ? " weekend" : "") + (isToday(d) ? " today":"");
+          td.style.cursor = "pointer";
+          td.title = "Click: set shift";
+          td.innerHTML = v ? renderShift(v) : "<span class='muted'>—</span>";
+          td.addEventListener("click", ()=> setShift(empIndex, key, v));
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      tbl.appendChild(tbody);
+      tableWrap.innerHTML = "";
+      tableWrap.appendChild(tbl);
+    }
+
+    function isToday(d){
+      const n = new Date();
+      return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+    }
+
+    function renderShift(v){
+      // expected format: "SITE|HH:MM-HH:MM" OR any text
+      if(v.includes("|")){
+        const [site, time] = v.split("|");
+        return `<span class="site">${escapeHTML(site)}</span><span class="time">${escapeHTML(time)}</span>`;
+      }
+      return `<span class="site">${escapeHTML(v)}</span>`;
+    }
+
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+    }
+
+    // Click cell -> prompt shift
+    function setShift(empIndex, dateKey, current){
+      const help =
+`Ku qor shift sida:
+LAST Birkenfels|19:00-07:00
+ama:
+HOTEL|19:00-07:00
+ama:
+FREI
+
+Haddii aad rabto inaad tirtirto: blank (waxba) ku qor kadib OK.`;
+      const v = prompt(help, current || "LAST Birkenfels|19:00-07:00");
+      if(v === null) return;
+      const val = v.trim();
+      if(!val){
+        delete employees[empIndex].shifts[dateKey];
+      }else{
+        employees[empIndex].shifts[dateKey] = val;
+      }
+      render();
+    }
+
+    // Employees actions
+    function addEmployee(){
+      const name = prompt("Magaca Mitarbeiter-ka?", "New Mitarbeiter");
+      if(!name) return;
+      employees.push({ name: name.trim(), shifts:{} });
+      render();
+    }
+
+    function editEmp(i){
+      const name = prompt("Update Mitarbeiter name:", employees[i].name);
+      if(!name) return;
+      employees[i].name = name.trim();
+      render();
+    }
+
+    function delEmp(i){
+      if(!confirm("Delete Mitarbeiter-kan?")) return;
+      employees.splice(i,1);
+      if(!employees.length) employees.push({ name:"Mitarbeiter", shifts:{} });
+      render();
+    }
+
+    // Demo fill
+    function fillDemo(){
+      const month = Number(monthSel.value);
+      const year  = Number(yearSel.value);
+      const dates = buildMonthDates(month, year);
+
+      // ensure 5 workers
+      employees = [
+        { name:"Mustafa Mursal Abdi", shifts:{} },
+        { name:"Mitarbeiter 2", shifts:{} },
+        { name:"Mitarbeiter 3", shifts:{} },
+        { name:"Mitarbeiter 4", shifts:{} },
+        { name:"Mitarbeiter 5", shifts:{} },
+      ];
+
+      // sample: Fri/Sat/Sun night for first worker
+      dates.forEach(d=>{
+        const key = formatDate(d);
+        const dow = d.getDay(); // 0 Sun
+        if(dow===5 || dow===6 || dow===0){
+          employees[0].shifts[key] = "LAST Birkenfels|19:00-07:00";
+        }
+      });
+      render();
+    }
+
+    // Events
+    [monthSel, yearSel, companyName, address, phone, email].forEach(el=>{
+      el.addEventListener("change", render);
+      el.addEventListener("input", render);
+    });
+
+    // Init
+    initSelectors();
+    render();
+
+    // Expose funcs for inline onclick
+    window.addEmployee = addEmployee;
+    window.editEmp = editEmp;
+    window.delEmp = delEmp;
+    window.fillDemo = fillDemo;
+  </script>
 </body>
 </html>
