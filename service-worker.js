@@ -1,1 +1,1 @@
-delete
+Remove service worker
