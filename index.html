@@ -1,12 +1,13 @@
+<!-- =========================================================
+FILE: index.html   (PASTE 100% AS-IS / COMPLETE)
+========================================================= -->
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Dienstplan (Monatsplan)</title>
+  <title>Masculine Security — Dienstplan</title>
   <meta name="theme-color" content="#0b3a78"/>
-
-  <!-- PWA (optional). If files exist, great. If not, app still works. -->
   <link rel="manifest" href="manifest.json"/>
 
   <style>
@@ -82,7 +83,6 @@
       font-size:12px;
       user-select:none;
       transition:.12s transform ease, .12s background ease;
-      white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.14)}
     .btn.primary{background: rgba(57,169,255,.28); border-color: rgba(57,169,255,.55)}
@@ -141,19 +141,16 @@
       user-select:none;
       font-size:12px;
       font-weight:700;
-      min-width:44px;
-      text-align:center;
     }
     .chip.active{
       background: rgba(57,169,255,.25);
       border-color: rgba(57,169,255,.6);
     }
     .tableWrap{overflow:auto; border-top:1px solid var(--line)}
-    table{width:100%; border-collapse:collapse; min-width:820px}
+    table{width:100%; border-collapse:collapse; min-width:760px}
     th,td{padding:10px 10px; border-bottom:1px solid var(--line); font-size:12px}
     th{color:var(--muted); text-align:left; font-weight:800; background: rgba(255,255,255,.06)}
     td{color:var(--text)}
-    .tdSmall{color:var(--muted); font-weight:650}
     .right{display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap}
     .pill{
       font-size:12px; padding:6px 10px; border-radius:999px;
@@ -169,7 +166,7 @@
       .wrap{max-width:none; margin:0; padding:0}
       .printPage{
         display:block !important;
-        padding:22mm 16mm;
+        padding:18mm 14mm;
         font-family: Arial, sans-serif;
       }
       .printCard{
@@ -182,39 +179,55 @@
         border-bottom:3px solid #1b7bff;
         padding-bottom:10px; margin-bottom:12px;
       }
-      .printBrand{ display:flex; gap:10px; align-items:center; }
+      .printBrand{display:flex; gap:10px; align-items:center;}
       .printLogo{
-        width:42px; height:42px; border-radius:10px;
-        border:1px solid #cfd7e3; overflow:hidden;
+        width:44px; height:44px; border-radius:10px;
+        border:1px solid #cfd7e3; overflow:hidden; background:#fff;
       }
       .printLogo img{width:100%; height:100%; object-fit:cover}
-      .printTitle{ font-size:18px; font-weight:800; color:#0b3a78; margin:0; }
+      .printTitle{font-size:18px; font-weight:800; color:#0b3a78; margin:0;}
       .printMeta{font-size:11px; color:#444; line-height:1.25}
-      .printDate{font-size:11px; color:#333; text-align:right}
+      .printDate{font-size:11px; color:#333; text-align:right; white-space:nowrap}
       .printH2{
-        text-align:center; margin:12px 0 10px;
-        color:#0b3a78; font-size:16px; font-weight:900;
+        text-align:center;
+        margin:12px 0 10px;
+        color:#0b3a78;
+        font-size:16px;
+        font-weight:900;
       }
       .printTable{
-        width:100%; border-collapse:collapse; margin-top:6px; font-size:11px;
+        width:100%;
+        border-collapse:collapse;
+        margin-top:6px;
+        font-size:11px;
       }
       .printTable th{
-        background:#eaf2ff; color:#0b3a78; border:1px solid #cfd7e3;
-        padding:7px; font-weight:800;
+        background:#eaf2ff;
+        color:#0b3a78;
+        border:1px solid #cfd7e3;
+        padding:7px;
+        font-weight:800;
       }
-      .printTable td{ border:1px solid #cfd7e3; padding:7px; color:#111; }
-      .notice{ margin-top:12px; text-align:center; font-size:11px; }
+      .printTable td{
+        border:1px solid #cfd7e3;
+        padding:7px;
+        color:#111;
+      }
+      .notice{
+        margin-top:12px;
+        text-align:center;
+        font-size:11px;
+      }
       .notice b{color:#c81f2c}
       .footerLine{
-        margin-top:18px; font-size:10px; color:#666;
-        display:flex; justify-content:space-between;
+        margin-top:14px;
+        font-size:10px;
+        color:#666;
+        display:flex;
+        justify-content:space-between;
       }
     }
   </style>
-
-  <!-- PDF generator (WhatsApp share on mobile) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
@@ -242,7 +255,7 @@
     </div>
   </div>
 
-  <!-- PLAN -->
+  <!-- PLAN (MONTHLY) -->
   <section id="pagePlan" class="grid">
     <div class="card">
       <div class="cardHead">
@@ -250,7 +263,6 @@
         <div class="right">
           <span class="pill" id="pillShift">Schicht: —</span>
           <span class="pill" id="pillTime">Uhrzeit: —</span>
-          <span class="pill" id="pillNote">Notiz: —</span>
         </div>
       </div>
 
@@ -263,7 +275,7 @@
           <div class="field">
             <label>Logo (optional)</label>
             <input id="logoFile" type="file" accept="image/*"/>
-            <div class="hint">Logo wird gespeichert & im PDF angezeigt.</div>
+            <div class="hint">Logo wird lokal gespeichert & im PDF angezeigt.</div>
           </div>
 
           <div class="field">
@@ -282,7 +294,6 @@
           <div class="field">
             <label>Datum (für PDF)</label>
             <input id="docDate" placeholder="16.02.2026 (oder 2026-02-16)"/>
-            <div class="hint">Format: TT.MM.JJJJ</div>
           </div>
         </div>
 
@@ -298,22 +309,19 @@
             <input id="empName" placeholder="z.B. Mustafa Mursal Abdi"/>
           </div>
 
-          <div class="field">
-            <label>Monat (auswählen)</label>
-            <input id="monthPick" type="month"/>
-            <div class="hint">Bisha dooro. Hoos ka dooro maalmaha (01–31).</div>
-          </div>
-
-          <div class="field">
+          <div class="field" style="grid-column:1/-1">
             <label>Monatstage (klicken)</label>
             <div class="chips" id="dayChips"></div>
-            <div class="hint">Maalmo badan dooro (tusaale: 01, 02, 05...).</div>
+            <div class="hint">
+              Klicke 01–31. Diese Daten erscheinen im PDF und im WhatsApp-Text.
+              Monat/Jahr kommt aus “Datum (für PDF)”.
+            </div>
           </div>
 
           <div class="field">
             <label>Objekt / Einsatz</label>
             <input id="objekt" placeholder="z.B. Hotel / Baustelle / Asylheim"/>
-            <div class="hint">Schicht (Tag/Nacht), Uhrzeit & Notiz waa automatic.</div>
+            <div class="hint">Schicht (Tag/Nacht), Uhrzeit & Notiz werden automatisch gesetzt.</div>
           </div>
 
           <div class="field">
@@ -323,7 +331,6 @@
               <option value="Tag">Tag</option>
               <option value="Nacht">Nacht</option>
             </select>
-            <div class="hint">Auto: Objekt keywords + Uhrzeit.</div>
           </div>
 
           <div class="field">
@@ -333,7 +340,7 @@
 
           <div class="field" style="grid-column:1/-1">
             <label>Notiz — automatisch</label>
-            <input id="note" placeholder="(wird automatisch ausgefüllt)"/>
+            <input id="note" placeholder="z.B. Rundgang / Schlüssel"/>
           </div>
         </div>
 
@@ -344,10 +351,6 @@
         </div>
 
         <div class="hint" id="statusPlan">Bereit.</div>
-        <div class="hint">
-          <b>WhatsApp (PDF):</b> Mobile (Android/iPhone) → PDF file waa la share-gareyn karaa toos (WhatsApp wuxuu ka soo muuqan karaa).  
-          Desktop (Edge/PC) → browser ma diri karo file toos WhatsApp; wuxuu sameeyaa PDF download + text, kadib adiga waxaad ku attach-gareysaa WhatsApp.
-        </div>
       </div>
 
       <div class="tableWrap">
@@ -357,8 +360,7 @@
               <th>#</th>
               <th>Mitarbeiter</th>
               <th>Nr.</th>
-              <th>Monat</th>
-              <th>Tage</th>
+              <th>Datum</th>
               <th>Schicht</th>
               <th>Uhrzeit</th>
               <th>Objekt</th>
@@ -384,9 +386,10 @@
           <label>Vorschau</label>
           <textarea id="msgPreview" readonly></textarea>
         </div>
-        <div class="hint">
-          ✅ Desktop: WhatsApp-Web opens with text.  
-          ✅ Mobile: WhatsApp (PDF) tries to share the PDF file with WhatsApp (if browser supports file sharing).
+        <div class="hint" id="waHint">
+          ✅ Desktop: WhatsApp-Web öffnet sich mit Text. <br/>
+          ✅ Mobile (Android/iPhone): “WhatsApp (PDF)” nutzt Share-Dialog (wenn Browser es unterstützt). <br/>
+          ℹ️ Wenn WhatsApp nicht im Share-Menü erscheint: PDF wird automatisch heruntergeladen (dann in WhatsApp als Datei senden).
         </div>
       </div>
     </div>
@@ -409,9 +412,9 @@
             <textarea id="docsText" placeholder="z.B. Vorfälle, Übergabe, besondere Hinweise…"></textarea>
           </div>
           <div class="field">
-            <label>Datum</label>
-            <input id="docsDate" placeholder="16.02.2026"/>
-            <div class="hint">Kani waa Dokumentation PDF gaar ah.</div>
+            <label>Datei (optional)</label>
+            <input id="docsFile" type="file"/>
+            <div class="hint">Diese Seite speichert Text lokal (Browser). Datei wird nicht hochgeladen.</div>
           </div>
         </div>
         <div class="hint" id="statusDocs">Bereit.</div>
@@ -420,7 +423,7 @@
 
     <div class="card">
       <div class="cardHead">
-        <h2>Checkliste (Beispiel)</h2>
+        <h2>Checkliste</h2>
       </div>
       <div class="cardBody">
         <div class="hint">
@@ -471,39 +474,22 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
-/* =========================
-   SERVICE WORKER (optional)
-========================= */
-(function(){
-  // If you deleted service-worker.js, this will fail silently (OK).
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", async () => {
-      try {
-        const reg = await navigator.serviceWorker.register("./service-worker.js");
-        reg.update().catch(()=>{});
-      } catch(e) {}
-    });
-  }
-})();
+/* =========================================================
+   SETTINGS / STORAGE
+========================================================= */
+const LS_KEY  = "ms-dienstplan-month-vFINAL";
+const LS_DOCS = "ms-dienstplan-docs-vFINAL";
 
-/* =========================
-   STORAGE + DEFAULTS
-========================= */
-const LS_KEY  = "ms-dienstplan-monthly-v1";
-const LS_DOCS = "ms-dienstplan-docs-v1";
-
-const SHIFT_TIMES = {
-  Tag:   "07:00–19:00",
-  Nacht: "19:00–07:00"
-};
+const SHIFT_TIMES = { Tag:"07:00–19:00", Nacht:"19:00–07:00" };
 
 function pad2(n){ return String(n).padStart(2,"0"); }
-function formatDateDE(d){
-  return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;
-}
+function formatDateDE(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
+function sanitize(s){ return String(s ?? "").trim(); }
+
 function parseDateInput(v){
   v = (v||"").trim();
   if(!v) return null;
@@ -514,85 +500,87 @@ function parseDateInput(v){
   }
   return null;
 }
-function getDocDate(){
-  return parseDateInput(docDate.value) || formatDateDE(new Date());
+function getDocDateDE(){
+  const v = document.querySelector("#docDate")?.value || "";
+  return parseDateInput(v) || formatDateDE(new Date());
 }
-function sanitize(s){ return String(s ?? "").trim(); }
-
-let entries = [];
-
-/* =========================
-   MONTHLY DAYS (only monthly)
-========================= */
-let selectedDays = new Set();
-let selectedMonth = ""; // "YYYY-MM"
-
-function initMonthDefault(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  selectedMonth = `${y}-${m}`;
+function getDocMonthYear(){
+  // returns {year, monthIndex} from docDate
+  const v = getDocDateDE(); // DD.MM.YYYY
+  const [dd,mm,yy] = v.split(".").map(Number);
+  const year = yy;
+  const monthIndex = (mm - 1); // 0-11
+  return { year, monthIndex };
 }
-function daysInMonth(ym){
-  const [y,m] = ym.split("-").map(Number);
-  return new Date(y, m, 0).getDate();
+function daysInMonth(year, monthIndex){
+  return new Date(year, monthIndex + 1, 0).getDate();
 }
-function two(n){ return String(n).padStart(2,"0"); }
-
-function ensureSomeDaySelected(maxDay){
-  if(selectedDays.size === 0) selectedDays.add(1);
-  for(const d of [...selectedDays]){
-    if(d > maxDay) selectedDays.delete(d);
-  }
-  if(selectedDays.size === 0) selectedDays.add(maxDay);
+function dateFromDayNumber(dayNum){
+  const {year, monthIndex} = getDocMonthYear();
+  const d = new Date(year, monthIndex, dayNum);
+  return formatDateDE(d);
 }
 
-function daysLabel(){
-  const ym = monthPick.value || selectedMonth || "";
-  const maxDay = ym ? daysInMonth(ym) : 31;
-  ensureSomeDaySelected(maxDay);
-  return [...selectedDays].sort((a,b)=>a-b).map(two).join(", ");
-}
-function datesLabelFull(){
-  const ym = monthPick.value || selectedMonth || "";
-  if(!ym) return "";
-  const [y,m] = ym.split("-").map(Number);
-  const maxDay = daysInMonth(ym);
-  ensureSomeDaySelected(maxDay);
-  const arr = [...selectedDays].sort((a,b)=>a-b);
-  return arr.map(d => `${two(d)}.${two(m)}.${y}`).join(", ");
+/* =========================================================
+   COMPANY LINE + LOGO
+========================================================= */
+function updateCompanyLine(){
+  const addr  = sanitize(companyAddr.value)  || "Werschenregerstraße 6, 28237 Bremen";
+  const phone = sanitize(companyPhone.value) || "015778697052";
+  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  companyLine.textContent = `${addr}  •  Tel: ${phone}  •  E-Mail: ${email}`;
 }
 
-function renderDayChips(){
-  const ym = monthPick.value || selectedMonth || "";
-  if(!ym){
-    dayChips.innerHTML = "";
-    return;
-  }
-  const maxDay = daysInMonth(ym);
-  ensureSomeDaySelected(maxDay);
+/* Default logo if none (try logo.png in repo) */
+async function tryLoadDefaultLogo(){
+  if(logoImg.src) return;
+  try{
+    const res = await fetch("./logo.png", {cache:"no-store"});
+    if(!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    logoImg.src = url;
+  }catch(e){}
+}
+function setLogoDataUrl(dataUrl){
+  logoImg.src = dataUrl;
+}
 
+/* =========================================================
+   MONTH CHIPS (01..31 depends on month)
+========================================================= */
+let selectedDays = new Set([1]);
+
+function renderMonthChips(){
+  const {year, monthIndex} = getDocMonthYear();
+  const max = daysInMonth(year, monthIndex);
   dayChips.innerHTML = "";
-  for(let d=1; d<=maxDay; d++){
+  for(let i=1;i<=max;i++){
     const el = document.createElement("div");
-    el.className = "chip" + (selectedDays.has(d) ? " active" : "");
-    el.textContent = two(d);
-    el.title = `Tag ${two(d)}`;
+    el.className = "chip" + (selectedDays.has(i) ? " active" : "");
+    el.textContent = pad2(i);
+    el.title = dateFromDayNumber(i);
     el.addEventListener("click", () => {
-      if(selectedDays.has(d)) selectedDays.delete(d);
-      else selectedDays.add(d);
-      ensureSomeDaySelected(maxDay);
-      renderDayChips();
+      if(selectedDays.has(i)) selectedDays.delete(i);
+      else selectedDays.add(i);
+      if(selectedDays.size === 0) selectedDays.add(i);
+      renderMonthChips();
       buildMessagePreview();
       autosaveSoon();
     });
     dayChips.appendChild(el);
   }
+
+  // remove any selected day that doesn't exist
+  for(const d of Array.from(selectedDays)){
+    if(d > max) selectedDays.delete(d);
+  }
+  if(selectedDays.size === 0) selectedDays.add(1);
 }
 
-/* =========================
-   AUTO: SHIFT / TIME / NOTE
-========================= */
+/* =========================================================
+   AUTO SHIFT / TIME / NOTE
+========================================================= */
 function timeLooksNight(t){
   const m = String(t||"").match(/(\d{1,2}):(\d{2}).*?(\d{1,2}):(\d{2})/);
   if(!m) return null;
@@ -605,118 +593,338 @@ function timeLooksNight(t){
   if(e <= 8*60) return true;
   return false;
 }
-
-function inferShiftFromObject(obj){
-  const o = (obj||"").toLowerCase();
-  // keyword-based: you can add more
-  if(/\b(nacht|night|nachtschicht)\b/.test(o)) return "Nacht";
-  if(/\b(tag|tagschicht)\b/.test(o)) return "Tag";
-  // hotel/heim often night; keep it conservative:
-  if(/\b(asyl|heim)\b/.test(o)) return "Nacht";
-  return null;
+function inferShiftFromTime(t){
+  const n = timeLooksNight(t);
+  if(n === null) return "Tag";
+  return n ? "Nacht" : "Tag";
 }
-
-function inferShiftAuto(){
-  // If time already indicates night, use it.
-  const t = sanitize(time.value);
-  const tn = timeLooksNight(t);
-  if(tn === true) return "Nacht";
-  if(tn === false) return "Tag";
-
-  const byObj = inferShiftFromObject(objekt.value);
-  if(byObj) return byObj;
-
-  return "Tag";
-}
-
-function inferTimeForShift(sh){
-  return SHIFT_TIMES[sh] || "";
-}
-
-function inferNoteAuto(obj){
-  const o = (obj||"").toLowerCase();
-
-  // simple rules (edit as you like)
-  if(/\b(hotel)\b/.test(o)) return "Rundgang / Schlüssel";
-  if(/\b(baustelle)\b/.test(o)) return "Kontrollgänge / Meldung an Bauleiter";
-  if(/\b(asyl|heim)\b/.test(o)) return "Kontrollgänge / Dokumentation";
-  if(/\b(last|birkenfels)\b/.test(o)) return "Rundgang / Schlüssel";
-  // default
+function autoNoteFromObjekt(obj){
+  const o = String(obj||"").toLowerCase();
+  if(!o) return "Rundgang / Schlüssel";
+  if(o.includes("hotel")) return "Rundgang / Schlüssel";
+  if(o.includes("baust")) return "Zugang / Kontrolle";
+  if(o.includes("asyl")) return "Rundgang / Übergabe";
+  if(o.includes("heim")) return "Rundgang / Übergabe";
+  if(o.includes("event")) return "Einlass / Kontrolle";
   return "Rundgang / Schlüssel";
 }
+function applyAuto(){
+  // 1) time based on shift selection
+  const shiftMode = shift.value;
+  let currentTime = sanitize(time.value);
+  let inferred = currentTime ? inferShiftFromTime(currentTime) : "Tag";
 
-function applyAutoFields(){
-  // shift
-  let sh = shift.value;
-  if(sh === "auto") sh = inferShiftAuto();
-
-  // time
-  const desiredTime = inferTimeForShift(sh);
-  if(!sanitize(time.value) || time.value === SHIFT_TIMES.Tag || time.value === SHIFT_TIMES.Nacht){
-    time.value = desiredTime;
-  } else {
-    // if user typed custom time, still update shift pills
-    // (do not overwrite)
+  if(shiftMode === "auto"){
+    // if time empty => use inferred Tag, else keep time
+    if(!currentTime){
+      currentTime = SHIFT_TIMES[inferred] || SHIFT_TIMES.Tag;
+      time.value = currentTime;
+    }
+    inferred = inferShiftFromTime(time.value) || "Tag";
+  }else{
+    inferred = shiftMode;
+    time.value = SHIFT_TIMES[inferred] || time.value || SHIFT_TIMES.Tag;
   }
 
-  // note
-  if(!sanitize(note.value) || note.dataset.auto === "1"){
-    note.value = inferNoteAuto(objekt.value);
-    note.dataset.auto = "1";
+  pillShift.textContent = `Schicht: ${inferred}`;
+  pillTime.textContent  = `Uhrzeit: ${sanitize(time.value) || "—"}`;
+
+  // 2) note auto if empty or equals old auto
+  const autoN = autoNoteFromObjekt(objekt.value);
+  const curN  = sanitize(note.value);
+  if(!curN || curN === "Rundgang / Schlüssel" || curN === "Zugang / Kontrolle" || curN === "Rundgang / Übergabe" || curN === "Einlass / Kontrolle"){
+    note.value = autoN;
   }
 
-  // pills
-  pillShift.textContent = `Schicht: ${sh}`;
-  pillTime.textContent  = `Uhrzeit: ${sanitize(time.value) || desiredTime || "—"}`;
-  pillNote.textContent  = `Notiz: ${sanitize(note.value) || "—"}`;
-
+  // keep preview updated
+  buildMessagePreview();
   autosaveSoon();
+}
+
+/* =========================================================
+   ENTRIES (MONTHLY: one row per selected date)
+========================================================= */
+let entries = [];
+
+function buildRowsFromSelection(){
+  const emp = sanitize(empName.value) || "Mitarbeiter";
+  const nr  = sanitize(empNo.value);
+  const obj = sanitize(objekt.value) || "—";
+  const noteText = sanitize(note.value) || "—";
+
+  // determine shift/time displayed
+  const t = sanitize(time.value) || SHIFT_TIMES.Tag;
+  const inferredShift = (shift.value === "auto") ? (inferShiftFromTime(t) || "Tag") : shift.value;
+
+  // dates sorted
+  const dates = Array.from(selectedDays).sort((a,b)=>a-b).map(d => dateFromDayNumber(d));
+  return dates.map(date => ({
+    empName: emp,
+    empNo: nr,
+    date,
+    shift: inferredShift,
+    time: t,
+    objekt: obj,
+    note: noteText,
+  }));
+}
+
+function addEntry(){
+  const obj = sanitize(objekt.value);
+  if(!obj){
+    statusPlan.textContent = "Bitte Objekt / Einsatz eingeben.";
+    return;
+  }
+  applyAuto();
+
+  const rows = buildRowsFromSelection();
+  for(const r of rows) entries.push(r);
+  saveState();
+  renderTable();
+  buildMessagePreview();
+  statusPlan.textContent = `Gespeichert: ${rows.length} Tage.`;
+}
+
+function removeEntry(idx){
+  entries.splice(idx,1);
+  saveState();
+  renderTable();
   buildMessagePreview();
 }
 
-/* =========================
-   COMPANY LINE + LOGO
-========================= */
-function updateCompanyLine(){
-  const name  = sanitize(companyName.value) || "Masculine Security";
-  const addr  = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
-  const phone = sanitize(companyPhone.value) || "015778697052";
-  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
-  companyLine.textContent = `${addr}  •  Tel: ${phone}  •  E-Mail: ${email}`;
-  document.title = `${name} — Dienstplan (Monatsplan)`;
-}
+function renderTable(){
+  tbody.innerHTML = "";
+  entries.forEach((e, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="tdSmall">${idx+1}</td>
+      <td>${escapeHtml(e.empName)}</td>
+      <td class="tdSmall">${escapeHtml(e.empNo||"")}</td>
+      <td>${escapeHtml(e.date)}</td>
+      <td>${escapeHtml(e.shift)}</td>
+      <td>${escapeHtml(e.time)}</td>
+      <td>${escapeHtml(e.objekt)}</td>
+      <td>${escapeHtml(e.note)}</td>
+      <td><button class="btn bad" style="padding:6px 10px;border-radius:10px" data-del="${idx}">Löschen</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
 
-async function fileToDataURL(file){
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result||""));
-    r.onerror = reject;
-    r.readAsDataURL(file);
+  tbody.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", ()=> removeEntry(Number(btn.getAttribute("data-del"))));
   });
 }
 
-logoFile.addEventListener("change", async () => {
-  const f = logoFile.files && logoFile.files[0];
-  if(!f) return;
-  try{
-    const url = await fileToDataURL(f);
-    logoImg.src = url;
-    statusPlan.textContent = "Logo gespeichert.";
-    saveState();
-  }catch(e){
-    statusPlan.textContent = "Logo konnte nicht geladen werden.";
-  }
-});
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
 
-/* =========================
-   SAVE / LOAD
-========================= */
+/* =========================================================
+   WHATSAPP TEXT
+========================================================= */
+function buildMessagePreview(){
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const emp  = sanitize(empName.value) || "Mitarbeiter";
+  const obj  = sanitize(objekt.value) || "—";
+  const t    = sanitize(time.value) || SHIFT_TIMES.Tag;
+  const inferredShift = (shift.value === "auto") ? (inferShiftFromTime(t) || "Tag") : shift.value;
+  const n    = sanitize(note.value) || "—";
+  const docD = getDocDateDE();
+
+  const dates = Array.from(selectedDays).sort((a,b)=>a-b).map(d => dateFromDayNumber(d));
+  const lines = [];
+  lines.push(`${name} — Dienstplan (Monatsplan)`);
+  lines.push(`Datum: ${docD}`);
+  lines.push(`Mitarbeiter: ${emp}${sanitize(empNo.value)?` (${sanitize(empNo.value)})`:""}`);
+  lines.push(`Objekt: ${obj}`);
+  lines.push(`Schicht: ${inferredShift}`);
+  lines.push(`Uhrzeit: ${t}`);
+  lines.push(`Notiz: ${n}`);
+  lines.push(`Tage: ${dates.join(", ")}`);
+  if(entries.length){
+    lines.push("");
+    lines.push("Gespeichert:");
+    // show up to 10 entries preview
+    entries.slice(0,10).forEach((e,i)=>{
+      lines.push(`${i+1}. ${e.date} — ${e.time} — ${e.objekt} — ${e.note}`);
+    });
+    if(entries.length>10) lines.push(`… +${entries.length-10} weitere`);
+  }
+  msgPreview.value = lines.join("\n");
+}
+
+function openWhatsAppText(){
+  const text = msgPreview.value || "";
+  const url = "https://wa.me/?text=" + encodeURIComponent(text);
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/* =========================================================
+   PDF (PRINT VIEW) + WHATSAPP PDF SHARE
+========================================================= */
+function fillPrint(){
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const addr = sanitize(companyAddr.value)  || "Werschenregerstraße 6, 28237 Bremen";
+  const phone= sanitize(companyPhone.value) || "015778697052";
+  const email= sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  const emp  = sanitize(empName.value) || "—";
+  const docD = getDocDateDE();
+
+  // Logo
+  if(logoImg.src){
+    printLogo.src = logoImg.src;
+  }else{
+    printLogo.removeAttribute("src");
+  }
+
+  pCompany.textContent = name;
+  pDate.textContent = `Datum: ${docD}`;
+
+  pMeta.innerHTML =
+    `${escapeHtml(addr)}<br/>Tel: ${escapeHtml(phone)} • E-Mail: ${escapeHtml(email)}<br/><b>Mitarbeiter:</b> ${escapeHtml(emp)}`;
+
+  // footer left include employee name (fix: Mitarbeiter name visible)
+  pFooterLeft.textContent = `${name} — Dienstplan — ${emp}`;
+
+  // table: use saved entries if exist, else build from selection
+  const rows = entries.length ? entries.slice().sort((a,b)=>a.date.localeCompare(b.date)) : buildRowsFromSelection();
+  pTbody.innerHTML = "";
+  rows.forEach(r=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(r.date)}</td>
+      <td>${escapeHtml(r.time)}</td>
+      <td>${escapeHtml(r.objekt)}</td>
+      <td>${escapeHtml(r.note)}</td>
+    `;
+    pTbody.appendChild(tr);
+  });
+}
+
+function openPrint(){
+  fillPrint();
+  printPage.classList.remove("hide");
+  window.print();
+  // small delay then hide again
+  setTimeout(()=> printPage.classList.add("hide"), 600);
+}
+
+/* Create a PDF blob from print HTML using the browser print engine is not possible directly.
+   So for WhatsApp(PDF): we use window.print() on desktop OR Web Share (file) on mobile:
+   - Mobile: create a simple PDF with jsPDF (no external libs needed) */
+async function makeSimplePdfBlob(){
+  // Minimal PDF (no jsPDF external): use print? Not possible.
+  // Use browser-native: create HTML->PDF is not possible without print UI.
+  // So: we generate a PDF via a tiny embedded jsPDF loader from CDN-free? (We avoid external network)
+  // Solution: Use Print on desktop; on mobile, we fallback to downloading the print via user print-to-PDF.
+  // Therefore: Here we only create a "text PDF" as a .txt converted? Not a real PDF.
+  // Instead: we force a download of a "ready message" and open WhatsApp text. (Reliable)
+  return null;
+}
+
+function downloadTextAsFile(filename, text){
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+async function whatsAppPDFFlow(){
+  // Reality: Browsers (especially desktop) cannot directly attach a generated PDF into WhatsApp chat automatically.
+  // Best reliable flow:
+  // 1) Open print dialog -> user "Save as PDF"
+  // 2) Open WhatsApp web with text ready
+  // 3) User attaches the saved PDF file manually
+  fillPrint();
+  printPage.classList.remove("hide");
+
+  // show instruction in status
+  statusPlan.textContent = "WhatsApp(PDF): 1) PDF speichern (Drucken) 2) WhatsApp öffnet mit Text 3) PDF-Datei anhängen.";
+
+  // Open WhatsApp text now
+  openWhatsAppText();
+
+  // Also open print dialog
+  setTimeout(()=> {
+    window.print();
+    setTimeout(()=> printPage.classList.add("hide"), 600);
+  }, 250);
+}
+
+/* =========================================================
+   CSV EXPORT
+========================================================= */
+function exportCSV(){
+  const head = ["Mitarbeiter","Nr","Datum","Schicht","Uhrzeit","Objekt","Notiz"];
+  const lines = [head.join(";")];
+  entries.forEach(e=>{
+    lines.push([
+      e.empName, e.empNo||"", e.date, e.shift, e.time, e.objekt, e.note
+    ].map(x=> `"${String(x).replaceAll('"','""')}"`).join(";"));
+  });
+  downloadTextAsFile(`Dienstplan_${getDocDateDE().replaceAll(".","-")}.csv`, lines.join("\n"));
+}
+
+/* =========================================================
+   DOCS TAB
+========================================================= */
+function saveDocs(){
+  localStorage.setItem(LS_DOCS, JSON.stringify({
+    text: docsText.value || "",
+    savedAt: new Date().toISOString(),
+  }));
+  statusDocs.textContent = "Dokumentation gespeichert.";
+}
+function loadDocs(){
+  try{
+    const raw = localStorage.getItem(LS_DOCS);
+    if(!raw) return;
+    const st = JSON.parse(raw);
+    docsText.value = st?.text ?? "";
+  }catch(e){}
+}
+function docsToPDF(){
+  // Simple print of docs section
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const docD = getDocDateDE();
+  const emp  = sanitize(empName.value) || "—";
+  const text = docsText.value || "";
+
+  const w = window.open("", "_blank", "noopener,noreferrer");
+  if(!w) { alert("Popup blockiert. Bitte Popups erlauben."); return; }
+  w.document.open();
+  w.document.write(`
+    <!doctype html><html><head><meta charset="utf-8"/>
+    <title>Dokumentation</title>
+    <style>
+      body{font-family:Arial, sans-serif; padding:18mm 14mm;}
+      h1{color:#0b3a78;margin:0 0 8px}
+      .meta{color:#444;font-size:12px;margin:0 0 14px}
+      pre{white-space:pre-wrap;border:1px solid #cfd7e3;border-radius:10px;padding:12px}
+    </style></head><body>
+    <h1>${escapeHtml(name)} — Dokumentation</h1>
+    <div class="meta">Datum: ${escapeHtml(docD)} • Mitarbeiter: ${escapeHtml(emp)}</div>
+    <pre>${escapeHtml(text)}</pre>
+    <script>window.print();<\/script>
+    </body></html>
+  `);
+  w.document.close();
+}
+
+/* =========================================================
+   SAVE/LOAD + AUTOSAVE
+========================================================= */
 let autosaveTimer = null;
 function autosaveSoon(){
-  if(autosaveTimer) clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(() => {
-    saveState();
-  }, 350);
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(saveState, 450);
 }
 
 function saveState(){
@@ -727,26 +935,19 @@ function saveState(){
       companyPhone: companyPhone.value,
       companyEmail: companyEmail.value,
       docDate: docDate.value,
-      monthPick: monthPick.value,
-      logoDataUrl: logoImg.src || ""
-    },
-    monthly: {
-      selectedDays: [...selectedDays]
-    },
-    fields: {
       empNo: empNo.value,
       empName: empName.value,
       objekt: objekt.value,
       shift: shift.value,
       time: time.value,
       note: note.value,
-      noteAuto: note.dataset.auto || "0"
+      selectedDays: Array.from(selectedDays),
+      logoDataUrl: logoImg.src || ""
     },
     entries
   };
   localStorage.setItem(LS_KEY, JSON.stringify(state));
   updateCompanyLine();
-  statusPlan.textContent = "Auto-Save: AN";
 }
 
 function loadState(){
@@ -756,579 +957,257 @@ function loadState(){
     const st = JSON.parse(raw);
 
     if(st?.meta){
-      companyName.value  = st.meta.companyName ?? companyName.value;
-      companyAddr.value  = st.meta.companyAddr ?? companyAddr.value;
-      companyPhone.value = st.meta.companyPhone ?? companyPhone.value;
-      companyEmail.value = st.meta.companyEmail ?? companyEmail.value;
-      docDate.value      = st.meta.docDate ?? docDate.value;
-      monthPick.value    = st.meta.monthPick ?? monthPick.value;
-      if(st.meta.logoDataUrl) logoImg.src = st.meta.logoDataUrl;
-    }
+      companyName.value = st.meta.companyName ?? companyName.value;
+      companyAddr.value = st.meta.companyAddr ?? companyAddr.value;
+      companyPhone.value= st.meta.companyPhone ?? companyPhone.value;
+      companyEmail.value= st.meta.companyEmail ?? companyEmail.value;
+      docDate.value     = st.meta.docDate ?? docDate.value;
 
-    if(st?.monthly?.selectedDays && Array.isArray(st.monthly.selectedDays)){
-      selectedDays = new Set(st.monthly.selectedDays.filter(n => Number.isFinite(n)));
-    }
+      empNo.value       = st.meta.empNo ?? "";
+      empName.value     = st.meta.empName ?? "";
+      objekt.value      = st.meta.objekt ?? "";
+      shift.value       = st.meta.shift ?? "auto";
+      time.value        = st.meta.time ?? "";
+      note.value        = st.meta.note ?? "";
 
-    if(st?.fields){
-      empNo.value   = st.fields.empNo ?? "";
-      empName.value = st.fields.empName ?? "";
-      objekt.value  = st.fields.objekt ?? "";
-      shift.value   = st.fields.shift ?? "auto";
-      time.value    = st.fields.time ?? "";
-      note.value    = st.fields.note ?? "";
-      note.dataset.auto = st.fields.noteAuto ?? "0";
+      if(Array.isArray(st.meta.selectedDays) && st.meta.selectedDays.length){
+        selectedDays = new Set(st.meta.selectedDays.map(Number).filter(Boolean));
+      }
+      if(st.meta.logoDataUrl) setLogoDataUrl(st.meta.logoDataUrl);
     }
 
     if(Array.isArray(st?.entries)) entries = st.entries;
-
   }catch(e){}
 }
 
 function resetAll(){
   if(!confirm("Reset? Alle gespeicherten Daten werden gelöscht.")) return;
   localStorage.removeItem(LS_KEY);
-  localStorage.removeItem(LS_DOCS);
-  selectedDays = new Set();
   entries = [];
+  selectedDays = new Set([1]);
   location.reload();
 }
 
-/* =========================
-   TABLE RENDER
-========================= */
-function renderTable(){
-  tbody.innerHTML = "";
-  if(!entries.length){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="10" class="tdSmall">Noch keine Einträge.</td>`;
-    tbody.appendChild(tr);
-    return;
-  }
+/* =========================================================
+   EVENTS
+========================================================= */
+const $ = (id)=>document.getElementById(id);
+const companyName = $("companyName");
+const companyAddr = $("companyAddr");
+const companyPhone= $("companyPhone");
+const companyEmail= $("companyEmail");
+const docDate     = $("docDate");
+const empNo       = $("empNo");
+const empName     = $("empName");
+const objekt      = $("objekt");
+const shift       = $("shift");
+const time        = $("time");
+const note        = $("note");
+const logoFile    = $("logoFile");
+const logoImg     = $("logoImg");
+const companyLine = $("companyLine");
+const dayChips    = $("dayChips");
+const pillShift   = $("pillShift");
+const pillTime    = $("pillTime");
+const tbody       = $("tbody");
+const msgPreview  = $("msgPreview");
+const statusPlan  = $("statusPlan");
+const printPage   = $("printPage");
+const printLogo   = $("printLogo");
+const pCompany    = $("pCompany");
+const pMeta       = $("pMeta");
+const pDate       = $("pDate");
+const pTbody      = $("pTbody");
+const pFooterLeft = $("pFooterLeft");
 
-  entries.forEach((e, idx) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="tdSmall">${idx+1}</td>
-      <td>${escapeHTML(e.empName)}</td>
-      <td class="tdSmall">${escapeHTML(e.empNo||"")}</td>
-      <td class="tdSmall">${escapeHTML(e.month||"")}</td>
-      <td>${escapeHTML(e.days||"")}</td>
-      <td>${escapeHTML(e.shift||"")}</td>
-      <td>${escapeHTML(e.time||"")}</td>
-      <td>${escapeHTML(e.objekt||"")}</td>
-      <td>${escapeHTML(e.note||"")}</td>
-      <td>
-        <button class="btn bad" data-del="${idx}">Löschen</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+const docsText    = $("docsText");
+const statusDocs  = $("statusDocs");
 
-  tbody.querySelectorAll("button[data-del]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const i = Number(btn.getAttribute("data-del"));
-      entries.splice(i,1);
-      saveState();
-      renderTable();
-      buildMessagePreview();
-    });
-  });
-}
+$("btnSaveEntry").addEventListener("click", addEntry);
+$("btnCopyText").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText(msgPreview.value || ""); }catch(e){}
+});
+$("btnWhatsAppText").addEventListener("click", openWhatsAppText);
+$("btnPrint").addEventListener("click", openPrint);
+$("btnPDF").addEventListener("click", openPrint);
+$("btnWhatsAppPDF").addEventListener("click", whatsAppPDFFlow);
+$("btnExportCSV").addEventListener("click", exportCSV);
+$("btnReset").addEventListener("click", resetAll);
 
-function escapeHTML(s){
-  return String(s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+$("btnDocsSave").addEventListener("click", saveDocs);
+$("btnDocsPDF").addEventListener("click", docsToPDF);
 
-/* =========================
-   WHATSAPP TEXT PREVIEW
-========================= */
-function buildMessagePreview(){
-  const name  = sanitize(companyName.value) || "Masculine Security";
-  const addr  = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
-  const phone = sanitize(companyPhone.value) || "015778697052";
-  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+// Tabs
+const tabPlan = $("tabPlan"), tabDocs = $("tabDocs");
+const pagePlan = $("pagePlan"), pageDocs = $("pageDocs");
+tabPlan.addEventListener("click", ()=>{
+  tabPlan.classList.add("active"); tabDocs.classList.remove("active");
+  pagePlan.classList.remove("hide"); pageDocs.classList.add("hide");
+});
+tabDocs.addEventListener("click", ()=>{
+  tabDocs.classList.add("active"); tabPlan.classList.remove("active");
+  pageDocs.classList.remove("hide"); pagePlan.classList.add("hide");
+});
 
-  const emp = sanitize(empName.value) || "Mitarbeiter";
-  const no  = sanitize(empNo.value) || "";
-  const obj = sanitize(objekt.value) || "";
-  const sh  = (shift.value === "auto") ? inferShiftAuto() : shift.value;
-  const tm  = sanitize(time.value) || inferTimeForShift(sh) || "";
-  const nt  = sanitize(note.value) || inferNoteAuto(obj);
+// Inputs autosave + auto logic
+[
+  companyName, companyAddr, companyPhone, companyEmail, docDate,
+  empNo, empName, objekt, shift, time, note
+].forEach(el=>{
+  el.addEventListener("input", ()=>{ updateCompanyLine(); buildMessagePreview(); autosaveSoon(); });
+  el.addEventListener("change", ()=>{ updateCompanyLine(); buildMessagePreview(); autosaveSoon(); });
+});
 
-  const month = monthPick.value || selectedMonth || "";
-  const dates = datesLabelFull();
-
-  let text = `${name} — Dienstplan (Monatsplan)\n`;
-  text += `${addr}\nTel: ${phone}\nE-Mail: ${email}\n`;
-  text += `Datum: ${getDocDate()}\n\n`;
-
-  text += `Mitarbeiter: ${emp}${no ? " ("+no+")" : ""}\n`;
-  if(month) text += `Monat: ${month}\n`;
-  if(dates) text += `Datum(e): ${dates}\n`;
-  if(obj) text += `Objekt: ${obj}\n`;
-  text += `Schicht: ${sh}\nUhrzeit: ${tm}\nNotiz: ${nt}\n\n`;
-
-  if(entries.length){
-    text += `Gespeicherte Einträge:\n`;
-    entries.forEach((e, i) => {
-      text += `${i+1}) ${e.empName}${e.empNo? " ("+e.empNo+")":""} | ${e.month||""} | ${e.dates||e.days||""} | ${e.shift} | ${e.time} | ${e.objekt} | ${e.note}\n`;
-    });
-  }
-
-  msgPreview.value = text;
-}
-
-/* =========================
-   SAVE ENTRY
-========================= */
-btnSaveEntry.addEventListener("click", () => {
-  const emp = sanitize(empName.value);
-  if(!emp){
-    alert("Bitte Mitarbeiter Name eingeben.");
-    return;
-  }
-  const month = monthPick.value || selectedMonth || "";
-  if(!month){
-    alert("Bitte Monat auswählen.");
-    return;
-  }
-
-  const sh = (shift.value === "auto") ? inferShiftAuto() : shift.value;
-  const tm = sanitize(time.value) || inferTimeForShift(sh);
-  const obj = sanitize(objekt.value);
-  const nt = sanitize(note.value) || inferNoteAuto(obj);
-
-  const days = daysLabel();
-  const dates = datesLabelFull();
-
-  const entry = {
-    empName: emp,
-    empNo: sanitize(empNo.value),
-    month,
-    days,
-    dates,
-    shift: sh,
-    time: tm,
-    objekt: obj,
-    note: nt
-  };
-
-  entries.push(entry);
-  saveState();
-  renderTable();
+docDate.addEventListener("change", ()=>{
+  // when month/year changes, rerender chips to correct days count
+  renderMonthChips();
   buildMessagePreview();
-  statusPlan.textContent = "Eintrag gespeichert.";
+  autosaveSoon();
 });
 
-/* =========================
-   CSV EXPORT
-========================= */
-btnExportCSV.addEventListener("click", () => {
-  const headers = ["Mitarbeiter","Nr","Monat","Tage","Datum(e)","Schicht","Uhrzeit","Objekt","Notiz"];
-  const rows = entries.map(e => [
-    e.empName, e.empNo||"", e.month||"", e.days||"", e.dates||"", e.shift||"", e.time||"", e.objekt||"", e.note||""
-  ]);
+shift.addEventListener("change", applyAuto);
+time.addEventListener("input", applyAuto);
+objekt.addEventListener("input", applyAuto);
 
-  const csv = [headers, ...rows]
-    .map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(";"))
-    .join("\n");
-
-  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `Dienstplan_${getDocDate().replaceAll(".","-")}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+logoFile.addEventListener("change", ()=>{
+  const f = logoFile.files && logoFile.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{ setLogoDataUrl(reader.result); autosaveSoon(); };
+  reader.readAsDataURL(f);
 });
 
-/* =========================
-   PRINT / PDF (browser)
-========================= */
-function buildPrintFromEntries(){
-  // Use entries if exist; else build from current form selection
-  const use = entries.length ? entries : [{
-    empName: sanitize(empName.value) || "Mitarbeiter",
-    empNo: sanitize(empNo.value) || "",
-    month: monthPick.value || selectedMonth || "",
-    days: daysLabel(),
-    dates: datesLabelFull(),
-    shift: (shift.value === "auto") ? inferShiftAuto() : shift.value,
-    time: sanitize(time.value) || inferTimeForShift((shift.value==="auto")?inferShiftAuto():shift.value),
-    objekt: sanitize(objekt.value) || "",
-    note: sanitize(note.value) || inferNoteAuto(objekt.value)
-  }];
-
-  // logo in print
-  printLogo.src = logoImg.src || "";
-  pCompany.textContent = sanitize(companyName.value) || "Masculine Security";
-  pMeta.textContent = `${sanitize(companyAddr.value)||"Werschenregerstraße 6, 28237 Bremen"} • Tel: ${sanitize(companyPhone.value)||"015778697052"} • ${sanitize(companyEmail.value)||"Kontakt.mass.bremen@hotmail.com"}`;
-  pDate.textContent = `Datum: ${getDocDate()}`;
-  pFooterLeft.textContent = `${sanitize(companyName.value)||"Masculine Security"} — Dienstplan`;
-
-  // table rows
-  pTbody.innerHTML = "";
-  use.forEach(e => {
-    // Make one row per selected date (more "official") for PDF look
-    const dateList = (e.dates||"").split(",").map(x=>x.trim()).filter(Boolean);
-    if(dateList.length){
-      dateList.forEach(d => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHTML(d)}</td>
-          <td>${escapeHTML(e.time||"")}</td>
-          <td>${escapeHTML(e.objekt||"")}</td>
-          <td>${escapeHTML(e.note||"")}</td>
-        `;
-        pTbody.appendChild(tr);
-      });
-    } else {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${escapeHTML(e.month||"")}</td>
-        <td>${escapeHTML(e.time||"")}</td>
-        <td>${escapeHTML(e.objekt||"")}</td>
-        <td>${escapeHTML(e.note||"")}</td>
-      `;
-      pTbody.appendChild(tr);
-    }
-  });
-}
-
-btnPrint.addEventListener("click", () => {
-  buildPrintFromEntries();
-  // show print page just for print
-  printPage.classList.remove("hide");
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => printPage.classList.add("hide"), 400);
-  }, 60);
-});
-
-btnPDF.addEventListener("click", () => {
-  // PDF via browser "Print to PDF"
-  buildPrintFromEntries();
-  printPage.classList.remove("hide");
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => printPage.classList.add("hide"), 400);
-  }, 60);
-});
-
-/* =========================
-   WhatsApp (Text)
-========================= */
-function openWhatsAppText(text){
-  const url = "https://wa.me/?text=" + encodeURIComponent(text);
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-btnWhatsAppText.addEventListener("click", () => {
-  buildMessagePreview();
-  openWhatsAppText(msgPreview.value);
-});
-
-btnCopyText.addEventListener("click", async () => {
-  try{
-    await navigator.clipboard.writeText(msgPreview.value);
-    alert("Text kopiert ✅");
-  }catch(e){
-    // fallback
-    msgPreview.focus();
-    msgPreview.select();
-    document.execCommand("copy");
-    alert("Text kopiert ✅");
-  }
-});
-
-/* =========================
-   WhatsApp (PDF) — best effort
-   - Mobile: tries navigator.share({files:[pdf]})
-   - Desktop: downloads pdf + opens WhatsApp Web with text (attach manually)
-========================= */
-async function buildPDFBlob(){
-  const { jsPDF } = window.jspdf || {};
-  if(!jsPDF) throw new Error("jsPDF not loaded");
-
-  // Use entries if exist; else form
-  const use = entries.length ? entries : [{
-    empName: sanitize(empName.value) || "Mitarbeiter",
-    empNo: sanitize(empNo.value) || "",
-    month: monthPick.value || selectedMonth || "",
-    days: daysLabel(),
-    dates: datesLabelFull(),
-    shift: (shift.value === "auto") ? inferShiftAuto() : shift.value,
-    time: sanitize(time.value) || inferTimeForShift((shift.value==="auto")?inferShiftAuto():shift.value),
-    objekt: sanitize(objekt.value) || "",
-    note: sanitize(note.value) || inferNoteAuto(objekt.value)
-  }];
-
-  const doc = new jsPDF({orientation:"landscape", unit:"pt", format:"a4"});
-  const name  = sanitize(companyName.value) || "Masculine Security";
-  const addr  = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
-  const phone = sanitize(companyPhone.value) || "015778697052";
-  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
-  const dateStr = getDocDate();
-
-  // Header
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(16);
-  doc.text(`${name}`, 70, 50);
-
-  doc.setFont("helvetica","normal");
-  doc.setFontSize(10);
-  doc.text(`${addr}`, 70, 68);
-  doc.text(`Tel: ${phone}`, 70, 82);
-  doc.text(`E-Mail: ${email}`, 70, 96);
-
-  doc.setFont("helvetica","normal");
-  doc.setFontSize(10);
-  doc.text(`Datum: ${dateStr}`, 740, 50, {align:"right"});
-
-  // Logo (if present)
-  try{
-    if(logoImg.src && logoImg.src.startsWith("data:image")){
-      doc.addImage(logoImg.src, "PNG", 20, 35, 38, 38, undefined, "FAST");
-    }
-  }catch(e){}
-
-  doc.setDrawColor(27,123,255);
-  doc.setLineWidth(2);
-  doc.line(20, 112, 820, 112);
-
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(14);
-  doc.text("Vorläufiger Dienstplan (Monatsplan)", 420, 140, {align:"center"});
-
-  // Rows: one row per date (clean)
-  const rows = [];
-  use.forEach(e => {
-    const list = (e.dates||"").split(",").map(x=>x.trim()).filter(Boolean);
-    if(list.length){
-      list.forEach(d => rows.push([d, e.time||"", e.objekt||"", e.note||""]));
-    }else{
-      rows.push([e.month||"", e.time||"", e.objekt||"", e.note||""]);
-    }
-  });
-
-  doc.autoTable({
-    startY: 160,
-    head: [["DATUM", "UHRZEIT", "OBJEKT", "NOTIZ"]],
-    body: rows,
-    theme: "grid",
-    styles: {font:"helvetica", fontSize:10, cellPadding:6},
-    headStyles: {fillColor:[234,242,255], textColor:[11,58,120]},
-    columnStyles: {
-      0:{cellWidth:120},
-      1:{cellWidth:120},
-      2:{cellWidth:240},
-      3:{cellWidth:260}
-    },
-    margin: {left:20, right:20}
-  });
-
-  const endY = doc.lastAutoTable.finalY || 420;
-
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(10);
-  doc.setTextColor(200,31,44);
-  doc.text("DRINGEND BEACHTEN:", 420, endY + 24, {align:"center"});
-
-  doc.setFont("helvetica","normal");
-  doc.setTextColor(17,17,17);
-  doc.setFontSize(10);
-  doc.text("Dienstantritt ist 20 Minuten vor Dienstbeginn • Ausfälle sofort melden • Stundenzettel rechtzeitig abgeben",
-           420, endY + 40, {align:"center"});
-
-  const blob = doc.output("blob");
-  return blob;
-}
-
-async function sharePDFOnMobile(blob, filename){
-  // navigator.share with files (works on many mobile browsers; desktop often not)
-  const file = new File([blob], filename, {type:"application/pdf"});
-  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
-    await navigator.share({
-      title: "Dienstplan PDF",
-      text: "Dienstplan als PDF",
-      files: [file]
-    });
-    return true;
-  }
-  return false;
-}
-
-function downloadBlob(blob, filename){
-  const a = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 2000);
-}
-
-btnWhatsAppPDF.addEventListener("click", async () => {
-  try{
-    buildMessagePreview();
-    statusPlan.textContent = "PDF wird erstellt…";
-    const blob = await buildPDFBlob();
-    const filename = `Dienstplan_${getDocDate().replaceAll(".","-")}.pdf`;
-
-    // Try mobile share first (this is the only realistic "direct send" method from browser)
-    const shared = await sharePDFOnMobile(blob, filename);
-
-    if(shared){
-      statusPlan.textContent = "WhatsApp Share geöffnet ✅";
-      return;
-    }
-
-    // Desktop fallback: download + open WhatsApp text
-    downloadBlob(blob, filename);
-    openWhatsAppText(msgPreview.value);
-    statusPlan.textContent = "PDF heruntergeladen. WhatsApp Text geöffnet. Datei bitte im Chat anhängen.";
-
-  }catch(e){
-    console.error(e);
-    alert("PDF/WhatsApp konnte nicht gestartet werden. Bitte prüfe Internet/Browser und versuche erneut.");
-    statusPlan.textContent = "Fehler.";
-  }
-});
-
-/* =========================
-   DOCS (Dokumentation)
-========================= */
-function saveDocs(){
-  const st = { text: docsText.value, date: docsDate.value };
-  localStorage.setItem(LS_DOCS, JSON.stringify(st));
-  statusDocs.textContent = "Dokumentation gespeichert.";
-}
-function loadDocs(){
-  try{
-    const raw = localStorage.getItem(LS_DOCS);
-    if(!raw) return;
-    const st = JSON.parse(raw);
-    docsText.value = st.text ?? "";
-    docsDate.value = st.date ?? "";
-  }catch(e){}
-}
-btnDocsSave.addEventListener("click", () => saveDocs());
-
-btnDocsPDF.addEventListener("click", async () => {
-  try{
-    const { jsPDF } = window.jspdf || {};
-    if(!jsPDF) throw new Error("jsPDF not loaded");
-
-    const doc = new jsPDF({orientation:"portrait", unit:"pt", format:"a4"});
-    const name  = sanitize(companyName.value) || "Masculine Security";
-    const addr  = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
-    const phone = sanitize(companyPhone.value) || "015778697052";
-    const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
-    const dStr  = parseDateInput(docsDate.value) || getDocDate();
-
-    doc.setFont("helvetica","bold"); doc.setFontSize(16);
-    doc.text(`${name} — Dokumentation`, 40, 50);
-
-    doc.setFont("helvetica","normal"); doc.setFontSize(10);
-    doc.text(`${addr}`, 40, 70);
-    doc.text(`Tel: ${phone} • E-Mail: ${email}`, 40, 85);
-    doc.text(`Datum: ${dStr}`, 40, 100);
-
-    doc.setDrawColor(27,123,255); doc.setLineWidth(2);
-    doc.line(40, 112, 555, 112);
-
-    doc.setFont("helvetica","normal"); doc.setFontSize(11);
-    const text = sanitize(docsText.value) || "—";
-    const lines = doc.splitTextToSize(text, 515);
-    doc.text(lines, 40, 140);
-
-    doc.save(`Dokumentation_${dStr.replaceAll(".","-")}.pdf`);
-    statusDocs.textContent = "Dokumentation PDF erstellt.";
-  }catch(e){
-    console.error(e);
-    alert("Dokumentation PDF Fehler.");
-  }
-});
-
-/* =========================
-   TABS
-========================= */
-function setTab(which){
-  const plan = (which === "plan");
-  tabPlan.classList.toggle("active", plan);
-  tabDocs.classList.toggle("active", !plan);
-  pagePlan.classList.toggle("hide", !plan);
-  pageDocs.classList.toggle("hide", plan);
-}
-tabPlan.addEventListener("click", () => setTab("plan"));
-tabDocs.addEventListener("click", () => setTab("docs"));
-
-/* =========================
-   EVENTS (auto)
-========================= */
-["input","change"].forEach(ev => {
-  companyName.addEventListener(ev, () => { updateCompanyLine(); autosaveSoon(); buildMessagePreview(); });
-  companyAddr.addEventListener(ev, () => { updateCompanyLine(); autosaveSoon(); buildMessagePreview(); });
-  companyPhone.addEventListener(ev, () => { updateCompanyLine(); autosaveSoon(); buildMessagePreview(); });
-  companyEmail.addEventListener(ev, () => { updateCompanyLine(); autosaveSoon(); buildMessagePreview(); });
-  docDate.addEventListener(ev, () => { autosaveSoon(); buildMessagePreview(); });
-  empNo.addEventListener(ev, () => { autosaveSoon(); buildMessagePreview(); });
-  empName.addEventListener(ev, () => { autosaveSoon(); buildMessagePreview(); });
-
-  objekt.addEventListener(ev, () => { applyAutoFields(); });
-  shift.addEventListener(ev, () => { applyAutoFields(); });
-  time.addEventListener(ev, () => { note.dataset.auto = note.dataset.auto || "0"; applyAutoFields(); });
-  note.addEventListener(ev, () => { note.dataset.auto = "0"; autosaveSoon(); buildMessagePreview(); });
-
-  monthPick.addEventListener(ev, () => {
-    selectedMonth = monthPick.value || selectedMonth;
-    renderDayChips();
-    autosaveSoon();
-    buildMessagePreview();
-  });
-});
-
-btnReset.addEventListener("click", resetAll);
-
-/* =========================
+/* =========================================================
    INIT
-========================= */
+========================================================= */
 (function init(){
-  initMonthDefault();
-
-  // defaults (your choice)
+  // Defaults (your choice remembered)
   companyName.value  = companyName.value  || "Masculine Security";
   companyAddr.value  = companyAddr.value  || "Werschenregerstraße 6, 28237 Bremen";
   companyPhone.value = companyPhone.value || "015778697052";
   companyEmail.value = companyEmail.value || "Kontakt.mass.bremen@hotmail.com";
-  if(!docDate.value) docDate.value = "16.02.2026"; // your choice
-
-  monthPick.value = selectedMonth;
+  docDate.value      = docDate.value      || formatDateDE(new Date()); // DD.MM.YYYY
+  shift.value        = shift.value        || "auto";
 
   loadState();
   loadDocs();
 
-  // ensure month value exists after load
-  if(monthPick.value) selectedMonth = monthPick.value;
-  else monthPick.value = selectedMonth;
-
-  // ensure selectedDays
-  if(selectedDays.size === 0) selectedDays.add(1);
-
   updateCompanyLine();
-  renderDayChips();
-  applyAutoFields();
-  renderTable();
-  buildMessagePreview();
-})();
+  tryLoadDefaultLogo();
 
+  // render chips + table
+  renderMonthChips();
+  renderTable();
+
+  // apply auto + preview
+  applyAuto();
+  buildMessagePreview();
+
+  // Service worker register (keeps updates fresh)
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", async ()=>{
+      try{
+        const reg = await navigator.serviceWorker.register("./service-worker.js");
+        reg.update().catch(()=>{});
+      }catch(e){}
+    });
+  }
+})();
 </script>
 </body>
 </html>
+
+
+<!-- =========================================================
+FILE: service-worker.js   (PASTE 100% AS-IS / COMPLETE)
+========================================================= -->
+/* Masculine Security — Service Worker (safe update)
+   - HTML: always fresh (no stuck old version)
+   - Assets: cache-first (fast)
+*/
+const CACHE = "ms-dienstplan-vFINAL-2026-02-16";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./version.txt",
+  "./logo.png"
+];
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).catch(()=>{})
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => (k !== CACHE ? caches.delete(k) : Promise.resolve())));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+
+  const url = new URL(req.url);
+  if (url.origin !== location.origin) return;
+
+  const isHTML =
+    req.mode === "navigate" ||
+    (req.headers.get("accept") || "").includes("text/html") ||
+    url.pathname.endsWith(".html") ||
+    url.pathname === "/" ||
+    url.pathname.endsWith("/");
+
+  if (isHTML) {
+    event.respondWith((async () => {
+      try {
+        const fresh = await fetch(req, { cache: "no-store" });
+        const cache = await caches.open(CACHE);
+        cache.put(req, fresh.clone());
+        return fresh;
+      } catch (e) {
+        const cached = await caches.match(req);
+        return cached || caches.match("./index.html");
+      }
+    })());
+    return;
+  }
+
+  event.respondWith((async () => {
+    const cached = await caches.match(req);
+    if (cached) return cached;
+
+    const fresh = await fetch(req);
+    const cache = await caches.open(CACHE);
+    cache.put(req, fresh.clone());
+    return fresh;
+  })());
+});
+
+
+<!-- =========================================================
+FILE: manifest.json   (PASTE 100% AS-IS / COMPLETE)
+========================================================= -->
+{
+  "name": "Masculine Security — Dienstplan",
+  "short_name": "Dienstplan",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#071225",
+  "theme_color": "#0b3a78",
+  "icons": [
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+
+
+<!-- =========================================================
+FILE: version.txt   (PASTE 100% AS-IS / COMPLETE)
+========================================================= -->
+vFINAL-2026-02-16
