@@ -4,928 +4,1181 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Masculine Security — Dienstplan</title>
-  <meta name="theme-color" content="#0b4fa3"/>
-
-  <!-- PDF lib -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  <meta name="theme-color" content="#0b3a78"/>
   <style>
     :root{
-      --bg1:#06213f;
-      --bg2:#073d78;
-      --line:rgba(255,255,255,.12);
+      --bg1:#06254f;
+      --bg2:#083b79;
+      --card:#0b4a92;
+      --card2:#0a3e7a;
+      --line:rgba(255,255,255,.16);
       --text:#ffffff;
       --muted:rgba(255,255,255,.78);
-      --accent:#61b6ff;
-      --good:#28e0b2;
-      --warn:#ffd166;
-      --bad:#ff5a7a;
+      --muted2:rgba(255,255,255,.62);
+      --accent:#39a9ff;
+      --accent2:#1b7bff;
+      --good:#21d19f;
+      --warn:#ffce54;
+      --bad:#ff4d6d;
       --r:18px;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --shadow: 0 12px 34px rgba(0,0,0,.25);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
-      margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 25% -10%, rgba(97,182,255,.35), transparent 55%),
-        radial-gradient(900px 600px at 90% 10%, rgba(40,224,178,.18), transparent 55%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
-      overflow-x:hidden;
+      margin:0; font-family:var(--font); color:var(--text);
+      background: radial-gradient(1200px 600px at 15% -10%, rgba(57,169,255,.35), transparent 60%),
+                  radial-gradient(900px 500px at 85% 0%, rgba(27,123,255,.30), transparent 55%),
+                  linear-gradient(180deg, var(--bg2), var(--bg1) 60%, #041a38);
+      min-height:100vh;
     }
-
-    .wrap{max-width:1200px; margin:22px auto; padding:0 14px 28px;}
-
+    a{color:var(--accent)}
+    .wrap{max-width:1180px; margin:22px auto 40px; padding:0 14px;}
     .topbar{
-      background:rgba(255,255,255,.08);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      padding:16px 16px 14px;
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      padding:14px 16px; border:1px solid var(--line); border-radius:var(--r);
+      background: linear-gradient(180deg, rgba(11,74,146,.75), rgba(6,37,79,.55));
+      box-shadow: var(--shadow);
+      position:sticky; top:10px; z-index:50;
+      backdrop-filter: blur(8px);
     }
-
-    .brand{display:flex; gap:12px; align-items:center; min-width:260px;}
-    .logo{
-      width:52px; height:52px; border-radius:14px;
-      background:rgba(255,255,255,.12);
+    .brand{display:flex; align-items:center; gap:12px; min-width:260px;}
+    .logoBox{
+      width:44px; height:44px; border-radius:12px;
+      background: rgba(255,255,255,.10);
       border:1px solid var(--line);
-      display:grid; place-items:center;
+      display:flex; align-items:center; justify-content:center;
       overflow:hidden;
     }
-    .logo img{width:100%; height:100%; object-fit:cover}
-    .btxt{display:flex; flex-direction:column; gap:3px;}
-    .title{font-size:18px; font-weight:800; letter-spacing:.4px}
-    .sub{font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap}
-    .sub b{color:var(--text); font-weight:700}
-
-    .tabs{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .tabbtn{
+    .logoBox img{width:100%; height:100%; object-fit:cover}
+    .brand h1{margin:0; font-size:16px; letter-spacing:.6px; text-transform:uppercase}
+    .meta{font-size:12px; color:var(--muted); line-height:1.25}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .tabBtn{
       border:1px solid var(--line);
-      background:rgba(255,255,255,.08);
+      background: rgba(255,255,255,.08);
       color:var(--text);
-      padding:10px 12px;
+      padding:9px 12px;
       border-radius:999px;
-      font-weight:800;
       cursor:pointer;
-      transition:.15s transform, .15s background;
+      font-weight:650;
+      font-size:12px;
       user-select:none;
     }
-    .tabbtn:hover{transform:translateY(-1px); background:rgba(255,255,255,.12)}
-    .tabbtn.active{background:rgba(97,182,255,.25); border-color:rgba(97,182,255,.55)}
-
-    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .tabBtn.active{background: rgba(57,169,255,.22); border-color: rgba(57,169,255,.55)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
     .btn{
       border:1px solid var(--line);
-      background:rgba(255,255,255,.10);
+      background: rgba(255,255,255,.10);
       color:var(--text);
-      padding:10px 12px;
+      padding:9px 12px;
       border-radius:12px;
-      font-weight:900;
       cursor:pointer;
-      transition:.15s transform, .15s background;
+      font-weight:650;
+      font-size:12px;
       user-select:none;
-      white-space:nowrap;
+      transition:.12s transform ease, .12s background ease;
     }
-    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.14)}
-    .btn.primary{background:rgba(97,182,255,.28); border-color:rgba(97,182,255,.6)}
-    .btn.good{background:rgba(40,224,178,.22); border-color:rgba(40,224,178,.55)}
-    .btn.warn{background:rgba(255,209,102,.18); border-color:rgba(255,209,102,.5)}
-    .btn.bad{background:rgba(255,90,122,.18); border-color:rgba(255,90,122,.5)}
-
-    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:14px;}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
-
-    .card{
-      background:rgba(255,255,255,.08);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      padding:14px;
-      min-width:0;
-    }
-
-    h2{margin:0 0 8px; font-size:16px; font-weight:900}
-    .hint{color:var(--muted); font-size:12px; line-height:1.45}
-
-    .form{
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.14)}
+    .btn.primary{background: rgba(57,169,255,.28); border-color: rgba(57,169,255,.55)}
+    .btn.good{background: rgba(33,209,159,.20); border-color: rgba(33,209,159,.55)}
+    .btn.bad{background: rgba(255,77,109,.18); border-color: rgba(255,77,109,.55)}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none}
+    .grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap:10px 12px;
-      margin-top:12px;
+      gap:14px;
+      margin-top:14px;
     }
-    @media (max-width: 680px){ .form{grid-template-columns:1fr} }
-
-    .field{display:flex; flex-direction:column; gap:6px; min-width:0}
-    label{font-size:12px; color:var(--muted); font-weight:800}
-    input, select, textarea{
+    @media(max-width:980px){ .grid{grid-template-columns:1fr} .brand{min-width:auto} }
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      background: linear-gradient(180deg, rgba(11,74,146,.70), rgba(6,37,79,.45));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .cardHead h2{margin:0; font-size:14px}
+    .cardBody{padding:14px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media(max-width:700px){ .row{grid-template-columns:1fr} }
+    .field label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px 2px;
+      font-weight:650;
+    }
+    .field input, .field textarea, .field select{
       width:100%;
-      padding:12px 12px;
+      padding:11px 12px;
       border-radius:12px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(7,25,55,.45);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.09);
       color:var(--text);
       outline:none;
-      font-weight:800;
     }
-    input::placeholder, textarea::placeholder{color:rgba(255,255,255,.55); font-weight:700}
-    input:focus, select:focus, textarea:focus{border-color:rgba(97,182,255,.75); box-shadow:0 0 0 3px rgba(97,182,255,.18)}
-
-    .chips{
-      display:flex; gap:8px; flex-wrap:wrap;
-      padding:10px; border-radius:14px;
-      border:1px dashed rgba(255,255,255,.18);
-      background:rgba(7,25,55,.25);
-    }
+    .field input::placeholder, .field textarea::placeholder{color: rgba(255,255,255,.55)}
+    .field textarea{min-height:110px; resize:vertical}
+    .hint{font-size:12px; color:var(--muted2); margin-top:8px; line-height:1.35}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
     .chip{
       padding:8px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(255,255,255,.08);
-      font-weight:900;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.08);
       cursor:pointer;
       user-select:none;
-      transition:.12s transform, .12s background;
       font-size:12px;
+      font-weight:700;
     }
-    .chip:hover{transform:translateY(-1px)}
-    .chip.on{background:rgba(97,182,255,.26); border-color:rgba(97,182,255,.55)}
-    .row-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .chip.active{
+      background: rgba(57,169,255,.25);
+      border-color: rgba(57,169,255,.6);
+    }
+    .tableWrap{overflow:auto; border-top:1px solid var(--line)}
+    table{width:100%; border-collapse:collapse; min-width:720px}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--line); font-size:12px}
+    th{color:var(--muted); text-align:left; font-weight:800; background: rgba(255,255,255,.06)}
+    td{color:var(--text)}
+    .tdSmall{color:var(--muted); font-weight:650}
+    .right{display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap}
+    .pill{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.08); border:1px solid var(--line);
+      color:var(--text); font-weight:750;
+    }
+    .status{font-size:12px; color:var(--muted); margin-left:8px}
+    .hide{display:none !important}
 
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(7,25,55,.25);
-    }
-    th,td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      font-size:12px;
-      vertical-align:top;
-      color:var(--text);
-      font-weight:800;
-    }
-    th{background:rgba(255,255,255,.10); text-transform:uppercase; letter-spacing:.35px; font-size:11px;}
-    tr:last-child td{border-bottom:none}
-    td.muted{color:rgba(255,255,255,.70); font-weight:700}
-
-    .previewBox{
-      background:rgba(7,25,55,.25);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:14px;
-      padding:12px;
-      min-height:110px;
-      font-size:12px;
-      color:rgba(255,255,255,.92);
-      white-space:pre-wrap;
-      line-height:1.5;
-      font-weight:800;
-    }
-
-    /* Hidden PDF template */
-    #pdfRoot{ position:absolute; left:-99999px; top:-99999px; width:794px; }
-    .pdfPage{
-      width:794px; min-height:1123px;
-      background:#ffffff;
-      color:#0b1a33;
-      font-family: Arial, sans-serif;
-      padding:26px 28px;
-    }
-    .pdfHeader{
-      display:flex; justify-content:space-between; align-items:flex-start;
-      border-bottom:3px solid #0b4fa3;
-      padding-bottom:10px;
-      margin-bottom:12px;
-      gap:14px;
-    }
-    .pdfBrand{display:flex; gap:12px; align-items:center}
-    .pdfLogo{
-      width:56px; height:56px; border-radius:12px;
-      border:1px solid rgba(11,79,163,.25);
-      overflow:hidden;
-      background:#f3f8ff;
-      display:grid; place-items:center;
-    }
-    .pdfLogo img{width:100%; height:100%; object-fit:cover}
-    .pdfTitle{font-size:18px; font-weight:900; color:#0b4fa3}
-    .pdfMeta{font-size:11px; color:#2b3a55; line-height:1.35}
-    .pdfMeta b{color:#0b1a33}
-    .pdfH1{
-      text-align:center;
-      color:#0b4fa3;
-      font-size:16px;
-      font-weight:900;
-      margin:14px 0 10px;
-    }
-    .pdfTable{
-      width:100%;
-      border-collapse:collapse;
-      font-size:11px;
-      margin-top:8px;
-      border:1px solid rgba(11,79,163,.25);
-    }
-    .pdfTable th, .pdfTable td{
-      border:1px solid rgba(11,79,163,.25);
-      padding:7px 8px;
-      text-align:left;
-    }
-    .pdfTable th{
-      background:#eaf4ff;
-      color:#0b4fa3;
-      font-weight:900;
-      font-size:10.5px;
-      text-transform:uppercase;
-      letter-spacing:.25px;
-    }
-    .pdfNoticeTitle{
-      margin:14px 0 6px;
-      text-align:center;
-      color:#c62828;
-      font-weight:900;
-      font-size:12px;
-    }
-    .pdfNotice{
-      font-size:10.5px;
-      line-height:1.35;
-      color:#1d2a44;
-      text-align:center;
-    }
-    .pdfFooter{
-      margin-top:18px;
-      font-size:10px;
-      color:#3a4a66;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
+    /* PRINT / PDF */
+    @media print{
+      body{background:#fff !important; color:#111 !important}
+      .topbar, .noPrint{display:none !important}
+      .wrap{max-width:none; margin:0; padding:0}
+      .printPage{
+        display:block !important;
+        padding:22mm 16mm;
+        font-family: Arial, sans-serif;
+      }
+      .printCard{
+        border:1px solid #cfd7e3;
+        border-radius:10px;
+        padding:14px;
+      }
+      .printHeader{
+        display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+        border-bottom:3px solid #1b7bff;
+        padding-bottom:10px; margin-bottom:12px;
+      }
+      .printBrand{
+        display:flex; gap:10px; align-items:center;
+      }
+      .printLogo{
+        width:42px; height:42px; border-radius:10px;
+        border:1px solid #cfd7e3; overflow:hidden;
+      }
+      .printLogo img{width:100%; height:100%; object-fit:cover}
+      .printTitle{
+        font-size:18px; font-weight:800; color:#0b3a78; margin:0;
+      }
+      .printMeta{font-size:11px; color:#444; line-height:1.25}
+      .printDate{font-size:11px; color:#333; text-align:right}
+      .printH2{
+        text-align:center;
+        margin:12px 0 10px;
+        color:#0b3a78;
+        font-size:16px;
+        font-weight:900;
+      }
+      .printTable{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:6px;
+        font-size:11px;
+      }
+      .printTable th{
+        background:#eaf2ff;
+        color:#0b3a78;
+        border:1px solid #cfd7e3;
+        padding:7px;
+        font-weight:800;
+      }
+      .printTable td{
+        border:1px solid #cfd7e3;
+        padding:7px;
+        color:#111;
+      }
+      .notice{
+        margin-top:12px;
+        text-align:center;
+        font-size:11px;
+      }
+      .notice b{color:#c81f2c}
+      .footerLine{
+        margin-top:18px;
+        font-size:10px;
+        color:#666;
+        display:flex;
+        justify-content:space-between;
+      }
     }
   </style>
+
+  <!-- PDF generator for WhatsApp (works best on mobile with Web Share) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo">
-          <img id="brandLogo" src="logo.png" alt="Logo" onerror="this.style.display='none'">
-        </div>
-        <div class="btxt">
-          <div class="title">MASCULINE SECURITY — Dienstplan</div>
-          <div class="sub">
-            <span><b>Adresse:</b> Werschenregerstraße 6 · 28237 Bremen</span>
-            <span><b>Tel:</b> 015778697052</span>
-            <span><b>E-Mail:</b> Kontakt.mass.bremen@hotmail.com</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <button class="tabbtn active" id="tabPlan">Wochenplan</button>
-        <button class="tabbtn" id="tabDocs">Dokumentation</button>
-      </div>
-
-      <div class="actions">
-        <button class="btn primary" id="btnPdf">PDF</button>
-        <button class="btn good" id="btnWhatsApp">WhatsApp senden</button>
-        <button class="btn" id="btnCsv">Export CSV</button>
-        <button class="btn bad" id="btnReset">Reset</button>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logoBox"><img id="logoImg" alt="Logo" /></div>
+      <div>
+        <h1>MASCULINE SECURITY — Dienstplan</h1>
+        <div class="meta" id="companyLine"></div>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="card" id="viewPlan">
+    <div class="tabs">
+      <button class="tabBtn active" id="tabPlan">Wochenplan</button>
+      <button class="tabBtn" id="tabDocs">Dokumentation</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="btnPDF">PDF</button>
+      <button class="btn" id="btnPrint">Drucken</button>
+      <button class="btn good" id="btnWhatsAppPDF">WhatsApp (PDF)</button>
+      <button class="btn" id="btnExportCSV">Export CSV</button>
+      <button class="btn bad" id="btnReset">Reset</button>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <section id="pagePlan" class="grid">
+    <div class="card">
+      <div class="cardHead">
         <h2>Wöchentlicher Mitarbeiter-Dienstplan</h2>
-        <div class="hint">
-          ✅ Datum format: <b>dd.mm.yyyy</b> (tusaale 16.02.2026)<br>
-          ✅ Schicht Tag/Nacht → Uhrzeit automatic<br>
-          ✅ WhatsApp senden: Mobile share (PDF) / Desktop: download + WhatsApp text
+        <div class="right">
+          <span class="pill" id="pillShift">Schicht: —</span>
+          <span class="pill" id="pillTime">Uhrzeit: —</span>
+        </div>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <div class="field">
+            <label>Firmenname</label>
+            <input id="companyName" placeholder="Masculine Security"/>
+          </div>
+          <div class="field">
+            <label>Logo (optional)</label>
+            <input id="logoFile" type="file" accept="image/*"/>
+          </div>
+
+          <div class="field">
+            <label>Adresse</label>
+            <input id="companyAddr" placeholder="Werschenregerstraße 6, 28237 Bremen"/>
+          </div>
+          <div class="field">
+            <label>Telefon</label>
+            <input id="companyPhone" placeholder="015778697052"/>
+          </div>
+
+          <div class="field">
+            <label>E-Mail</label>
+            <input id="companyEmail" placeholder="Kontakt.mass.bremen@hotmail.com"/>
+          </div>
+          <div class="field">
+            <label>Datum (für PDF)</label>
+            <input id="docDate" placeholder="16.02.2026 (oder 2026-02-16)"/>
+          </div>
         </div>
 
-        <div class="form">
-          <div class="field">
-            <label>Datum (dd.mm.yyyy)</label>
-            <input id="date" placeholder="16.02.2026">
-          </div>
+        <div style="height:12px"></div>
 
+        <div class="row">
           <div class="field">
-            <label>KW (optional)</label>
-            <input id="kw" placeholder="z.B. 07">
+            <label>Mitarbeiter-Nr. (optional)</label>
+            <input id="empNo" placeholder="z.B. MS-001"/>
           </div>
-
           <div class="field">
             <label>Mitarbeiter Name</label>
-            <input id="empName" placeholder="z.B. Mustafa">
+            <input id="empName" placeholder="z.B. Mustafa Mursal Abdi"/>
           </div>
 
           <div class="field">
-            <label>Mitarbeiter-Nr (optional)</label>
-            <input id="empNo" placeholder="z.B. MS-001">
-          </div>
-
-          <div class="field" style="grid-column:1 / -1">
-            <label>Arbeitstage (klick auswählen)</label>
+            <label>Arbeitstage (klicken)</label>
             <div class="chips" id="dayChips"></div>
+            <div class="hint">Klicke Mo–So. Diese Tage erscheinen im PDF und im WhatsApp-Text.</div>
           </div>
 
           <div class="field">
             <label>Objekt / Einsatz</label>
-            <input id="objekt" placeholder="z.B. Hotel / Baustelle">
+            <input id="objekt" placeholder="z.B. Hotel / Baustelle / Asylheim"/>
+            <div class="hint">Schicht (Tag/Nacht), Uhrzeit & Notiz werden automatisch gesetzt.</div>
           </div>
 
           <div class="field">
-            <label>Notiz (optional)</label>
-            <input id="note" placeholder="z.B. Tor 2 / Schlüssel">
-          </div>
-
-          <div class="field">
-            <label>Schicht (Tag/Nacht)</label>
+            <label>Schicht (Tag/Nacht) — automatisch</label>
             <select id="shift">
+              <option value="auto">Automatisch</option>
               <option value="Tag">Tag</option>
               <option value="Nacht">Nacht</option>
             </select>
           </div>
 
           <div class="field">
-            <label>Uhrzeit (automatic)</label>
-            <input id="time" placeholder="07:00–19:00">
+            <label>Uhrzeit — automatisch</label>
+            <input id="time" placeholder="z.B. 19:00–07:00"/>
           </div>
-        </div>
 
-        <div class="row-actions">
-          <button class="btn good" id="btnAdd">+ Eintrag speichern</button>
-          <button class="btn" id="btnClearForm">Formular leeren</button>
+          <div class="field" style="grid-column:1/-1">
+            <label>Notiz — automatisch</label>
+            <input id="note" placeholder="(wird automatisch ausgefüllt)"/>
+          </div>
         </div>
 
         <div style="height:12px"></div>
 
-        <h2>Gespeicherte Einträge</h2>
+        <div class="right">
+          <button class="btn good" id="btnSaveEntry">+ Eintrag speichern</button>
+        </div>
+
+        <div class="hint" id="statusPlan">Bereit.</div>
+      </div>
+
+      <div class="tableWrap">
         <table>
           <thead>
             <tr>
-              <th>#</th><th>Mitarbeiter</th><th>Nr</th><th>Tage</th>
-              <th>Objekt</th><th>Schicht</th><th>Uhrzeit</th><th>Notiz</th><th>Aktion</th>
+              <th>#</th>
+              <th>Mitarbeiter</th>
+              <th>Nr.</th>
+              <th>Tage</th>
+              <th>Schicht</th>
+              <th>Uhrzeit</th>
+              <th>Objekt</th>
+              <th>Notiz</th>
+              <th>Aktion</th>
             </tr>
           </thead>
-          <tbody id="rows">
-            <tr><td class="muted" colspan="9">Noch keine Einträge.</td></tr>
-          </tbody>
+          <tbody id="tbody"></tbody>
         </table>
       </div>
+    </div>
 
-      <div class="card" id="viewRight">
-        <div id="viewPreview">
-          <h2>Vorschau</h2>
-          <div class="hint">Text-ka WhatsApp/Email u dir. Button-ka WhatsApp wuxuu isku dayaa PDF share (mobile), haddii kale waa text + download.</div>
-          <div style="height:10px"></div>
-          <div class="previewBox" id="msgPreview"></div>
-
-          <div class="row-actions">
-            <button class="btn" id="btnCopy">Text kopieren</button>
-            <button class="btn good" id="btnWhatsAppText">WhatsApp (Text)</button>
-          </div>
+    <div class="card">
+      <div class="cardHead">
+        <h2>Vorschau (WhatsApp-Text)</h2>
+        <div class="right">
+          <button class="btn" id="btnCopyText">Text kopieren</button>
+          <button class="btn good" id="btnWhatsAppText">WhatsApp (Text)</button>
         </div>
-
-        <div id="viewDocs" style="display:none">
-          <h2>Dokumentation</h2>
-          <div class="hint">Qor dokumentation—waxaa la keydinayaa.</div>
-          <div style="height:10px"></div>
-
-          <div class="field">
-            <label>Dokumentation Text</label>
-            <textarea id="docText" rows="12" placeholder="Vorkommnisse / Übergabe / Notizen..."></textarea>
-          </div>
-
-          <div class="row-actions">
-            <button class="btn good" id="btnSaveDoc">Dokumentation speichern</button>
-            <button class="btn warn" id="btnPdfDoc">Dokumentation als PDF</button>
-          </div>
+      </div>
+      <div class="cardBody">
+        <div class="field">
+          <label>Vorschau</label>
+          <textarea id="msgPreview" readonly></textarea>
+        </div>
+        <div class="hint">
+          Desktop: WhatsApp-Web öffnet sich mit Text.  
+          Mobile: “WhatsApp (PDF)” nutzt Share-Dialog (wenn verfügbar).
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Hidden PDF template -->
-  <div id="pdfRoot">
-    <div class="pdfPage" id="pdfPage">
-      <div class="pdfHeader">
-        <div class="pdfBrand">
-          <div class="pdfLogo"><img id="pdfLogo" src="logo.png" alt="Logo"></div>
-          <div>
-            <div class="pdfTitle">Masculine Security</div>
-            <div class="pdfMeta">
-              <div><b>Adresse:</b> Werschenregerstraße 6, 28237 Bremen</div>
-              <div><b>Tel:</b> 015778697052</div>
-              <div><b>E-Mail:</b> Kontakt.mass.bremen@hotmail.com</div>
-            </div>
-          </div>
-        </div>
-        <div class="pdfMeta" style="text-align:right">
-          <div><b>Datum:</b> <span id="pdfDate">16.02.2026</span></div>
-          <div><b>KW:</b> <span id="pdfKW">—</span></div>
-          <div><b>Seite:</b> 1 / 1</div>
+  <!-- DOCUMENTATION -->
+  <section id="pageDocs" class="grid hide">
+    <div class="card">
+      <div class="cardHead">
+        <h2>Dokumentation</h2>
+        <div class="right">
+          <button class="btn" id="btnDocsSave">Speichern</button>
+          <button class="btn" id="btnDocsPDF">PDF (Dokumentation)</button>
         </div>
       </div>
+      <div class="cardBody">
+        <div class="row">
+          <div class="field">
+            <label>Notizen / Ereignisse</label>
+            <textarea id="docsText" placeholder="z.B. Vorfälle, Übergabe, besondere Hinweise…"></textarea>
+          </div>
+          <div class="field">
+            <label>Datei (optional)</label>
+            <input id="docsFile" type="file"/>
+            <div class="hint">Diese Seite speichert Text lokal (Browser). Datei wird nicht hochgeladen.</div>
+          </div>
+        </div>
+        <div class="hint" id="statusDocs">Bereit.</div>
+      </div>
+    </div>
 
-      <div class="pdfH1">Vorläufiger Dienstplan</div>
+    <div class="card">
+      <div class="cardHead">
+        <h2>Checkliste (Beispiel)</h2>
+      </div>
+      <div class="cardBody">
+        <div class="hint">
+          ✅ 20 Minuten vorher da sein • ✅ Ausfälle sofort melden • ✅ Stundenzettel rechtzeitig abgeben
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <table class="pdfTable">
+  <!-- PRINT PAGE (hidden on screen) -->
+  <div class="printPage hide" id="printPage">
+    <div class="printCard">
+      <div class="printHeader">
+        <div class="printBrand">
+          <div class="printLogo"><img id="printLogo" alt="Logo"/></div>
+          <div>
+            <p class="printTitle" id="pCompany">Masculine Security</p>
+            <div class="printMeta" id="pMeta"></div>
+          </div>
+        </div>
+        <div class="printDate" id="pDate"></div>
+      </div>
+
+      <div class="printH2">Vorläufiger Dienstplan</div>
+
+      <table class="printTable" id="pTable">
         <thead>
           <tr>
-            <th>Tag</th>
-            <th>Uhrzeit</th>
-            <th>Objekt</th>
-            <th>Notiz</th>
+            <th>TAG</th>
+            <th>UHRZEIT</th>
+            <th>OBJEKT</th>
+            <th>NOTIZ</th>
           </tr>
         </thead>
-        <tbody id="pdfTbody">
-          <tr><td colspan="4">Keine Einträge.</td></tr>
-        </tbody>
+        <tbody id="pTbody"></tbody>
       </table>
 
-      <div class="pdfNoticeTitle">DRINGEND BEACHTEN:</div>
-      <div class="pdfNotice">
-        Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
-        Verspätungen und Ausfälle sind unverzüglich telefonisch zu melden!<br>
+      <div class="notice">
+        <b>DRINGEND BEACHTEN:</b><br/>
+        Dienstantritt ist 20 Minuten vor Dienstbeginn!<br/>
+        Verspätungen und Ausfälle unverzüglich telefonisch melden!<br/>
         Stundenzettel spätestens 2 Tage vor Monatsende einreichen.
       </div>
 
-      <div class="pdfFooter">
-        <div>Masculine Security — Dienstplan</div>
+      <div class="footerLine">
+        <div id="pFooterLeft"></div>
         <div>Seite 1 von 1</div>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    const LS_KEY = "ms_dienstplan_single_v1";
-    const LS_DOC = "ms_doku_single_v1";
+<script>
+/* =========================
+   STORAGE + DEFAULTS
+========================= */
+const LS_KEY = "ms-dienstplan-v10";
+const LS_DOCS = "ms-dienstplan-docs-v10";
 
-    const DAY_LIST = [
-      {key:"Mo", label:"Montag"},
-      {key:"Di", label:"Dienstag"},
-      {key:"Mi", label:"Mittwoch"},
-      {key:"Do", label:"Donnerstag"},
-      {key:"Fr", label:"Freitag"},
-      {key:"Sa", label:"Samstag"},
-      {key:"So", label:"Sonntag"},
-    ];
+const DAYS = [
+  {k:"Mo", label:"Montag"},
+  {k:"Di", label:"Dienstag"},
+  {k:"Mi", label:"Mittwoch"},
+  {k:"Do", label:"Donnerstag"},
+  {k:"Fr", label:"Freitag"},
+  {k:"Sa", label:"Samstag"},
+  {k:"So", label:"Sonntag"},
+];
 
-    const SHIFT_TIMES = { Tag:"07:00–19:00", Nacht:"19:00–07:00" };
+const SHIFT_TIMES = {
+  Tag: "07:00–19:00",
+  Nacht: "19:00–07:00"
+};
 
-    const state = {
-      days: new Set(),
-      entries: [],
-      meta: { date:"", kw:"", empName:"", empNo:"", objekt:"", note:"", shift:"Tag", time:"" }
-    };
+function pad2(n){ return String(n).padStart(2,"0"); }
+function formatDateDE(d){
+  return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;
+}
+function parseDateInput(v){
+  v = (v||"").trim();
+  if(!v) return null;
+  if(/^\d{2}\.\d{2}\.\d{4}$/.test(v)) return v;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)){
+    const [y,m,dd] = v.split("-").map(Number);
+    return formatDateDE(new Date(y, m-1, dd));
+  }
+  return null;
+}
+function getDocDate(){
+  const v = document.querySelector("#docDate")?.value || "";
+  return parseDateInput(v) || formatDateDE(new Date());
+}
 
-    const $ = (s)=>document.querySelector(s);
+function sanitize(s){ return String(s ?? "").trim(); }
 
-    function pad2(n){ return String(n).padStart(2,'0'); }
-    function formatDateDE(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
-
-    function tryParseDateAny(v){
-      if(!v) return null;
-      v = String(v).trim();
-      const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if(iso){ const d = new Date(+iso[1], +iso[2]-1, +iso[3]); return isNaN(d)?null:d; }
-      const de = v.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-      if(de){ const d = new Date(+de[3], +de[2]-1, +de[1]); return isNaN(d)?null:d; }
-      return null;
+function saveState(){
+  const state = {
+    meta: {
+      companyName: companyName.value,
+      companyAddr: companyAddr.value,
+      companyPhone: companyPhone.value,
+      companyEmail: companyEmail.value,
+      docDate: docDate.value,
+      logoDataUrl: logoImg.src || ""
+    },
+    entries
+  };
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  updateCompanyLine();
+  statusPlan.textContent = "Gespeichert.";
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const st = JSON.parse(raw);
+    if(st?.meta){
+      companyName.value = st.meta.companyName ?? companyName.value;
+      companyAddr.value = st.meta.companyAddr ?? companyAddr.value;
+      companyPhone.value = st.meta.companyPhone ?? companyPhone.value;
+      companyEmail.value = st.meta.companyEmail ?? companyEmail.value;
+      docDate.value = st.meta.docDate ?? docDate.value;
+      if(st.meta.logoDataUrl) logoImg.src = st.meta.logoDataUrl;
     }
-    function normalizeDateToDE(v){
-      const d = tryParseDateAny(v);
-      return d ? formatDateDE(d) : formatDateDE(new Date());
-    }
+    if(Array.isArray(st?.entries)) entries = st.entries;
+  }catch(e){}
+}
 
-    function escapeHtml(s){
-      return String(s||"").replace(/[&<>"']/g, (c)=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[c]));
-    }
+function updateCompanyLine(){
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const addr = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
+  const phone = sanitize(companyPhone.value) || "015778697052";
+  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  companyLine.textContent = `${addr}  •  Tel: ${phone}  •  E-Mail: ${email}`;
+  // also update logo preview if empty
+  if(!logoImg.src){ logoImg.alt = name; }
+}
 
-    function saveState(){
-      localStorage.setItem(LS_KEY, JSON.stringify({
-        days:[...state.days],
-        entries:state.entries,
-        meta:state.meta
-      }));
-    }
-    function loadState(){
-      const raw = localStorage.getItem(LS_KEY);
-      if(!raw) return;
-      try{
-        const d = JSON.parse(raw);
-        state.days = new Set(Array.isArray(d.days)?d.days:[]);
-        state.entries = Array.isArray(d.entries)?d.entries:[];
-        state.meta = Object.assign(state.meta, d.meta||{});
-      }catch{}
-    }
+/* =========================
+   UI: DAYS (click chips)
+========================= */
+let selectedDays = new Set(["Mo"]); // default Monday
 
-    function renderDayChips(){
-      const wrap = $("#dayChips");
-      wrap.innerHTML = "";
-      DAY_LIST.forEach(d=>{
-        const el = document.createElement("div");
-        el.className = "chip" + (state.days.has(d.key) ? " on" : "");
-        el.textContent = d.label;
-        el.addEventListener("click", ()=>{
-          if(state.days.has(d.key)) state.days.delete(d.key); else state.days.add(d.key);
-          renderDayChips();
-          rebuildPreview();
-          saveState();
-        });
-        wrap.appendChild(el);
-      });
-    }
-
-    function syncMetaFromForm(){
-      state.meta.date = normalizeDateToDE($("#date").value);
-      $("#date").value = state.meta.date;
-
-      state.meta.kw = $("#kw").value.trim();
-      state.meta.empName = $("#empName").value.trim();
-      state.meta.empNo = $("#empNo").value.trim();
-      state.meta.objekt = $("#objekt").value.trim();
-      state.meta.note = $("#note").value.trim();
-      state.meta.shift = $("#shift").value;
-      state.meta.time = $("#time").value.trim();
-    }
-
-    function autoTimeByShift(){
-      $("#time").value = SHIFT_TIMES[$("#shift").value] || $("#time").value;
-    }
-
-    function setFormFromMeta(){
-      $("#date").value = state.meta.date || formatDateDE(new Date());
-      $("#kw").value = state.meta.kw || "";
-      $("#empName").value = state.meta.empName || "";
-      $("#empNo").value = state.meta.empNo || "";
-      $("#objekt").value = state.meta.objekt || "";
-      $("#note").value = state.meta.note || "";
-      $("#shift").value = state.meta.shift || "Tag";
-      $("#time").value = state.meta.time || SHIFT_TIMES[$("#shift").value];
-    }
-
-    function buildMessageText(){
-      syncMetaFromForm();
-      const date = state.meta.date || formatDateDE(new Date());
-      const kw = state.meta.kw ? `KW ${state.meta.kw}` : "KW —";
-      const days = [...state.days];
-      const dayStr = days.length ? days.join(", ") : "—";
-      const time = state.meta.time || SHIFT_TIMES[state.meta.shift];
-
-      return [
-        `MASCULINE SECURITY — Dienstplan`,
-        `Datum: ${date} | ${kw}`,
-        `Mitarbeiter: ${state.meta.empName || "—"}${state.meta.empNo ? " ("+state.meta.empNo+")" : ""}`,
-        `Tage: ${dayStr}`,
-        `Objekt: ${state.meta.objekt || "—"}`,
-        `Schicht: ${state.meta.shift} | Uhrzeit: ${time}`,
-        state.meta.note ? `Notiz: ${state.meta.note}` : "",
-        ``,
-        `DRINGEND: 20 Min vor Dienstbeginn da sein. Ausfälle sofort melden.`
-      ].filter(Boolean).join("\n");
-    }
-
-    function rebuildPreview(){
-      $("#msgPreview").textContent = buildMessageText();
-      fillPdfTemplate();
-    }
-
-    function fillPdfTemplate(){
-      syncMetaFromForm();
-      $("#pdfDate").textContent = state.meta.date || formatDateDE(new Date());
-      $("#pdfKW").textContent = state.meta.kw ? `KW ${state.meta.kw}` : "—";
-
-      const body = $("#pdfTbody");
-      const days = [...state.days];
-      const obj = state.meta.objekt || "—";
-      const note = state.meta.note || "—";
-      const time = state.meta.time || SHIFT_TIMES[state.meta.shift];
-
-      if(!days.length){
-        body.innerHTML = `<tr><td colspan="4">Keine Einträge.</td></tr>`;
-        return;
-      }
-
-      body.innerHTML = days.map(d=>`
-        <tr>
-          <td>${escapeHtml(d)}</td>
-          <td>${escapeHtml(time)}</td>
-          <td>${escapeHtml(obj)}</td>
-          <td>${escapeHtml(note)}</td>
-        </tr>
-      `).join("");
-    }
-
-    async function makePdfBlob(){
-      fillPdfTemplate();
-
-      // wait logo
-      const img = $("#pdfLogo");
-      if(img && !img.complete){
-        await new Promise(res=>{ img.onload=res; img.onerror=res; });
-      }
-
-      const date = $("#pdfDate").textContent || formatDateDE(new Date());
-      const filename = `Dienstplan_${date.replaceAll(".","-")}.pdf`;
-
-      const opt = {
-        margin: [10,10,10,10],
-        filename,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-      };
-
-      const worker = html2pdf().set(opt).from($("#pdfPage"));
-      const pdf = await worker.toPdf().get("pdf");
-      const blob = pdf.output("blob");
-      return { blob, filename, date };
-    }
-
-    function downloadBlob(blob, filename){
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url), 1500);
-    }
-
-    function openWhatsAppWithText(text){
-      const encoded = encodeURIComponent(text);
-      window.open(`https://wa.me/?text=${encoded}`, "_blank", "noopener,noreferrer");
-    }
-
-    async function doPdfDownload(){
-      const out = await makePdfBlob();
-      downloadBlob(out.blob, out.filename);
-    }
-
-    async function sendWhatsAppPdf(){
-      // Mobile: share PDF file, Desktop: download + WhatsApp text
-      let out = null;
-      try{ out = await makePdfBlob(); }catch{ out = null; }
-
-      if(out && navigator.canShare){
-        try{
-          const file = new File([out.blob], out.filename, {type:"application/pdf"});
-          if(navigator.canShare({files:[file]})){
-            await navigator.share({ title:`Dienstplan ${out.date}`, text:`Dienstplan (${out.date})`, files:[file] });
-            return;
-          }
-        }catch{}
-      }
-
-      if(out){
-        downloadBlob(out.blob, out.filename);
-        openWhatsAppWithText(buildMessageText() + `\n\nPDF downloaded: ${out.filename}\nAttach it in WhatsApp.`);
-        return;
-      }
-
-      openWhatsAppWithText(buildMessageText());
-    }
-
-    function exportCSV(){
-      syncMetaFromForm();
-      const rows = [];
-      rows.push(["Datum", state.meta.date]);
-      rows.push(["KW", state.meta.kw || ""]);
-      rows.push(["Mitarbeiter", state.meta.empName || ""]);
-      rows.push(["MitarbeiterNr", state.meta.empNo || ""]);
-      rows.push(["Objekt", state.meta.objekt || ""]);
-      rows.push(["Schicht", state.meta.shift || ""]);
-      rows.push(["Uhrzeit", state.meta.time || ""]);
-      rows.push(["Tage", [...state.days].join(", ")]);
-      rows.push(["Notiz", state.meta.note || ""]);
-      rows.push(["---","---"]);
-      const csv = rows.map(r=>r.map(v=>{
-        const s = String(v??"");
-        return /[",\n]/.test(s) ? `"${s.replaceAll('"','""')}"` : s;
-      }).join(",")).join("\n");
-
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-      downloadBlob(blob, `Dienstplan_${(state.meta.date||formatDateDE(new Date())).replaceAll(".","-")}.csv`);
-    }
-
-    function renderEntries(){
-      const tb = $("#rows");
-      if(!state.entries.length){
-        tb.innerHTML = `<tr><td class="muted" colspan="9">Noch keine Einträge.</td></tr>`;
-        return;
-      }
-      tb.innerHTML = "";
-      state.entries.forEach((e, idx)=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td>${escapeHtml(e.empName||"")}</td>
-          <td>${escapeHtml(e.empNo||"")}</td>
-          <td>${escapeHtml((e.days||[]).join(", "))}</td>
-          <td>${escapeHtml(e.objekt||"")}</td>
-          <td>${escapeHtml(e.shift||"")}</td>
-          <td>${escapeHtml(e.time||"")}</td>
-          <td>${escapeHtml(e.note||"")}</td>
-          <td><button class="btn bad" data-del="${idx}" style="padding:7px 9px; border-radius:10px;">Löschen</button></td>
-        `;
-        tb.appendChild(tr);
-      });
-      tb.querySelectorAll("[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const i = +btn.getAttribute("data-del");
-          state.entries.splice(i,1);
-          saveState();
-          renderEntries();
-          rebuildPreview();
-        });
-      });
-    }
-
-    function addEntry(){
-      syncMetaFromForm();
-      if(!state.meta.empName){ alert("Mitarbeiter Name fehlt."); return; }
-      if(!state.meta.objekt){ alert("Objekt/Einsatz fehlt."); return; }
-      if(!state.days.size){ alert("Bitte Arbeitstage auswählen."); return; }
-
-      const time = state.meta.time || SHIFT_TIMES[state.meta.shift];
-      const entry = {
-        date: state.meta.date,
-        kw: state.meta.kw,
-        empName: state.meta.empName,
-        empNo: state.meta.empNo,
-        days: [...state.days],
-        objekt: state.meta.objekt,
-        shift: state.meta.shift,
-        time,
-        note: state.meta.note
-      };
-      state.entries.push(entry);
-      saveState();
-      renderEntries();
-      rebuildPreview();
-    }
-
-    function clearForm(){
-      state.days = new Set();
-      state.meta.empName = "";
-      state.meta.empNo = "";
-      state.meta.objekt = "";
-      state.meta.note = "";
-      state.meta.shift = "Tag";
-      state.meta.time = SHIFT_TIMES.Tag;
-      saveState();
+function renderDayChips(){
+  dayChips.innerHTML = "";
+  for(const d of DAYS){
+    const el = document.createElement("div");
+    el.className = "chip" + (selectedDays.has(d.k) ? " active" : "");
+    el.textContent = d.k;
+    el.title = d.label;
+    el.addEventListener("click", () => {
+      if(selectedDays.has(d.k)) selectedDays.delete(d.k);
+      else selectedDays.add(d.k);
+      if(selectedDays.size === 0) selectedDays.add(d.k);
       renderDayChips();
-      setFormFromMeta();
-      rebuildPreview();
-    }
+      buildMessagePreview();
+      autosaveSoon();
+    });
+    dayChips.appendChild(el);
+  }
+}
+function daysLabel(){
+  // Keep order Mo..So
+  const arr = DAYS.filter(d => selectedDays.has(d.k)).map(d=>d.k);
+  return arr.join(", ");
+}
 
-    function resetAll(){
-      if(!confirm("Alles löschen?")) return;
-      localStorage.removeItem(LS_KEY);
-      localStorage.removeItem(LS_DOC);
-      state.days = new Set();
-      state.entries = [];
-      state.meta = { date:"", kw:"", empName:"", empNo:"", objekt:"", note:"", shift:"Tag", time:"" };
-      init();
-    }
+/* =========================
+   AUTO: SHIFT / TIME / NOTE
+========================= */
+function timeLooksNight(t){
+  // if starts >= 18 OR ends <= 08 => night
+  const m = String(t||"").match(/(\d{1,2}):(\d{2}).*?(\d{1,2}):(\d{2})/);
+  if(!m) return null;
+  const sH = Number(m[1]), sM = Number(m[2]);
+  const eH = Number(m[3]), eM = Number(m[4]);
+  const s = sH*60+sM;
+  const e = eH*60+eM;
+  // night typically crosses midnight (end < start) OR starts late OR ends early
+  if(e < s) return true;
+  if(s >= 18*60) return true;
+  if(e <= 8*60) return true;
+  return false;
+}
+function inferShiftFromTime(t){
+  const n = timeLooksNight(t);
+  if(n === null) return "Tag";
+  return n ? "Nacht" : "Tag";
+}
+function applyAutoTime(){
+  const mode = shift.value;
+  const cur = sanitize(time.value);
+  if(mode === "auto"){
+    // infer from time if user typed it; else default Tag
+    const sh = cur ? inferShiftFromTime(cur) : "Tag";
+    pillShift.textContent = `Schicht: ${sh} (auto)`;
+    if(!cur) time.value = SHIFT_TIMES[sh];
+    pillTime.textContent = `Uhrzeit: ${time.value || SHIFT_TIMES[sh]}`;
+    return sh;
+  }
+  // forced Tag/Nacht
+  pillShift.textContent = `Schicht: ${mode}`;
+  if(!cur || cur === SHIFT_TIMES.Tag || cur === SHIFT_TIMES.Nacht){
+    time.value = SHIFT_TIMES[mode];
+  }
+  pillTime.textContent = `Uhrzeit: ${time.value}`;
+  return mode;
+}
 
-    async function copyText(){
-      const text = buildMessageText();
-      try{
-        await navigator.clipboard.writeText(text);
-        alert("Text kopiert.");
-      }catch{
-        alert("Copy not available.");
-      }
-    }
+function autoNote(){
+  // Simple, reliable automatic note
+  const obj = sanitize(objekt.value).toLowerCase();
+  const sh = (shift.value === "auto") ? inferShiftFromTime(time.value) : shift.value;
+  let n = "";
+  if(/hotel|hostel|rezeption/.test(obj)) n = "Rezeption / Rundgang / Schlüssel";
+  else if(/baustelle|bau/.test(obj)) n = "Tor / Schlüssel / Rundgang";
+  else if(/asyl|heim|unterkunft/.test(obj)) n = "Zugang kontrollieren / Rundgang";
+  else if(/event|club|diskothek/.test(obj)) n = "Einlass / Kontrolle";
+  else n = "Rundgang / Schlüssel / Uniform";
+  // night add-on
+  if(sh === "Nacht") n += " (Nachtwache)";
+  note.value = n;
+}
 
-    function setTab(which){
-      if(which==="plan"){
-        $("#tabPlan").classList.add("active");
-        $("#tabDocs").classList.remove("active");
-        $("#viewPlan").style.display = "";
-        $("#viewPreview").style.display = "";
-        $("#viewDocs").style.display = "none";
-      }else{
-        $("#tabDocs").classList.add("active");
-        $("#tabPlan").classList.remove("active");
-        $("#viewPlan").style.display = "none";
-        $("#viewPreview").style.display = "none";
-        $("#viewDocs").style.display = "";
-      }
-    }
+function refreshAutoFields(){
+  const sh = applyAutoTime();
+  autoNote();
+  buildMessagePreview();
+}
 
-    function loadDocs(){ $("#docText").value = localStorage.getItem(LS_DOC) || ""; }
-    function saveDocs(){ localStorage.setItem(LS_DOC, $("#docText").value||""); alert("Dokumentation gespeichert."); }
+/* =========================
+   ENTRIES + TABLE
+========================= */
+let entries = [];
 
-    async function pdfDocs(){
-      const doc = ($("#docText").value||"").trim();
-      if(!doc){ alert("Dokumentation ist leer."); return; }
+function renderTable(){
+  tbody.innerHTML = "";
+  if(entries.length === 0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="tdSmall" colspan="9">Noch keine Einträge.</td>`;
+    tbody.appendChild(tr);
+    buildPrintTable();
+    buildMessagePreview();
+    return;
+  }
 
-      const temp = document.createElement("div");
-      temp.style.position="absolute"; temp.style.left="-99999px"; temp.style.top="-99999px"; temp.style.width="794px";
-      temp.innerHTML = `
-        <div class="pdfPage">
-          <div class="pdfHeader">
-            <div class="pdfBrand">
-              <div class="pdfLogo"><img src="logo.png" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></div>
-              <div>
-                <div class="pdfTitle">Masculine Security</div>
-                <div class="pdfMeta">
-                  <div><b>Adresse:</b> Werschenregerstraße 6, 28237 Bremen</div>
-                  <div><b>Tel:</b> 015778697052</div>
-                  <div><b>E-Mail:</b> Kontakt.mass.bremen@hotmail.com</div>
-                </div>
-              </div>
-            </div>
-            <div class="pdfMeta" style="text-align:right">
-              <div><b>Datum:</b> ${normalizeDateToDE($("#date").value)}</div>
-              <div><b>Dokumentation</b></div>
-              <div><b>Seite:</b> 1 / 1</div>
-            </div>
-          </div>
-          <div class="pdfH1">Dokumentation</div>
-          <div style="border:1px solid rgba(11,79,163,.25); border-radius:10px; padding:10px; background:#f6fbff; white-space:pre-wrap; font-size:11px; line-height:1.45">
-            ${escapeHtml(doc)}
-          </div>
-          <div class="pdfFooter">
-            <div>Masculine Security — Dokumentation</div>
-            <div>Seite 1 von 1</div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(temp);
+  entries.forEach((e, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="tdSmall">${idx+1}</td>
+      <td>${escapeHtml(e.empName)}</td>
+      <td class="tdSmall">${escapeHtml(e.empNo || "—")}</td>
+      <td>${escapeHtml(e.days)}</td>
+      <td>${escapeHtml(e.shift)}</td>
+      <td>${escapeHtml(e.time)}</td>
+      <td>${escapeHtml(e.objekt)}</td>
+      <td>${escapeHtml(e.note)}</td>
+      <td>
+        <button class="btn bad" data-del="${idx}" style="padding:6px 9px;border-radius:10px;font-size:11px">Löschen</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 
-      const opt = {
-        margin: [10,10,10,10],
-        filename: `Dokumentation_${normalizeDateToDE($("#date").value).replaceAll(".","-")}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-      };
-
-      await html2pdf().set(opt).from(temp.firstElementChild).save();
-      temp.remove();
-    }
-
-    function bind(){
-      $("#date").addEventListener("blur", ()=>{ $("#date").value = normalizeDateToDE($("#date").value); syncMetaFromForm(); saveState(); rebuildPreview(); });
-      $("#shift").addEventListener("change", ()=>{ autoTimeByShift(); syncMetaFromForm(); saveState(); rebuildPreview(); });
-
-      ["kw","empName","empNo","objekt","note","time"].forEach(id=>{
-        $("#"+id).addEventListener("input", ()=>{ syncMetaFromForm(); saveState(); rebuildPreview(); });
-      });
-
-      $("#btnAdd").addEventListener("click", addEntry);
-      $("#btnClearForm").addEventListener("click", clearForm);
-
-      $("#btnPdf").addEventListener("click", doPdfDownload);
-      $("#btnWhatsApp").addEventListener("click", sendWhatsAppPdf);
-      $("#btnCsv").addEventListener("click", exportCSV);
-      $("#btnReset").addEventListener("click", resetAll);
-
-      $("#btnCopy").addEventListener("click", copyText);
-      $("#btnWhatsAppText").addEventListener("click", ()=>openWhatsAppWithText(buildMessageText()));
-
-      $("#tabPlan").addEventListener("click", ()=>setTab("plan"));
-      $("#tabDocs").addEventListener("click", ()=>setTab("docs"));
-
-      $("#btnSaveDoc").addEventListener("click", saveDocs);
-      $("#btnPdfDoc").addEventListener("click", pdfDocs);
-    }
-
-    function init(){
-      loadState();
-      if(!state.meta.date) state.meta.date = formatDateDE(new Date());
-      state.meta.date = normalizeDateToDE(state.meta.date);
-
-      // default time
-      if(!state.meta.time) state.meta.time = SHIFT_TIMES[state.meta.shift || "Tag"];
-
-      renderDayChips();
-      setFormFromMeta();
-      renderEntries();
-      rebuildPreview();
-      loadDocs();
-      setTab("plan");
-      bind();
+  tbody.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.getAttribute("data-del"));
+      entries.splice(i,1);
+      renderTable();
       saveState();
+    });
+  });
+
+  buildPrintTable();
+  buildMessagePreview();
+}
+
+function escapeHtml(s){
+  return String(s??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+function addEntry(){
+  const eName = sanitize(empName.value);
+  const eNo = sanitize(empNo.value);
+  const eDays = daysLabel();
+  const eObj = sanitize(objekt.value);
+  const sh = (shift.value === "auto") ? inferShiftFromTime(time.value) : shift.value;
+  const t = sanitize(time.value) || SHIFT_TIMES[sh];
+  const n = sanitize(note.value) || "—";
+
+  if(!eName || !eObj){
+    statusPlan.textContent = "Bitte Mitarbeiter Name und Objekt ausfüllen.";
+    return;
+  }
+  entries.push({
+    empName: eName,
+    empNo: eNo,
+    days: eDays,
+    shift: sh,
+    time: t,
+    objekt: eObj,
+    note: n
+  });
+  statusPlan.textContent = "Eintrag gespeichert.";
+  renderTable();
+  saveState();
+}
+
+/* =========================
+   PRINT/PDF (screen print page)
+========================= */
+function buildPrintTable(){
+  // Use first entry as “main” plan view (like your screenshot),
+  // but if multiple entries exist, we merge days from the first entry.
+  const first = entries[0];
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const addr = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
+  const phone = sanitize(companyPhone.value) || "015778697052";
+  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  const dateStr = getDocDate();
+
+  document.getElementById("pCompany").textContent = name;
+  document.getElementById("pMeta").innerHTML =
+    `Adresse: ${escapeHtml(addr)}<br/>Tel: ${escapeHtml(phone)}<br/>E-Mail: ${escapeHtml(email)}`;
+  document.getElementById("pDate").innerHTML = `Datum: <b>${escapeHtml(dateStr)}</b>`;
+  document.getElementById("pFooterLeft").textContent = `${name} — Dienstplan`;
+
+  // logo in print
+  document.getElementById("printLogo").src = logoImg.src || "";
+
+  const body = document.getElementById("pTbody");
+  body.innerHTML = "";
+
+  if(!first){
+    body.innerHTML = `<tr><td colspan="4">—</td></tr>`;
+    return;
+  }
+
+  // For each selected day, show same time/object/note like example PDF
+  const daysArr = DAYS.filter(d => first.days.split(", ").includes(d.k));
+  for(const d of daysArr){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(d.k)}</td>
+      <td>${escapeHtml(first.time)}</td>
+      <td>${escapeHtml(first.objekt)}</td>
+      <td>${escapeHtml(first.note)}</td>
+    `;
+    body.appendChild(tr);
+  }
+}
+
+function openPrint(){
+  buildPrintTable();
+  // show print page temporarily
+  printPage.classList.remove("hide");
+  // hide normal pages while printing
+  pagePlan.classList.add("hide");
+  pageDocs.classList.add("hide");
+  window.print();
+  // restore
+  printPage.classList.add("hide");
+  if(tabPlan.classList.contains("active")) pagePlan.classList.remove("hide");
+  else pageDocs.classList.remove("hide");
+}
+
+function downloadPDFviaPrint(){
+  // Open print dialog -> user chooses "Save as PDF"
+  openPrint();
+}
+
+/* =========================
+   WhatsApp TEXT
+========================= */
+function buildMessagePreview(){
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const phone = sanitize(companyPhone.value) || "015778697052";
+  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  const dateStr = getDocDate();
+
+  if(entries.length === 0){
+    msgPreview.value = `${name}\nDatum: ${dateStr}\nTel: ${phone}\nE-Mail: ${email}\n\n— Noch keine Einträge —`;
+    return;
+  }
+  const e = entries[0];
+  msgPreview.value =
+`${name} — Dienstplan
+Datum: ${dateStr}
+
+Mitarbeiter: ${e.empName}${e.empNo ? " ("+e.empNo+")" : ""}
+Tage: ${e.days}
+Schicht: ${e.shift}
+Uhrzeit: ${e.time}
+Objekt: ${e.objekt}
+Notiz: ${e.note}
+
+Kontakt: ${phone} • ${email}`;
+}
+
+function openWhatsAppText(){
+  const text = msgPreview.value || "";
+  const url = "https://wa.me/?text=" + encodeURIComponent(text);
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/* =========================
+   WhatsApp PDF (REAL FIX)
+   - Uses jsPDF + autoTable
+   - Mobile: navigator.share with File -> WhatsApp works
+   - Desktop: downloads PDF + opens WhatsApp text with “PDF saved…”
+========================= */
+async function makeDienstplanPDFBlob(){
+  const { jsPDF } = window.jspdf || {};
+  if(!jsPDF) throw new Error("jsPDF not loaded.");
+
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const addr = sanitize(companyAddr.value) || "Werschenregerstraße 6, 28237 Bremen";
+  const phone = sanitize(companyPhone.value) || "015778697052";
+  const email = sanitize(companyEmail.value) || "Kontakt.mass.bremen@hotmail.com";
+  const dateStr = getDocDate();
+
+  const doc = new jsPDF({unit:"pt", format:"a4"});
+  const W = doc.internal.pageSize.getWidth();
+
+  // Header
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.setTextColor(11,58,120);
+  doc.text(name, 82, 56);
+
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.setTextColor(40,40,40);
+  doc.text(`Adresse: ${addr}`, 82, 72);
+  doc.text(`Tel: ${phone}`, 82, 86);
+  doc.text(`E-Mail: ${email}`, 82, 100);
+
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.setTextColor(40,40,40);
+  doc.text(`Datum: ${dateStr}`, W-170, 72);
+
+  // Logo if available
+  if(logoImg.src){
+    try{
+      const imgData = logoImg.src;
+      // try to add as JPEG/PNG; jsPDF detects by dataURL header
+      doc.addImage(imgData, 28, 38, 44, 44);
+    }catch(e){}
+  }
+
+  // Blue line
+  doc.setDrawColor(27,123,255);
+  doc.setLineWidth(2);
+  doc.line(28, 118, W-28, 118);
+
+  // Title
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(15);
+  doc.setTextColor(11,58,120);
+  doc.text("Vorläufiger Dienstplan", W/2, 152, {align:"center"});
+
+  // Table data (use first entry as weekly plan)
+  const rows = [];
+  if(entries.length){
+    const e = entries[0];
+    const dayKeys = e.days.split(", ").filter(Boolean);
+    for(const k of dayKeys){
+      rows.push([k, e.time, e.objekt, e.note || "—"]);
+    }
+  }else{
+    rows.push(["—","—","—","—"]);
+  }
+
+  doc.autoTable({
+    startY: 170,
+    head: [["TAG","UHRZEIT","OBJEKT","NOTIZ"]],
+    body: rows,
+    theme: "grid",
+    styles: {font:"helvetica", fontSize:10, cellPadding:6, textColor:[20,20,20]},
+    headStyles: {fillColor:[234,242,255], textColor:[11,58,120], fontStyle:"bold"},
+    margin: {left:28, right:28}
+  });
+
+  const y = doc.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 18 : 420;
+
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(10);
+  doc.setTextColor(200,31,44);
+  doc.text("DRINGEND BEACHTEN:", W/2, y, {align:"center"});
+
+  doc.setFont("helvetica","normal");
+  doc.setTextColor(60,60,60);
+  doc.text("Dienstantritt ist 20 Minuten vor Dienstbeginn!", W/2, y+14, {align:"center"});
+  doc.text("Verspätungen und Ausfälle unverzüglich telefonisch melden!", W/2, y+28, {align:"center"});
+  doc.text("Stundenzettel spätestens 2 Tage vor Monatsende einreichen.", W/2, y+42, {align:"center"});
+
+  // Footer
+  doc.setFontSize(9);
+  doc.setTextColor(120,120,120);
+  doc.text(`${name} — Dienstplan`, 28, 820);
+  doc.text("Seite 1 von 1", W-28, 820, {align:"right"});
+
+  return doc.output("blob");
+}
+
+async function whatsappSendPDF(){
+  try{
+    if(entries.length === 0){
+      statusPlan.textContent = "Bitte zuerst einen Eintrag speichern.";
+      return;
+    }
+    const blob = await makeDienstplanPDFBlob();
+    const dateStr = getDocDate().replaceAll(".","-");
+    const filename = `Dienstplan_${dateStr}.pdf`;
+    const file = new File([blob], filename, {type:"application/pdf"});
+
+    // Mobile share (works with WhatsApp if installed)
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        title: "Dienstplan",
+        text: "Dienstplan als PDF",
+        files: [file]
+      });
+      statusPlan.textContent = "WhatsApp Share geöffnet (PDF).";
+      return;
     }
 
-    document.addEventListener("DOMContentLoaded", init);
-  </script>
+    // Desktop fallback: download + open WhatsApp text (user attaches PDF)
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2500);
+
+    const txt = msgPreview.value + "\n\n(PDF wurde heruntergeladen. Bitte in WhatsApp als Datei anhängen.)";
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener,noreferrer");
+    statusPlan.textContent = "PDF heruntergeladen + WhatsApp Text geöffnet.";
+  }catch(err){
+    statusPlan.textContent = "WhatsApp (PDF) konnte nicht gesendet werden. Bitte Seite neu laden (Ctrl+F5).";
+  }
+}
+
+/* =========================
+   CSV EXPORT
+========================= */
+function exportCSV(){
+  const head = ["Mitarbeiter","Nr","Tage","Schicht","Uhrzeit","Objekt","Notiz"];
+  const lines = [head.join(";")];
+  for(const e of entries){
+    lines.push([
+      e.empName, e.empNo||"", e.days, e.shift, e.time, e.objekt, e.note
+    ].map(v => `"${String(v).replaceAll('"','""')}"`).join(";"));
+  }
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dienstplan.csv";
+  a.click();
+}
+
+/* =========================
+   DOCS
+========================= */
+function saveDocs(){
+  localStorage.setItem(LS_DOCS, JSON.stringify({
+    text: docsText.value || ""
+  }));
+  statusDocs.textContent = "Dokumentation gespeichert.";
+}
+function loadDocs(){
+  try{
+    const raw = localStorage.getItem(LS_DOCS);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    docsText.value = d?.text || "";
+  }catch(e){}
+}
+async function docsPDF(){
+  const { jsPDF } = window.jspdf || {};
+  if(!jsPDF){ statusDocs.textContent="jsPDF nicht geladen."; return; }
+  const name = sanitize(companyName.value) || "Masculine Security";
+  const dateStr = getDocDate();
+
+  const doc = new jsPDF({unit:"pt", format:"a4"});
+  const W = doc.internal.pageSize.getWidth();
+  doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(11,58,120);
+  doc.text(`${name} — Dokumentation`, 28, 54);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(60,60,60);
+  doc.text(`Datum: ${dateStr}`, W-28, 54, {align:"right"});
+
+  if(logoImg.src){
+    try{ doc.addImage(logoImg.src, 28, 64, 44, 44); }catch(e){}
+  }
+  doc.setDrawColor(27,123,255); doc.setLineWidth(2); doc.line(28, 118, W-28, 118);
+
+  doc.setFont("helvetica","normal"); doc.setFontSize(11); doc.setTextColor(20,20,20);
+  const text = docsText.value || "—";
+  const lines = doc.splitTextToSize(text, W-56);
+  doc.text(lines, 28, 150);
+
+  const blob = doc.output("blob");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `Dokumentation_${dateStr.replaceAll(".","-")}.pdf`;
+  a.click();
+  statusDocs.textContent = "Dokumentation PDF heruntergeladen.";
+}
+
+/* =========================
+   AUTOSAVE (light)
+========================= */
+let autosaveTimer = null;
+function autosaveSoon(){
+  if(autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(saveState, 350);
+}
+
+/* =========================
+   EVENTS
+========================= */
+const companyName = document.getElementById("companyName");
+const companyAddr = document.getElementById("companyAddr");
+const companyPhone = document.getElementById("companyPhone");
+const companyEmail = document.getElementById("companyEmail");
+const docDate = document.getElementById("docDate");
+const logoFile = document.getElementById("logoFile");
+const logoImg = document.getElementById("logoImg");
+const companyLine = document.getElementById("companyLine");
+
+const empNo = document.getElementById("empNo");
+const empName = document.getElementById("empName");
+const objekt = document.getElementById("objekt");
+const shift = document.getElementById("shift");
+const time = document.getElementById("time");
+const note = document.getElementById("note");
+const dayChips = document.getElementById("dayChips");
+const tbody = document.getElementById("tbody");
+const statusPlan = document.getElementById("statusPlan");
+const msgPreview = document.getElementById("msgPreview");
+
+const pillShift = document.getElementById("pillShift");
+const pillTime = document.getElementById("pillTime");
+
+const pagePlan = document.getElementById("pagePlan");
+const pageDocs = document.getElementById("pageDocs");
+const tabPlan = document.getElementById("tabPlan");
+const tabDocs = document.getElementById("tabDocs");
+
+const docsText = document.getElementById("docsText");
+const docsFile = document.getElementById("docsFile");
+const statusDocs = document.getElementById("statusDocs");
+
+const printPage = document.getElementById("printPage");
+
+document.getElementById("btnSaveEntry").addEventListener("click", addEntry);
+document.getElementById("btnCopyText").addEventListener("click", async ()=>{
+  try{
+    await navigator.clipboard.writeText(msgPreview.value || "");
+    statusPlan.textContent = "Text kopiert.";
+  }catch(e){
+    statusPlan.textContent = "Kopieren nicht möglich. Markiere Text manuell.";
+  }
+});
+document.getElementById("btnWhatsAppText").addEventListener("click", openWhatsAppText);
+document.getElementById("btnWhatsAppPDF").addEventListener("click", whatsappSendPDF);
+
+document.getElementById("btnPrint").addEventListener("click", openPrint);
+document.getElementById("btnPDF").addEventListener("click", downloadPDFviaPrint);
+document.getElementById("btnExportCSV").addEventListener("click", exportCSV);
+
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(!confirm("Alles löschen?")) return;
+  localStorage.removeItem(LS_KEY);
+  entries = [];
+  selectedDays = new Set(["Mo"]);
+  renderDayChips();
+  renderTable();
+  updateCompanyLine();
+  refreshAutoFields();
+  statusPlan.textContent = "Reset erledigt.";
+});
+
+tabPlan.addEventListener("click", ()=>{
+  tabPlan.classList.add("active"); tabDocs.classList.remove("active");
+  pagePlan.classList.remove("hide"); pageDocs.classList.add("hide");
+});
+tabDocs.addEventListener("click", ()=>{
+  tabDocs.classList.add("active"); tabPlan.classList.remove("active");
+  pageDocs.classList.remove("hide"); pagePlan.classList.add("hide");
+});
+
+document.getElementById("btnDocsSave").addEventListener("click", saveDocs);
+document.getElementById("btnDocsPDF").addEventListener("click", docsPDF);
+
+// meta inputs -> autosave + update header line
+[companyName, companyAddr, companyPhone, companyEmail, docDate].forEach(el=>{
+  el.addEventListener("input", ()=>{
+    updateCompanyLine();
+    buildMessagePreview();
+    autosaveSoon();
+  });
+});
+
+logoFile.addEventListener("change", ()=>{
+  const f = logoFile.files?.[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    logoImg.src = String(r.result || "");
+    updateCompanyLine();
+    buildPrintTable();
+    autosaveSoon();
+    statusPlan.textContent = "Logo gespeichert.";
+  };
+  r.readAsDataURL(f);
+});
+
+// auto behavior
+[objekt, time].forEach(el=> el.addEventListener("input", ()=>{ refreshAutoFields(); autosaveSoon(); }));
+shift.addEventListener("change", ()=>{ refreshAutoFields(); autosaveSoon(); });
+
+// docs auto save
+docsText.addEventListener("input", ()=>{
+  saveDocs();
+});
+
+// Init defaults
+function initDefaults(){
+  companyName.value = companyName.value || "Masculine Security";
+  companyAddr.value = companyAddr.value || "Werschenregerstraße 6, 28237 Bremen";
+  companyPhone.value = companyPhone.value || "015778697052";
+  companyEmail.value = companyEmail.value || "Kontakt.mass.bremen@hotmail.com";
+  // leave docDate empty; we auto use today if empty
+  updateCompanyLine();
+  renderDayChips();
+  refreshAutoFields();
+  buildMessagePreview();
+}
+
+// Boot
+loadState();
+loadDocs();
+initDefaults();
+renderTable();
+
+// Ensure no “code dump” shows (some old versions injected debug text)
+// If any stray text nodes appear, they stay inside script only.
+
+</script>
 </body>
 </html>
