@@ -1,326 +1,156 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Masculine Security — Dienstplan</title>
-
-  <!-- Optional: PWA -->
-  <meta name="theme-color" content="#0b5aa6" />
-  <link rel="manifest" href="manifest.json" />
-
-  <!-- PDF libs (CDN) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
+  <meta name="theme-color" content="#0b2a55"/>
   <style>
     :root{
-      --bg:#083a66;
-      --bg2:#0b4f8c;
-      --panel:#0b5aa6;
-      --card:rgba(255,255,255,.08);
-      --card2:rgba(255,255,255,.10);
-      --line:rgba(255,255,255,.18);
+      --bg:#061a33;
+      --panel:#0b2a55;
+      --panel2:#0d356a;
+      --card:#0f3f7a;
+      --line:rgba(255,255,255,.16);
       --text:#ffffff;
-      --muted:rgba(255,255,255,.8);
-      --muted2:rgba(255,255,255,.65);
-      --accent:#46b6ff;
-      --good:#2bd4bd;
-      --warn:#ffd166;
-      --danger:#ff6b6b;
-
-      --r:18px;
-      --r2:12px;
-      --shadow: 0 12px 30px rgba(0,0,0,.25);
-
+      --muted:rgba(255,255,255,.78);
+      --accent:#2d8cff;
+      --accent2:#57b3ff;
+      --good:#27d6a6;
+      --warn:#ffcc66;
+      --bad:#ff5b7b;
+      --r:16px;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
       font-family:var(--font);
       color:var(--text);
-      background: radial-gradient(1200px 800px at 30% -10%, rgba(70,182,255,.35), transparent 60%),
-                  radial-gradient(900px 700px at 90% 10%, rgba(43,212,189,.22), transparent 55%),
-                  linear-gradient(180deg, var(--bg), #052744);
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(45,140,255,.35), transparent 60%),
+                  radial-gradient(1200px 800px at 90% 10%, rgba(87,179,255,.25), transparent 65%),
+                  linear-gradient(180deg, #041227, #061a33 60%, #041227);
+      min-height:100vh;
     }
-
-    a{color:var(--text); text-decoration:none}
-    .wrap{max-width:1180px; margin:18px auto; padding:0 14px 24px}
-
-    /* Header */
+    .wrap{max-width:1100px;margin:22px auto;padding:0 14px}
     .topbar{
-      display:flex; gap:14px; align-items:center; justify-content:space-between;
-      padding:14px 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.06));
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
       border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
-    .brand{display:flex; gap:12px; align-items:center; min-width:280px}
-    .logoBox{
-      width:44px; height:44px; border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.10);
-      display:grid; place-items:center;
-      overflow:hidden;
-    }
-    .logoBox img{width:100%; height:100%; object-fit:cover}
-    .brandTitle{line-height:1.1}
-    .brandTitle b{display:block; font-size:16px; letter-spacing:.2px}
-    .brandTitle small{display:block; color:var(--muted2); font-size:12px; margin-top:2px}
-
-    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
-    .pill{
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.08);
-      color:var(--text);
-      cursor:pointer;
-      user-select:none;
-      font-weight:600;
-      font-size:13px;
-      display:inline-flex; align-items:center; gap:8px;
-      transition:.15s transform, .15s background;
-    }
-    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.12)}
-    .pill.primary{background: rgba(70,182,255,.18); border-color: rgba(70,182,255,.45)}
-    .pill.good{background: rgba(43,212,189,.18); border-color: rgba(43,212,189,.45)}
-    .pill.warn{background: rgba(255,209,102,.18); border-color: rgba(255,209,102,.45)}
-    .pill.danger{background: rgba(255,107,107,.18); border-color: rgba(255,107,107,.45)}
-    .pill:active{transform: translateY(0px) scale(.99)}
-    .status{
-      font-size:12px;
-      color:var(--muted);
-      padding:8px 10px;
-      border-radius:12px;
-      border:1px dashed rgba(255,255,255,.25);
-      background: rgba(0,0,0,.12);
-      max-width:340px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    /* Tabs */
-    .tabsRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px}
-    .tabBtn{
-      padding:10px 14px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.08);
-      cursor:pointer; font-weight:700; font-size:13px;
-      transition:.15s background;
-    }
-    .tabBtn.active{background: rgba(255,255,255,.14)}
-    .tabPanel{display:none}
-    .tabPanel.active{display:block}
-
-    /* Layout cards */
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:14px;
-      margin-top:14px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .brand{min-width:unset}
-      .status{max-width:unset}
-    }
-    .card{
-      border:1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(255,255,255,.07);
-      box-shadow: var(--shadow);
+      border-radius:18px;
+      box-shadow:var(--shadow);
       padding:14px;
-      backdrop-filter: blur(10px);
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:260px;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:12px;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      overflow:hidden; display:grid; place-items:center;
+      flex:0 0 auto;
+    }
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .title b{font-size:16px;letter-spacing:.3px}
+    .title .meta{font-size:12px;color:var(--muted);line-height:1.35;margin-top:2px}
+    .actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      padding:10px 12px;border-radius:999px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.2px;
+      transition:.15s transform, .15s background;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
+    .btn.primary{background:linear-gradient(180deg,var(--accent),#1b6fe0);border-color:rgba(255,255,255,.22)}
+    .btn.good{background:linear-gradient(180deg,var(--good),#1aa887);border-color:rgba(255,255,255,.20)}
+    .btn.warn{background:linear-gradient(180deg,var(--warn),#f0a93a);border-color:rgba(255,255,255,.20);color:#10243f}
+    .btn.bad{background:linear-gradient(180deg,var(--bad),#d93a60);border-color:rgba(255,255,255,.20)}
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
     .card h2{
-      margin:0 0 10px;
-      font-size:15px;
-      letter-spacing:.2px;
-      color:var(--text);
-    }
-    .hint{color:var(--muted2); font-size:12px; margin-top:4px}
-
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    @media (max-width:700px){ .row{grid-template-columns:1fr} }
-
-    .field{
-      display:flex; flex-direction:column; gap:6px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;
-      padding:10px 12px;
-    }
-    label{font-size:12px; color:var(--muted2); font-weight:700}
-    input, select, textarea{
-      width:100%;
-      border:0;
-      outline:none;
-      border-radius:12px;
-      padding:10px 10px;
-      background: rgba(0,0,0,.18);
-      color:var(--text);
+      margin:0;
+      padding:12px 14px;
+      background:linear-gradient(180deg, rgba(45,140,255,.22), rgba(255,255,255,.02));
+      border-bottom:1px solid var(--line);
       font-size:14px;
-    }
-    textarea{min-height:86px; resize:vertical}
-
-    .daysWrap{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px}
-    .dayChip{
-      padding:8px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.12);
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-      user-select:none;
-    }
-    .dayChip.on{background: rgba(70,182,255,.22); border-color: rgba(70,182,255,.55)}
-    .miniRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-
-    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-
-    /* Table */
-    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:16px; border:1px solid rgba(255,255,255,.14)}
-    thead th{
-      text-align:left; font-size:12px; color:var(--muted);
-      background: rgba(0,0,0,.18);
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.14);
-      white-space:nowrap;
-    }
-    tbody td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      font-size:13px;
-      vertical-align:top;
-    }
-    tbody tr:last-child td{border-bottom:0}
-    .tdSmall{color:var(--muted2); font-size:12px}
-    .badge{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.12);
-      font-weight:800; font-size:12px;
-    }
-    .badge.tag{border-color: rgba(70,182,255,.55); background: rgba(70,182,255,.18)}
-    .badge.nacht{border-color: rgba(255,209,102,.55); background: rgba(255,209,102,.18)}
-    .right{text-align:right}
-
-    /* PDF template */
-    #pdfCanvas{
-      position:fixed; left:-99999px; top:0;
-      width: 1123px; /* ~A4 landscape at 96dpi */
-      background:#ffffff;
-      color:#111;
-      font-family: Arial, sans-serif;
-    }
-    .pdfPage{
-      width:1123px; height:794px; /* A4 landscape */
-      padding:38px 46px;
-      position:relative;
-      background:#fff;
-    }
-    .pdfHeader{
-      display:flex; align-items:flex-start; justify-content:space-between;
-      border:2px solid #2a78c7;
-      border-radius:14px;
-      padding:14px 16px;
-    }
-    .pdfBrand{display:flex; gap:12px; align-items:center}
-    .pdfLogo{
-      width:54px; height:54px; border-radius:12px;
-      border:1px solid #d7e7fb;
-      overflow:hidden;
-      background:#f5fbff;
-      display:grid; place-items:center;
-    }
-    .pdfLogo img{width:100%; height:100%; object-fit:cover}
-    .pdfBrandText b{display:block; font-size:22px; color:#1e5fa5}
-    .pdfBrandText small{display:block; color:#444; margin-top:2px; font-size:12px; line-height:1.35}
-    .pdfMeta{font-size:13px; color:#111; text-align:right}
-    .pdfLine{
-      margin-top:14px;
-      height:4px; background: linear-gradient(90deg, #2a78c7, #6fbfff);
-      border-radius:999px;
-    }
-    .pdfTitle{
-      margin:18px 0 10px;
-      text-align:center;
-      font-size:22px;
-      color:#1e5fa5;
-      font-weight:900;
-    }
-    .pdfTable{
-      width:100%;
-      border-collapse:collapse;
-      border:1px solid #cfe3fb;
-      border-radius:10px;
-      overflow:hidden;
-      font-size:14px;
-    }
-    .pdfTable th{
-      background:#eaf4ff;
-      color:#1e5fa5;
-      text-align:left;
-      padding:10px;
-      border-bottom:1px solid #cfe3fb;
-      font-size:13px;
-      text-transform:uppercase;
       letter-spacing:.3px;
     }
-    .pdfTable td{
-      padding:10px;
-      border-bottom:1px solid #e6eef9;
-      color:#111;
+    .content{padding:14px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:560px){.row{grid-template-columns:1fr}}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    input, select, textarea{
+      width:100%;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
     }
-    .pdfTable tr:last-child td{border-bottom:0}
-    .pdfNotice{
-      margin-top:16px;
-      text-align:center;
-      font-size:13px;
-      color:#111;
-    }
-    .pdfNotice b{
-      display:block;
-      margin-bottom:6px;
-      color:#c0392b;
-      letter-spacing:.4px;
-    }
-    .pdfFooter{
-      position:absolute;
-      left:46px; right:46px; bottom:30px;
-      display:flex; align-items:center; justify-content:space-between;
-      color:#666;
+    textarea{min-height:92px;resize:vertical}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      border:1px solid var(--line);
+      padding:9px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      background:rgba(255,255,255,.08);
+      user-select:none;
+      font-weight:700;
       font-size:12px;
     }
-
-    /* Toast */
-    .toast{
-      position:fixed; left:50%; bottom:18px;
-      transform:translateX(-50%);
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.55);
-      color:#fff;
-      box-shadow: var(--shadow);
-      font-size:13px;
-      opacity:0;
-      pointer-events:none;
-      transition:.18s opacity, .18s transform;
-      max-width:min(680px, calc(100% - 24px));
-      white-space:nowrap;
+    .chip.on{background:linear-gradient(180deg, rgba(45,140,255,.45), rgba(27,111,224,.35)); border-color:rgba(255,255,255,.22)}
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
       overflow:hidden;
-      text-overflow:ellipsis;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.06);
     }
-    .toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      font-size:12px;
+      color:var(--text);
+      vertical-align:top;
+    }
+    th{color:rgba(255,255,255,.88);background:rgba(45,140,255,.18);text-align:left}
+    tr:last-child td{border-bottom:none}
+    .muted{color:var(--muted)}
+    .foot{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap
+    }
+    .note-red{color:#ffd0d8;font-weight:800}
+    .small{font-size:11px;color:rgba(255,255,255,.72)}
   </style>
 </head>
 
@@ -328,900 +158,543 @@
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="logoBox" title="Logo (logo.png)">
-          <img id="appLogo" alt="Logo" />
-        </div>
-        <div class="brandTitle">
+        <div class="logo" id="logoBox"><span class="small">MS</span></div>
+        <div class="title">
           <b>MASCULINE SECURITY — Dienstplan</b>
-          <small id="companyLine">Adresse · Tel · E-Mail</small>
+          <div class="meta">
+            Adresse: Werschenregerstraße 6, 28237 Bremen &nbsp;•&nbsp; Tel: 015778697052<br/>
+            E-Mail: Kontakt.mass.bremen@hotmail.com
+          </div>
         </div>
       </div>
 
       <div class="actions">
-        <span class="status" id="status">Bereit.</span>
-        <button class="pill primary" id="btnTabPlan">Wochenplan</button>
-        <button class="pill" id="btnTabDocs">Dokumentation</button>
-        <button class="pill" id="btnPDF">PDF</button>
-        <button class="pill" id="btnPrint">Drucken</button>
-        <button class="pill good" id="btnWhatsAppPDF">WhatsApp (PDF)</button>
-        <button class="pill danger" id="btnReset">Reset</button>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn primary" id="btnAdd">Eintrag speichern</button>
+        <button class="btn" id="btnPdf">PDF</button>
+        <button class="btn good" id="btnWaPdf">WhatsApp (PDF)</button>
       </div>
     </div>
 
-    <div class="tabsRow">
-      <button class="tabBtn active" data-tab="plan">Wochenplan</button>
-      <button class="tabBtn" data-tab="docs">Dokumentation</button>
-    </div>
-
-    <!-- PLAN TAB -->
-    <div class="tabPanel active" id="tab-plan">
-      <div class="grid">
-        <div class="card">
-          <h2>Wöchentlicher Mitarbeiter-Dienstplan</h2>
-          <div class="hint">
-            ✅ Auto: <b>Schicht (Tag/Nacht)</b> + <b>Uhrzeit</b> + <b>Notiz</b> · Datumformat: <b>dd.mm.yyyy</b> · Alles wird gespeichert.
-          </div>
-
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>Firmenname</label>
-              <input id="companyName" value="Masculine Security" />
-            </div>
-            <div class="field">
-              <label>Datum (für PDF)</label>
-              <input id="pdfDate" />
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>Adresse</label>
-              <input id="companyAddress" value="Werschenregerstraße 6, 28237 Bremen" />
-            </div>
-            <div class="field">
-              <label>Telefon</label>
-              <input id="companyPhone" value="015778697052" />
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>E-Mail</label>
-              <input id="companyEmail" value="Kontakt.mass.bremen@hotmail.com" />
-            </div>
-            <div class="field">
-              <label>Logo (optional) — empfehlung: <b>logo.png</b></label>
-              <input id="logoFile" type="file" accept="image/*" />
-              <div class="hint">Wenn kein Upload: App versucht automatisch <b>logo.png</b> zu laden.</div>
-            </div>
-          </div>
-
-          <hr style="border:0;border-top:1px solid rgba(255,255,255,.14);margin:14px 0">
-
+    <div class="grid">
+      <div class="card">
+        <h2>Wöchentlicher Mitarbeiter-Dienstplan</h2>
+        <div class="content">
           <div class="row">
-            <div class="field">
+            <div>
               <label>Mitarbeiter Name</label>
               <input id="empName" placeholder="z.B. Mustafa Mursal Abdi" />
             </div>
-            <div class="field">
+            <div>
               <label>Mitarbeiter-Nr (optional)</label>
-              <input id="empNo" placeholder="z.B. MS-001" />
+              <input id="empNr" placeholder="z.B. MS-001" />
             </div>
           </div>
 
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>Arbeitstage (klicken)</label>
-              <div class="daysWrap" id="daysWrap"></div>
-              <div class="hint">Mehrere Tage möglich (z.B. Mo, Di, Mi, Do).</div>
-            </div>
+          <div style="height:10px"></div>
 
-            <div class="field">
+          <div class="row">
+            <div>
               <label>Objekt / Einsatz</label>
-              <input id="objekt" placeholder="z.B. Hotel / Baustelle / LAST Birkenfels" />
-              <div class="hint">🔎 Auto-Notiz + Auto-Schicht kann aus Objekt erkannt werden (z.B. “Hotel”, “Asyl”, “Nacht”, “Rundgang”).</div>
+              <input id="objekt" placeholder="z.B. Hotel / Baustelle / Asylheim" />
+            </div>
+            <div>
+              <label>Logo (optional) — für PDF</label>
+              <input type="file" id="logoFile" accept="image/*"/>
+              <div class="small" style="margin-top:6px">Tipp: Logo wird gespeichert & im PDF angezeigt.</div>
             </div>
           </div>
 
-          <div class="row" style="margin-top:12px">
-            <div class="field">
+          <div style="height:10px"></div>
+
+          <label>Arbeitstage (klicken)</label>
+          <div class="chips" id="dayChips"></div>
+
+          <div style="height:10px"></div>
+
+          <div class="row">
+            <div>
               <label>Schicht (Tag/Nacht) — automatisch</label>
-              <input id="shift" readonly />
+              <select id="shift" disabled>
+                <option>Tag</option>
+                <option>Nacht</option>
+              </select>
+              <div class="small" style="margin-top:6px">Wird automatisch gesetzt: Tag = 07:00–19:00, Nacht = 19:00–07:00</div>
             </div>
-            <div class="field">
+            <div>
               <label>Uhrzeit — automatisch</label>
-              <input id="time" readonly />
+              <input id="time" disabled />
             </div>
           </div>
 
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>Notiz (automatisch)</label>
-              <input id="note" readonly />
-              <div class="hint">Auto-Notiz kann angepasst werden über “Dokumentation” (Regeln).</div>
+          <div style="height:10px"></div>
+
+          <div class="row">
+            <div>
+              <label>Datum (für PDF)</label>
+              <input id="pdfDate" />
+              <div class="small" style="margin-top:6px">Format: TT.MM.JJJJ (z.B. 16.02.2026)</div>
             </div>
-            <div class="field">
-              <label>Bereit</label>
-              <div class="miniRow">
-                <label class="badge" style="margin:0">
-                  <input type="checkbox" id="ready" style="width:18px;height:18px; margin:0 6px 0 0" />
-                  Bereit
-                </label>
-                <span class="tdSmall">Wird im Plan gespeichert.</span>
-              </div>
+            <div>
+              <label>Notiz — automatisch</label>
+              <input id="note" placeholder="z.B. Rundgang / Schlüssel" />
+              <div class="small" style="margin-top:6px">Wenn leer: wird automatisch „Rundgang / Schlüssel“ gesetzt.</div>
             </div>
           </div>
 
-          <div class="btnRow">
-            <button class="pill good" id="btnAdd">+ Eintrag speichern</button>
-            <button class="pill" id="btnExportCSV">Export CSV</button>
-            <button class="pill warn" id="btnCopyText">Text kopieren</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Vorschau (Text an Mitarbeiter senden)</h2>
-          <div class="hint">Text wird automatisch aus gespeicherten Einträgen gebaut. Kann direkt in WhatsApp eingefügt werden.</div>
-          <div class="field" style="margin-top:12px">
-            <label>Text</label>
-            <textarea id="previewText" readonly></textarea>
-          </div>
-
-          <div class="btnRow">
-            <button class="pill primary" id="btnOpenWhatsAppText">WhatsApp (Text)</button>
-            <button class="pill" id="btnWhatsAppPDF2">WhatsApp (PDF)</button>
-          </div>
-
-          <hr style="border:0;border-top:1px solid rgba(255,255,255,.14);margin:14px 0">
-
-          <h2>Gespeicherte Wochenpläne</h2>
-          <div class="hint">Diese Liste wird im PDF angezeigt.</div>
-
-          <div style="margin-top:12px; overflow:auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Mitarbeiter</th>
-                  <th>Nr.</th>
-                  <th>Tage</th>
-                  <th>Objekt</th>
-                  <th>Schicht</th>
-                  <th>Uhrzeit</th>
-                  <th>Notiz</th>
-                  <th class="right">Aktion</th>
-                </tr>
-              </thead>
-              <tbody id="planBody"></tbody>
-            </table>
+          <div class="hint">
+            <span class="note-red">Hinweis:</span> WhatsApp kann aus dem Browser **kein PDF automatisch anhängen** (Sicherheit).  
+            Button öffnet PDF-Print + öffnet WhatsApp Chat mit Text — du fügst die Datei dann kurz manuell hinzu.
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- DOCS TAB -->
-    <div class="tabPanel" id="tab-docs">
-      <div class="grid">
-        <div class="card">
-          <h2>Dokumentation (Regeln & Vorlagen)</h2>
-          <div class="hint">
-            Hier kannst du Auto-Notiz Regeln definieren (z.B. “Hotel” → “Rundgang / Schlüssel”).
-          </div>
+      <div class="card">
+        <h2>Vorschau + Gespeicherte Einträge</h2>
+        <div class="content">
+          <label>Vorschau (WhatsApp Text)</label>
+          <textarea id="preview" readonly></textarea>
 
-          <div class="row" style="margin-top:12px">
-            <div class="field">
-              <label>Auto-Notiz Regeln (eine pro Zeile)</label>
-              <textarea id="noteRules" placeholder="Beispiel:
-hotel => Rundgang / Schlüssel
-baustelle => Zugang / Ausweis
-asyl => Kontrollgang / Schlüssel
-schlüssel => Schlüssel übernehmen
-uniform => Uniform / Weste"></textarea>
-              <div class="hint">Format: <b>keyword => Notiz</b> (case-insensitive).</div>
-            </div>
+          <div style="height:12px"></div>
 
-            <div class="field">
-              <label>Schicht Regeln (optional)</label>
-              <textarea id="shiftRules" placeholder="Beispiel:
-nacht => Nacht
-night => Nacht
-tag => Tag
-day => Tag"></textarea>
-              <div class="hint">Wenn Objekt “nacht” enthält → Schicht Nacht.</div>
-            </div>
-          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Mitarbeiter</th>
+                <th>Tage</th>
+                <th>Objekt</th>
+                <th>Schicht</th>
+                <th>Uhrzeit</th>
+                <th>Notiz</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="7" class="muted">Noch keine Einträge.</td></tr>
+            </tbody>
+          </table>
 
-          <div class="btnRow">
-            <button class="pill good" id="btnSaveDocs">Dokumentation speichern</button>
-            <button class="pill danger" id="btnResetDocs">Dokumentation reset</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Hilfe (WhatsApp PDF)</h2>
-          <div class="hint">
-            ⚠️ Desktop-Browser dürfen <b>keine Datei automatisch</b> in WhatsApp anhängen (Sicherheitsregel).
-            <br>✅ Mobile (Android) kann oft direkt teilen, wenn <b>navigator.share</b> unterstützt wird.
-          </div>
-
-          <div class="field" style="margin-top:12px">
-            <label>Was die App macht</label>
-            <textarea readonly>
-1) PDF erzeugen
-2) PDF automatisch speichern (Download)
-3) WhatsApp öffnen + Text vorbereiten
-4) Du: WhatsApp → 📎 → Dokument → PDF auswählen → Senden
-
-Wenn dein Handy/Browser "Datei teilen" erlaubt:
-→ App versucht direkt "Share" mit PDF Datei.
-            </textarea>
-          </div>
-
-          <div class="btnRow">
-            <button class="pill good" id="btnWhatsAppPDF3">WhatsApp (PDF) testen</button>
-            <button class="pill" id="btnPDF2">Nur PDF</button>
+          <div class="foot">
+            <div>Auto-Save: <b id="autosave">AN</b></div>
+            <div>Version: <b>vFinal</b></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Hidden PDF canvas -->
-  <div id="pdfCanvas" aria-hidden="true">
-    <div class="pdfPage" id="pdfPage">
-      <div class="pdfHeader">
-        <div class="pdfBrand">
-          <div class="pdfLogo"><img id="pdfLogo" alt="Logo" /></div>
-          <div class="pdfBrandText">
-            <b id="pdfCompanyName">Masculine Security</b>
-            <small id="pdfCompanyMeta">
-              Adresse: Werschenregerstraße 6, 28237 Bremen<br>
-              Tel: 015778697052<br>
-              E-Mail: Kontakt.mass.bremen@hotmail.com
-            </small>
-          </div>
-        </div>
-        <div class="pdfMeta">
-          <div><b>Datum:</b> <span id="pdfDateOut">16.02.2026</span></div>
-        </div>
-      </div>
+<script>
+/* =========================
+   STATE + STORAGE
+========================= */
+const STORE_KEY = "ms_dienstplan_final";
+const state = {
+  meta: {
+    company: "Masculine Security",
+    address: "Werschenregerstraße 6, 28237 Bremen",
+    phone: "015778697052",
+    email: "Kontakt.mass.bremen@hotmail.com",
+    logoDataUrl: ""
+  },
+  entries: []
+};
 
-      <div class="pdfLine"></div>
-      <div class="pdfTitle">Vorläufiger Dienstplan</div>
-
-      <table class="pdfTable" id="pdfTable">
-        <thead>
-          <tr>
-            <th>TAG</th>
-            <th>UHRZEIT</th>
-            <th>OBJEKT</th>
-            <th>NOTIZ</th>
-          </tr>
-        </thead>
-        <tbody id="pdfRows"></tbody>
-      </table>
-
-      <div class="pdfNotice">
-        <b>DRINGEND BEACHTEN:</b>
-        Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
-        Verspätungen und Ausfälle sind unverzüglich telefonisch zu melden!<br>
-        Stundenzettel spätestens 2 Tage vor Monatsende einreichen.
-      </div>
-
-      <div class="pdfFooter">
-        <div id="pdfFooterLeft">Masculine Security — Dienstplan</div>
-        <div id="pdfFooterRight">Seite 1 von 1</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    /**********************
-     * Storage keys
-     **********************/
-    const KEY_PLAN = "ms_dienstplan_v1";
-    const KEY_META = "ms_meta_v1";
-    const KEY_DOCS = "ms_docs_v1";
-    const DEFAULT_TIME = { Tag: "07:00–19:00", Nacht: "19:00–07:00" };
-    const DAYS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
-
-    /**********************
-     * Helpers
-     **********************/
-    const $ = (s)=>document.querySelector(s);
-    const $$ = (s)=>Array.from(document.querySelectorAll(s));
-
-    function toast(msg){
-      const t = $("#toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"), 2600);
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function load(){
+  const raw = localStorage.getItem(STORE_KEY);
+  if(!raw) return;
+  try{
+    const obj = JSON.parse(raw);
+    if(obj && typeof obj==="object"){
+      Object.assign(state.meta, obj.meta||{});
+      state.entries = Array.isArray(obj.entries) ? obj.entries : [];
     }
-    function setStatus(msg){ $("#status").textContent = msg; }
-
-    function todayDE(){
-      return new Date().toLocaleDateString("de-DE"); // dd.mm.yyyy
-    }
-
-    function safeJSONParse(str, fallback){
-      try{ return JSON.parse(str) ?? fallback; }catch{ return fallback; }
-    }
-
-    function normalize(s){
-      return (s||"").toString().trim().toLowerCase();
-    }
-
-    function loadPlan(){
-      return safeJSONParse(localStorage.getItem(KEY_PLAN), []);
-    }
-    function savePlan(plan){
-      localStorage.setItem(KEY_PLAN, JSON.stringify(plan));
-    }
-
-    function loadMeta(){
-      return safeJSONParse(localStorage.getItem(KEY_META), {
-        companyName:"Masculine Security",
-        companyAddress:"Werschenregerstraße 6, 28237 Bremen",
-        companyPhone:"015778697052",
-        companyEmail:"Kontakt.mass.bremen@hotmail.com",
-        pdfDate: todayDE(),
-        logoDataUrl: null
-      });
-    }
-    function saveMeta(meta){
-      localStorage.setItem(KEY_META, JSON.stringify(meta));
-    }
-
-    function loadDocs(){
-      return safeJSONParse(localStorage.getItem(KEY_DOCS), {
-        noteRules:
-`hotel => Rundgang / Schlüssel
-asyl => Kontrollgang / Schlüssel
-baustelle => Zugang / Ausweis
-schlüssel => Schlüssel übernehmen
-uniform => Uniform / Weste`,
-        shiftRules:
-`nacht => Nacht
-night => Nacht
-tag => Tag
-day => Tag`
-      });
-    }
-    function saveDocs(docs){
-      localStorage.setItem(KEY_DOCS, JSON.stringify(docs));
-    }
-
-    function parseRules(text){
-      const lines = (text||"").split("\n").map(l=>l.trim()).filter(Boolean);
-      const rules = [];
-      for(const l of lines){
-        const idx = l.indexOf("=>");
-        if(idx===-1) continue;
-        const k = l.slice(0,idx).trim();
-        const v = l.slice(idx+2).trim();
-        if(k && v) rules.push({k: normalize(k), v});
-      }
-      return rules;
-    }
-
-    function pickByRules(value, rules){
-      const val = normalize(value);
-      if(!val) return null;
-      for(const r of rules){
-        if(val.includes(r.k)) return r.v;
-      }
-      return null;
-    }
-
-    function autoShift(objekt, docs){
-      const byRule = pickByRules(objekt, parseRules(docs.shiftRules));
-      if(byRule) return byRule;
-
-      const o = normalize(objekt);
-      if(/nacht|night|ns|nachtdienst/.test(o)) return "Nacht";
-      return "Tag";
-    }
-
-    function autoNote(objekt, docs){
-      const byRule = pickByRules(objekt, parseRules(docs.noteRules));
-      if(byRule) return byRule;
-
-      const o = normalize(objekt);
-      if(o.includes("hotel")) return "Rundgang / Schlüssel";
-      if(o.includes("asyl")) return "Kontrollgang / Schlüssel";
-      if(o.includes("baustelle")) return "Zugang / Ausweis";
-      if(o.includes("uniform")) return "Uniform / Weste";
-      return "—";
-    }
-
-    function makePreviewText(meta, plan){
-      if(plan.length===0){
-        return `Masculine Security — Dienstplan\nDatum: ${meta.pdfDate}\n\nNoch keine Einträge.`;
-      }
-      const lines = [];
-      lines.push(`${meta.companyName} — Dienstplan`);
-      lines.push(`Datum: ${meta.pdfDate}`);
-      lines.push("");
-      for(const p of plan){
-        const days = (p.days||[]).join(", ");
-        lines.push(`• ${p.empName}${p.empNo?` (${p.empNo})`:``}: ${days} — ${p.objekt} — ${p.shift} — ${p.time} — ${p.note}`);
-      }
-      lines.push("");
-      lines.push("Bitte bestätigen.");
-      return lines.join("\n");
-    }
-
-    function escapeCSV(s){
-      const v = (s??"").toString();
-      if(/[",\n]/.test(v)) return `"${v.replace(/"/g,'""')}"`;
-      return v;
-    }
-
-    /**********************
-     * UI init
-     **********************/
-    const state = {
-      meta: loadMeta(),
-      docs: loadDocs(),
-      plan: loadPlan(),
-      selectedDays: new Set()
-    };
-
-    function renderDaysChips(){
-      const wrap = $("#daysWrap");
-      wrap.innerHTML = "";
-      DAYS.forEach(d=>{
-        const b = document.createElement("div");
-        b.className = "dayChip";
-        b.textContent = d;
-        b.addEventListener("click", ()=>{
-          if(state.selectedDays.has(d)) state.selectedDays.delete(d);
-          else state.selectedDays.add(d);
-          b.classList.toggle("on");
-          autosaveSoon();
-        });
-        wrap.appendChild(b);
-      });
-    }
-
-    function fillMetaInputs(){
-      $("#companyName").value = state.meta.companyName;
-      $("#companyAddress").value = state.meta.companyAddress;
-      $("#companyPhone").value = state.meta.companyPhone;
-      $("#companyEmail").value = state.meta.companyEmail;
-
-      // Default required: pdf date 16.02.2026 if user wants fixed today
-      $("#pdfDate").value = state.meta.pdfDate || todayDE();
-
-      // header line
-      $("#companyLine").textContent =
-        `${state.meta.companyAddress} · Tel: ${state.meta.companyPhone} · ${state.meta.companyEmail}`;
-
-      // logo
-      setLogo(state.meta.logoDataUrl);
-    }
-
-    function setLogo(dataUrl){
-      // fallback to logo.png if no dataUrl
-      const appLogo = $("#appLogo");
-      const pdfLogo = $("#pdfLogo");
-
-      const src = dataUrl || "logo.png";
-      appLogo.src = src;
-      pdfLogo.src = src;
-
-      // if logo.png missing, show placeholder
-      appLogo.onerror = ()=>{
-        appLogo.removeAttribute("src");
-        appLogo.alt = "MS";
-      };
-      pdfLogo.onerror = ()=>{
-        pdfLogo.removeAttribute("src");
-        pdfLogo.alt = "MS";
-      };
-    }
-
-    function renderPlanTable(){
-      const body = $("#planBody");
-      body.innerHTML = "";
-      const sorted = [...state.plan].sort((a,b)=> (a.empName||"").localeCompare(b.empName||""));
-      for(const p of sorted){
-        const tr = document.createElement("tr");
-        const badge = p.shift==="Nacht"
-          ? `<span class="badge nacht">Nacht</span>`
-          : `<span class="badge tag">Tag</span>`;
-
-        tr.innerHTML = `
-          <td><b>${p.empName||""}</b><div class="tdSmall">${p.ready? "✅ Bereit" : "—"}</div></td>
-          <td>${p.empNo||"—"}</td>
-          <td>${(p.days||[]).join(", ")}</td>
-          <td>${p.objekt||"—"}</td>
-          <td>${badge}</td>
-          <td>${p.time||"—"}</td>
-          <td>${p.note||"—"}</td>
-          <td class="right">
-            <button class="pill danger" data-id="${p.id}" style="padding:8px 10px;font-size:12px">Löschen</button>
-          </td>
-        `;
-        tr.querySelector("button").addEventListener("click", (e)=>{
-          const id = e.currentTarget.getAttribute("data-id");
-          state.plan = state.plan.filter(x=>x.id!==id);
-          savePlan(state.plan);
-          renderAll();
-          toast("Eintrag gelöscht.");
-        });
-        body.appendChild(tr);
-      }
-
-      $("#previewText").value = makePreviewText(state.meta, state.plan);
-    }
-
-    function applyAutoFields(){
-      const objekt = $("#objekt").value;
-      const shift = autoShift(objekt, state.docs);
-      const time = DEFAULT_TIME[shift] || DEFAULT_TIME.Tag;
-      const note = autoNote(objekt, state.docs);
-
-      $("#shift").value = shift;
-      $("#time").value = time;
-      $("#note").value = note;
-    }
-
-    function autosaveMeta(){
-      state.meta.companyName = $("#companyName").value.trim() || "Masculine Security";
-      state.meta.companyAddress = $("#companyAddress").value.trim() || "";
-      state.meta.companyPhone = $("#companyPhone").value.trim() || "";
-      state.meta.companyEmail = $("#companyEmail").value.trim() || "";
-      state.meta.pdfDate = $("#pdfDate").value.trim() || todayDE();
-      saveMeta(state.meta);
-
-      $("#companyLine").textContent =
-        `${state.meta.companyAddress} · Tel: ${state.meta.companyPhone} · ${state.meta.companyEmail}`;
-      $("#previewText").value = makePreviewText(state.meta, state.plan);
-    }
-
-    let saveTimer = null;
-    function autosaveSoon(){
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(()=>{
-        autosaveMeta();
-        applyAutoFields();
-        setStatus("Gespeichert.");
-      }, 250);
-    }
-
-    function renderAll(){
-      fillMetaInputs();
-      renderPlanTable();
-      applyAutoFields();
-      setStatus("Bereit.");
-    }
-
-    /**********************
-     * PDF Generation
-     **********************/
-    async function buildPDFBlob(){
-      // Fill PDF template
-      $("#pdfCompanyName").textContent = state.meta.companyName || "Masculine Security";
-      $("#pdfCompanyMeta").innerHTML =
-        `Adresse: ${state.meta.companyAddress}<br>`+
-        `Tel: ${state.meta.companyPhone}<br>`+
-        `E-Mail: ${state.meta.companyEmail}`;
-      $("#pdfDateOut").textContent = state.meta.pdfDate || todayDE();
-      $("#pdfFooterLeft").textContent = `${state.meta.companyName} — Dienstplan`;
-
-      // Build rows (simple: group by first employee in list, show days rows)
-      const tbody = $("#pdfRows");
-      tbody.innerHTML = "";
-
-      // Create day → row map
-      const dayMap = new Map(DAYS.map(d=>[d,{time:"—", objekt:"—", note:"—"}]));
-      // If multiple entries, pick last for each day (simple)
-      for(const p of state.plan){
-        for(const d of (p.days||[])){
-          dayMap.set(d, {time:p.time||"—", objekt:p.objekt||"—", note:p.note||"—"});
-        }
-      }
-
-      for(const d of DAYS){
-        const row = dayMap.get(d) || {time:"—", objekt:"—", note:"—"};
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${d}</td><td>${row.time}</td><td>${row.objekt}</td><td>${row.note}</td>`;
-        tbody.appendChild(tr);
-      }
-
-      // Ensure logo is loaded
-      await new Promise(res=>{
-        const img = $("#pdfLogo");
-        if(img.complete && img.naturalWidth>0) return res();
-        img.onload = ()=>res();
-        img.onerror = ()=>res();
-      });
-
-      // Render to canvas
-      const node = $("#pdfPage");
-      const canvas = await html2canvas(node, {scale:2, useCORS:true, backgroundColor:"#ffffff"});
-      const imgData = canvas.toDataURL("image/png");
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({orientation:"landscape", unit:"pt", format:"a4"});
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-
-      // Fit image to page
-      pdf.addImage(imgData, "PNG", 0, 0, pageW, pageH);
-
-      // Return Blob
-      const blob = pdf.output("blob");
-      return blob;
-    }
-
-    async function downloadPDF(){
-      setStatus("PDF wird erstellt…");
-      const blob = await buildPDFBlob();
-      const name = `Dienstplan_${(state.meta.pdfDate||todayDE()).replaceAll(".","-")}.pdf`;
-
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      setStatus("PDF gespeichert (Download).");
-      toast("PDF gespeichert. (Downloads)");
-      return { blob, name };
-    }
-
-    /**********************
-     * WhatsApp PDF (SOLVED)
-     * - Mobile: tries navigator.share(files)
-     * - Desktop: auto-download + open WhatsApp with text (user attaches file)
-     **********************/
-    async function sendWhatsAppPDF(){
-      // 1) Ensure date is saved
-      autosaveMeta();
-
-      // 2) Create PDF + auto download (always)
-      const { blob, name } = await downloadPDF();
-
-      // 3) Text for WhatsApp
-      const text =
-`${state.meta.companyName} – Dienstplan
-Datum: ${state.meta.pdfDate}
-
-✅ PDF wurde gespeichert: ${name}
-➡️ WhatsApp: 📎 → Dokument → "${name}" auswählen → Senden.`;
-
-      // 4) Try direct share with file (mostly works on Android Chrome)
-      try{
-        const file = new File([blob], name, {type:"application/pdf"});
-        if(navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share){
-          setStatus("Teilen…");
-          await navigator.share({
-            title: `${state.meta.companyName} Dienstplan`,
-            text,
-            files: [file],
-          });
-          setStatus("WhatsApp Teilen: fertig.");
-          return;
-        }
-      }catch(e){
-        // ignore and fallback
-      }
-
-      // 5) Fallback: open WhatsApp text
-      const wa = "https://wa.me/?text=" + encodeURIComponent(text);
-      window.open(wa, "_blank", "noopener,noreferrer");
-      setStatus("WhatsApp geöffnet (Text). Datei bitte anhängen.");
-      toast("WhatsApp geöffnet. PDF bitte als Dokument anhängen.");
-    }
-
-    /**********************
-     * Export CSV / Copy text / WhatsApp text
-     **********************/
-    function exportCSV(){
-      const header = ["Mitarbeiter","Nr","Tage","Objekt","Schicht","Uhrzeit","Notiz","Bereit"];
-      const rows = [header.join(",")];
-      for(const p of state.plan){
-        rows.push([
-          escapeCSV(p.empName||""),
-          escapeCSV(p.empNo||""),
-          escapeCSV((p.days||[]).join(" ")),
-          escapeCSV(p.objekt||""),
-          escapeCSV(p.shift||""),
-          escapeCSV(p.time||""),
-          escapeCSV(p.note||""),
-          escapeCSV(p.ready ? "JA" : "NEIN"),
-        ].join(","));
-      }
-      const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Dienstplan_${(state.meta.pdfDate||todayDE()).replaceAll(".","-")}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      toast("CSV exportiert.");
-    }
-
-    async function copyText(){
-      const t = $("#previewText").value;
-      try{
-        await navigator.clipboard.writeText(t);
-        toast("Text kopiert.");
-      }catch{
-        // fallback
-        const ta = $("#previewText");
-        ta.focus(); ta.select();
-        document.execCommand("copy");
-        toast("Text kopiert (fallback).");
-      }
-    }
-
-    function openWhatsAppText(){
-      autosaveMeta();
-      const text = $("#previewText").value || makePreviewText(state.meta, state.plan);
-      window.open("https://wa.me/?text="+encodeURIComponent(text), "_blank", "noopener,noreferrer");
-    }
-
-    /**********************
-     * Events
-     **********************/
-    document.addEventListener("DOMContentLoaded", ()=>{
-      // Tabs
-      $$(".tabBtn").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          $$(".tabBtn").forEach(x=>x.classList.remove("active"));
-          b.classList.add("active");
-          const tab = b.getAttribute("data-tab");
-          $$(".tabPanel").forEach(p=>p.classList.remove("active"));
-          $("#tab-"+tab).classList.add("active");
-        });
-      });
-
-      // Header quick tab buttons
-      $("#btnTabPlan").addEventListener("click", ()=>$$(".tabBtn")[0].click());
-      $("#btnTabDocs").addEventListener("click", ()=>$$(".tabBtn")[1].click());
-
-      // Default date (must be dd.mm.yyyy)
-      if(!state.meta.pdfDate) state.meta.pdfDate = todayDE();
-      $("#pdfDate").value = state.meta.pdfDate || todayDE();
-
-      // Render day chips
-      renderDaysChips();
-
-      // Meta inputs autosave
-      ["companyName","companyAddress","companyPhone","companyEmail","pdfDate"].forEach(id=>{
-        $("#"+id).addEventListener("input", autosaveSoon);
-      });
-
-      // Objekt triggers auto shift/time/note
-      $("#objekt").addEventListener("input", ()=>{
-        applyAutoFields();
-        autosaveSoon();
-      });
-
-      // Logo upload
-      $("#logoFile").addEventListener("change", async (e)=>{
-        const f = e.target.files && e.target.files[0];
-        if(!f) return;
-        const reader = new FileReader();
-        reader.onload = ()=>{
-          state.meta.logoDataUrl = reader.result;
-          saveMeta(state.meta);
-          setLogo(state.meta.logoDataUrl);
-          toast("Logo gespeichert.");
-        };
-        reader.readAsDataURL(f);
-      });
-
-      // Add entry
-      $("#btnAdd").addEventListener("click", ()=>{
-        const empName = $("#empName").value.trim();
-        const empNo = $("#empNo").value.trim();
-        const objekt = $("#objekt").value.trim();
-        const days = Array.from(state.selectedDays);
-
-        if(!empName){ toast("Bitte Mitarbeiter Name eingeben."); return; }
-        if(days.length===0){ toast("Bitte Arbeitstage anklicken."); return; }
-        if(!objekt){ toast("Bitte Objekt / Einsatz eingeben."); return; }
-
-        applyAutoFields();
-
-        const entry = {
-          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
-          empName,
-          empNo,
-          days: days.slice(),
-          objekt,
-          shift: $("#shift").value,
-          time: $("#time").value,
-          note: $("#note").value,
-          ready: $("#ready").checked
-        };
-        state.plan.push(entry);
-        savePlan(state.plan);
-
-        // Reset form bits (keep meta)
-        $("#empName").value = "";
-        $("#empNo").value = "";
-        $("#objekt").value = "";
-        $("#ready").checked = false;
-        state.selectedDays.clear();
-        $$("#daysWrap .dayChip").forEach(x=>x.classList.remove("on"));
-        applyAutoFields();
-
-        renderPlanTable();
-        toast("Eintrag gespeichert.");
-      });
-
-      // Export CSV
-      $("#btnExportCSV").addEventListener("click", exportCSV);
-
-      // Copy text
-      $("#btnCopyText").addEventListener("click", copyText);
-
-      // WhatsApp text
-      $("#btnOpenWhatsAppText").addEventListener("click", openWhatsAppText);
-
-      // PDF / Print / WhatsApp PDF
-      $("#btnPDF").addEventListener("click", downloadPDF);
-      $("#btnPDF2").addEventListener("click", downloadPDF);
-      $("#btnPrint").addEventListener("click", ()=>window.print());
-
-      $("#btnWhatsAppPDF").addEventListener("click", sendWhatsAppPDF);
-      $("#btnWhatsAppPDF2").addEventListener("click", sendWhatsAppPDF);
-      $("#btnWhatsAppPDF3").addEventListener("click", sendWhatsAppPDF);
-
-      // Reset
-      $("#btnReset").addEventListener("click", ()=>{
-        if(!confirm("Alles löschen? (Plan + Meta)")) return;
-        localStorage.removeItem(KEY_PLAN);
-        localStorage.removeItem(KEY_META);
-        state.plan = [];
-        state.meta = loadMeta();
-        renderAll();
-        toast("Reset 완료.");
-      });
-
-      // Docs
-      $("#noteRules").value = state.docs.noteRules || "";
-      $("#shiftRules").value = state.docs.shiftRules || "";
-
-      $("#btnSaveDocs").addEventListener("click", ()=>{
-        state.docs.noteRules = $("#noteRules").value;
-        state.docs.shiftRules = $("#shiftRules").value;
-        saveDocs(state.docs);
-        applyAutoFields();
-        toast("Dokumentation gespeichert.");
-      });
-
-      $("#btnResetDocs").addEventListener("click", ()=>{
-        if(!confirm("Dokumentation reset?")) return;
-        localStorage.removeItem(KEY_DOCS);
-        state.docs = loadDocs();
-        $("#noteRules").value = state.docs.noteRules;
-        $("#shiftRules").value = state.docs.shiftRules;
-        applyAutoFields();
-        toast("Dokumentation reset.");
-      });
-
-      // Load initial
-      renderAll();
-
-      // Ensure default logo load attempt
-      setLogo(state.meta.logoDataUrl);
-
-      // Make sure date always dd.mm.yyyy (if user deletes)
-      $("#pdfDate").addEventListener("blur", ()=>{
-        if(!$("#pdfDate").value.trim()){
-          $("#pdfDate").value = todayDE();
-          autosaveMeta();
-        }
-      });
+  }catch(e){}
+}
+
+/* =========================
+   HELPERS
+========================= */
+const DAYS = [
+  {k:"Mo", l:"Montag"},
+  {k:"Di", l:"Dienstag"},
+  {k:"Mi", l:"Mittwoch"},
+  {k:"Do", l:"Donnerstag"},
+  {k:"Fr", l:"Freitag"},
+  {k:"Sa", l:"Samstag"},
+  {k:"So", l:"Sonntag"},
+];
+
+function todayDE(){
+  // default your requested format (can be edited)
+  return "16.02.2026";
+}
+function normalize(s){ return String(s||"").trim(); }
+
+const SHIFT_TIMES = {
+  Tag: "07:00–19:00",
+  Nacht: "19:00–07:00"
+};
+
+function autoShiftByObjekt(obj){
+  const t = normalize(obj).toLowerCase();
+  // simple keyword rules (you can extend)
+  if(/nacht|night|hotel|asyl|heim|rundgang/.test(t)) return "Nacht";
+  return "Tag";
+}
+
+function autoNoteIfEmpty(note){
+  const n = normalize(note);
+  return n ? n : "Rundgang / Schlüssel";
+}
+
+function buildWhatsAppText(entry){
+  const date = normalize(document.getElementById("pdfDate").value) || todayDE();
+  return (
+`Dienstplan – ${date}
+
+Mitarbeiter: ${entry.empName}${entry.empNr ? " ("+entry.empNr+")" : ""}
+Tage: ${entry.days.join(", ")}
+Schicht: ${entry.shift}
+Uhrzeit: ${entry.time}
+Objekt: ${entry.objekt}
+Notiz: ${entry.note}
+
+Masculine Security
+Tel: ${state.meta.phone}
+E-Mail: ${state.meta.email}`
+  );
+}
+
+/* =========================
+   UI INIT
+========================= */
+const $ = (id)=>document.getElementById(id);
+
+function renderLogo(){
+  const box = $("logoBox");
+  box.innerHTML = "";
+  if(state.meta.logoDataUrl){
+    const img = document.createElement("img");
+    img.src = state.meta.logoDataUrl;
+    box.appendChild(img);
+  }else{
+    box.innerHTML = '<span class="small">MS</span>';
+  }
+}
+
+function renderDaysChips(selected=new Set()){
+  const wrap = $("dayChips");
+  wrap.innerHTML = "";
+  DAYS.forEach(d=>{
+    const b = document.createElement("div");
+    b.className = "chip"+(selected.has(d.k)?" on":"");
+    b.textContent = d.k+" — "+d.l;
+    b.dataset.day = d.k;
+    b.addEventListener("click", ()=>{
+      if(selected.has(d.k)) selected.delete(d.k); else selected.add(d.k);
+      renderDaysChips(selected);
+      updatePreviewFromForm(selected);
     });
-  </script>
+    wrap.appendChild(b);
+  });
+  return selected;
+}
+
+let selectedDays = renderDaysChips(new Set(["Mo","Di","Mi","Do"]));
+
+function updateShiftAndTime(){
+  const obj = $("objekt").value;
+  const shift = autoShiftByObjekt(obj);
+  $("shift").value = shift;
+  $("time").value = SHIFT_TIMES[shift];
+}
+
+function updatePreviewFromForm(daysSet){
+  const empName = normalize($("empName").value) || "Mitarbeiter";
+  const empNr   = normalize($("empNr").value);
+  const objekt  = normalize($("objekt").value) || "Objekt";
+  updateShiftAndTime();
+  const shift = $("shift").value;
+  const time  = $("time").value;
+  const note  = autoNoteIfEmpty($("note").value);
+
+  const entry = {
+    empName, empNr, objekt,
+    days: Array.from(daysSet),
+    shift, time,
+    note
+  };
+  $("preview").value = buildWhatsAppText(entry);
+}
+
+function renderTable(){
+  const body = $("tbody");
+  if(!state.entries.length){
+    body.innerHTML = '<tr><td colspan="7" class="muted">Noch keine Einträge.</td></tr>';
+    return;
+  }
+  body.innerHTML = "";
+  state.entries.forEach((e, idx)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(e.empName)} ${e.empNr?'<span class="muted">('+escapeHtml(e.empNr)+')</span>':""}</td>
+      <td>${escapeHtml(e.days.join(", "))}</td>
+      <td>${escapeHtml(e.objekt)}</td>
+      <td>${escapeHtml(e.shift)}</td>
+      <td>${escapeHtml(e.time)}</td>
+      <td>${escapeHtml(e.note)}</td>
+      <td>
+        <button class="btn" data-act="copy" data-i="${idx}">Text</button>
+        <button class="btn bad" data-act="del" data-i="${idx}">Delete</button>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+
+  body.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.dataset.i);
+      const act = btn.dataset.act;
+      if(act==="del"){
+        state.entries.splice(i,1);
+        save(); renderTable(); updatePreviewFromForm(selectedDays);
+      }
+      if(act==="copy"){
+        const text = buildWhatsAppText(state.entries[i]);
+        navigator.clipboard?.writeText(text).catch(()=>{});
+        $("preview").value = text;
+        alert("Text in Vorschau (und Clipboard wenn erlaubt).");
+      }
+    });
+  });
+}
+
+function escapeHtml(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* =========================
+   PDF WINDOW (PRINT)
+========================= */
+function buildPdfHtml(){
+  const date = normalize($("pdfDate").value) || todayDE();
+  const empName = normalize($("empName").value) || "Mitarbeiter";
+  const empNr   = normalize($("empNr").value);
+  const objekt  = normalize($("objekt").value) || "Objekt";
+  updateShiftAndTime();
+  const shift = $("shift").value;
+  const time  = $("time").value;
+  const note  = autoNoteIfEmpty($("note").value);
+  const days  = Array.from(selectedDays);
+
+  const logo = state.meta.logoDataUrl ? `<img src="${state.meta.logoDataUrl}" style="width:46px;height:46px;border-radius:10px;object-fit:cover">`
+                                     : `<div style="width:46px;height:46px;border-radius:10px;background:#0b2a55;color:#fff;display:grid;place-items:center;font-weight:800">MS</div>`;
+
+  // A4-ish clean like your example, but BLUE
+  const rows = DAYS.map(d=>{
+    const on = days.includes(d.k);
+    return `
+      <tr>
+        <td style="width:80px">${d.k}</td>
+        <td style="width:140px">${on ? (shift==="Nacht" ? "19:00–07:00" : "07:00–19:00") : "—"}</td>
+        <td>${on ? escapeHtml(objekt) : "—"}</td>
+        <td>${on ? escapeHtml(note) : "—"}</td>
+      </tr>
+    `;
+  }).join("");
+
+  return `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Dienstplan</title>
+<style>
+  @page{ size:A4; margin:14mm; }
+  body{ font-family: Arial, sans-serif; color:#0b1a33; }
+  .box{ border:1px solid #d7e6ff; border-radius:14px; padding:12px; }
+  .head{ display:flex; gap:12px; align-items:center; }
+  .meta{ font-size:12px; line-height:1.35; }
+  .date{ margin-left:auto; font-size:12px; }
+  .line{ height:3px; background:#2d8cff; margin:10px 0; }
+  h1{ margin:6px 0 8px; text-align:center; font-size:18px; color:#0a2d57; }
+  table{ width:100%; border-collapse:collapse; font-size:12px; }
+  th, td{ border:1px solid #e6eefc; padding:8px; }
+  th{ background:#eef6ff; text-align:left; color:#0a2d57; }
+  .warn{ margin-top:10px; text-align:center; font-size:11px; color:#8a1a2b; }
+  .foot{ display:flex; justify-content:space-between; margin-top:10px; font-size:11px; color:#5c6b86; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="head">
+      ${logo}
+      <div class="meta">
+        <b style="font-size:16px;color:#0a2d57">Masculine Security</b><br>
+        Adresse: ${escapeHtml(state.meta.address)}<br>
+        Tel: ${escapeHtml(state.meta.phone)}<br>
+        E-Mail: ${escapeHtml(state.meta.email)}
+      </div>
+      <div class="date"><b>Datum:</b> ${escapeHtml(date)}</div>
+    </div>
+
+    <div class="line"></div>
+
+    <h1>Vorläufiger Dienstplan</h1>
+
+    <div style="font-size:12px;margin-bottom:8px">
+      <b>Mitarbeiter:</b> ${escapeHtml(empName)} ${empNr ? "("+escapeHtml(empNr)+")" : ""}<br>
+      <b>Schicht:</b> ${escapeHtml(shift)} &nbsp;•&nbsp; <b>Uhrzeit:</b> ${escapeHtml(time)}
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:80px">TAG</th>
+          <th style="width:140px">UHRZEIT</th>
+          <th>OBJEKT</th>
+          <th style="width:220px">NOTIZ</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+
+    <div class="warn">
+      <b>DRINGEND BEACHTEN:</b><br>
+      Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
+      Verspätungen und Ausfälle sind unverzüglich telefonisch zu melden!
+    </div>
+
+    <div class="foot">
+      <div>Masculine Security — Dienstplan</div>
+      <div>Seite 1 von 1</div>
+    </div>
+  </div>
+
+<script>
+  // auto open print dialog
+  setTimeout(()=>{ window.print(); }, 300);
+</script>
+</body>
+</html>
+`;
+}
+
+function openPdfPrintWindow(){
+  const w = window.open("", "_blank", "noopener,noreferrer");
+  if(!w){ alert("Popup blockiert. Bitte Popups erlauben und nochmal klicken."); return null; }
+  w.document.open();
+  w.document.write(buildPdfHtml());
+  w.document.close();
+  return w;
+}
+
+/* =========================
+   WHATSAPP (PDF) FLOW
+========================= */
+function openWhatsAppWithText(text){
+  const url = "https://wa.me/?text=" + encodeURIComponent(text);
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function sendWhatsAppPdfFlow(){
+  // 1) Open PDF print window (user chooses Save as PDF)
+  openPdfPrintWindow();
+
+  // 2) Open WhatsApp with ready text (PDF attach manually)
+  const empName = normalize($("empName").value) || "Mitarbeiter";
+  const note = autoNoteIfEmpty($("note").value);
+  const date = normalize($("pdfDate").value) || todayDE();
+  const msg =
+`PDF ist bereit ✔️ (bitte im Print-Dialog "Save as PDF" wählen)
+Datum: ${date}
+Mitarbeiter: ${empName}
+Notiz: ${note}
+
+👉 Danach PDF in WhatsApp als Datei anhängen und senden.`;
+  setTimeout(()=>openWhatsAppWithText(msg), 700);
+}
+
+/* =========================
+   ADD ENTRY
+========================= */
+function addEntry(){
+  const empName = normalize($("empName").value);
+  if(!empName){ alert("Bitte Mitarbeiter Name eingeben."); return; }
+
+  const empNr  = normalize($("empNr").value);
+  const objekt = normalize($("objekt").value) || "Objekt";
+  updateShiftAndTime();
+  const shift = $("shift").value;
+  const time  = $("time").value;
+  const note  = autoNoteIfEmpty($("note").value);
+  const days  = Array.from(selectedDays);
+
+  const entry = { empName, empNr, objekt, days, shift, time, note };
+  state.entries.push(entry);
+  save();
+  renderTable();
+  $("preview").value = buildWhatsAppText(entry);
+  alert("Gespeichert ✅");
+}
+
+/* =========================
+   RESET
+========================= */
+function resetAll(){
+  if(!confirm("Reset? Alle gespeicherten Daten werden gelöscht.")) return;
+  localStorage.removeItem(STORE_KEY);
+  location.reload();
+}
+
+/* =========================
+   EVENTS
+========================= */
+$("pdfDate").value = todayDE();
+
+["empName","empNr","objekt","note","pdfDate"].forEach(id=>{
+  $(id).addEventListener("input", ()=>{
+    updateShiftAndTime();
+    updatePreviewFromForm(selectedDays);
+    save(); // autosave meta/inputs not stored separately, but ok to keep state stable
+  });
+});
+
+$("btnAdd").addEventListener("click", addEntry);
+$("btnReset").addEventListener("click", resetAll);
+$("btnPdf").addEventListener("click", openPdfPrintWindow);
+$("btnWaPdf").addEventListener("click", sendWhatsAppPdfFlow);
+
+$("logoFile").addEventListener("change", (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    state.meta.logoDataUrl = String(reader.result||"");
+    renderLogo();
+    save();
+    alert("Logo gespeichert ✅ (wird im PDF angezeigt)");
+  };
+  reader.readAsDataURL(f);
+});
+
+/* =========================
+   BOOT
+========================= */
+load();
+renderLogo();
+renderTable();
+updateShiftAndTime();
+updatePreviewFromForm(selectedDays);
+
+</script>
 </body>
 </html>
