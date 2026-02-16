@@ -1,350 +1,98 @@
-✅ HAL CODE BLOCK (Update ALL + Solve)
-— Copy block-kan → kadib kala qaybi 3 FILE sida hoos ku qoran.
-— Tani waxay xallisaa: “old version / cache stuck” + “SW code hoos ka muuqda” + “GitHub Pages update”
-
-========================================================
-FILE 1) index.html
-========================================================
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="theme-color" content="#0b1220"/>
-  <title>Masculine Security — Dienstplan</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Masculine Security — Dienstplan</title>
 
-  <!-- PWA -->
-  <link rel="manifest" href="./manifest.json"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 
-  <!-- ✅ IMPORTANT: Never cache HTML (helps GitHub pages + SW refresh) -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
-
-  <style>
-    :root{
-      --bg:#071225;
-      --panel:#0b1a33;
-      --panel2:#0c2242;
-      --card:#0f2a4f;
-      --line:#16345e;
-      --text:#e7f0ff;
-      --muted:#9bb1d5;
-      --accent:#3aa6ff;
-      --good:#21d19f;
-      --warn:#ffce54;
-      --r:16px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:var(--font); color:var(--text);
-      background: radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.25), transparent 60%) , var(--bg);
-    }
-    .wrap{max-width:1100px; margin:24px auto; padding:0 14px;}
-    .top{
-      background: linear-gradient(180deg, rgba(58,166,255,.22), rgba(12,34,66,.55));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: var(--r);
-      padding:16px;
-      display:flex; gap:16px; align-items:center; justify-content:space-between;
-    }
-    .brand{display:flex; gap:12px; align-items:center; min-width:0;}
-    .logo{
-      width:44px; height:44px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden;
-    }
-    .logo img{width:100%; height:100%; object-fit:cover}
-    .brand h1{margin:0; font-size:18px; letter-spacing:.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .brand small{display:block; margin-top:4px; color:var(--muted); font-size:12px; line-height:1.35}
-    .actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
-    button{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:600;
-    }
-    button:hover{border-color:rgba(58,166,255,.35)}
-    .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap:14px; margin-top:14px;}
-    .panel{
-      background: rgba(12,34,66,.55);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: var(--r);
-      padding:14px;
-      min-height:320px;
-    }
-    table{width:100%; border-collapse:collapse; font-size:13px;}
-    th,td{padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:top;}
-    th{color:var(--muted); font-weight:700; text-align:left; font-size:12px;}
-    .muted{color:var(--muted)}
-    .pill{
-      display:inline-block; padding:4px 8px; border-radius:999px;
-      background: rgba(58,166,255,.16);
-      border:1px solid rgba(58,166,255,.25);
-      color:var(--text); font-weight:700; font-size:12px;
-    }
-    .hint{margin-top:10px; color:var(--muted); font-size:12px; line-height:1.5}
-    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
-  </style>
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#071225;
+color:#e7f0ff;
+}
+.wrap{max-width:1100px;margin:24px auto;padding:14px;}
+.top{
+background:#0b1a33;
+padding:16px;
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+button{
+padding:10px 12px;
+background:#3aa6ff;
+border:none;
+border-radius:8px;
+color:white;
+cursor:pointer;
+}
+table{width:100%;margin-top:20px;border-collapse:collapse;}
+td,th{padding:10px;border-bottom:1px solid #16345e;}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo"><img src="./logo.png" alt="Masculine Security"/></div>
-        <div style="min-width:0">
-          <h1>MASCULINE SECURITY — DIENSTPLAN</h1>
-          <small>
-            Werschenregerstraße 6, 28237 Bremen · Tel: 015778697052 ·
-            E-Mail: <span class="muted">kontakt.mass.bremen@hotmail.com</span>
-          </small>
-        </div>
-      </div>
+<div class="wrap">
 
-      <div class="actions">
-        <button type="button" onclick="window.print()">Drucken</button>
-        <button type="button" onclick="downloadPDF()">PDF</button>
-        <button type="button" onclick="msResetApp()">Reset (Cache)</button>
-      </div>
-    </div>
+<div class="top">
+<div>
+<b>MASCULINE SECURITY — DIENSTPLAN</b><br>
+<small>Werschenregerstraße 6 · 28237 Bremen · 015778697052</small>
+</div>
+<div>
+<button onclick="resetCache()">Reset</button>
+</div>
+</div>
 
-    <div class="grid">
-      <div class="panel">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
-          <div>
-            <span class="pill">Plan (Demo)</span>
-            <div class="hint">Haddii aad rabto: waxaan ku xiri karnaa data JSON/CSV si automatic u buuxsamo.</div>
-          </div>
-          <div class="muted" id="buildInfo"></div>
-        </div>
+<table>
+<tr>
+<th>#</th>
+<th>Mitarbeiter</th>
+<th>Datum</th>
+<th>Schicht</th>
+<th>Zeit</th>
+<th>Objekt</th>
+</tr>
 
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Mitarbeiter</th>
-              <th>ID</th>
-              <th>Datum</th>
-              <th>Schicht</th>
-              <th>Uhrzeit</th>
-              <th>Objekt</th>
-              <th>Bemerkung</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
+<tr><td>15</td><td>Mustafa Mursal Abdi</td><td>22.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
+<tr><td>16</td><td>Mustafa Mursal Abdi</td><td>23.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
+<tr><td>17</td><td>Mustafa Mursal Abdi</td><td>24.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
+<tr><td>18</td><td>Mustafa Mursal Abdi</td><td>27.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
+<tr><td>19</td><td>Mustafa Mursal Abdi</td><td>28.02.2026</td><td>Nacht</td><td>19:00–07:00</td><td>HOTEL</td></tr>
+</table>
 
-      <div class="panel">
-        <h3 style="margin:0 0 8px 0; font-size:16px;">Dokumentation</h3>
-        <div class="hint">
-          ✅ Hadda: Service Worker wuxuu leeyahay “network-first for HTML” iyo “cache-first for assets”.<br/>
-          ✅ Old version stuck ma jiri doono (GitHub Pages / Edge).<br/>
-          ✅ Haddii wax khaldan: riix <b>Reset (Cache)</b>.<br/><br/>
-          <span class="muted">Tip:</span> Markasta oo update la sameeyo, kaliya beddel <b>version.txt</b> si refresh degdeg ah u dhaco.
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <script>
-    // Demo rows (waxaad beddeli kartaa)
-    const demo = [
-      {n:15,name:"Mustafa Mursal Abdi",id:"001",date:"22.02.2026",shift:"Nacht",time:"19:00–07:00",obj:"HOTEL",note:"Einsatz mit ..."},
-      {n:16,name:"Mustafa Mursal Abdi",id:"001",date:"23.02.2026",shift:"Nacht",time:"19:00–07:00",obj:"HOTEL",note:"Einsatz mit ..."},
-      {n:17,name:"Mustafa Mursal Abdi",id:"001",date:"24.02.2026",shift:"Nacht",time:"19:00–07:00",obj:"HOTEL",note:"Einsatz mit ..."},
-      {n:18,name:"Mustafa Mursal Abdi",id:"001",date:"27.02.2026",shift:"Nacht",time:"19:00–07:00",obj:"HOTEL",note:"Einsatz mit ..."},
-      {n:19,name:"Mustafa Mursal Abdi",id:"001",date:"28.02.2026",shift:"Nacht",time:"19:00–07:00",obj:"HOTEL",note:"Einsatz mit ..."}
-    ];
-    const tbody = document.getElementById("rows");
-    demo.forEach(r=>{
-      const tr=document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.n}</td><td>${r.name}</td><td>${r.id}</td><td>${r.date}</td>
-        <td>${r.shift}</td><td>${r.time}</td><td>${r.obj}</td><td>${r.note}</td>`;
-      tbody.appendChild(tr);
-    });
+<script>
+// DELETE ALL SERVICE WORKERS (AUTO FIX)
+async function resetCache(){
+if('serviceWorker' in navigator){
+const regs = await navigator.serviceWorker.getRegistrations();
+for(let r of regs){await r.unregister();}
+}
+if(window.caches){
+const keys = await caches.keys();
+for(let k of keys){await caches.delete(k);}
+}
+alert("Cache cleared ✔️");
+location.reload(true);
+}
 
-    async function loadVersion(){
-      try{
-        const res = await fetch("./version.txt", { cache:"no-store" });
-        const v = (await res.text()).trim();
-        document.getElementById("buildInfo").textContent = "Version: " + v;
-      }catch(e){
-        document.getElementById("buildInfo").textContent = "";
-      }
-    }
-    loadVersion();
+// AUTO REMOVE OLD SERVICE WORKERS
+(async ()=>{
+if('serviceWorker' in navigator){
+const regs = await navigator.serviceWorker.getRegistrations();
+for(let r of regs){await r.unregister();}
+}
+})();
+</script>
 
-    function downloadPDF(){
-      // Simple browser PDF print
-      window.print();
-    }
-  </script>
-
-  <!-- ✅ SW FIX: register RELATIVE + add code-based reset -->
-  <script>
-    (function () {
-      const SW_PATH = "./service-worker.js"; // ✅ MUST be relative
-
-      async function msRegisterSW() {
-        if (!("serviceWorker" in navigator)) return;
-        try {
-          const reg = await navigator.serviceWorker.register(SW_PATH, { scope: "./" });
-          if (reg.update) reg.update().catch(()=>{});
-
-          if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
-
-          let reloaded = false;
-          navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (reloaded) return;
-            reloaded = true;
-            location.reload();
-          });
-        } catch (e) {
-          console.warn("SW register failed:", e);
-        }
-      }
-
-      // ✅ CODE ahaan delete: unregister + delete caches
-      async function msResetApp() {
-        try {
-          if ("serviceWorker" in navigator) {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(regs.map(r => r.unregister()));
-          }
-          if (window.caches && caches.keys) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map(k => caches.delete(k)));
-          }
-          alert("✅ Reset done: SW + Cache waa la tirtiray. Page wuu reload garayaa.");
-          location.reload(true);
-        } catch (e) {
-          console.warn("Reset failed:", e);
-          alert("❌ Reset error. Fiiri console (F12).");
-        }
-      }
-
-      window.msResetApp = msResetApp;
-      window.addEventListener("load", msRegisterSW);
-    })();
-  </script>
 </body>
 </html>
-
-
-========================================================
-FILE 2) service-worker.js
-========================================================
-/* Masculine Security — Service Worker (safe update)
-   - HTML: network-first (always fresh)
-   - Assets: cache-first (fast)
-*/
-const CACHE = "ms-dienstplan-vFINAL-2026-02-16";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./version.txt",
-  "./logo.png"
-];
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
-});
-
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).catch(()=>{})
-  );
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k === CACHE ? null : caches.delete(k))));
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
-
-  const url = new URL(req.url);
-
-  // same-origin only
-  if (url.origin !== self.location.origin) return;
-
-  const accept = req.headers.get("accept") || "";
-  const isHTML =
-    accept.includes("text/html") ||
-    url.pathname.endsWith(".html") ||
-    url.pathname === "/" ||
-    url.pathname.endsWith("/");
-
-  if (isHTML) {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(req, { cache: "no-store" });
-        const cache = await caches.open(CACHE);
-        // keep latest html in cache as fallback
-        cache.put("./index.html", fresh.clone()).catch(()=>{});
-        return fresh;
-      } catch (e) {
-        const cached = await caches.match("./index.html");
-        return cached || new Response("Offline", {
-          status: 503,
-          headers: { "content-type": "text/plain" }
-        });
-      }
-    })());
-    return;
-  }
-
-  // assets cache-first
-  event.respondWith((async () => {
-    const cached = await caches.match(req);
-    if (cached) return cached;
-
-    try {
-      const fresh = await fetch(req);
-      const cache = await caches.open(CACHE);
-      cache.put(req, fresh.clone()).catch(()=>{});
-      return fresh;
-    } catch (e) {
-      return new Response("Offline", {
-        status: 503,
-        headers: { "content-type": "text/plain" }
-      });
-    }
-  })());
-});
-
-
-========================================================
-FILE 3) version.txt
-========================================================
-vFINAL-2026-02-16-01
-
-
-========================================================
-✅ SIDEE LO GU DHIGAA GITHUB (SI DEGDEG AH)
-========================================================
-1) GitHub repo: Masculine-security
-2) index.html -> Edit -> ku replace garee FILE 1 oo dhan -> Commit
-3) service-worker.js -> Create/Upload -> ku paste FILE 2 -> Commit
-4) version.txt -> Edit/Create -> ku paste FILE 3 -> Commit
-5) Edge: open site -> Ctrl+Shift+R
-6) Haddii wali old: gudaha app-ka riix "Reset (Cache)" (button)
-
-✅ Marka la sameeyo: code hoos ma muuqanayo + old version stuck ma jirayo.
