@@ -1,3 +1,6 @@
+/* =========================
+   FILE: index.html
+   ========================= */
 <!doctype html>
 <html lang="de">
 <head>
@@ -5,6 +8,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Masculine Security — Dienstplan</title>
   <meta name="theme-color" content="#0b1220"/>
+  <link rel="manifest" href="manifest.json"/>
 
   <style>
     :root{
@@ -22,13 +26,18 @@
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0; font-family:var(--font); color:var(--text);
       background:
         radial-gradient(1200px 700px at 30% -10%, rgba(58,166,255,.20), transparent 55%),
         radial-gradient(900px 600px at 90% 10%, rgba(33,209,159,.12), transparent 55%),
         var(--bg);
+      overflow-x:hidden;
     }
+    /* safety: never show accidental raw code blocks */
+    pre, code { display:none !important; }
+
     .wrap{max-width:1200px;margin:0 auto;padding:16px}
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
@@ -150,8 +159,7 @@
       <div class="card">
         <h2>Dienstplan Eingabe</h2>
         <p class="hint">
-          Waxaad buuxisaa xogta shirkadda + KW + Start-Datum (Montag). Kadib plan entries ku dar.
-          PDF (Proc-Style) wuxuu sameynayaa qaabkii sawirka (header, table 7 days, DRINGEND BEACHTEN, footer).
+          Buuxi: KW + Start-Datum (Montag). Kadib entries ku dar. “PDF (Proc-Style)” wuxuu sameeyaa qaabkii Proc (header + 7 days table + DRINGEND BEACHTEN + footer).
         </p>
 
         <div class="row">
@@ -162,7 +170,7 @@
           <div>
             <label>Logo upload (optional)</label>
             <input id="logoFile" type="file" accept="image/*">
-            <div class="mini">Talo: repo ku hay <b>logo.png</b> si u muuqdo PDF-ka.</div>
+            <div class="mini">Talo: repo ku hay <b>logo.png</b> si PDF uu u helo.</div>
           </div>
         </div>
 
@@ -192,7 +200,7 @@
           <div>
             <label>Start-Datum (Montag)</label>
             <input id="weekStart" type="date">
-            <div class="mini">Tani waa Monday ee todobaadka (KW).</div>
+            <div class="mini">Waa Monday ee todobaadka (KW).</div>
           </div>
           <div>
             <label>Überschrift</label>
@@ -269,62 +277,50 @@
     </div>
   </div>
 
+  <!-- ✅ IMPORTANT: script must be properly closed to prevent code showing on page -->
   <script>
-    // =========================
-    // Storage
-    // =========================
-    const K_META="MS_META_PROC_V1";
-    const K_ENT="MS_ENT_PROC_V1";
+    "use strict";
+
+    // ====== VERSION (forces cache refresh together with service worker) ======
+    const APP_VERSION = "v7";
+
+    // ====== Storage keys ======
+    const K_META="MS_META_PROC_V7";
+    const K_ENT ="MS_ENT_PROC_V7";
 
     const $ = (id)=>document.getElementById(id);
     const pad2 = (n)=>String(n).padStart(2,"0");
+
+    const state = { entries:[], logoDataUrl:"" };
 
     function setToast(msg, cls="ok"){
       const t=$("toast");
       t.className="toast "+cls;
       t.textContent=msg;
     }
+    function safeParse(s, fallback){ try{return JSON.parse(s)}catch(_){return fallback} }
 
-    function safeParse(s, fallback){ try{return JSON.parse(s)}catch(e){return fallback} }
-    function saveAll(){
-      const meta = getMeta();
-      localStorage.setItem(K_META, JSON.stringify(meta));
-      localStorage.setItem(K_ENT, JSON.stringify(state.entries));
+    function esc(s){
+      return String(s||"")
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
-    function loadAll(){
-      const meta = safeParse(localStorage.getItem(K_META), null);
-      const ent  = safeParse(localStorage.getItem(K_ENT), []);
-      if(meta) setMeta(meta);
-      state.entries = Array.isArray(ent)?ent:[];
+    function dayLabel(k){
+      return ({Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"}[k]||k);
     }
 
-    // =========================
-    // Meta
-    // =========================
+    // ====== Meta ======
     function getMeta(){
       return {
-        company:$("cName").value.trim()||"Masculine Security",
-        addr:$("cAddr").value.trim(),
-        tel:$("cTel").value.trim(),
-        email:$("cEmail").value.trim(),
+        company: ($("cName").value||"").trim() || "Masculine Security",
+        addr: ($("cAddr").value||"").trim(),
+        tel:  ($("cTel").value||"").trim(),
+        email:($("cEmail").value||"").trim(),
         kw: Number($("kw").value||"0")||0,
         weekStart: $("weekStart").value || "",
-        headline: $("headline").value.trim() || "Vorläufiger Dienstplan",
+        headline: ($("headline").value||"").trim() || "Vorläufiger Dienstplan",
         logoDataUrl: state.logoDataUrl || ""
       };
-    }
-
-    function setMeta(m){
-      $("cName").value = m.company || "Masculine Security";
-      $("cAddr").value = m.addr || "";
-      $("cTel").value = m.tel || "";
-      $("cEmail").value = m.email || "";
-      $("kw").value = m.kw || 32;
-      $("weekStart").value = m.weekStart || "";
-      $("headline").value = m.headline || "Vorläufiger Dienstplan";
-      state.logoDataUrl = m.logoDataUrl || "";
-      applyMetaToHeader();
-      applyLogo();
     }
 
     function applyMetaToHeader(){
@@ -339,20 +335,35 @@
 
     function applyLogo(){
       const img=$("logoImg");
-      if(state.logoDataUrl){
-        img.src = state.logoDataUrl;
-        img.style.opacity=1;
-      }else{
-        img.src = "logo.png";
-        img.style.opacity=1;
-      }
+      img.style.opacity=1;
+      img.src = state.logoDataUrl ? state.logoDataUrl : "logo.png";
     }
 
-    // =========================
-    // Entries
-    // =========================
-    const state = { entries:[], logoDataUrl:"" };
+    function saveAll(){
+      const meta=getMeta();
+      localStorage.setItem(K_META, JSON.stringify(meta));
+      localStorage.setItem(K_ENT, JSON.stringify(state.entries));
+    }
 
+    function loadAll(){
+      const meta = safeParse(localStorage.getItem(K_META), null);
+      const ent  = safeParse(localStorage.getItem(K_ENT), []);
+      if(meta){
+        $("cName").value = meta.company || "Masculine Security";
+        $("cAddr").value = meta.addr || "";
+        $("cTel").value  = meta.tel || "";
+        $("cEmail").value= meta.email || "";
+        $("kw").value    = meta.kw || 32;
+        $("weekStart").value = meta.weekStart || "";
+        $("headline").value  = meta.headline || "Vorläufiger Dienstplan";
+        state.logoDataUrl = meta.logoDataUrl || "";
+      }
+      state.entries = Array.isArray(ent)?ent:[];
+      applyMetaToHeader();
+      applyLogo();
+    }
+
+    // ====== Entries ======
     function renderTable(){
       const tb=$("tbody");
       if(!state.entries.length){
@@ -366,37 +377,32 @@
           <td>${esc(e.objekt)}</td>
           <td>${esc(e.time)}</td>
           <td>${esc(e.note||"")}</td>
-          <td><button class="sbtn bad" onclick="delEnt(${i})">Löschen</button></td>
+          <td><button class="sbtn bad" data-del="${i}">Löschen</button></td>
         </tr>
       `).join("");
-    }
-    window.delEnt = function(i){
-      state.entries.splice(i,1);
-      saveAll();
-      renderTable();
-      setToast("Eintrag gelöscht ✅","ok");
-    };
 
-    function esc(s){
-      return String(s||"")
-        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-    }
-    function dayLabel(k){
-      return ({Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"}[k]||k);
+      tb.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const idx=Number(btn.getAttribute("data-del"));
+          state.entries.splice(idx,1);
+          saveAll();
+          renderTable();
+          setToast("Eintrag gelöscht ✅","ok");
+        });
+      });
     }
 
     function addEntry(){
-      const empName=$("empName").value.trim();
-      const empNo=$("empNo").value.trim();
+      const empName=($("empName").value||"").trim();
+      const empNo  =($("empNo").value||"").trim();
       const day=$("day").value;
-      const objekt=$("objekt").value.trim();
-      const time=$("time").value.trim();
-      const note=$("note").value.trim();
+      const objekt=($("objekt").value||"").trim();
+      const time=($("time").value||"").trim();
+      const note=($("note").value||"").trim();
 
-      if(!empName){ setToast("Bitte Mitarbeiter Name eingeben.","warnT"); return; }
-      if(!objekt){ setToast("Bitte Objekt/Einsatz eingeben.","warnT"); return; }
-      if(!time){ setToast("Bitte Uhrzeit eingeben.","warnT"); return; }
+      if(!empName) return setToast("Bitte Mitarbeiter Name eingeben.","warnT");
+      if(!objekt) return setToast("Bitte Objekt/Einsatz eingeben.","warnT");
+      if(!time)   return setToast("Bitte Uhrzeit eingeben.","warnT");
 
       state.entries.unshift({empName, empNo, day, objekt, time, note, created:Date.now()});
       saveAll();
@@ -414,46 +420,33 @@
       setToast("Neu ✅","ok");
     }
 
-    // =========================
-    // Proc-style PDF generator
-    // =========================
+    // ====== Date helpers for PDF ======
     function parseDateISO(iso){
-      // iso = YYYY-MM-DD
       if(!iso) return null;
       const [y,m,d]=iso.split("-").map(Number);
       if(!y||!m||!d) return null;
       return new Date(y, m-1, d);
     }
-    function fmtDE(d){
-      return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;
-    }
-    function addDays(date, n){
-      const d=new Date(date.getTime());
-      d.setDate(d.getDate()+n);
-      return d;
-    }
+    function fmtDE(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
+    function addDays(date, n){ const d=new Date(date.getTime()); d.setDate(d.getDate()+n); return d; }
 
     function groupForWeek(entries){
-      // group by employee, then day (Mo..So)
       const byEmp = new Map();
       for(const e of entries){
-        const key = (e.empName||"").trim() + "||" + (e.empNo||"").trim();
+        const key = (e.empName||"").trim()+"||"+(e.empNo||"").trim();
         if(!byEmp.has(key)){
           byEmp.set(key, {empName:e.empName, empNo:e.empNo, days:{Mo:[],Di:[],Mi:[],Do:[],Fr:[],Sa:[],So:[]}});
         }
-        byEmp.get(key).days[e.day] = (byEmp.get(key).days[e.day]||[]);
         byEmp.get(key).days[e.day].push(e);
       }
       return Array.from(byEmp.values());
     }
 
+    // ====== Proc-style PDF ======
     function buildProcHtml(){
       const m=getMeta();
       const start=parseDateISO(m.weekStart);
-      if(!start){
-        setToast("Bitte Start-Datum (Montag) auswählen.","warnT");
-        return null;
-      }
+      if(!start){ setToast("Bitte Start-Datum (Montag) auswählen.","warnT"); return null; }
 
       const dates = {
         Mo: fmtDE(start),
@@ -468,14 +461,9 @@
       const logoSrc = m.logoDataUrl ? m.logoDataUrl : "logo.png";
       const emps = groupForWeek(state.entries);
 
-      // Build rows: one row per employee (like Proc sample)
-      const rowsHtml = (emps.length?emps:[{empName:"", empNo:"", days:{Mo:[],Di:[],Mi:[],Do:[],Fr:[],Sa:[],So:[]}}]).map(emp=>{
-        const left = `
-          <div class="empName">${esc(emp.empName||"")}</div>
-          <div class="empNo">${esc(emp.empNo||"")}</div>
-        `;
+      const rowsHtml = (emps.length?emps:[{empName:"",empNo:"",days:{Mo:[],Di:[],Mi:[],Do:[],Fr:[],Sa:[],So:[]}}]).map(emp=>{
         const cell = (k)=>{
-          const items = (emp.days[k]||[]);
+          const items = emp.days[k]||[];
           if(!items.length) return `<div class="cellEmpty"></div>`;
           return items.map(x=>`
             <div class="cellObj">${esc(x.objekt)}</div>
@@ -485,7 +473,10 @@
         };
         return `
           <tr>
-            <td class="empCol">${left}</td>
+            <td class="empCol">
+              <div class="empName">${esc(emp.empName||"")}</div>
+              <div class="empNo">${esc(emp.empNo||"")}</div>
+            </td>
             <td>${cell("Mo")}</td>
             <td>${cell("Di")}</td>
             <td>${cell("Mi")}</td>
@@ -493,35 +484,22 @@
             <td>${cell("Fr")}</td>
             <td>${cell("Sa")}</td>
             <td>${cell("So")}</td>
-          </tr>
-        `;
+          </tr>`;
       }).join("");
 
-      const urgent = `
-        <div class="urgentTitle">DRINGEND BEACHTEN:</div>
-        <div class="urgentText">
-          Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
-          Verspätungen und Ausfälle des Dienstantritts sind unverzüglich telefonisch zu melden!<br>
-          Die Dienstzeiten von Sonderbewachungen müssen nach Dienstende schriftlich mitgeteilt werden!<br><br>
-          Freiwünsche werden spätestens am Donnerstag schriftlich der Einsatzleitung mitgeteilt!<br>
-          Je nach Auftragslage werden diese Zugestimmt oder abgelehnt.<br><br>
-          Der Stundenzettel wird 2. Tage vor Monatsende bei der Einsatzleitung eingereicht!
-        </div>
-      `;
-
-      const html = `
-<!doctype html>
+      return `<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${esc(m.company)} — Dienstplan KW ${m.kw}</title>
+<title>${esc(m.company)} — Dienstplan KW ${esc(String(m.kw||""))}</title>
 <style>
   @page { size: A4; margin: 12mm; }
   body{ font-family: Arial, Helvetica, sans-serif; color:#111; margin:0; }
   .title{ text-align:center; color:#b91c1c; font-weight:700; font-size:18px; margin:8px 0 10px; }
+  .topInfo{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
   .kw{ font-weight:700; font-size:13px; margin:0 0 8px; }
-  .wrap{ width:100%; }
+  .companyMeta{ font-size:9px; color:#333; line-height:1.35; text-align:right; }
   table{ width:100%; border-collapse:collapse; table-layout:fixed; }
   th, td{ border:1px solid #333; padding:6px; vertical-align:top; font-size:10px; }
   th{ background:#eaf2ff; text-align:center; font-weight:700; }
@@ -543,65 +521,62 @@
   .footerLogo{ width:160px; height:auto; object-fit:contain; }
   .footSmall{ font-size:9px; color:#333; margin-top:6px; }
   .pageNo{ position:fixed; right:0; bottom:0; font-size:9px; color:#333; }
-  .topInfo{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-  .companyMeta{ font-size:9px; color:#333; line-height:1.35; text-align:right; }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="title">${esc(m.headline)}}</div>
+  <div class="title">${esc(m.headline)}</div>
 
-    <div class="topInfo">
-      <div class="kw">Dienstplan KW ${esc(String(m.kw||""))}</div>
-      <div class="companyMeta">
-        <div><b>${esc(m.company)}</b></div>
-        <div>${esc(m.addr||"")}</div>
-        <div>Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}</div>
-      </div>
+  <div class="topInfo">
+    <div class="kw">Dienstplan KW ${esc(String(m.kw||""))}</div>
+    <div class="companyMeta">
+      <div><b>${esc(m.company)}</b></div>
+      <div>${esc(m.addr||"")}</div>
+      <div>Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}</div>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th class="empCol">
-            <div class="logoBox"><img class="logo" src="${logoSrc}" alt="Logo"></div>
-          </th>
-          <th><span class="hdrDate">${dates.Mo}</span><span class="hdrDay">Montag</span></th>
-          <th><span class="hdrDate">${dates.Di}</span><span class="hdrDay">Dienstag</span></th>
-          <th><span class="hdrDate">${dates.Mi}</span><span class="hdrDay">Mittwoch</span></th>
-          <th><span class="hdrDate">${dates.Do}</span><span class="hdrDay">Donnerstag</span></th>
-          <th><span class="hdrDate">${dates.Fr}</span><span class="hdrDay">Freitag</span></th>
-          <th><span class="hdrDate">${dates.Sa}</span><span class="hdrDay">Samstag</span></th>
-          <th><span class="hdrDate">${dates.So}</span><span class="hdrDay">Sonntag</span></th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rowsHtml}
-      </tbody>
-    </table>
-
-    <div class="urgent">${urgent}</div>
-
-    <div class="footer">
-      <img class="footerLogo" src="${logoSrc}" alt="Logo">
-      <div class="footSmall">
-        ${esc(m.company)}<br>
-        ${esc(m.addr||"")}<br>
-        Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}
-      </div>
-    </div>
-
-    <div class="pageNo">Seite 1 von 1</div>
   </div>
 
-  <script>
-    // auto open print
-    window.onload = () => { setTimeout(()=>window.print(), 300); };
-  </script>
+  <table>
+    <thead>
+      <tr>
+        <th class="empCol"><div class="logoBox"><img class="logo" src="${logoSrc}" alt="Logo"></div></th>
+        <th><span class="hdrDate">${dates.Mo}</span><span class="hdrDay">Montag</span></th>
+        <th><span class="hdrDate">${dates.Di}</span><span class="hdrDay">Dienstag</span></th>
+        <th><span class="hdrDate">${dates.Mi}</span><span class="hdrDay">Mittwoch</span></th>
+        <th><span class="hdrDate">${dates.Do}</span><span class="hdrDay">Donnerstag</span></th>
+        <th><span class="hdrDate">${dates.Fr}</span><span class="hdrDay">Freitag</span></th>
+        <th><span class="hdrDate">${dates.Sa}</span><span class="hdrDay">Samstag</span></th>
+        <th><span class="hdrDate">${dates.So}</span><span class="hdrDay">Sonntag</span></th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+
+  <div class="urgent">
+    <div class="urgentTitle">DRINGEND BEACHTEN:</div>
+    <div class="urgentText">
+      Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
+      Verspätungen und Ausfälle des Dienstantritts sind unverzüglich telefonisch zu melden!<br>
+      Die Dienstzeiten von Sonderbewachungen müssen nach Dienstende schriftlich mitgeteilt werden!<br><br>
+      Freiwünsche werden spätestens am Donnerstag schriftlich der Einsatzleitung mitgeteilt!<br>
+      Je nach Auftragslage werden diese Zugestimmt oder abgelehnt.<br><br>
+      Der Stundenzettel wird 2. Tage vor Monatsende bei der Einsatzleitung eingereicht!
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="footerLogo" src="${logoSrc}" alt="Logo">
+    <div class="footSmall">
+      ${esc(m.company)}<br>
+      ${esc(m.addr||"")}<br>
+      Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}
+    </div>
+  </div>
+
+  <div class="pageNo">Seite 1 von 1</div>
+
+  <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
 </body>
-</html>
-      `;
-      return html.replace("}}",""); // tiny safety
+</html>`;
     }
 
     function openProcPDF(){
@@ -612,43 +587,35 @@
       w.document.open();
       w.document.write(html);
       w.document.close();
-      setToast("PDF (Proc-Style) geöffnet ✅  -> Save as PDF","ok");
+      setToast("PDF geöffnet ✅ → Save as PDF","ok");
     }
 
-    // =========================
-    // WhatsApp text (not file)
-    // =========================
+    // ====== WhatsApp text ======
     function makeWhatsAppText(){
       const m=getMeta();
       const start=parseDateISO(m.weekStart);
       const lines=[];
       lines.push(`${m.company} — Dienstplan KW ${m.kw}`);
-      if(start){
-        lines.push(`Woche: ${fmtDE(start)} – ${fmtDE(addDays(start,6))}`);
-      }
+      if(start) lines.push(`Woche: ${fmtDE(start)} – ${fmtDE(addDays(start,6))}`);
       lines.push(`Adresse: ${m.addr}`);
       lines.push(`Tel: ${m.tel} | Email: ${m.email}`);
       lines.push(`----------------------------`);
 
-      // list entries
       const order={Mo:1,Di:2,Mi:3,Do:4,Fr:5,Sa:6,So:7};
       const sorted=[...state.entries].sort((a,b)=>(order[a.day]-order[b.day]) || (a.empName||"").localeCompare(b.empName||""));
       sorted.forEach(e=>{
         lines.push(`${dayLabel(e.day)} — ${e.empName}${e.empNo?` (${e.empNo})`:""} — ${e.objekt} — ${e.time}${e.note?` — ${e.note}`:""}`);
       });
-
       return lines.join("\n");
     }
     function sendWA(){
-      const text = makeWhatsAppText();
-      const url = "https://wa.me/?text=" + encodeURIComponent(text);
+      const text=makeWhatsAppText();
+      const url="https://wa.me/?text="+encodeURIComponent(text);
       window.open(url, "_blank", "noopener,noreferrer");
       setToast("WhatsApp text geöffnet ✅","ok");
     }
 
-    // =========================
-    // CSV
-    // =========================
+    // ====== CSV ======
     function csvEscape(s){
       s=String(s||"");
       if(/[;"\n]/.test(s)) return `"${s.replaceAll('"','""')}"`;
@@ -670,9 +637,7 @@
       setToast("CSV exportiert ✅","ok");
     }
 
-    // =========================
-    // Reset
-    // =========================
+    // ====== Reset ======
     function resetAll(){
       if(!confirm("Reset ALL data?")) return;
       localStorage.removeItem(K_META);
@@ -680,23 +645,22 @@
       location.reload();
     }
 
-    // =========================
-    // Init
-    // =========================
+    // ====== Init ======
     function init(){
-      // default weekStart = next/this Monday
+      // default weekStart = this Monday
       const d=new Date();
       const day=d.getDay(); // 0 Sun..6 Sat
-      const diff=(day===0? -6 : 1-day); // to Monday
+      const diff=(day===0? -6 : 1-day);
       const mon=new Date(d.getFullYear(), d.getMonth(), d.getDate()+diff);
       $("weekStart").value = `${mon.getFullYear()}-${pad2(mon.getMonth()+1)}-${pad2(mon.getDate())}`;
 
       loadAll();
-      applyMetaToHeader();
+      renderTable();
+      saveAll();
 
       ["cName","cAddr","cTel","cEmail","kw","weekStart","headline"].forEach(id=>{
         $(id).addEventListener("input", ()=>{ applyMetaToHeader(); saveAll(); });
-        $(id).addEventListener("change", ()=>{ applyMetaToHeader(); saveAll(); });
+        $(id).addEventListener("change",()=>{ applyMetaToHeader(); saveAll(); });
       });
 
       $("logoFile").addEventListener("change",(e)=>{
@@ -712,18 +676,92 @@
         r.readAsDataURL(f);
       });
 
-      $("btnAdd").onclick=()=>{ addEntry(); };
-      $("btnClear").onclick=()=>{ clearInputs(); };
-      $("btnPDFPro").onclick=()=>{ openProcPDF(); };
-      $("btnWA").onclick=()=>{ sendWA(); };
-      $("btnExport").onclick=()=>{ exportCSV(); };
-      $("btnReset").onclick=()=>{ resetAll(); };
+      $("btnAdd").addEventListener("click", addEntry);
+      $("btnClear").addEventListener("click", clearInputs);
+      $("btnPDFPro").addEventListener("click", openProcPDF);
+      $("btnWA").addEventListener("click", sendWA);
+      $("btnExport").addEventListener("click", exportCSV);
+      $("btnReset").addEventListener("click", resetAll);
 
-      renderTable();
-      saveAll();
-      setToast("Bereit ✅","ok");
+      setToast("Bereit ✅ ("+APP_VERSION+")","ok");
     }
     init();
+
+    // ====== Register service worker (safe) ======
+    window.addEventListener("load", ()=>{
+      if("serviceWorker" in navigator){
+        navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+      }
+    });
   </script>
 </body>
 </html>
+
+
+/* =========================
+   FILE: service-worker.js
+   ========================= */
+const CACHE_NAME = "ms-dienstplan-v7";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./logo.png",
+  "./version.txt",
+  "./service-worker.js"
+];
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(()=>{})
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async ()=>{
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : Promise.resolve()));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+
+  event.respondWith((async ()=>{
+    // Network-first for HTML (so updates show immediately)
+    const isHTML = req.headers.get("accept")?.includes("text/html");
+    if(isHTML){
+      try{
+        const fresh = await fetch(req);
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(req, fresh.clone());
+        return fresh;
+      }catch(_){
+        const cached = await caches.match(req);
+        return cached || caches.match("./index.html");
+      }
+    }
+
+    // Cache-first for other assets
+    const cached = await caches.match(req);
+    if(cached) return cached;
+
+    try{
+      const fresh = await fetch(req);
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(req, fresh.clone());
+      return fresh;
+    }catch(_){
+      return cached || Response.error();
+    }
+  })());
+});
+
+
+/* =========================
+   FILE: version.txt
+   ========================= */
+v7
