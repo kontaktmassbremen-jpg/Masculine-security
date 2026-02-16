@@ -3,165 +3,127 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Masculine Security — Dienstplan (KW)</title>
+  <title>Masculine Security — Monatskalender (KW) + Documentation</title>
 
-  <!-- No SW, no cache-stuck for HTML -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
 
   <style>
     :root{
-      --paper:#fff;
-      --bg:#f4f5f7;
-      --ink:#111;
-      --muted:#444;
-      --line:#1f1f1f;
-      --red:#c40000;
-      --blue:#0b2a5a;
-      --soft:#f1f1f1;
+      --paper:#fff; --bg:#f4f5f7; --ink:#111; --muted:#444;
+      --line:#1f1f1f; --red:#c40000; --blue:#0b2a5a; --soft:#f1f1f1;
+      --wk:#f7f7f7; --weekend:#f9f0f0;
+      --chip:#f3f7ff;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
-    .wrap{max-width:1180px;margin:18px auto;padding:0 12px}
-    .toolbar{
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;
-    }
+    .wrap{max-width:1220px;margin:18px auto;padding:0 12px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
     .tool-left,.tool-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .input,select{
-      border:1px solid #cfd3d9;background:#fff;color:#111;
-      padding:10px 10px;border-radius:10px;outline:none;min-width:140px
+    .input,select,textarea{
+      border:1px solid #cfd3d9;background:#fff;color:#111;padding:10px 10px;border-radius:10px;outline:none;
     }
+    .input,select{min-width:140px}
+    textarea{width:100%; min-height:90px; resize:vertical}
     .btn{
-      border:1px solid #cfd3d9;background:#fff;color:#111;
-      padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700
+      border:1px solid #cfd3d9;background:#fff;color:#111;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700
     }
     .btn:hover{border-color:#9aa3af}
     .btn.red{border-color:#f0b3b3;background:#fff5f5;color:#7a0000}
     .btn.blue{border-color:#b6c7e6;background:#f3f7ff;color:#0b2a5a}
     .btn.small{padding:6px 8px;border-radius:8px;font-size:12px}
 
-    .paper{
-      background:var(--paper);
-      border:1px solid #d7dbe2;
-      border-radius:14px;
-      padding:20px;
-      box-shadow:0 6px 20px rgba(0,0,0,.06);
-    }
-
-    /* Header like your sample */
-    .title{
-      text-align:center;font-weight:900;color:var(--red);
-      margin:4px 0 14px;font-size:20px;letter-spacing:.2px;
-    }
+    .paper{background:var(--paper);border:1px solid #d7dbe2;border-radius:14px;padding:20px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    .title{text-align:center;font-weight:900;color:var(--red);margin:4px 0 14px;font-size:20px}
     .subrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px}
-    .kwlabel{font-weight:900;font-size:14px}
+    .leftLabel{font-weight:900;font-size:14px}
     .brandbox{display:flex;align-items:center;gap:12px}
     .logoBox{
-      width:60px;height:44px;border:2px solid var(--line);
-      display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--blue);
-      border-radius:6px;overflow:hidden
+      width:60px;height:44px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;
+      font-weight:900;color:var(--blue);border-radius:6px;overflow:hidden
     }
     .logoBox img{width:100%;height:100%;object-fit:contain}
     .company{font-weight:900;color:var(--blue);font-size:16px;line-height:1.1}
     .company small{display:block;color:var(--muted);font-weight:700;font-size:11px;margin-top:3px}
 
-    /* NORMAL CALENDAR LOOK (Mon–Sun) */
-    .cal{
-      border:2px solid var(--line);
-      border-radius:10px;
-      overflow:hidden;
-      margin-top:8px;
-    }
-    .calHead{
-      display:grid;
-      grid-template-columns: 160px repeat(7, 1fr);
-      background:var(--soft);
-      border-bottom:2px solid var(--line);
-    }
+    /* MONTH CALENDAR GRID */
+    .cal{border:2px solid var(--line);border-radius:10px;overflow:hidden;margin-top:8px}
+    .calHead{display:grid;grid-template-columns:66px repeat(7, 1fr);background:var(--soft);border-bottom:2px solid var(--line)}
     .calHead div{
-      padding:10px 8px;
-      border-right:1.6px solid var(--line);
-      font-weight:900;
-      text-align:center;
-      font-size:12px;
+      padding:10px 8px;border-right:1.6px solid var(--line);font-weight:900;text-align:center;font-size:12px
     }
-    .calHead div:first-child{text-align:left}
-    .calBody{
-      display:grid;
-      grid-template-columns: 160px repeat(7, 1fr);
+    .calHead div:first-child{text-align:center;background:var(--wk)}
+    .calBody{display:grid;grid-template-columns:66px repeat(7, 1fr)}
+    .kwCell{
+      border-right:1.6px solid var(--line);border-bottom:1.6px solid var(--line);
+      background:var(--wk);font-weight:900;text-align:center;display:flex;align-items:center;justify-content:center;
+      min-height:120px;font-size:12px
     }
-    .cell{
-      min-height:70px;
-      border-right:1.6px solid var(--line);
-      border-bottom:1.6px solid var(--line);
-      padding:6px 6px;
-      position:relative;
-      background:#fff;
+    .dayCell{
+      border-right:1.6px solid var(--line);border-bottom:1.6px solid var(--line);
+      padding:8px;min-height:120px;position:relative;background:#fff;cursor:pointer
     }
-    .cell.weekend{background:#f9f0f0}
-    .cell:last-child{border-right:none}
-    .rowName{
-      font-weight:900;
-      text-align:left;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
+    .dayCell.weekend{background:var(--weekend)}
+    .dayCell.out{background:#fafafa;color:#777}
+    .dayCell:last-child{border-right:none}
+    .dayTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+    .dayNum{
+      font-weight:900;border:1px solid rgba(0,0,0,.16);border-radius:10px;padding:2px 8px;background:#fff;font-size:12px
     }
-    .rowName .nameTxt{padding:6px 6px}
-    .rowName .nameActions{padding-right:6px; display:flex; gap:6px}
-    .dayBox{
-      font-weight:900;
-      font-size:11px;
-      color:#000;
-      position:absolute;
-      top:6px; right:6px;
-      background:#fff;
-      border:1px solid rgba(0,0,0,.18);
-      border-radius:8px;
-      padding:2px 6px;
+    .shift{
+      font-size:11px;font-weight:800;white-space:pre-wrap;line-height:1.25
     }
-    .shiftText{
-      margin-top:22px;
-      font-size:11px;
-      font-weight:800;
-      white-space:pre-wrap;
-      line-height:1.25;
-    }
-    .shiftText .site{display:block;font-weight:900}
-    .shiftText .time{display:block;font-weight:900}
+    .shift .site{display:block;font-weight:900}
+    .shift .time{display:block;font-weight:900}
     .dash{color:#666;font-weight:900}
-    .clickHint{
-      position:absolute; left:6px; bottom:6px;
-      font-size:10px; color:#666; font-weight:700;
+    .hint{position:absolute;left:8px;bottom:8px;font-size:10px;color:#666;font-weight:700}
+
+    /* Documentation + Summary */
+    .section{margin-top:18px}
+    .h3{margin:0 0 8px 0;color:var(--blue);font-weight:900}
+    .grid2{display:grid;grid-template-columns: 1.2fr .8fr;gap:14px;margin-top:10px}
+    .card{
+      border:1px solid #d7dbe2;border-radius:12px;padding:12px;background:#fff;
     }
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{
+      border:1px solid #cfd3d9;border-radius:12px;padding:10px 12px;background:var(--chip);
+      font-weight:900;color:var(--blue);min-width:160px
+    }
+    .chip small{display:block;font-weight:800;color:var(--muted);margin-top:4px}
+
+    table.log{width:100%;border-collapse:collapse}
+    table.log th, table.log td{border:1px solid #333;padding:8px;text-align:left;font-size:12px}
+    table.log th{background:#f1f1f1}
 
     .noticeTitle{text-align:center;color:var(--red);font-weight:900;margin:14px 0 6px;font-size:13px}
     .notice{text-align:center;font-size:11px;line-height:1.45;font-weight:700}
+
     .footer{margin-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
     .bigBrand{display:flex;align-items:center;gap:12px;color:var(--blue);font-weight:900;font-size:34px}
     .bigBrand .mark{
-      width:52px;height:52px;border:3px solid var(--blue);border-radius:14px;
-      display:flex;align-items:center;justify-content:center;font-size:20px
+      width:52px;height:52px;border:3px solid var(--blue);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px
     }
     .addr{text-align:center;font-size:10px;color:#333;font-weight:700;flex:1}
     .page{font-size:10px;color:#333;font-weight:700;white-space:nowrap}
 
-    /* Print */
     @media print{
       body{background:#fff}
       .wrap{max-width:100%;margin:0;padding:0}
       .toolbar{display:none!important}
       .paper{border:none;border-radius:0;box-shadow:none;padding:16px}
+      .dayCell{min-height:110px}
+      .kwCell{min-height:110px}
+      .hint{display:none}
+      textarea{border:1px solid #333}
+      .grid2{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- Controls: ONLY change KW (normal calendar week view) -->
   <div class="toolbar">
     <div class="tool-left">
       <input class="input" id="companyName" value="Masculine Security"/>
@@ -171,9 +133,14 @@
     </div>
 
     <div class="tool-right">
-      <select id="yearSel" class="input"></select>
-      <select id="kwSel" class="input"></select>
+      <select id="empSel" class="input"></select>
       <button class="btn blue" type="button" onclick="addEmployee()">Add Mitarbeiter</button>
+      <button class="btn" type="button" onclick="editEmployee()">Edit</button>
+      <button class="btn red" type="button" onclick="deleteEmployee()">Delete</button>
+
+      <select id="monthSel" class="input"></select>
+      <select id="yearSel" class="input"></select>
+
       <button class="btn" type="button" onclick="demo()">Demo</button>
       <button class="btn red" type="button" onclick="window.print()">PDF / Drucken</button>
       <button class="btn" type="button" onclick="resetLocal()">Reset (Local)</button>
@@ -184,7 +151,7 @@
     <div class="title">Vorläufiger Dienstplan</div>
 
     <div class="subrow">
-      <div class="kwlabel" id="kwLabel">Dienstplan KW …</div>
+      <div class="leftLabel" id="leftLabel">Dienstplan — Monat</div>
 
       <div class="brandbox">
         <div class="logoBox">
@@ -197,8 +164,61 @@
       </div>
     </div>
 
-    <!-- Normal calendar week grid -->
     <div class="cal" id="calendar"></div>
+
+    <!-- ========== Documentation + Summary ========== -->
+    <div class="section">
+      <div class="h3">Documentation</div>
+      <div class="grid2">
+        <div class="card">
+          <div style="font-weight:900;color:var(--blue);margin-bottom:8px">Einsatz-Dokumentation (Monat)</div>
+          <textarea id="docText" placeholder="Ku qor halkan: incidents, notes, kunde instructions, key handover, visitors, patrol notes, iwm..."></textarea>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn" type="button" onclick="clearDoc()">Clear</button>
+            <button class="btn blue" type="button" onclick="exportDoc()">Export TXT</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:900;color:var(--blue);margin-bottom:10px">Monthly Summary (Selected Mitarbeiter)</div>
+          <div class="chips">
+            <div class="chip">
+              Total Shifts
+              <small id="sumShifts">0</small>
+            </div>
+            <div class="chip">
+              Total Hours
+              <small id="sumHours">0</small>
+            </div>
+            <div class="chip">
+              Night Shifts
+              <small id="sumNight">0</small>
+            </div>
+          </div>
+          <div style="margin-top:12px;color:var(--muted);font-weight:700;font-size:12px;line-height:1.4">
+            Hours waxaa laga xisaabiyaa format-ka: <b>SITE|19:00-07:00</b> (ama <b>19:00–07:00</b>).<br/>
+            Haddii aad qorto “FREI”, hours = 0.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="h3">Employee Monthly Log (Selected Mitarbeiter)</div>
+      <div class="card">
+        <table class="log">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Shift</th>
+              <th>Hours</th>
+            </tr>
+          </thead>
+          <tbody id="logBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- ============================================ -->
 
     <div class="noticeTitle">DRINGEND BEACHTEN:</div>
     <div class="notice">
@@ -223,92 +243,131 @@
 
 <script>
   // =========================
-  // 100% Complete KW Week Plan
-  // - Normal calendar (Mon–Sun)
-  // - ONLY change: Year + KW
-  // - Data saved in localStorage
+  // Monatskalender + KW + Documentation + Monthly Summary + Log
   // =========================
+  const LS_KEY = "ms_month_calendar_kw_doc_v1";
 
-  const LS_KEY = "ms_kw_dienstplan_v2";
-
-  const daysDE = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-
-  const yearSel = document.getElementById("yearSel");
-  const kwSel   = document.getElementById("kwSel");
-  const kwLabel = document.getElementById("kwLabel");
-  const calEl   = document.getElementById("calendar");
+  const monthsDE = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  const dayShort = ["Mo","Di","Mi","Do","Fr","Sa","So"]; // Mon..Sun
 
   const companyName = document.getElementById("companyName");
   const address = document.getElementById("address");
   const phone = document.getElementById("phone");
   const email = document.getElementById("email");
 
-  // -------- ISO week helpers (Germany)
-  function mondayOfISOWeek(week, year){
-    // week 1 contains Jan 4
-    const jan4 = new Date(year, 0, 4);
-    const day = jan4.getDay() || 7; // Mon=1..Sun=7
-    const mondayWeek1 = new Date(year, 0, 4 - (day - 1));
-    const monday = new Date(mondayWeek1);
-    monday.setDate(mondayWeek1.getDate() + (week - 1) * 7);
-    return monday;
+  const empSel = document.getElementById("empSel");
+  const monthSel = document.getElementById("monthSel");
+  const yearSel = document.getElementById("yearSel");
+  const leftLabel = document.getElementById("leftLabel");
+  const calEl = document.getElementById("calendar");
+
+  const docText = document.getElementById("docText");
+  const logBody = document.getElementById("logBody");
+  const sumShifts = document.getElementById("sumShifts");
+  const sumHours  = document.getElementById("sumHours");
+  const sumNight  = document.getElementById("sumNight");
+
+  function pad2(n){return String(n).padStart(2,"0");}
+  function fmt(d){return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`;}
+  function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));}
+  function isWeekend(d){const g=d.getDay(); return g===0 || g===6;} // Sun=0 Sat=6
+
+  // ISO week number (Germany / ISO-8601)
+  function isoWeekNumber(date){
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
   }
-  function buildWeekDates(kw, year){
-    const mon = mondayOfISOWeek(kw, year);
-    const arr = [];
-    for(let i=0;i<7;i++){
-      const d = new Date(mon);
-      d.setDate(mon.getDate()+i);
-      arr.push(d);
-    }
-    return arr; // Mon..Sun
+
+  // Monday-start for month grid
+  function gridStart(month, year){
+    const first = new Date(year, month, 1);
+    const day = (first.getDay()+6)%7; // Mon=0..Sun=6
+    return new Date(year, month, 1 - day);
   }
-  function pad2(n){ return String(n).padStart(2,"0"); }
-  function formatDate(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
-  function isWeekend(d){ const g = d.getDay(); return g===0 || g===6; } // Sun=0, Sat=6
-  function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-  }
+
   function renderShift(v){
-    // "SITE|19:00-07:00" or any text
     if(!v) return `<span class="dash">—</span>`;
     if(v.includes("|")){
-      const [site,time] = v.split("|");
+      const [site,time]=v.split("|");
       return `<span class="site">${escapeHTML(site)}</span><span class="time">${escapeHTML(time)}</span>`;
     }
     return `<span class="site">${escapeHTML(v)}</span>`;
   }
 
-  // -------- State
+  // ---- Hours parsing (supports "19:00-07:00" or "19:00–07:00")
+  function parseHoursFromShiftText(text){
+    if(!text) return 0;
+    const t = String(text).trim();
+    if(!t) return 0;
+    if(/^frei$/i.test(t)) return 0;
+
+    const part = t.includes("|") ? t.split("|")[1] : t; // after |
+    if(!part) return 0;
+
+    const m = part.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
+    if(!m) return 0;
+
+    const sh = Number(m[1]), sm = Number(m[2]);
+    const eh = Number(m[3]), em = Number(m[4]);
+    let start = sh*60+sm;
+    let end = eh*60+em;
+    if(end < start) end += 24*60; // overnight
+    const mins = end - start;
+    return Math.round((mins/60)*100)/100;
+  }
+
+  function isNightShift(text){
+    // If start >= 18:00 OR contains "nacht"
+    if(!text) return false;
+    const t = String(text).toLowerCase();
+    if(t.includes("nacht")) return true;
+
+    const part = t.includes("|") ? t.split("|")[1] : t;
+    const m = part.match(/(\d{1,2}):(\d{2})\s*[-–]/);
+    if(!m) return false;
+    const sh = Number(m[1]);
+    return sh >= 18 || sh < 6;
+  }
+
+  // ---- State
   function defaultState(){
     return {
-      employees: [
-        { name: "Mustafa Mursal Abdi", shifts: {} }
-      ]
+      employees: [{ name:"Mustafa Mursal Abdi", shifts:{} }],
+      docs: {} // key = "YYYY-MM" => text
     };
   }
+
+  let state = load();
+
   function load(){
     try{
       const raw = localStorage.getItem(LS_KEY);
       if(!raw) return defaultState();
       const obj = JSON.parse(raw);
       if(!obj || !Array.isArray(obj.employees)) return defaultState();
-      // sanitize
-      obj.employees = obj.employees.map(e => ({
-        name: String(e.name || "Mitarbeiter"),
+
+      obj.employees = obj.employees.map(e=>({
+        name: String(e.name||"Mitarbeiter"),
         shifts: (e.shifts && typeof e.shifts==="object") ? e.shifts : {}
       }));
+
+      if(!obj.docs || typeof obj.docs!=="object") obj.docs = {};
       return obj;
     }catch{
       return defaultState();
     }
   }
-  function save(){
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
-  }
-  let state = load();
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 
-  // -------- Header apply
+  function ymKey(){
+    const month = Number(monthSel.value)+1;
+    const year = Number(yearSel.value);
+    return `${year}-${pad2(month)}`; // YYYY-MM
+  }
+
   function applyHeader(){
     const cn = (companyName.value || "Masculine Security").trim();
     const addr = (address.value || "").trim();
@@ -324,118 +383,209 @@
     document.getElementById("mark").textContent = cn.split(" ").map(s=>s[0]).slice(0,2).join("").toUpperCase() || "MS";
   }
 
-  // -------- Render calendar
-  function render(){
-    applyHeader();
+  function rebuildEmpSelect(){
+    empSel.innerHTML = "";
+    state.employees.forEach((e,i)=>{
+      const o=document.createElement("option");
+      o.value=String(i);
+      o.textContent=e.name;
+      empSel.appendChild(o);
+    });
+    if(Number(empSel.value) >= state.employees.length) empSel.value="0";
+  }
 
-    const year = Number(yearSel.value);
-    const kw   = Number(kwSel.value);
-    const dates = buildWeekDates(kw, year);
+  function loadDoc(){
+    const key = ymKey();
+    docText.value = state.docs[key] || "";
+  }
 
-    kwLabel.textContent = `Dienstplan KW ${kw} — ${year} (${formatDate(dates[0])} bis ${formatDate(dates[6])})`;
+  function saveDoc(){
+    const key = ymKey();
+    state.docs[key] = docText.value;
+    save();
+  }
 
-    // Build header (Mon–Sun)
-    const head = document.createElement("div");
-    head.className = "calHead";
+  function clearDoc(){
+    if(!confirm("Clear documentation text?")) return;
+    docText.value = "";
+    saveDoc();
+  }
+  function exportDoc(){
+    const key = ymKey();
+    const emp = state.employees[Number(empSel.value)]?.name || "Mitarbeiter";
+    const filename = `documentation_${key}_${emp.replace(/\s+/g,"_")}.txt`;
+    const blob = new Blob([docText.value || ""], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
 
-    const h0 = document.createElement("div");
-    h0.textContent = "Mitarbeiter";
-    head.appendChild(h0);
+  // ---- Monthly log + summary
+  function rebuildLogAndSummary(){
+    const month = Number(monthSel.value);
+    const year  = Number(yearSel.value);
+    const empIndex = Number(empSel.value);
+    const emp = state.employees[empIndex];
 
-    for(let i=0;i<7;i++){
-      const d = dates[i];
-      const h = document.createElement("div");
-      h.textContent = `${daysDE[i]}  •  ${formatDate(d)}`;
-      if(isWeekend(d)) h.style.background = "#f9f0f0";
-      head.appendChild(h);
+    const first = new Date(year, month, 1);
+    const last  = new Date(year, month+1, 0);
+
+    let totalShiftsCount = 0;
+    let totalHours = 0;
+    let nightCount = 0;
+
+    logBody.innerHTML = "";
+    for(let day=1; day<=last.getDate(); day++){
+      const d = new Date(year, month, day);
+      const key = fmt(d);
+      const val = emp.shifts[key];
+      if(!val) continue;
+
+      const hours = parseHoursFromShiftText(val);
+      const night = isNightShift(val);
+
+      totalShiftsCount++;
+      totalHours += hours;
+      if(night) nightCount++;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${key}</td><td>${escapeHTML(val)}</td><td>${hours.toFixed(2)}</td>`;
+      logBody.appendChild(tr);
     }
 
-    // Body grid
+    sumShifts.textContent = String(totalShiftsCount);
+    sumHours.textContent  = totalHours.toFixed(2);
+    sumNight.textContent  = String(nightCount);
+  }
+
+  function render(){
+    applyHeader();
+    rebuildEmpSelect();
+
+    const month = Number(monthSel.value);
+    const year = Number(yearSel.value);
+    const empIndex = Number(empSel.value);
+    const emp = state.employees[empIndex];
+
+    // Label with KW range (month)
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month+1, 0);
+    leftLabel.textContent = `Dienstplan ${monthsDE[month]} ${year} (KW ${isoWeekNumber(first)}–${isoWeekNumber(last)})`;
+
+    // Load documentation for this month
+    loadDoc();
+
+    // Build calendar head
+    const head = document.createElement("div");
+    head.className = "calHead";
+    const hKW = document.createElement("div");
+    hKW.textContent = "KW";
+    head.appendChild(hKW);
+
+    for(let i=0;i<7;i++){
+      const d=document.createElement("div");
+      d.textContent = dayShort[i];
+      head.appendChild(d);
+    }
+
+    // Build body: 6 weeks grid
     const body = document.createElement("div");
     body.className = "calBody";
 
-    state.employees.forEach((emp, empIndex) => {
-      // Name cell
-      const nameCell = document.createElement("div");
-      nameCell.className = "cell rowName";
-      nameCell.innerHTML = `
-        <div class="nameTxt">${escapeHTML(emp.name)}</div>
-        <div class="nameActions">
-          <button class="btn small" type="button" onclick="editEmployee(${empIndex})">Edit</button>
-          <button class="btn small red" type="button" onclick="deleteEmployee(${empIndex})">X</button>
-        </div>
-      `;
-      body.appendChild(nameCell);
+    const start = gridStart(month, year);
+    for(let week=0; week<6; week++){
+      const weekMon = new Date(start);
+      weekMon.setDate(start.getDate() + week*7);
+      const kw = isoWeekNumber(weekMon);
 
-      // 7 day cells
+      const kwCell = document.createElement("div");
+      kwCell.className = "kwCell";
+      kwCell.textContent = "KW " + kw;
+      body.appendChild(kwCell);
+
       for(let i=0;i<7;i++){
-        const d = dates[i];
-        const key = formatDate(d);
+        const d = new Date(weekMon);
+        d.setDate(weekMon.getDate()+i);
+
+        const inMonth = (d.getMonth()===month && d.getFullYear()===year);
+        const key = fmt(d);
         const val = emp.shifts[key] || "";
 
-        const c = document.createElement("div");
-        c.className = "cell" + (isWeekend(d) ? " weekend" : "");
-        c.title = "Click: set shift";
-
-        c.innerHTML = `
-          <div class="dayBox">${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</div>
-          <div class="shiftText">${renderShift(val)}</div>
-          <div class="clickHint">Click</div>
+        const cell = document.createElement("div");
+        cell.className = "dayCell" + (isWeekend(d) ? " weekend":"") + (!inMonth ? " out":"");
+        cell.innerHTML = `
+          <div class="dayTop">
+            <div class="dayNum">${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</div>
+          </div>
+          <div class="shift">${renderShift(val)}</div>
+          <div class="hint">Click</div>
         `;
 
-        c.addEventListener("click", () => setShift(empIndex, key, val));
-        body.appendChild(c);
-      }
-    });
-
-    calEl.innerHTML = "";
-    calEl.appendChild(head);
-    calEl.appendChild(body);
-  }
-
-  // -------- Actions
-  function setShift(empIndex, dateKey, current){
-    const help =
-`Ku qor shift sida:
+        cell.addEventListener("click", ()=>{
+          if(!inMonth) return;
+          const help =
+`(${emp.name}) ${key}
+Ku qor shift sida:
 HOTEL|19:00-07:00
 LAST Birkenfels|19:00-07:00
 FREI
 
 Tirtir: blank ka dhig kadib OK.`;
-    const v = prompt(help, current || "HOTEL|19:00-07:00");
-    if(v === null) return;
-    const val = v.trim();
-    if(!val) delete state.employees[empIndex].shifts[dateKey];
-    else state.employees[empIndex].shifts[dateKey] = val;
+          const v = prompt(help, val || "HOTEL|19:00-07:00");
+          if(v===null) return;
+          const t = v.trim();
+          if(!t) delete emp.shifts[key];
+          else emp.shifts[key]=t;
 
-    save();
-    render();
+          save();
+          rebuildLogAndSummary();
+          render(); // re-render cell text
+        });
+
+        body.appendChild(cell);
+      }
+    }
+
+    calEl.innerHTML = "";
+    calEl.appendChild(head);
+    calEl.appendChild(body);
+
+    rebuildLogAndSummary();
   }
 
+  // Employee actions
   function addEmployee(){
     const name = prompt("Magaca Mitarbeiter-ka?", "New Mitarbeiter");
     if(!name) return;
     state.employees.push({ name: name.trim(), shifts: {} });
     save();
     render();
+    empSel.value = String(state.employees.length-1);
+    render();
   }
-  function editEmployee(i){
+  function editEmployee(){
+    const i = Number(empSel.value);
     const name = prompt("Update name:", state.employees[i].name);
     if(!name) return;
     state.employees[i].name = name.trim();
     save();
     render();
   }
-  function deleteEmployee(i){
+  function deleteEmployee(){
+    const i = Number(empSel.value);
     if(!confirm("Delete Mitarbeiter-kan?")) return;
     state.employees.splice(i,1);
     if(!state.employees.length) state = defaultState();
     save();
+    empSel.value = "0";
     render();
   }
 
   function demo(){
-    // Make 5 workers and fill Fri/Sat/Sun for first worker
     state.employees = [
       { name:"Mustafa Mursal Abdi", shifts:{} },
       { name:"Mitarbeiter 2", shifts:{} },
@@ -443,18 +593,21 @@ Tirtir: blank ka dhig kadib OK.`;
       { name:"Mitarbeiter 4", shifts:{} },
       { name:"Mitarbeiter 5", shifts:{} }
     ];
+    const month = Number(monthSel.value);
     const year = Number(yearSel.value);
-    const kw   = Number(kwSel.value);
-    const dates = buildWeekDates(kw, year);
+    const last = new Date(year, month+1, 0);
 
-    dates.forEach(d=>{
-      const key = formatDate(d);
-      const g = d.getDay(); // Fri=5, Sat=6, Sun=0
+    for(let day=1; day<=last.getDate(); day++){
+      const d = new Date(year, month, day);
+      const g = d.getDay();
       if(g===5 || g===6 || g===0){
-        state.employees[0].shifts[key] = "LAST Birkenfels|19:00-07:00";
+        state.employees[0].shifts[fmt(d)] = "LAST Birkenfels|19:00-07:00";
       }
-    });
+    }
+
+    state.docs[ymKey()] = "Monthly documentation: \n- Patrols OK\n- No incidents\n- Keys returned\n";
     save();
+    empSel.value="0";
     render();
   }
 
@@ -466,58 +619,51 @@ Tirtir: blank ka dhig kadib OK.`;
     render();
   }
 
-  // -------- Init selectors
+  // init selects
   function initSelectors(){
-    const now = new Date();
-    const yNow = now.getFullYear();
+    monthsDE.forEach((m,i)=>{
+      const o=document.createElement("option");
+      o.value=String(i);
+      o.textContent=m;
+      monthSel.appendChild(o);
+    });
 
-    // years
+    const now=new Date();
+    const yNow=now.getFullYear();
     for(let y=yNow-2; y<=yNow+4; y++){
       const o=document.createElement("option");
       o.value=String(y);
       o.textContent=String(y);
       yearSel.appendChild(o);
     }
-    yearSel.value = String(yNow);
 
-    // KW 1..53
-    for(let k=1; k<=53; k++){
-      const o=document.createElement("option");
-      o.value=String(k);
-      o.textContent="KW " + k;
-      kwSel.appendChild(o);
-    }
-
-    // default KW = current ISO week (quick compute by scanning)
-    // We'll find KW where "today" is in that week by trying 1..53 for current year
-    let defaultKW = 1;
-    for(let k=1;k<=53;k++){
-      const w = buildWeekDates(k, yNow);
-      const start = w[0].getTime();
-      const end = w[6].getTime();
-      const t = new Date(yNow, now.getMonth(), now.getDate()).getTime();
-      if(t >= start && t <= end){ defaultKW = k; break; }
-    }
-    kwSel.value = String(defaultKW);
+    monthSel.value=String(now.getMonth());
+    yearSel.value=String(yNow);
   }
 
   // events
-  [yearSel, kwSel, companyName, address, phone, email].forEach(el=>{
+  [empSel, monthSel, yearSel, companyName, address, phone, email].forEach(el=>{
     el.addEventListener("change", ()=>{ save(); render(); });
-    el.addEventListener("input",  ()=>{ save(); render(); });
+    el.addEventListener("input", ()=>{ save(); render(); });
+  });
+
+  docText.addEventListener("input", ()=>{
+    saveDoc();
   });
 
   initSelectors();
-  applyHeader();
   render();
   save();
 
-  // expose for inline buttons
+  // expose
   window.addEmployee = addEmployee;
   window.editEmployee = editEmployee;
   window.deleteEmployee = deleteEmployee;
   window.demo = demo;
   window.resetLocal = resetLocal;
+
+  window.clearDoc = clearDoc;
+  window.exportDoc = exportDoc;
 </script>
 </body>
 </html>
