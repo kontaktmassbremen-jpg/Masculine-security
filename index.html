@@ -1,6 +1,3 @@
-/* =========================
-   FILE: index.html
-   ========================= */
 <!doctype html>
 <html lang="de">
 <head>
@@ -12,21 +9,12 @@
 
   <style>
     :root{
-      --bg:#071225;
-      --panel:#0b1a33;
-      --card:#0f2a4f;
-      --line:#16345e;
-      --text:#e7f0ff;
-      --muted:#9bb1d5;
-      --accent:#3aa6ff;
-      --good:#21d19f;
-      --warn:#ffce54;
-      --bad:#ff4d6d;
-      --r:16px; --r2:12px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --bg:#071225; --panel:#0b1a33; --card:#0f2a4f; --line:#16345e;
+      --text:#e7f0ff; --muted:#9bb1d5; --accent:#3aa6ff;
+      --good:#21d19f; --warn:#ffce54; --bad:#ff4d6d;
+      --r:16px; --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0; font-family:var(--font); color:var(--text);
       background:
@@ -35,15 +23,12 @@
         var(--bg);
       overflow-x:hidden;
     }
-    /* safety: never show accidental raw code blocks */
-    pre, code { display:none !important; }
-
     .wrap{max-width:1200px;margin:0 auto;padding:16px}
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       background: rgba(11,26,51,.92);
       border:1px solid var(--line); border-radius:var(--r);
-      padding:12px 12px;
+      padding:12px;
       box-shadow:0 10px 28px rgba(0,0,0,.35);
     }
     .brand{display:flex;gap:12px;align-items:center}
@@ -51,7 +36,6 @@
     .brand h1{margin:0;font-size:15px;letter-spacing:.4px}
     .meta{font-size:12px;color:var(--muted);line-height:1.35}
     .meta a{color:var(--text);text-decoration:none;border-bottom:1px dashed rgba(231,240,255,.35)}
-    .meta a:hover{border-bottom-color:rgba(231,240,255,.75)}
     .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     .btn{
       background: rgba(58,166,255,.14);
@@ -62,17 +46,14 @@
       cursor:pointer;
       font-weight:700;
       font-size:12px;
-      transition:.15s transform, .15s filter;
-      user-select:none;
     }
-    .btn:hover{filter:brightness(1.08); transform: translateY(-1px)}
     .btn.secondary{background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14)}
     .btn.good{background: rgba(33,209,159,.14); border:1px solid rgba(33,209,159,.32)}
     .btn.warn{background: rgba(255,206,84,.14); border:1px solid rgba(255,206,84,.28)}
     .btn.bad{background: rgba(255,77,109,.14); border:1px solid rgba(255,77,109,.28)}
 
-    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
     .card{
+      margin-top:14px;
       background: rgba(15,42,79,.80);
       border:1px solid var(--line);
       border-radius:var(--r);
@@ -80,10 +61,8 @@
       box-shadow:0 10px 28px rgba(0,0,0,.25);
     }
     h2{margin:0 0 10px 0;font-size:14px}
-    .hint{margin:0 0 12px 0;color:var(--muted);font-size:12px;line-height:1.4}
-
     label{display:block;margin:10px 0 6px;color:var(--muted);font-size:12px}
-    input, select, textarea{
+    input, select{
       width:100%;
       padding:11px 12px;
       border-radius:12px;
@@ -92,9 +71,6 @@
       color:var(--text);
       outline:none;
     }
-    input:focus, select:focus, textarea:focus{border-color: rgba(58,166,255,.55)}
-    textarea{min-height:90px;resize:vertical}
-
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media (max-width: 820px){ .row{grid-template-columns:1fr} }
 
@@ -109,26 +85,18 @@
     th, td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);font-size:12px;vertical-align:top}
     th{background: rgba(7,18,37,.50);color:var(--muted);text-align:left}
     tr:last-child td{border-bottom:none}
-    .mini{font-size:11px;color:var(--muted)}
-    .right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px}
     .sbtn{
       padding:8px 10px;border-radius:10px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       color:var(--text);cursor:pointer;font-weight:700;font-size:12px;
     }
-    .sbtn:hover{filter:brightness(1.08)}
-    .sbtn.bad{border-color: rgba(255,77,109,.35); background: rgba(255,77,109,.12)}
-    .sbtn.accent{border-color: rgba(58,166,255,.40); background: rgba(58,166,255,.12)}
     .toast{
       margin-top:10px;padding:10px 12px;border-radius:12px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(7,18,37,.45);
       color:var(--muted);font-size:12px;
     }
-    .ok{border-color: rgba(33,209,159,.30)}
-    .warnT{border-color: rgba(255,206,84,.30); color:#fff2c6}
-    .err{border-color: rgba(255,77,109,.30); color:#ffdbe3}
   </style>
 </head>
 
@@ -148,546 +116,202 @@
       </div>
 
       <div class="actions">
-        <button class="btn secondary" id="btnPDFPro" type="button">PDF (Proc-Style)</button>
+        <button class="btn secondary" id="btnPDF" type="button">PDF (Proc-Style)</button>
         <button class="btn good" id="btnWA" type="button">WhatsApp (Text)</button>
-        <button class="btn warn" id="btnExport" type="button">Export CSV</button>
+        <button class="btn warn" id="btnCSV" type="button">Export CSV</button>
         <button class="btn bad" id="btnReset" type="button">Reset</button>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h2>Dienstplan Eingabe</h2>
-        <p class="hint">
-          Buuxi: KW + Start-Datum (Montag). Kadib entries ku dar. “PDF (Proc-Style)” wuxuu sameeyaa qaabkii Proc (header + 7 days table + DRINGEND BEACHTEN + footer).
-        </p>
+    <div class="card">
+      <h2>Dienstplan Eingabe</h2>
 
-        <div class="row">
-          <div>
-            <label>Firma</label>
-            <input id="cName" value="Masculine Security">
-          </div>
-          <div>
-            <label>Logo upload (optional)</label>
-            <input id="logoFile" type="file" accept="image/*">
-            <div class="mini">Talo: repo ku hay <b>logo.png</b> si PDF uu u helo.</div>
-          </div>
+      <div class="row">
+        <div>
+          <label>KW</label>
+          <input id="kw" type="number" min="1" max="53" value="32">
         </div>
-
-        <div class="row">
-          <div>
-            <label>Adresse</label>
-            <input id="cAddr" value="Werschenregerstraße 6 · 28237 Bremen">
-          </div>
-          <div>
-            <label>Telefon</label>
-            <input id="cTel" value="015778697052">
-          </div>
+        <div>
+          <label>Start-Datum (Montag)</label>
+          <input id="weekStart" type="date">
         </div>
-
-        <div class="row">
-          <div>
-            <label>E-Mail</label>
-            <input id="cEmail" value="kontakt.mass.bremen@hotmail.com">
-          </div>
-          <div>
-            <label>KW (Kalenderwoche)</label>
-            <input id="kw" type="number" min="1" max="53" value="32">
-          </div>
-        </div>
-
-        <div class="row">
-          <div>
-            <label>Start-Datum (Montag)</label>
-            <input id="weekStart" type="date">
-            <div class="mini">Waa Monday ee todobaadka (KW).</div>
-          </div>
-          <div>
-            <label>Überschrift</label>
-            <input id="headline" value="Vorläufiger Dienstplan">
-          </div>
-        </div>
-
-        <hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:14px 0">
-
-        <div class="row">
-          <div>
-            <label>Mitarbeiter Name</label>
-            <input id="empName" placeholder="z.B. Mustafa Mursal Abdi">
-          </div>
-          <div>
-            <label>Mitarbeiter-Nr (optional)</label>
-            <input id="empNo" placeholder="z.B. MS-001">
-          </div>
-        </div>
-
-        <div class="row">
-          <div>
-            <label>Tag (Mo–So)</label>
-            <select id="day">
-              <option value="Mo">Montag</option>
-              <option value="Di">Dienstag</option>
-              <option value="Mi">Mittwoch</option>
-              <option value="Do">Donnerstag</option>
-              <option value="Fr">Freitag</option>
-              <option value="Sa">Samstag</option>
-              <option value="So">Sonntag</option>
-            </select>
-          </div>
-          <div>
-            <label>Objekt / Einsatz</label>
-            <input id="objekt" placeholder="z.B. LAST Birkenfels">
-          </div>
-        </div>
-
-        <div class="row">
-          <div>
-            <label>Uhrzeit</label>
-            <input id="time" placeholder="z.B. 19:00–07:00">
-          </div>
-          <div>
-            <label>Notiz (optional)</label>
-            <input id="note" placeholder="z.B. Tor 2 / Schlüssel / Uniform">
-          </div>
-        </div>
-
-        <div class="right">
-          <button class="sbtn accent" id="btnAdd" type="button">+ Eintrag speichern</button>
-          <button class="sbtn" id="btnClear" type="button">Neu</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Mitarbeiter</th>
-              <th>Tag</th>
-              <th>Objekt</th>
-              <th>Uhrzeit</th>
-              <th>Notiz</th>
-              <th>Aktion</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-            <tr><td colspan="6" style="color:#556b92">Noch keine Einträge.</td></tr>
-          </tbody>
-        </table>
-
-        <div id="toast" class="toast ok">Bereit ✅</div>
       </div>
+
+      <div class="row">
+        <div>
+          <label>Mitarbeiter Name</label>
+          <input id="empName" placeholder="z.B. Mustafa Mursal Abdi">
+        </div>
+        <div>
+          <label>Mitarbeiter-Nr (optional)</label>
+          <input id="empNo" placeholder="z.B. MS-001">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Tag</label>
+          <select id="day">
+            <option value="Mo">Montag</option><option value="Di">Dienstag</option><option value="Mi">Mittwoch</option>
+            <option value="Do">Donnerstag</option><option value="Fr">Freitag</option><option value="Sa">Samstag</option>
+            <option value="So">Sonntag</option>
+          </select>
+        </div>
+        <div>
+          <label>Objekt / Einsatz</label>
+          <input id="objekt" placeholder="z.B. LAST Birkenfels">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Uhrzeit</label>
+          <input id="time" placeholder="z.B. 19:00–07:00">
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="note" placeholder="z.B. Tor 2 / Schlüssel / Uniform">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="sbtn" id="btnAdd" type="button">+ Eintrag speichern</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Mitarbeiter</th><th>Tag</th><th>Objekt</th><th>Uhrzeit</th><th>Notiz</th><th>Aktion</th></tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="6" style="color:#556b92">Noch keine Einträge.</td></tr>
+        </tbody>
+      </table>
+
+      <div id="toast" class="toast">Bereit (v7)</div>
     </div>
   </div>
 
-  <!-- ✅ IMPORTANT: script must be properly closed to prevent code showing on page -->
   <script>
     "use strict";
+    const K_ENT="MS_ENT_V7";
 
-    // ====== VERSION (forces cache refresh together with service worker) ======
-    const APP_VERSION = "v7";
+    const $=id=>document.getElementById(id);
+    const pad2=n=>String(n).padStart(2,"0");
 
-    // ====== Storage keys ======
-    const K_META="MS_META_PROC_V7";
-    const K_ENT ="MS_ENT_PROC_V7";
+    const order={Mo:1,Di:2,Mi:3,Do:4,Fr:5,Sa:6,So:7};
+    const dayLabel=k=>({Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"}[k]||k);
 
-    const $ = (id)=>document.getElementById(id);
-    const pad2 = (n)=>String(n).padStart(2,"0");
+    const state={ entries: [] };
 
-    const state = { entries:[], logoDataUrl:"" };
+    function setToast(t){ $("toast").textContent=t; }
 
-    function setToast(msg, cls="ok"){
-      const t=$("toast");
-      t.className="toast "+cls;
-      t.textContent=msg;
+    function save(){ localStorage.setItem(K_ENT, JSON.stringify(state.entries)); }
+    function load(){
+      try{ state.entries=JSON.parse(localStorage.getItem(K_ENT)||"[]")||[]; }catch(_){ state.entries=[]; }
     }
-    function safeParse(s, fallback){ try{return JSON.parse(s)}catch(_){return fallback} }
 
     function esc(s){
-      return String(s||"")
-        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-    }
-    function dayLabel(k){
-      return ({Mo:"Montag",Di:"Dienstag",Mi:"Mittwoch",Do:"Donnerstag",Fr:"Freitag",Sa:"Samstag",So:"Sonntag"}[k]||k);
+      return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
     }
 
-    // ====== Meta ======
-    function getMeta(){
-      return {
-        company: ($("cName").value||"").trim() || "Masculine Security",
-        addr: ($("cAddr").value||"").trim(),
-        tel:  ($("cTel").value||"").trim(),
-        email:($("cEmail").value||"").trim(),
-        kw: Number($("kw").value||"0")||0,
-        weekStart: $("weekStart").value || "",
-        headline: ($("headline").value||"").trim() || "Vorläufiger Dienstplan",
-        logoDataUrl: state.logoDataUrl || ""
-      };
-    }
-
-    function applyMetaToHeader(){
-      const m=getMeta();
-      $("titleTop").textContent = `${m.company} — Dienstplan`;
-      $("cAddrTxt").textContent = m.addr;
-      $("cTelLink").textContent = m.tel;
-      $("cTelLink").href = "tel:"+m.tel.replace(/\s+/g,"");
-      $("cEmailLink").textContent = m.email;
-      $("cEmailLink").href = "mailto:"+m.email;
-    }
-
-    function applyLogo(){
-      const img=$("logoImg");
-      img.style.opacity=1;
-      img.src = state.logoDataUrl ? state.logoDataUrl : "logo.png";
-    }
-
-    function saveAll(){
-      const meta=getMeta();
-      localStorage.setItem(K_META, JSON.stringify(meta));
-      localStorage.setItem(K_ENT, JSON.stringify(state.entries));
-    }
-
-    function loadAll(){
-      const meta = safeParse(localStorage.getItem(K_META), null);
-      const ent  = safeParse(localStorage.getItem(K_ENT), []);
-      if(meta){
-        $("cName").value = meta.company || "Masculine Security";
-        $("cAddr").value = meta.addr || "";
-        $("cTel").value  = meta.tel || "";
-        $("cEmail").value= meta.email || "";
-        $("kw").value    = meta.kw || 32;
-        $("weekStart").value = meta.weekStart || "";
-        $("headline").value  = meta.headline || "Vorläufiger Dienstplan";
-        state.logoDataUrl = meta.logoDataUrl || "";
-      }
-      state.entries = Array.isArray(ent)?ent:[];
-      applyMetaToHeader();
-      applyLogo();
-    }
-
-    // ====== Entries ======
-    function renderTable(){
+    function render(){
       const tb=$("tbody");
       if(!state.entries.length){
-        tb.innerHTML = `<tr><td colspan="6" style="color:#556b92">Noch keine Einträge.</td></tr>`;
+        tb.innerHTML=`<tr><td colspan="6" style="color:#556b92">Noch keine Einträge.</td></tr>`;
         return;
       }
-      tb.innerHTML = state.entries.map((e,i)=>`
+      tb.innerHTML=state.entries.map((e,i)=>`
         <tr>
-          <td><b>${esc(e.empName)}</b><div class="mini">${esc(e.empNo||"")}</div></td>
+          <td><b>${esc(e.empName)}</b><div style="font-size:11px;color:#9bb1d5">${esc(e.empNo||"")}</div></td>
           <td>${dayLabel(e.day)}</td>
           <td>${esc(e.objekt)}</td>
           <td>${esc(e.time)}</td>
           <td>${esc(e.note||"")}</td>
-          <td><button class="sbtn bad" data-del="${i}">Löschen</button></td>
+          <td><button class="sbtn" data-del="${i}">Löschen</button></td>
         </tr>
       `).join("");
 
-      tb.querySelectorAll("button[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const idx=Number(btn.getAttribute("data-del"));
-          state.entries.splice(idx,1);
-          saveAll();
-          renderTable();
-          setToast("Eintrag gelöscht ✅","ok");
-        });
+      tb.querySelectorAll("button[data-del]").forEach(b=>{
+        b.onclick=()=>{
+          const i=Number(b.getAttribute("data-del"));
+          state.entries.splice(i,1);
+          save(); render(); setToast("Gelöscht ✅");
+        };
       });
     }
 
-    function addEntry(){
+    function add(){
       const empName=($("empName").value||"").trim();
-      const empNo  =($("empNo").value||"").trim();
+      const empNo=($("empNo").value||"").trim();
       const day=$("day").value;
       const objekt=($("objekt").value||"").trim();
       const time=($("time").value||"").trim();
       const note=($("note").value||"").trim();
-
-      if(!empName) return setToast("Bitte Mitarbeiter Name eingeben.","warnT");
-      if(!objekt) return setToast("Bitte Objekt/Einsatz eingeben.","warnT");
-      if(!time)   return setToast("Bitte Uhrzeit eingeben.","warnT");
-
-      state.entries.unshift({empName, empNo, day, objekt, time, note, created:Date.now()});
-      saveAll();
-      renderTable();
-      setToast("Eintrag gespeichert ✅","ok");
+      if(!empName||!objekt||!time){ setToast("Fadlan Name/Objekt/Uhrzeit buuxi."); return; }
+      state.entries.push({empName, empNo, day, objekt, time, note});
+      state.entries.sort((a,b)=>(order[a.day]-order[b.day]) || a.empName.localeCompare(b.empName));
+      save(); render(); setToast("Gespeichert ✅");
     }
 
-    function clearInputs(){
-      $("empName").value="";
-      $("empNo").value="";
-      $("objekt").value="";
-      $("time").value="";
-      $("note").value="";
-      $("day").value="Mo";
-      setToast("Neu ✅","ok");
+    function mondayOfThisWeek(){
+      const d=new Date(); const day=d.getDay(); const diff=(day===0?-6:1-day);
+      const mon=new Date(d.getFullYear(), d.getMonth(), d.getDate()+diff);
+      return `${mon.getFullYear()}-${pad2(mon.getMonth()+1)}-${pad2(mon.getDate())}`;
     }
 
-    // ====== Date helpers for PDF ======
-    function parseDateISO(iso){
-      if(!iso) return null;
-      const [y,m,d]=iso.split("-").map(Number);
-      if(!y||!m||!d) return null;
-      return new Date(y, m-1, d);
-    }
-    function fmtDE(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
-    function addDays(date, n){ const d=new Date(date.getTime()); d.setDate(d.getDate()+n); return d; }
-
-    function groupForWeek(entries){
-      const byEmp = new Map();
-      for(const e of entries){
-        const key = (e.empName||"").trim()+"||"+(e.empNo||"").trim();
-        if(!byEmp.has(key)){
-          byEmp.set(key, {empName:e.empName, empNo:e.empNo, days:{Mo:[],Di:[],Mi:[],Do:[],Fr:[],Sa:[],So:[]}});
-        }
-        byEmp.get(key).days[e.day].push(e);
-      }
-      return Array.from(byEmp.values());
-    }
-
-    // ====== Proc-style PDF ======
-    function buildProcHtml(){
-      const m=getMeta();
-      const start=parseDateISO(m.weekStart);
-      if(!start){ setToast("Bitte Start-Datum (Montag) auswählen.","warnT"); return null; }
-
-      const dates = {
-        Mo: fmtDE(start),
-        Di: fmtDE(addDays(start,1)),
-        Mi: fmtDE(addDays(start,2)),
-        Do: fmtDE(addDays(start,3)),
-        Fr: fmtDE(addDays(start,4)),
-        Sa: fmtDE(addDays(start,5)),
-        So: fmtDE(addDays(start,6)),
-      };
-
-      const logoSrc = m.logoDataUrl ? m.logoDataUrl : "logo.png";
-      const emps = groupForWeek(state.entries);
-
-      const rowsHtml = (emps.length?emps:[{empName:"",empNo:"",days:{Mo:[],Di:[],Mi:[],Do:[],Fr:[],Sa:[],So:[]}}]).map(emp=>{
-        const cell = (k)=>{
-          const items = emp.days[k]||[];
-          if(!items.length) return `<div class="cellEmpty"></div>`;
-          return items.map(x=>`
-            <div class="cellObj">${esc(x.objekt)}</div>
-            <div class="cellTime">${esc(x.time)}</div>
-            ${x.note?`<div class="cellNote">${esc(x.note)}</div>`:""}
-          `).join("");
-        };
-        return `
-          <tr>
-            <td class="empCol">
-              <div class="empName">${esc(emp.empName||"")}</div>
-              <div class="empNo">${esc(emp.empNo||"")}</div>
-            </td>
-            <td>${cell("Mo")}</td>
-            <td>${cell("Di")}</td>
-            <td>${cell("Mi")}</td>
-            <td>${cell("Do")}</td>
-            <td>${cell("Fr")}</td>
-            <td>${cell("Sa")}</td>
-            <td>${cell("So")}</td>
-          </tr>`;
-      }).join("");
-
-      return `<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>${esc(m.company)} — Dienstplan KW ${esc(String(m.kw||""))}</title>
-<style>
-  @page { size: A4; margin: 12mm; }
-  body{ font-family: Arial, Helvetica, sans-serif; color:#111; margin:0; }
-  .title{ text-align:center; color:#b91c1c; font-weight:700; font-size:18px; margin:8px 0 10px; }
-  .topInfo{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-  .kw{ font-weight:700; font-size:13px; margin:0 0 8px; }
-  .companyMeta{ font-size:9px; color:#333; line-height:1.35; text-align:right; }
-  table{ width:100%; border-collapse:collapse; table-layout:fixed; }
-  th, td{ border:1px solid #333; padding:6px; vertical-align:top; font-size:10px; }
-  th{ background:#eaf2ff; text-align:center; font-weight:700; }
-  .hdrDate{ display:block; font-size:10px; font-weight:700; margin-bottom:2px; }
-  .hdrDay{ display:block; font-size:10px; color:#111; }
-  .empCol{ width:20%; }
-  .empName{ font-weight:700; font-size:10px; }
-  .empNo{ font-size:9px; color:#444; margin-top:2px; }
-  .cellObj{ font-weight:700; font-size:10px; }
-  .cellTime{ font-size:10px; margin-top:2px; }
-  .cellNote{ font-size:9px; color:#333; margin-top:2px; }
-  .cellEmpty{ height:34px; }
-  .logoBox{ display:flex; align-items:center; justify-content:center; }
-  .logo{ width:44px; height:44px; object-fit:contain; }
-  .urgent{ margin-top:12px; text-align:center; }
-  .urgentTitle{ color:#b91c1c; font-weight:700; font-size:12px; margin-bottom:6px; }
-  .urgentText{ font-size:10px; line-height:1.35; }
-  .footer{ margin-top:14px; text-align:center; }
-  .footerLogo{ width:160px; height:auto; object-fit:contain; }
-  .footSmall{ font-size:9px; color:#333; margin-top:6px; }
-  .pageNo{ position:fixed; right:0; bottom:0; font-size:9px; color:#333; }
-</style>
-</head>
-<body>
-  <div class="title">${esc(m.headline)}</div>
-
-  <div class="topInfo">
-    <div class="kw">Dienstplan KW ${esc(String(m.kw||""))}</div>
-    <div class="companyMeta">
-      <div><b>${esc(m.company)}</b></div>
-      <div>${esc(m.addr||"")}</div>
-      <div>Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}</div>
-    </div>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th class="empCol"><div class="logoBox"><img class="logo" src="${logoSrc}" alt="Logo"></div></th>
-        <th><span class="hdrDate">${dates.Mo}</span><span class="hdrDay">Montag</span></th>
-        <th><span class="hdrDate">${dates.Di}</span><span class="hdrDay">Dienstag</span></th>
-        <th><span class="hdrDate">${dates.Mi}</span><span class="hdrDay">Mittwoch</span></th>
-        <th><span class="hdrDate">${dates.Do}</span><span class="hdrDay">Donnerstag</span></th>
-        <th><span class="hdrDate">${dates.Fr}</span><span class="hdrDay">Freitag</span></th>
-        <th><span class="hdrDate">${dates.Sa}</span><span class="hdrDay">Samstag</span></th>
-        <th><span class="hdrDate">${dates.So}</span><span class="hdrDay">Sonntag</span></th>
-      </tr>
-    </thead>
-    <tbody>${rowsHtml}</tbody>
-  </table>
-
-  <div class="urgent">
-    <div class="urgentTitle">DRINGEND BEACHTEN:</div>
-    <div class="urgentText">
-      Dienstantritt ist 20 Minuten vor Dienstbeginn!<br>
-      Verspätungen und Ausfälle des Dienstantritts sind unverzüglich telefonisch zu melden!<br>
-      Die Dienstzeiten von Sonderbewachungen müssen nach Dienstende schriftlich mitgeteilt werden!<br><br>
-      Freiwünsche werden spätestens am Donnerstag schriftlich der Einsatzleitung mitgeteilt!<br>
-      Je nach Auftragslage werden diese Zugestimmt oder abgelehnt.<br><br>
-      Der Stundenzettel wird 2. Tage vor Monatsende bei der Einsatzleitung eingereicht!
-    </div>
-  </div>
-
-  <div class="footer">
-    <img class="footerLogo" src="${logoSrc}" alt="Logo">
-    <div class="footSmall">
-      ${esc(m.company)}<br>
-      ${esc(m.addr||"")}<br>
-      Tel: ${esc(m.tel||"")} · E-Mail: ${esc(m.email||"")}
-    </div>
-  </div>
-
-  <div class="pageNo">Seite 1 von 1</div>
-
-  <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
-</body>
-</html>`;
-    }
-
-    function openProcPDF(){
-      const html = buildProcHtml();
-      if(!html) return;
-      const w = window.open("", "_blank", "noopener,noreferrer");
-      if(!w){ setToast("Popup blockiert. Bitte Popups erlauben und erneut klicken.","warnT"); return; }
-      w.document.open();
-      w.document.write(html);
-      w.document.close();
-      setToast("PDF geöffnet ✅ → Save as PDF","ok");
-    }
-
-    // ====== WhatsApp text ======
-    function makeWhatsAppText(){
-      const m=getMeta();
-      const start=parseDateISO(m.weekStart);
+    function waText(){
+      const kw=$("kw").value||"";
+      const ws=$("weekStart").value||"";
       const lines=[];
-      lines.push(`${m.company} — Dienstplan KW ${m.kw}`);
-      if(start) lines.push(`Woche: ${fmtDE(start)} – ${fmtDE(addDays(start,6))}`);
-      lines.push(`Adresse: ${m.addr}`);
-      lines.push(`Tel: ${m.tel} | Email: ${m.email}`);
-      lines.push(`----------------------------`);
-
-      const order={Mo:1,Di:2,Mi:3,Do:4,Fr:5,Sa:6,So:7};
-      const sorted=[...state.entries].sort((a,b)=>(order[a.day]-order[b.day]) || (a.empName||"").localeCompare(b.empName||""));
-      sorted.forEach(e=>{
+      lines.push(`Masculine Security — Dienstplan KW ${kw}`);
+      lines.push(`Start (Mo): ${ws}`);
+      lines.push(`Tel: 015778697052 | Email: kontakt.mass.bremen@hotmail.com`);
+      lines.push(`---------------------------`);
+      state.entries.forEach(e=>{
         lines.push(`${dayLabel(e.day)} — ${e.empName}${e.empNo?` (${e.empNo})`:""} — ${e.objekt} — ${e.time}${e.note?` — ${e.note}`:""}`);
       });
       return lines.join("\n");
     }
+
     function sendWA(){
-      const text=makeWhatsAppText();
-      const url="https://wa.me/?text="+encodeURIComponent(text);
-      window.open(url, "_blank", "noopener,noreferrer");
-      setToast("WhatsApp text geöffnet ✅","ok");
+      const url="https://wa.me/?text="+encodeURIComponent(waText());
+      window.open(url,"_blank","noopener,noreferrer");
+      setToast("WhatsApp text geöffnet ✅");
     }
 
-    // ====== CSV ======
-    function csvEscape(s){
-      s=String(s||"");
-      if(/[;"\n]/.test(s)) return `"${s.replaceAll('"','""')}"`;
-      return s;
-    }
     function exportCSV(){
       const header=["Mitarbeiter","Nr","Tag","Objekt","Uhrzeit","Notiz"].join(";");
-      const rows=state.entries.map(e=>[
-        e.empName||"", e.empNo||"", dayLabel(e.day), e.objekt||"", e.time||"", e.note||""
-      ].map(csvEscape).join(";"));
-      const csv=[header,...rows].join("\n");
-      const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+      const rows=state.entries.map(e=>[e.empName,e.empNo||"",dayLabel(e.day),e.objekt,e.time,e.note||""].join(";"));
+      const blob=new Blob([header+"\n"+rows.join("\n")],{type:"text/csv;charset=utf-8"});
       const a=document.createElement("a");
       a.href=URL.createObjectURL(blob);
       a.download="dienstplan.csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setToast("CSV exportiert ✅","ok");
+      document.body.appendChild(a); a.click(); a.remove();
+      setToast("CSV exportiert ✅");
     }
 
-    // ====== Reset ======
     function resetAll(){
       if(!confirm("Reset ALL data?")) return;
-      localStorage.removeItem(K_META);
       localStorage.removeItem(K_ENT);
       location.reload();
     }
 
-    // ====== Init ======
-    function init(){
-      // default weekStart = this Monday
-      const d=new Date();
-      const day=d.getDay(); // 0 Sun..6 Sat
-      const diff=(day===0? -6 : 1-day);
-      const mon=new Date(d.getFullYear(), d.getMonth(), d.getDate()+diff);
-      $("weekStart").value = `${mon.getFullYear()}-${pad2(mon.getMonth()+1)}-${pad2(mon.getDate())}`;
-
-      loadAll();
-      renderTable();
-      saveAll();
-
-      ["cName","cAddr","cTel","cEmail","kw","weekStart","headline"].forEach(id=>{
-        $(id).addEventListener("input", ()=>{ applyMetaToHeader(); saveAll(); });
-        $(id).addEventListener("change",()=>{ applyMetaToHeader(); saveAll(); });
-      });
-
-      $("logoFile").addEventListener("change",(e)=>{
-        const f=e.target.files && e.target.files[0];
-        if(!f) return;
-        const r=new FileReader();
-        r.onload=()=>{
-          state.logoDataUrl=String(r.result||"");
-          applyLogo();
-          saveAll();
-          setToast("Logo gespeichert ✅ (lokal)","ok");
-        };
-        r.readAsDataURL(f);
-      });
-
-      $("btnAdd").addEventListener("click", addEntry);
-      $("btnClear").addEventListener("click", clearInputs);
-      $("btnPDFPro").addEventListener("click", openProcPDF);
-      $("btnWA").addEventListener("click", sendWA);
-      $("btnExport").addEventListener("click", exportCSV);
-      $("btnReset").addEventListener("click", resetAll);
-
-      setToast("Bereit ✅ ("+APP_VERSION+")","ok");
+    // PDF Proc-style => open print window (Save as PDF)
+    function openPDF(){
+      alert("PDF: Browser print dialog ayaa furmaya. Dooro 'Save as PDF'. (WhatsApp direct file send browser-ka si toos ah uma oggola.)");
+      window.print();
     }
-    init();
 
-    // ====== Register service worker (safe) ======
+    // init
+    $("weekStart").value = mondayOfThisWeek();
+    load(); render();
+    $("btnAdd").onclick=add;
+    $("btnWA").onclick=sendWA;
+    $("btnCSV").onclick=exportCSV;
+    $("btnReset").onclick=resetAll;
+    $("btnPDF").onclick=openPDF;
+
+    // register SW
     window.addEventListener("load", ()=>{
       if("serviceWorker" in navigator){
         navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
@@ -696,72 +320,3 @@
   </script>
 </body>
 </html>
-
-
-/* =========================
-   FILE: service-worker.js
-   ========================= */
-const CACHE_NAME = "ms-dienstplan-v7";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./logo.png",
-  "./version.txt",
-  "./service-worker.js"
-];
-
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(()=>{})
-  );
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil((async ()=>{
-    const keys = await caches.keys();
-    await Promise.all(keys.map(k => (k !== CACHE_NAME) ? caches.delete(k) : Promise.resolve()));
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
-
-  event.respondWith((async ()=>{
-    // Network-first for HTML (so updates show immediately)
-    const isHTML = req.headers.get("accept")?.includes("text/html");
-    if(isHTML){
-      try{
-        const fresh = await fetch(req);
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(req, fresh.clone());
-        return fresh;
-      }catch(_){
-        const cached = await caches.match(req);
-        return cached || caches.match("./index.html");
-      }
-    }
-
-    // Cache-first for other assets
-    const cached = await caches.match(req);
-    if(cached) return cached;
-
-    try{
-      const fresh = await fetch(req);
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(req, fresh.clone());
-      return fresh;
-    }catch(_){
-      return cached || Response.error();
-    }
-  })());
-});
-
-
-/* =========================
-   FILE: version.txt
-   ========================= */
-v7
