@@ -1,161 +1,523 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Masculine Security — Monthly Plan</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Masculine Security — Dienstplan (KW)</title>
 
-<style>
-body{font-family:Arial;background:#f4f5f7;margin:0}
-.wrap{max-width:1200px;margin:20px auto;padding:10px}
-.paper{background:#fff;border-radius:12px;padding:20px}
-.title{text-align:center;color:#c40000;font-weight:bold;font-size:22px;margin-bottom:10px}
-.section{margin-top:25px}
-h3{margin-bottom:6px;color:#0b2a5a}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #333;padding:8px;text-align:center;font-size:12px}
-th{background:#f1f1f1}
-.cell{cursor:pointer;min-height:60px}
-.weekend{background:#f9f0f0}
-textarea{width:100%;height:80px;border-radius:8px;padding:8px}
-button{padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer}
-.summary{display:flex;gap:20px}
-.box{flex:1;border:1px solid #ddd;padding:10px;border-radius:10px;background:#fafafa}
-</style>
+  <!-- No SW, no cache-stuck for HTML -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+
+  <style>
+    :root{
+      --paper:#fff;
+      --bg:#f4f5f7;
+      --ink:#111;
+      --muted:#444;
+      --line:#1f1f1f;
+      --red:#c40000;
+      --blue:#0b2a5a;
+      --soft:#f1f1f1;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1180px;margin:18px auto;padding:0 12px}
+    .toolbar{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px;
+    }
+    .tool-left,.tool-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .input,select{
+      border:1px solid #cfd3d9;background:#fff;color:#111;
+      padding:10px 10px;border-radius:10px;outline:none;min-width:140px
+    }
+    .btn{
+      border:1px solid #cfd3d9;background:#fff;color:#111;
+      padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700
+    }
+    .btn:hover{border-color:#9aa3af}
+    .btn.red{border-color:#f0b3b3;background:#fff5f5;color:#7a0000}
+    .btn.blue{border-color:#b6c7e6;background:#f3f7ff;color:#0b2a5a}
+    .btn.small{padding:6px 8px;border-radius:8px;font-size:12px}
+
+    .paper{
+      background:var(--paper);
+      border:1px solid #d7dbe2;
+      border-radius:14px;
+      padding:20px;
+      box-shadow:0 6px 20px rgba(0,0,0,.06);
+    }
+
+    /* Header like your sample */
+    .title{
+      text-align:center;font-weight:900;color:var(--red);
+      margin:4px 0 14px;font-size:20px;letter-spacing:.2px;
+    }
+    .subrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .kwlabel{font-weight:900;font-size:14px}
+    .brandbox{display:flex;align-items:center;gap:12px}
+    .logoBox{
+      width:60px;height:44px;border:2px solid var(--line);
+      display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--blue);
+      border-radius:6px;overflow:hidden
+    }
+    .logoBox img{width:100%;height:100%;object-fit:contain}
+    .company{font-weight:900;color:var(--blue);font-size:16px;line-height:1.1}
+    .company small{display:block;color:var(--muted);font-weight:700;font-size:11px;margin-top:3px}
+
+    /* NORMAL CALENDAR LOOK (Mon–Sun) */
+    .cal{
+      border:2px solid var(--line);
+      border-radius:10px;
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .calHead{
+      display:grid;
+      grid-template-columns: 160px repeat(7, 1fr);
+      background:var(--soft);
+      border-bottom:2px solid var(--line);
+    }
+    .calHead div{
+      padding:10px 8px;
+      border-right:1.6px solid var(--line);
+      font-weight:900;
+      text-align:center;
+      font-size:12px;
+    }
+    .calHead div:first-child{text-align:left}
+    .calBody{
+      display:grid;
+      grid-template-columns: 160px repeat(7, 1fr);
+    }
+    .cell{
+      min-height:70px;
+      border-right:1.6px solid var(--line);
+      border-bottom:1.6px solid var(--line);
+      padding:6px 6px;
+      position:relative;
+      background:#fff;
+    }
+    .cell.weekend{background:#f9f0f0}
+    .cell:last-child{border-right:none}
+    .rowName{
+      font-weight:900;
+      text-align:left;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .rowName .nameTxt{padding:6px 6px}
+    .rowName .nameActions{padding-right:6px; display:flex; gap:6px}
+    .dayBox{
+      font-weight:900;
+      font-size:11px;
+      color:#000;
+      position:absolute;
+      top:6px; right:6px;
+      background:#fff;
+      border:1px solid rgba(0,0,0,.18);
+      border-radius:8px;
+      padding:2px 6px;
+    }
+    .shiftText{
+      margin-top:22px;
+      font-size:11px;
+      font-weight:800;
+      white-space:pre-wrap;
+      line-height:1.25;
+    }
+    .shiftText .site{display:block;font-weight:900}
+    .shiftText .time{display:block;font-weight:900}
+    .dash{color:#666;font-weight:900}
+    .clickHint{
+      position:absolute; left:6px; bottom:6px;
+      font-size:10px; color:#666; font-weight:700;
+    }
+
+    .noticeTitle{text-align:center;color:var(--red);font-weight:900;margin:14px 0 6px;font-size:13px}
+    .notice{text-align:center;font-size:11px;line-height:1.45;font-weight:700}
+    .footer{margin-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .bigBrand{display:flex;align-items:center;gap:12px;color:var(--blue);font-weight:900;font-size:34px}
+    .bigBrand .mark{
+      width:52px;height:52px;border:3px solid var(--blue);border-radius:14px;
+      display:flex;align-items:center;justify-content:center;font-size:20px
+    }
+    .addr{text-align:center;font-size:10px;color:#333;font-weight:700;flex:1}
+    .page{font-size:10px;color:#333;font-weight:700;white-space:nowrap}
+
+    /* Print */
+    @media print{
+      body{background:#fff}
+      .wrap{max-width:100%;margin:0;padding:0}
+      .toolbar{display:none!important}
+      .paper{border:none;border-radius:0;box-shadow:none;padding:16px}
+    }
+  </style>
 </head>
 <body>
-
 <div class="wrap">
-<div class="paper">
 
-<div class="title">MONTHLY SECURITY PLAN</div>
+  <!-- Controls: ONLY change KW (normal calendar week view) -->
+  <div class="toolbar">
+    <div class="tool-left">
+      <input class="input" id="companyName" value="Masculine Security"/>
+      <input class="input" id="address" value="Werschenregerstraße 6, 28237 Bremen"/>
+      <input class="input" id="phone" value="015778697052"/>
+      <input class="input" id="email" value="kontakt.mass.bremen@hotmail.com"/>
+    </div>
 
-<h3 id="monthLabel"></h3>
+    <div class="tool-right">
+      <select id="yearSel" class="input"></select>
+      <select id="kwSel" class="input"></select>
+      <button class="btn blue" type="button" onclick="addEmployee()">Add Mitarbeiter</button>
+      <button class="btn" type="button" onclick="demo()">Demo</button>
+      <button class="btn red" type="button" onclick="window.print()">PDF / Drucken</button>
+      <button class="btn" type="button" onclick="resetLocal()">Reset (Local)</button>
+    </div>
+  </div>
 
-<table id="calendar"></table>
+  <div class="paper">
+    <div class="title">Vorläufiger Dienstplan</div>
 
-<div class="section">
-<h3>Documentation</h3>
-<textarea id="doc"></textarea>
-</div>
+    <div class="subrow">
+      <div class="kwlabel" id="kwLabel">Dienstplan KW …</div>
 
-<div class="section">
-<h3>Monthly Summary</h3>
-<div class="summary">
-<div class="box">
-<b>Total Shifts:</b>
-<div id="totalShifts">0</div>
-</div>
-<div class="box">
-<b>Total Hours:</b>
-<div id="totalHours">0</div>
-</div>
-<div class="box">
-<b>Night Shifts:</b>
-<div id="nightShifts">0</div>
-</div>
-</div>
-</div>
+      <div class="brandbox">
+        <div class="logoBox">
+          <img src="./logo.png" alt="" onerror="this.remove(); this.parentElement.textContent='MS';">
+        </div>
+        <div class="company" id="companyBox">
+          MASCULINE SECURITY
+          <small id="companySmall"></small>
+        </div>
+      </div>
+    </div>
 
-<div class="section">
-<h3>Employee Monthly Log</h3>
-<table id="log">
-<tr>
-<th>Employee</th>
-<th>Date</th>
-<th>Shift</th>
-</tr>
-</table>
-</div>
+    <!-- Normal calendar week grid -->
+    <div class="cal" id="calendar"></div>
 
-</div>
+    <div class="noticeTitle">DRINGEND BEACHTEN:</div>
+    <div class="notice">
+      Dienstantritt ist 20 Minuten vor Dienstbeginn!<br/>
+      Verspätungen und Ausfälle des Dienstantritts sind unverzüglich telefonisch zu melden!<br/>
+      Die Dienstzeiten von Sonderbewachungen müssen nach Dienstende schriftlich mitgeteilt werden!<br/><br/>
+      Freiwünsche werden spätestens am Donnerstag schriftlich der Einsatzleitung mitgeteilt!<br/>
+      Je nach Auftragslage werden diese Zugestimmt oder abgelehnt.<br/><br/>
+      Der Stundenzettel wird 2. Tage vor Monatsende bei der Einsatzleitung eingereicht!
+    </div>
+
+    <div class="footer">
+      <div class="bigBrand">
+        <div class="mark" id="mark">MS</div>
+        <div id="bigName">Masculine Security</div>
+      </div>
+      <div class="addr" id="footerAddr">Masculine Security · Werschenregerstraße 6 · 28237 Bremen</div>
+      <div class="page">Seite 1 von 1</div>
+    </div>
+  </div>
 </div>
 
 <script>
+  // =========================
+  // 100% Complete KW Week Plan
+  // - Normal calendar (Mon–Sun)
+  // - ONLY change: Year + KW
+  // - Data saved in localStorage
+  // =========================
 
-const employees=["Mustafa"];
+  const LS_KEY = "ms_kw_dienstplan_v2";
 
-let shifts={};
+  const daysDE = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
 
-const calendar=document.getElementById("calendar");
+  const yearSel = document.getElementById("yearSel");
+  const kwSel   = document.getElementById("kwSel");
+  const kwLabel = document.getElementById("kwLabel");
+  const calEl   = document.getElementById("calendar");
 
-const month= new Date().getMonth();
-const year= new Date().getFullYear();
+  const companyName = document.getElementById("companyName");
+  const address = document.getElementById("address");
+  const phone = document.getElementById("phone");
+  const email = document.getElementById("email");
 
-document.getElementById("monthLabel").innerText=
-new Date(year,month).toLocaleString('de-DE',{month:'long',year:'numeric'});
+  // -------- ISO week helpers (Germany)
+  function mondayOfISOWeek(week, year){
+    // week 1 contains Jan 4
+    const jan4 = new Date(year, 0, 4);
+    const day = jan4.getDay() || 7; // Mon=1..Sun=7
+    const mondayWeek1 = new Date(year, 0, 4 - (day - 1));
+    const monday = new Date(mondayWeek1);
+    monday.setDate(mondayWeek1.getDate() + (week - 1) * 7);
+    return monday;
+  }
+  function buildWeekDates(kw, year){
+    const mon = mondayOfISOWeek(kw, year);
+    const arr = [];
+    for(let i=0;i<7;i++){
+      const d = new Date(mon);
+      d.setDate(mon.getDate()+i);
+      arr.push(d);
+    }
+    return arr; // Mon..Sun
+  }
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function formatDate(d){ return `${pad2(d.getDate())}.${pad2(d.getMonth()+1)}.${d.getFullYear()}`; }
+  function isWeekend(d){ const g = d.getDay(); return g===0 || g===6; } // Sun=0, Sat=6
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+  function renderShift(v){
+    // "SITE|19:00-07:00" or any text
+    if(!v) return `<span class="dash">—</span>`;
+    if(v.includes("|")){
+      const [site,time] = v.split("|");
+      return `<span class="site">${escapeHTML(site)}</span><span class="time">${escapeHTML(time)}</span>`;
+    }
+    return `<span class="site">${escapeHTML(v)}</span>`;
+  }
 
-function daysInMonth(m,y){
-return new Date(y,m+1,0).getDate();
-}
+  // -------- State
+  function defaultState(){
+    return {
+      employees: [
+        { name: "Mustafa Mursal Abdi", shifts: {} }
+      ]
+    };
+  }
+  function load(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw) return defaultState();
+      const obj = JSON.parse(raw);
+      if(!obj || !Array.isArray(obj.employees)) return defaultState();
+      // sanitize
+      obj.employees = obj.employees.map(e => ({
+        name: String(e.name || "Mitarbeiter"),
+        shifts: (e.shifts && typeof e.shifts==="object") ? e.shifts : {}
+      }));
+      return obj;
+    }catch{
+      return defaultState();
+    }
+  }
+  function save(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+  let state = load();
 
-function isoWeek(d){
-d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
-d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
-var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
-return Math.ceil((((d-yearStart)/86400000)+1)/7);
-}
+  // -------- Header apply
+  function applyHeader(){
+    const cn = (companyName.value || "Masculine Security").trim();
+    const addr = (address.value || "").trim();
+    const ph = (phone.value || "").trim();
+    const em = (email.value || "").trim();
 
-function render(){
-calendar.innerHTML="";
+    document.getElementById("companyBox").childNodes[0].textContent = cn.toUpperCase();
+    document.getElementById("companySmall").textContent =
+      `${addr}${ph? " · Tel: "+ph:""}${em? " · E-Mail: "+em:""}`;
 
-let days=daysInMonth(month,year);
+    document.getElementById("bigName").textContent = cn;
+    document.getElementById("footerAddr").textContent = `${cn} · ${addr}`;
+    document.getElementById("mark").textContent = cn.split(" ").map(s=>s[0]).slice(0,2).join("").toUpperCase() || "MS";
+  }
 
-let row=document.createElement("tr");
-row.innerHTML="<th>KW</th><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th>";
-calendar.appendChild(row);
+  // -------- Render calendar
+  function render(){
+    applyHeader();
 
-let start=new Date(year,month,1);
+    const year = Number(yearSel.value);
+    const kw   = Number(kwSel.value);
+    const dates = buildWeekDates(kw, year);
 
-while(start.getMonth()==month){
-let tr=document.createElement("tr");
+    kwLabel.textContent = `Dienstplan KW ${kw} — ${year} (${formatDate(dates[0])} bis ${formatDate(dates[6])})`;
 
-let kw=isoWeek(start);
-let kwCell=document.createElement("td");
-kwCell.innerText="KW "+kw;
-tr.appendChild(kwCell);
+    // Build header (Mon–Sun)
+    const head = document.createElement("div");
+    head.className = "calHead";
 
-for(let i=0;i<7;i++){
-let td=document.createElement("td");
-td.className="cell";
+    const h0 = document.createElement("div");
+    h0.textContent = "Mitarbeiter";
+    head.appendChild(h0);
 
-let d=new Date(start);
-d.setDate(start.getDate()+i);
+    for(let i=0;i<7;i++){
+      const d = dates[i];
+      const h = document.createElement("div");
+      h.textContent = `${daysDE[i]}  •  ${formatDate(d)}`;
+      if(isWeekend(d)) h.style.background = "#f9f0f0";
+      head.appendChild(h);
+    }
 
-if(d.getMonth()==month){
-let key=d.toISOString().split("T")[0];
-td.innerText=shifts[key]||d.getDate();
-td.onclick=()=>{
-let v=prompt("Shift?");
-if(v){shifts[key]=v;}
-updateLog(d,v);
-renderSummary();
-render();
-};
-}
+    // Body grid
+    const body = document.createElement("div");
+    body.className = "calBody";
 
-tr.appendChild(td);
-}
+    state.employees.forEach((emp, empIndex) => {
+      // Name cell
+      const nameCell = document.createElement("div");
+      nameCell.className = "cell rowName";
+      nameCell.innerHTML = `
+        <div class="nameTxt">${escapeHTML(emp.name)}</div>
+        <div class="nameActions">
+          <button class="btn small" type="button" onclick="editEmployee(${empIndex})">Edit</button>
+          <button class="btn small red" type="button" onclick="deleteEmployee(${empIndex})">X</button>
+        </div>
+      `;
+      body.appendChild(nameCell);
 
-calendar.appendChild(tr);
-start.setDate(start.getDate()+7);
-}
-}
+      // 7 day cells
+      for(let i=0;i<7;i++){
+        const d = dates[i];
+        const key = formatDate(d);
+        const val = emp.shifts[key] || "";
 
-function updateLog(date,shift){
-let log=document.getElementById("log");
-let tr=document.createElement("tr");
-tr.innerHTML=`<td>Mustafa</td><td>${date.toLocaleDateString()}</td><td>${shift}</td>`;
-log.appendChild(tr);
-}
+        const c = document.createElement("div");
+        c.className = "cell" + (isWeekend(d) ? " weekend" : "");
+        c.title = "Click: set shift";
 
-function renderSummary(){
-let total=Object.keys(shifts).length;
-document.getElementById("totalShifts").innerText=total;
-}
+        c.innerHTML = `
+          <div class="dayBox">${pad2(d.getDate())}.${pad2(d.getMonth()+1)}</div>
+          <div class="shiftText">${renderShift(val)}</div>
+          <div class="clickHint">Click</div>
+        `;
 
-render();
+        c.addEventListener("click", () => setShift(empIndex, key, val));
+        body.appendChild(c);
+      }
+    });
 
+    calEl.innerHTML = "";
+    calEl.appendChild(head);
+    calEl.appendChild(body);
+  }
+
+  // -------- Actions
+  function setShift(empIndex, dateKey, current){
+    const help =
+`Ku qor shift sida:
+HOTEL|19:00-07:00
+LAST Birkenfels|19:00-07:00
+FREI
+
+Tirtir: blank ka dhig kadib OK.`;
+    const v = prompt(help, current || "HOTEL|19:00-07:00");
+    if(v === null) return;
+    const val = v.trim();
+    if(!val) delete state.employees[empIndex].shifts[dateKey];
+    else state.employees[empIndex].shifts[dateKey] = val;
+
+    save();
+    render();
+  }
+
+  function addEmployee(){
+    const name = prompt("Magaca Mitarbeiter-ka?", "New Mitarbeiter");
+    if(!name) return;
+    state.employees.push({ name: name.trim(), shifts: {} });
+    save();
+    render();
+  }
+  function editEmployee(i){
+    const name = prompt("Update name:", state.employees[i].name);
+    if(!name) return;
+    state.employees[i].name = name.trim();
+    save();
+    render();
+  }
+  function deleteEmployee(i){
+    if(!confirm("Delete Mitarbeiter-kan?")) return;
+    state.employees.splice(i,1);
+    if(!state.employees.length) state = defaultState();
+    save();
+    render();
+  }
+
+  function demo(){
+    // Make 5 workers and fill Fri/Sat/Sun for first worker
+    state.employees = [
+      { name:"Mustafa Mursal Abdi", shifts:{} },
+      { name:"Mitarbeiter 2", shifts:{} },
+      { name:"Mitarbeiter 3", shifts:{} },
+      { name:"Mitarbeiter 4", shifts:{} },
+      { name:"Mitarbeiter 5", shifts:{} }
+    ];
+    const year = Number(yearSel.value);
+    const kw   = Number(kwSel.value);
+    const dates = buildWeekDates(kw, year);
+
+    dates.forEach(d=>{
+      const key = formatDate(d);
+      const g = d.getDay(); // Fri=5, Sat=6, Sun=0
+      if(g===5 || g===6 || g===0){
+        state.employees[0].shifts[key] = "LAST Birkenfels|19:00-07:00";
+      }
+    });
+    save();
+    render();
+  }
+
+  function resetLocal(){
+    if(!confirm("Reset ALL local data?")) return;
+    localStorage.removeItem(LS_KEY);
+    state = defaultState();
+    save();
+    render();
+  }
+
+  // -------- Init selectors
+  function initSelectors(){
+    const now = new Date();
+    const yNow = now.getFullYear();
+
+    // years
+    for(let y=yNow-2; y<=yNow+4; y++){
+      const o=document.createElement("option");
+      o.value=String(y);
+      o.textContent=String(y);
+      yearSel.appendChild(o);
+    }
+    yearSel.value = String(yNow);
+
+    // KW 1..53
+    for(let k=1; k<=53; k++){
+      const o=document.createElement("option");
+      o.value=String(k);
+      o.textContent="KW " + k;
+      kwSel.appendChild(o);
+    }
+
+    // default KW = current ISO week (quick compute by scanning)
+    // We'll find KW where "today" is in that week by trying 1..53 for current year
+    let defaultKW = 1;
+    for(let k=1;k<=53;k++){
+      const w = buildWeekDates(k, yNow);
+      const start = w[0].getTime();
+      const end = w[6].getTime();
+      const t = new Date(yNow, now.getMonth(), now.getDate()).getTime();
+      if(t >= start && t <= end){ defaultKW = k; break; }
+    }
+    kwSel.value = String(defaultKW);
+  }
+
+  // events
+  [yearSel, kwSel, companyName, address, phone, email].forEach(el=>{
+    el.addEventListener("change", ()=>{ save(); render(); });
+    el.addEventListener("input",  ()=>{ save(); render(); });
+  });
+
+  initSelectors();
+  applyHeader();
+  render();
+  save();
+
+  // expose for inline buttons
+  window.addEmployee = addEmployee;
+  window.editEmployee = editEmployee;
+  window.deleteEmployee = deleteEmployee;
+  window.demo = demo;
+  window.resetLocal = resetLocal;
 </script>
 </body>
 </html>
